@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -7,11 +6,11 @@ import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { getActiveAds, Ad } from '@/lib/supabase';
 import { Store, ShoppingBag, TrendingUp } from 'lucide-react';
-
 const Index: React.FC = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [activeAds, setActiveAds] = useState<Ad[]>([]);
-
   useEffect(() => {
     const fetchAds = async () => {
       try {
@@ -21,14 +20,11 @@ const Index: React.FC = () => {
         console.error('Failed to fetch ads:', error);
       }
     };
-
     fetchAds();
   }, []);
-
-  return (
-    <Layout>
+  return <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-pakistani-green-800 to-pakistani-green-900 py-16 md:py-24">
+      <section className="bg-gradient-to-br from-pakistani-green-800 to-pakistani-green-900 md:py-24 mx-[33px] py-[93px] px-[24px] my-[7px] rounded-3xl">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0">
@@ -39,14 +35,11 @@ const Index: React.FC = () => {
                 Streamline your B2B operations with Pakistan's premier wholesale marketplace connecting suppliers and retailers.
               </p>
               <div className="flex flex-wrap gap-4">
-                {user ? (
-                  <Link to="/dashboard">
+                {user ? <Link to="/dashboard">
                     <Button className="bg-white text-primary hover:bg-gray-100">
                       Go to Dashboard
                     </Button>
-                  </Link>
-                ) : (
-                  <>
+                  </Link> : <>
                     <Link to="/signup">
                       <Button className="bg-white text-primary hover:bg-gray-100">
                         Sign Up Now
@@ -57,19 +50,13 @@ const Index: React.FC = () => {
                         Login
                       </Button>
                     </Link>
-                  </>
-                )}
+                  </>}
               </div>
             </div>
             <div className="md:w-1/2 flex justify-center">
-              <img 
-                src="https://lljiqniebnmfbytbkjkv.supabase.co/storage/v1/object/public/public/hero-image.svg"
-                alt="B2B Marketplace" 
-                className="max-w-full h-auto"
-                onError={(e) => {
-                  e.currentTarget.src = "https://via.placeholder.com/500x400?text=Pak+Bazaar+Connect";
-                }}
-              />
+              <img src="https://lljiqniebnmfbytbkjkv.supabase.co/storage/v1/object/public/public/hero-image.svg" alt="B2B Marketplace" className="max-w-full h-auto" onError={e => {
+              e.currentTarget.src = "https://via.placeholder.com/500x400?text=Pak+Bazaar+Connect";
+            }} />
             </div>
           </div>
         </div>
@@ -100,11 +87,9 @@ const Index: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Create shops, list products, and connect with retailers across Pakistan. Expand your business reach.
               </p>
-              {!user && (
-                <Link to="/signup" className="text-primary font-medium hover:underline">
+              {!user && <Link to="/signup" className="text-primary font-medium hover:underline">
                   Register as Wholesaler →
-                </Link>
-              )}
+                </Link>}
             </Card>
             
             <Card className="p-6 text-center">
@@ -117,11 +102,9 @@ const Index: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Find reliable wholesalers, browse products, and place orders efficiently to grow your retail business.
               </p>
-              {!user && (
-                <Link to="/signup" className="text-primary font-medium hover:underline">
+              {!user && <Link to="/signup" className="text-primary font-medium hover:underline">
                   Register as Seller →
-                </Link>
-              )}
+                </Link>}
             </Card>
             
             <Card className="p-6 text-center">
@@ -134,55 +117,38 @@ const Index: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Analytics, promotions, and support to help your business thrive in Pakistan's growing market.
               </p>
-              {!user && (
-                <Link to="/signup" className="text-primary font-medium hover:underline">
+              {!user && <Link to="/signup" className="text-primary font-medium hover:underline">
                   Learn More →
-                </Link>
-              )}
+                </Link>}
             </Card>
           </div>
         </div>
       </section>
 
       {/* Featured Ads Section */}
-      {activeAds.length > 0 && (
-        <section className="py-16 bg-gray-50">
+      {activeAds.length > 0 && <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Featured Promotions</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {activeAds.map((ad) => (
-                <Card key={ad.id} className="overflow-hidden">
-                  {ad.image && (
-                    <div className="h-48 overflow-hidden">
-                      <img 
-                        src={ad.image} 
-                        alt={ad.headline}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = "https://via.placeholder.com/300x200?text=Ad";
-                        }}
-                      />
-                    </div>
-                  )}
+              {activeAds.map(ad => <Card key={ad.id} className="overflow-hidden">
+                  {ad.image && <div className="h-48 overflow-hidden">
+                      <img src={ad.image} alt={ad.headline} className="w-full h-full object-cover" onError={e => {
+                e.currentTarget.src = "https://via.placeholder.com/300x200?text=Ad";
+              }} />
+                    </div>}
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-3">{ad.headline}</h3>
-                    {user ? (
-                      <Link to="/dashboard/browse-shops" className="text-primary font-medium hover:underline">
+                    {user ? <Link to="/dashboard/browse-shops" className="text-primary font-medium hover:underline">
                         Browse Shops →
-                      </Link>
-                    ) : (
-                      <Link to="/signup" className="text-primary font-medium hover:underline">
+                      </Link> : <Link to="/signup" className="text-primary font-medium hover:underline">
                         Sign Up to View →
-                      </Link>
-                    )}
+                      </Link>}
                   </div>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
-        </section>
-      )}
+        </section>}
 
       {/* CTA Section */}
       <section className="py-16 bg-pakistani-green-900 text-white">
@@ -191,23 +157,17 @@ const Index: React.FC = () => {
           <p className="text-pakistani-green-100 text-lg mb-8 max-w-2xl mx-auto">
             Join thousands of businesses using Pak Bazaar Connect to streamline their wholesale operations.
           </p>
-          {!user ? (
-            <Link to="/signup">
+          {!user ? <Link to="/signup">
               <Button className="bg-white text-primary hover:bg-gray-100 text-lg px-8 py-3">
                 Get Started Now
               </Button>
-            </Link>
-          ) : (
-            <Link to="/dashboard">
+            </Link> : <Link to="/dashboard">
               <Button className="bg-white text-primary hover:bg-gray-100 text-lg px-8 py-3">
                 Go to Dashboard
               </Button>
-            </Link>
-          )}
+            </Link>}
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Index;

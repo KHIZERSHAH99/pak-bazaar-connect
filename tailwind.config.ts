@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				poppins: ["Poppins", "sans-serif"],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -25,8 +29,20 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#1B5E20',
+					foreground: 'white',
+				},
+				"pakistani-green": {
+					50: "#e8f5e9",
+					100: "#c8e6c9",
+					200: "#a5d6a7",
+					300: "#81c784",
+					400: "#66bb6a",
+					500: "#4caf50",
+					600: "#43a047",
+					700: "#388e3c",
+					800: "#2e7d32",
+					900: "#1B5E20",
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',

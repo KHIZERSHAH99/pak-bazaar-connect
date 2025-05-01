@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -7,11 +6,11 @@ import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { getActiveAds, Ad } from '@/lib/supabase';
 import { Store, ShoppingBag, TrendingUp, ArrowRight, Package, UserCheck, Building } from 'lucide-react';
-
 const Index: React.FC = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [activeAds, setActiveAds] = useState<Ad[]>([]);
-  
   useEffect(() => {
     const fetchAds = async () => {
       try {
@@ -23,9 +22,7 @@ const Index: React.FC = () => {
     };
     fetchAds();
   }, []);
-  
-  return (
-    <Layout>
+  return <Layout>
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-pakistani_green-800 to-pakistani_green-700 py-16 md:py-24 px-4 rounded-xl overflow-hidden relative">
         <div className="absolute inset-0 opacity-10">
@@ -49,15 +46,12 @@ const Index: React.FC = () => {
                 Connect with trusted wholesalers and retailers across Pakistan. Streamline your business operations and grow your network with Pak Bazaar Connect.
               </p>
               <div className="flex flex-wrap gap-4">
-                {user ? (
-                  <Link to="/dashboard">
+                {user ? <Link to="/dashboard">
                     <Button className="bg-white text-pakistani_green-800 hover:bg-gray-100 font-medium text-base py-6 px-8 rounded-md shadow-lg group transition-all duration-300">
                       Go to Dashboard
                       <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                     </Button>
-                  </Link>
-                ) : (
-                  <>
+                  </Link> : <>
                     <Link to="/signup">
                       <Button className="bg-white text-pakistani_green-800 hover:bg-gray-100 font-medium text-base py-6 px-8 rounded-md shadow-lg group transition-all duration-300">
                         Sign Up Now
@@ -65,25 +59,19 @@ const Index: React.FC = () => {
                       </Button>
                     </Link>
                     <Link to="/login">
-                      <Button variant="outline" className="text-white border-white border-2 hover:bg-white/10 font-medium text-base py-6 px-8 rounded-md">
+                      <Button variant="outline" className="border-white border-2 font-medium text-base py-6 px-8 rounded-md text-zinc-50 bg-emerald-950 hover:bg-emerald-800">
                         Login
                       </Button>
                     </Link>
-                  </>
-                )}
+                  </>}
               </div>
             </div>
             <div className="md:w-1/2 flex justify-center">
               <div className="relative">
                 <div className="absolute inset-0 bg-blue-500 rounded-full blur-3xl opacity-10"></div>
-                <img
-                  src="https://lljiqniebnmfbytbkjkv.supabase.co/storage/v1/object/public/public/marketplace-illustration.png"
-                  alt="B2B Marketplace"
-                  className="max-w-full h-auto relative z-10 drop-shadow-2xl"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://cdn.pixabay.com/photo/2018/04/02/11/08/business-3284034_1280.png";
-                  }}
-                />
+                <img src="https://lljiqniebnmfbytbkjkv.supabase.co/storage/v1/object/public/public/marketplace-illustration.png" alt="B2B Marketplace" className="max-w-full h-auto relative z-10 drop-shadow-2xl" onError={e => {
+                e.currentTarget.src = "https://cdn.pixabay.com/photo/2018/04/02/11/08/business-3284034_1280.png";
+              }} />
               </div>
             </div>
           </div>
@@ -112,12 +100,10 @@ const Index: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Create shops, list products, and connect with retailers across Pakistan. Track orders and manage your inventory seamlessly.
               </p>
-              {!user && (
-                <Link to="/signup" className="text-pakistani_green-700 font-medium hover:underline group flex items-center justify-center">
+              {!user && <Link to="/signup" className="text-pakistani_green-700 font-medium hover:underline group flex items-center justify-center">
                   Register as Wholesaler 
                   <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-              )}
+                </Link>}
             </Card>
             
             <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md">
@@ -130,12 +116,10 @@ const Index: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Discover reliable wholesalers, browse quality products, and place orders with confidence to grow your retail business.
               </p>
-              {!user && (
-                <Link to="/signup" className="text-pakistani_green-700 font-medium hover:underline group flex items-center justify-center">
+              {!user && <Link to="/signup" className="text-pakistani_green-700 font-medium hover:underline group flex items-center justify-center">
                   Register as Seller
                   <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-              )}
+                </Link>}
             </Card>
             
             <Card className="p-8 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md">
@@ -148,12 +132,10 @@ const Index: React.FC = () => {
               <p className="text-gray-600 mb-4">
                 Access analytics, create promotions, and get support to help your business thrive in Pakistan's growing marketplace.
               </p>
-              {!user && (
-                <Link to="/signup" className="text-pakistani_green-700 font-medium hover:underline group flex items-center justify-center">
+              {!user && <Link to="/signup" className="text-pakistani_green-700 font-medium hover:underline group flex items-center justify-center">
                   Learn More
                   <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-              )}
+                </Link>}
             </Card>
           </div>
         </div>
@@ -184,47 +166,32 @@ const Index: React.FC = () => {
       </section>
 
       {/* Featured Ads Section */}
-      {activeAds.length > 0 && (
-        <section className="py-16">
+      {activeAds.length > 0 && <section className="py-16">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-4">Featured Promotions</h2>
             <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">Discover exclusive offers from top wholesalers across Pakistan</p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {activeAds.map(ad => (
-                <Card key={ad.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md rounded-xl">
-                  {ad.image && (
-                    <div className="h-48 overflow-hidden">
-                      <img 
-                        src={ad.image} 
-                        alt={ad.headline} 
-                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" 
-                        onError={(e) => {
-                          e.currentTarget.src = "https://via.placeholder.com/300x200?text=Ad";
-                        }} 
-                      />
-                    </div>
-                  )}
+              {activeAds.map(ad => <Card key={ad.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md rounded-xl">
+                  {ad.image && <div className="h-48 overflow-hidden">
+                      <img src={ad.image} alt={ad.headline} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onError={e => {
+                e.currentTarget.src = "https://via.placeholder.com/300x200?text=Ad";
+              }} />
+                    </div>}
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-3">{ad.headline}</h3>
-                    {user ? (
-                      <Link to="/dashboard/browse-shops" className="text-pakistani_green-700 font-medium hover:underline group flex items-center">
+                    {user ? <Link to="/dashboard/browse-shops" className="text-pakistani_green-700 font-medium hover:underline group flex items-center">
                         Browse Shops
                         <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                      </Link>
-                    ) : (
-                      <Link to="/signup" className="text-pakistani_green-700 font-medium hover:underline group flex items-center">
+                      </Link> : <Link to="/signup" className="text-pakistani_green-700 font-medium hover:underline group flex items-center">
                         Sign Up to View
                         <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                      </Link>
-                    )}
+                      </Link>}
                   </div>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
-        </section>
-      )}
+        </section>}
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-pakistani_green-900 to-pakistani_green-700 text-white rounded-xl mb-8 overflow-hidden relative">
@@ -244,25 +211,19 @@ const Index: React.FC = () => {
           <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
             Join thousands of businesses using Pak Bazaar Connect to streamline their wholesale operations.
           </p>
-          {!user ? (
-            <Link to="/signup">
+          {!user ? <Link to="/signup">
               <Button className="bg-white text-pakistani_green-800 hover:bg-gray-100 font-medium text-base py-6 px-8 rounded-md shadow-lg group transition-all duration-300">
                 Get Started Now
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
-            </Link>
-          ) : (
-            <Link to="/dashboard">
+            </Link> : <Link to="/dashboard">
               <Button className="bg-white text-pakistani_green-800 hover:bg-gray-100 font-medium text-base py-6 px-8 rounded-md shadow-lg group transition-all duration-300">
                 Go to Dashboard
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
-            </Link>
-          )}
+            </Link>}
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Index;

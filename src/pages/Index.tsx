@@ -69,11 +69,10 @@ const Index: React.FC = () => {
             </div>
             <div className="md:w-1/2 flex justify-center">
               <img
-                src="https://ndopdaifnmzdkdjsolbq.supabase.co/storage/v1/object/public/public/marketplace-illustration.svg"
+                src="https://lljiqniebnmfbytbkjkv.supabase.co/storage/v1/object/public/public/marketplace-illustration.svg"
                 alt="B2B Marketplace"
                 className="max-w-full h-auto drop-shadow-lg rounded-lg animate-fadeIn"
                 onError={(e) => {
-                  // Fallback to a high-quality placeholder image that matches our theme
                   e.currentTarget.src = "https://cdn.pixabay.com/photo/2018/04/02/11/08/business-3284034_1280.png";
                 }}
                 style={{
@@ -84,6 +83,11 @@ const Index: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Banner */}
+      <div className="bg-pakistani-green-100 text-pakistani-green-800 p-3 my-4 rounded-lg text-center animate-pulse">
+        <strong>Join Now! Free Ads for First 10 Wholesalers!</strong>
+      </div>
 
       {/* Features Section */}
       <section className="py-16 bg-white">

@@ -9,7 +9,250 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      ads: {
+        Row: {
+          created_at: string
+          headline: string
+          id: string
+          image: string | null
+          status: string
+          wholesaler_id: string
+        }
+        Insert: {
+          created_at?: string
+          headline: string
+          id?: string
+          image?: string | null
+          status?: string
+          wholesaler_id: string
+        }
+        Update: {
+          created_at?: string
+          headline?: string
+          id?: string
+          image?: string | null
+          status?: string
+          wholesaler_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ads_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_history: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          reply: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          reply: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          reply?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          shop_id: string
+          status: string
+          total_amount: number
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          shop_id: string
+          status?: string
+          total_amount: number
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          shop_id?: string
+          status?: string
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          created_at: string
+          id: string
+          image: string | null
+          is_active: boolean
+          name: string
+          price: number
+          shop_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          name: string
+          price: number
+          shop_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          name?: string
+          price?: number
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      role_requests: {
+        Row: {
+          created_at: string
+          id: string
+          requested_role: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          requested_role: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          requested_role?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shops: {
+        Row: {
+          address: string
+          contact: string
+          created_at: string
+          id: string
+          logo: string | null
+          name: string
+          owner_id: string
+          postal_code: string
+        }
+        Insert: {
+          address: string
+          contact: string
+          created_at?: string
+          id?: string
+          logo?: string | null
+          name: string
+          owner_id: string
+          postal_code: string
+        }
+        Update: {
+          address?: string
+          contact?: string
+          created_at?: string
+          id?: string
+          logo?: string | null
+          name?: string
+          owner_id?: string
+          postal_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shops_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

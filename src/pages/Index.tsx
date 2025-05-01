@@ -28,7 +28,7 @@ const Index: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-6 mx-0 py-0 my-0 px-0 lg:text-5xl">
                 Connect Wholesalers and Sellers Across Pakistan
               </h1>
               <p className="text-pakistani-green-100 text-lg mb-8 max-w-lg">
@@ -46,7 +46,7 @@ const Index: React.FC = () => {
                       </Button>
                     </Link>
                     <Link to="/login">
-                      <Button variant="outline" className="text-white hover:bg-pakistani-green-700">
+                      <Button variant="outline" className="text-white hover:bg-pakistani-green-700 bg-green-950 hover:bg-green-800">
                         Login
                       </Button>
                     </Link>

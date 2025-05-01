@@ -53,7 +53,7 @@ const Index: React.FC = () => {
                     </Button>
                   </Link> : <>
                     <Link to="/signup">
-                      <Button className="bg-white text-pakistani_green-800 hover:bg-gray-100 font-medium text-base py-6 px-8 rounded-md shadow-lg group transition-all duration-300">
+                      <Button className="text-pakistani_green-800 font-medium text-base py-6 px-8 rounded-md shadow-lg group transition-all duration-300 bg-zinc-100">
                         Sign Up Now
                         <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                       </Button>

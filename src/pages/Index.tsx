@@ -79,9 +79,7 @@ const Index: React.FC = () => {
       </section>
 
       {/* Banner */}
-      <div className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-pakistani_green-800 p-4 my-6 rounded-lg text-center font-medium shadow-md animate-pulse">
-        <span className="font-bold">Special Offer:</span> Join Now! Free Ads for First 10 Wholesalers!
-      </div>
+      
 
       {/* Features Section */}
       <section className="py-16">

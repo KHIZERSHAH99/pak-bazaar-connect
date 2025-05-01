@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signIn } from '@/lib/supabase';
@@ -7,32 +6,32 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { LogIn, User, AlertCircle } from 'lucide-react';
-
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { checkAuthStatus } = useAuth();
-  const { toast } = useToast();
-
+  const {
+    checkAuthStatus
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    
     if (!email || !password) {
       setError('Please enter both email and password');
       return;
     }
-
     try {
       setIsLoading(true);
       await signIn(email, password);
       await checkAuthStatus();
       toast({
         title: 'Success',
-        description: 'You have successfully logged in',
+        description: 'You have successfully logged in'
       });
       navigate('/dashboard');
     } catch (error: any) {
@@ -41,7 +40,7 @@ const Login: React.FC = () => {
       toast({
         title: 'Login failed',
         description: error.message || 'Please check your credentials and try again',
-        variant: 'destructive',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
@@ -57,7 +56,7 @@ const Login: React.FC = () => {
       await checkAuthStatus();
       toast({
         title: 'Success',
-        description: 'You have successfully logged in',
+        description: 'You have successfully logged in'
       });
       navigate('/dashboard');
     } catch (error: any) {
@@ -66,15 +65,13 @@ const Login: React.FC = () => {
       toast({
         title: 'Login failed',
         description: error.message || 'Please check your connection and try again',
-        variant: 'destructive',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
     }
   };
-
-  return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pakistani_green-800 via-pakistani_green-700 to-pakistani_green-600 relative overflow-hidden">
+  return <div className="min-h-screen flex flex-col bg-gradient-to-br from-pakistani_green-800 via-pakistani_green-700 to-pakistani_green-600 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
         <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
           <defs>
@@ -110,49 +107,27 @@ const Login: React.FC = () => {
               <p className="text-gray-600 mt-2">Sign in to your account to continue</p>
             </div>
 
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 rounded-lg flex items-center text-red-600 text-sm">
+            {error && <div className="mb-6 p-4 bg-red-50 rounded-lg flex items-center text-red-600 text-sm">
                 <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
                 <span>{error}</span>
-              </div>
-            )}
+              </div>}
 
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email Address
                 </label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-pakistani_green-500 focus:border-transparent"
-                  disabled={isLoading}
-                />
+                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-pakistani_green-500 focus:border-transparent" disabled={isLoading} />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-pakistani_green-500 focus:border-transparent"
-                  disabled={isLoading}
-                />
+                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password" className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-pakistani_green-500 focus:border-transparent" disabled={isLoading} />
               </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-pakistani_green-700 text-white font-medium py-3 px-4 rounded-lg shadow-md hover:bg-pakistani_green-800 transition-colors"
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full bg-pakistani_green-700 text-white font-medium py-3 px-4 rounded-lg shadow-md hover:bg-pakistani_green-800 transition-colors" disabled={isLoading}>
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
             </form>
@@ -170,31 +145,11 @@ const Login: React.FC = () => {
             <div className="mt-8 pt-6 border-t border-gray-200">
               <h3 className="text-sm font-medium text-gray-700 mb-4 text-center">Demo Accounts</h3>
               <div className="grid grid-cols-3 gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleQuickLogin('admin@test.com', 'password')}
-                  disabled={isLoading}
-                  className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50"
-                >
-                  Admin
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleQuickLogin('wholesaler1@test.com', 'password')}
-                  disabled={isLoading}
-                  className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50"
-                >
+                
+                <Button variant="outline" size="sm" onClick={() => handleQuickLogin('wholesaler1@test.com', 'password')} disabled={isLoading} className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50">
                   Wholesaler
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleQuickLogin('seller1@test.com', 'password')}
-                  disabled={isLoading}
-                  className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50"
-                >
+                <Button variant="outline" size="sm" onClick={() => handleQuickLogin('seller1@test.com', 'password')} disabled={isLoading} className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50">
                   Seller
                 </Button>
               </div>
@@ -205,8 +160,6 @@ const Login: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Login;

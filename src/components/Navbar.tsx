@@ -1,169 +1,163 @@
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { signOut } from '@/lib/supabase';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { signOut } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import { Home, LogIn, LogOut, Package, Settings, User, Menu, X } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useToast } from '@/hooks/use-toast';
+import { Menu, X, LogOut, User } from 'lucide-react';
 
 const Navbar: React.FC = () => {
-  const { user, profile } = useAuth();
-  const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const location = useLocation();
+  
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+  
+  // If we're on an auth page, don't show the navbar
+  if (isAuthPage) {
+    return null;
+  }
 
   const handleLogout = async () => {
     try {
       await signOut();
-      navigate('/');
+      toast({
+        title: 'Logged out',
+        description: 'You have been successfully logged out',
+      });
     } catch (error) {
-      console.error('Logout error:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to log out',
+        variant: 'destructive',
+      });
     }
   };
 
   return (
-    <nav className="bg-white shadow py-4">
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <div className="flex items-center space-x-3">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center">
-            <div className="mr-3">
-              <img 
-                src="https://lljiqniebnmfbytbkjkv.supabase.co/storage/v1/object/public/public/pbc-logo.png" 
-                alt="PBC Logo" 
-                className="h-10 w-auto"
-                onError={(e) => {
-                  // Fallback if image doesn't load
-                  e.currentTarget.src = "https://via.placeholder.com/40x40?text=PBC";
-                }}
-              />
+            <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
+              <span className="text-white text-xl font-bold">PBC</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold text-primary tracking-tight">PBC</span>
-              <span className="text-xs font-light text-gray-600 -mt-1">Pak Bazaar Connect</span>
-            </div>
+            <span className="text-xl font-bold text-pakistani_green-800 ml-2 hidden md:inline-block">Pak Bazaar Connect</span>
           </Link>
-        </div>
 
-        <div className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-gray-600 hover:text-primary transition-colors">
-            <div className="flex items-center space-x-1">
-              <Home className="h-4 w-4" />
-              <span>Home</span>
-            </div>
-          </Link>
-          
-          {user ? (
-            <>
-              <Link to="/dashboard" className="text-gray-600 hover:text-primary transition-colors">
-                <div className="flex items-center space-x-1">
-                  <Settings className="h-4 w-4" />
-                  <span>Dashboard</span>
-                </div>
-              </Link>
-              <Link to="/profile" className="text-gray-600 hover:text-primary transition-colors">
-                <div className="flex items-center space-x-1">
-                  <User className="h-4 w-4" />
-                  <span>Profile</span>
-                </div>
-              </Link>
-              <Button 
-                variant="outline"
-                onClick={handleLogout}
-                className="text-gray-600 hover:text-primary"
-              >
-                <LogOut className="h-4 w-4 mr-1" />
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="text-gray-600 hover:text-primary transition-colors">
-                <div className="flex items-center space-x-1">
-                  <LogIn className="h-4 w-4" />
-                  <span>Login</span>
-                </div>
-              </Link>
-              <Link to="/signup" className="bg-pakistani-green-800 hover:bg-pakistani-green-900 text-white px-4 py-2 rounded-md transition-colors">
-                Sign Up
-              </Link>
-            </>
-          )}
-        </div>
-
-        <div className="md:hidden">
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="sm:max-w-xs w-[80vw]">
-              <div className="flex flex-col space-y-4 py-4">
-                <Link 
-                  to="/" 
-                  className="flex items-center px-2 py-1 rounded-md hover:bg-gray-100"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Home className="h-4 w-4 mr-2" />
-                  <span>Home</span>
-                </Link>
-                
-                {user ? (
-                  <>
-                    <Link 
-                      to="/dashboard" 
-                      className="flex items-center px-2 py-1 rounded-md hover:bg-gray-100"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <Settings className="h-4 w-4 mr-2" />
-                      <span>Dashboard</span>
-                    </Link>
-                    <Link 
-                      to="/profile" 
-                      className="flex items-center px-2 py-1 rounded-md hover:bg-gray-100"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <User className="h-4 w-4 mr-2" />
-                      <span>Profile</span>
-                    </Link>
-                    <Button 
-                      variant="outline"
-                      onClick={() => {
-                        handleLogout();
-                        setIsOpen(false);
-                      }}
-                      className="w-full justify-start"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link to="/" className="text-gray-700 hover:text-pakistani_green-700 font-medium">Home</Link>
+            {user ? (
+              <>
+                <Link to="/dashboard" className="text-gray-700 hover:text-pakistani_green-700 font-medium">Dashboard</Link>
+                <div className="ml-4 flex items-center space-x-3">
+                  <Link to="/profile">
+                    <Button variant="outline" size="sm" className="flex items-center border-pakistani_green-700 text-pakistani_green-700">
+                      <User className="mr-1 h-4 w-4" />
+                      Profile
                     </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link 
-                      to="/login" 
-                      className="flex items-center px-2 py-1 rounded-md hover:bg-gray-100"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <LogIn className="h-4 w-4 mr-2" />
-                      <span>Login</span>
-                    </Link>
-                    <Link 
-                      to="/signup" 
-                      className="flex items-center px-2 py-1 rounded-md bg-pakistani-green-800 hover:bg-pakistani-green-900 text-white justify-center"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Sign Up
-                    </Link>
-                  </>
-                )}
+                  </Link>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={handleLogout}
+                    className="flex items-center text-gray-700"
+                  >
+                    <LogOut className="mr-1 h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Link to="/login">
+                  <Button variant="outline" className="border-pakistani_green-700 text-pakistani_green-700">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white">
+                    Sign Up
+                  </Button>
+                </Link>
               </div>
-            </SheetContent>
-          </Sheet>
+            )}
+          </nav>
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden focus:outline-none"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="h-6 w-6 text-gray-700" />
+            ) : (
+              <Menu className="h-6 w-6 text-gray-700" />
+            )}
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 px-2 space-y-3 border-t border-gray-200">
+            <Link 
+              to="/" 
+              className="block py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </Link>
+            {user ? (
+              <>
+                <Link 
+                  to="/dashboard" 
+                  className="block py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  to="/profile" 
+                  className="block py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+                <button
+                  className="w-full text-left py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  className="block py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link 
+                  to="/signup" 
+                  className="block py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
+        )}
       </div>
-    </nav>
+    </header>
   );
 };
 

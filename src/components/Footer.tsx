@@ -4,33 +4,52 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-white border-t py-10 mt-auto">
+    <footer className="bg-white border-t border-gray-200 py-12">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col items-center text-center md:flex-row md:justify-between md:items-start md:text-left">
-          <div className="mb-8 md:mb-0">
-            <div className="flex flex-col items-center md:items-start">
-              <span className="text-2xl font-bold text-primary tracking-tight">PBC</span>
-              <span className="text-xs font-light text-gray-600 -mt-1">Pak Bazaar Connect</span>
-            </div>
-            <p className="text-gray-600 max-w-md mt-4">
-              Connecting wholesalers and sellers across Pakistan to streamline B2B commerce.
-            </p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <Link to="/" className="flex flex-col items-start">
+              <div className="flex items-center">
+                <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
+                  <span className="text-white text-xl font-bold">PBC</span>
+                </div>
+                <span className="text-xl font-bold text-pakistani_green-800 ml-2">Pak Bazaar Connect</span>
+              </div>
+              <p className="mt-4 text-sm text-gray-600">Pakistan's premier B2B marketplace connecting wholesalers and sellers.</p>
+            </Link>
           </div>
           
-          <div className="flex flex-wrap justify-center md:justify-end gap-x-12 gap-y-6">
-            <Link to="/" className="text-gray-600 hover:text-primary transition-colors">Home</Link>
-            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">About</Link>
-            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">Contact</Link>
-            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">Terms</Link>
-            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">Privacy</Link>
-            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">FAQ</Link>
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Platform</h3>
+            <ul className="space-y-2">
+              <li><Link to="/" className="text-gray-600 hover:text-pakistani_green-700">Home</Link></li>
+              <li><Link to="/login" className="text-gray-600 hover:text-pakistani_green-700">Login</Link></li>
+              <li><Link to="/signup" className="text-gray-600 hover:text-pakistani_green-700">Sign Up</Link></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Resources</h3>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-gray-600 hover:text-pakistani_green-700">Help Center</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-pakistani_green-700">Privacy Policy</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-pakistani_green-700">Terms of Service</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Contact</h3>
+            <ul className="space-y-2">
+              <li className="text-gray-600">Email: info@pakbazaar.com</li>
+              <li className="text-gray-600">Phone: +92 300 1234567</li>
+              <li className="text-gray-600">Address: Islamabad, Pakistan</li>
+            </ul>
           </div>
         </div>
         
-        <div className="mt-8 border-t border-gray-200 pt-6 text-center">
-          <p className="text-gray-600 text-sm">
-            Build Successful, API Keys Secured | © {new Date().getFullYear()} Pak Bazaar Connect. All rights reserved.
-          </p>
+        <div className="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-600 text-sm">&copy; 2024 Pak Bazaar Connect. All rights reserved.</p>
+          <p className="text-gray-600 text-sm mt-4 md:mt-0">Build Successful, API Keys Secured</p>
         </div>
       </div>
     </footer>

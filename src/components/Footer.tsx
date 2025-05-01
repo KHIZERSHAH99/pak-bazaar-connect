@@ -1,50 +1,34 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-white border-t py-8 mt-auto">
+    <footer className="bg-white border-t py-10 mt-auto">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between">
-          <div className="mb-6 md:mb-0">
-            <h3 className="text-lg font-semibold mb-2 text-primary">Pak Bazaar Connect</h3>
-            <p className="text-gray-600 max-w-md">
+        <div className="flex flex-col items-center text-center md:flex-row md:justify-between md:items-start md:text-left">
+          <div className="mb-8 md:mb-0">
+            <div className="flex flex-col items-center md:items-start">
+              <span className="text-2xl font-bold text-primary tracking-tight">PBC</span>
+              <span className="text-xs font-light text-gray-600 -mt-1">Pak Bazaar Connect</span>
+            </div>
+            <p className="text-gray-600 max-w-md mt-4">
               Connecting wholesalers and sellers across Pakistan to streamline B2B commerce.
             </p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-            <div>
-              <h4 className="text-sm font-semibold mb-3 text-gray-800">PLATFORM</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">How it Works</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Pricing</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">FAQ</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-sm font-semibold mb-3 text-gray-800">COMPANY</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">About Us</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Careers</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Contact</a></li>
-              </ul>
-            </div>
-            
-            <div className="col-span-2 md:col-span-1">
-              <h4 className="text-sm font-semibold mb-3 text-gray-800">LEGAL</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Cookie Policy</a></li>
-              </ul>
-            </div>
+          <div className="flex flex-wrap justify-center md:justify-end gap-x-12 gap-y-6">
+            <Link to="/" className="text-gray-600 hover:text-primary transition-colors">Home</Link>
+            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">About</Link>
+            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">Contact</Link>
+            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">Terms</Link>
+            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">Privacy</Link>
+            <Link to="#" className="text-gray-600 hover:text-primary transition-colors">FAQ</Link>
           </div>
         </div>
         
-        <div className="mt-8 border-t border-gray-200 pt-6">
-          <p className="text-center text-gray-600 text-sm">
+        <div className="mt-8 border-t border-gray-200 pt-6 text-center">
+          <p className="text-gray-600 text-sm">
             Build Successful, API Keys Secured | © {new Date().getFullYear()} Pak Bazaar Connect. All rights reserved.
           </p>
         </div>

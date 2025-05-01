@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signUp } from '@/lib/supabase';
-import Layout from '@/components/Layout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -58,9 +57,23 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-gradient-to-bl from-pakistani-green-800 via-blue-600 to-yellow-400 relative overflow-hidden">
+      {/* Abstract shapes in the background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gradient-to-tl from-yellow-300/30 to-orange-500/30 blur-xl"></div>
+        <div className="absolute top-1/3 -right-24 w-72 h-72 rounded-full bg-gradient-to-bl from-blue-300/30 to-purple-500/30 blur-xl"></div>
+        <div className="absolute top-10 left-1/4 w-64 h-64 rounded-full bg-gradient-to-tr from-green-300/30 to-teal-500/30 blur-xl"></div>
+      </div>
+      
+      <nav className="relative z-10 w-full px-6 py-4">
+        <Link to="/" className="flex flex-col items-center md:items-start">
+          <span className="text-3xl font-bold text-white tracking-tight">PBC</span>
+          <span className="text-xs font-light text-white/80 -mt-1">Pak Bazaar Connect</span>
+        </Link>
+      </nav>
+      
+      <div className="container flex-grow mx-auto px-4 py-8 flex items-center justify-center relative z-10">
+        <div className="w-full max-w-md backdrop-blur-sm bg-white/90 rounded-2xl shadow-xl overflow-hidden">
           <div className="p-8">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-gray-800">Create an Account</h2>
@@ -115,10 +128,12 @@ const Signup: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full bg-primary hover:bg-pakistani-green-800 text-white font-medium py-2 px-4 rounded-md"
+                className="w-full bg-white text-gray-700 font-medium py-2 px-4 rounded-md border border-gray-200 shadow-sm transition-all hover:bg-gradient-to-r hover:from-pakistani-green-600 hover:to-blue-500 hover:text-white group"
                 disabled={isLoading}
               >
-                {isLoading ? 'Signing up...' : 'Sign Up'}
+                <span className="group-hover:animate-pulse">
+                  {isLoading ? 'Signing up...' : 'Sign Up'}
+                </span>
               </Button>
             </form>
 
@@ -133,7 +148,7 @@ const Signup: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

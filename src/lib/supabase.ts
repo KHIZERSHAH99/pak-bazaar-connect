@@ -1,8 +1,7 @@
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://lljiqniebnmfbytbkjkv.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsamlxbmllYm5tZmJ5dGJramt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQzODUxOTEsImV4cCI6MjAyOTk2MTE5MX0.ZM0v_SJFV7qDskk_LJ3-lq8bgarMdm8a09GcTgs6tBs';
+const supabaseUrl = 'https://ndopdaifnmzdkdjsolbq.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kb3BkYWlmbm16ZGtkanNvbGJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYwODIzNDgsImV4cCI6MjA2MTY1ODM0OH0.08199L9E4T8KGTxZkW83FTjRo058DomUn2v0OarzOBw';
 
 // Define types for user profiles
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
@@ -71,8 +70,25 @@ export interface ChatMessage {
   created_at?: string;
 }
 
+// New commission interface
+export interface Commission {
+  id: string;
+  transaction_id: string;
+  seller_id: string;
+  sale_amount: number;
+  commission_amount: number;
+  payout_amount: number;
+  created_at?: string;
+}
+
 // Initialize Supabase client
-export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    storage: localStorage
+  }
+});
 
 // Auth helper functions
 export const getCurrentUser = async () => {
@@ -433,6 +449,19 @@ export const createOrder = async (orderData: Partial<Order>) => {
     throw error;
   }
   
+  // Create commission entry for this order
+  if (data && data.length > 0) {
+    try {
+      await createCommission({
+        transaction_id: data[0].id,
+        seller_id: shop.owner_id,
+        sale_amount: orderData.total_amount || 0
+      });
+    } catch (commissionError) {
+      console.error('Error creating commission:', commissionError);
+    }
+  }
+  
   return data;
 };
 
@@ -548,4 +577,73 @@ export const getChatHistory = async () => {
   }
   
   return data as ChatMessage[];
+};
+
+// Create commission function
+export const createCommission = async (orderData: {
+  transaction_id: string;
+  seller_id: string;
+  sale_amount: number;
+}) => {
+  const { transaction_id, seller_id, sale_amount } = orderData;
+  
+  // Get shop's commission rate (default is 5%)
+  const { data: shop, error: shopError } = await supabase
+    .from('shops')
+    .select('commission_rate')
+    .eq('owner_id', seller_id)
+    .single();
+  
+  const commissionRate = shop?.commission_rate || 5.0;
+  
+  // Calculate commission and payout amount
+  const commissionAmount = (sale_amount * commissionRate) / 100;
+  const payoutAmount = sale_amount - commissionAmount;
+  
+  const { data, error } = await supabase
+    .from('commissions')
+    .insert({
+      transaction_id,
+      seller_id,
+      sale_amount,
+      commission_amount: commissionAmount,
+      payout_amount: payoutAmount
+    })
+    .select();
+  
+  if (error) throw error;
+  
+  // Update the order with the commission ID
+  if (data && data.length > 0) {
+    await supabase
+      .from('orders')
+      .update({ commission_id: data[0].id })
+      .eq('id', transaction_id);
+  }
+  
+  return data;
+};
+
+// Get seller commissions
+export const getSellerCommissions = async (sellerId?: string) => {
+  const user = await getCurrentUser();
+  if (!user) return [];
+  
+  const userId = sellerId || user.id;
+  
+  const { data, error } = await supabase
+    .from('commissions')
+    .select(`
+      *,
+      orders:orders(*)
+    `)
+    .eq('seller_id', userId)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching commissions:', error);
+    return [];
+  }
+  
+  return data;
 };

@@ -12,7 +12,8 @@ import {
   MessageSquare, 
   Settings,
   Store,
-  FileText 
+  FileText,
+  BarChart3 
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -80,6 +81,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         path: '/dashboard/wholesaler-orders', 
         icon: <ShoppingCart className="w-5 h-5 mr-3" /> 
       },
+      { 
+        name: 'Seller Dashboard', 
+        path: '/dashboard/seller-dashboard', 
+        icon: <BarChart3 className="w-5 h-5 mr-3" /> 
+      },
     ];
 
     const sellerItems = [
@@ -107,7 +113,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <div className="flex flex-grow">
         <aside className="hidden md:block w-64 bg-white border-r border-gray-200">
@@ -120,7 +126,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   to={item.path}
                   className={`flex items-center px-4 py-3 rounded-md text-sm font-medium ${
                     isActive(item.path)
-                      ? 'bg-primary text-white'
+                      ? 'bg-pakistani_green-700 text-white'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -132,7 +138,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         </aside>
         <main className="flex-grow p-6 bg-gray-50">
-          {children}
+          <div className="container mx-auto">
+            {children}
+          </div>
         </main>
       </div>
       <Footer />

@@ -22,6 +22,7 @@ import AdApprovals from "./pages/admin/AdApprovals";
 import Shops from "./pages/wholesaler/Shops";
 import Products from "./pages/wholesaler/Products";
 import Advertisements from "./pages/wholesaler/Advertisements";
+import SellerDashboard from "./pages/wholesaler/SellerDashboard";
 
 // Seller pages
 import BrowseShops from "./pages/seller/BrowseShops";
@@ -58,6 +59,7 @@ const App = () => (
             <Route path="/dashboard/products" element={<Products />} />
             <Route path="/dashboard/ads" element={<Advertisements />} />
             <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />
+            <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />
 
             {/* Seller pages */}
             <Route path="/dashboard/browse-shops" element={<BrowseShops />} />

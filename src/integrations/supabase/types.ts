@@ -76,9 +76,48 @@ export type Database = {
           },
         ]
       }
+      commissions: {
+        Row: {
+          commission_amount: number
+          created_at: string
+          id: string
+          payout_amount: number
+          sale_amount: number
+          seller_id: string
+          transaction_id: string
+        }
+        Insert: {
+          commission_amount: number
+          created_at?: string
+          id?: string
+          payout_amount: number
+          sale_amount: number
+          seller_id: string
+          transaction_id: string
+        }
+        Update: {
+          commission_amount?: number
+          created_at?: string
+          id?: string
+          payout_amount?: number
+          sale_amount?: number
+          seller_id?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commissions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           buyer_id: string
+          commission_id: string | null
           created_at: string
           id: string
           shop_id: string
@@ -87,6 +126,7 @@ export type Database = {
         }
         Insert: {
           buyer_id: string
+          commission_id?: string | null
           created_at?: string
           id?: string
           shop_id: string
@@ -95,6 +135,7 @@ export type Database = {
         }
         Update: {
           buyer_id?: string
+          commission_id?: string | null
           created_at?: string
           id?: string
           shop_id?: string
@@ -107,6 +148,13 @@ export type Database = {
             columns: ["buyer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_commission_id_fkey"
+            columns: ["commission_id"]
+            isOneToOne: false
+            referencedRelation: "commissions"
             referencedColumns: ["id"]
           },
           {
@@ -215,6 +263,7 @@ export type Database = {
       shops: {
         Row: {
           address: string
+          commission_rate: number | null
           contact: string
           created_at: string
           id: string
@@ -225,6 +274,7 @@ export type Database = {
         }
         Insert: {
           address: string
+          commission_rate?: number | null
           contact: string
           created_at?: string
           id?: string
@@ -235,6 +285,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          commission_rate?: number | null
           contact?: string
           created_at?: string
           id?: string

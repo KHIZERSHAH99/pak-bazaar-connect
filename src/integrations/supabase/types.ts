@@ -9,7 +9,258 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      ads: {
+        Row: {
+          created_at: string | null
+          headline: string
+          id: string
+          image: string | null
+          status: string
+          wholesaler_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          headline: string
+          id?: string
+          image?: string | null
+          status?: string
+          wholesaler_id: string
+        }
+        Update: {
+          created_at?: string | null
+          headline?: string
+          id?: string
+          image?: string | null
+          status?: string
+          wholesaler_id?: string
+        }
+        Relationships: []
+      }
+      chat_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          reply: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          reply: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          reply?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      commissions: {
+        Row: {
+          commission_amount: number
+          created_at: string | null
+          id: string
+          payout_amount: number
+          sale_amount: number
+          seller_id: string
+          transaction_id: string
+        }
+        Insert: {
+          commission_amount: number
+          created_at?: string | null
+          id?: string
+          payout_amount: number
+          sale_amount: number
+          seller_id: string
+          transaction_id: string
+        }
+        Update: {
+          commission_amount?: number
+          created_at?: string | null
+          id?: string
+          payout_amount?: number
+          sale_amount?: number
+          seller_id?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commissions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          buyer_id: string
+          commission_id: string | null
+          created_at: string | null
+          id: string
+          shop_id: string
+          status: string
+          total_amount: number
+        }
+        Insert: {
+          buyer_id: string
+          commission_id?: string | null
+          created_at?: string | null
+          id?: string
+          shop_id: string
+          status?: string
+          total_amount: number
+        }
+        Update: {
+          buyer_id?: string
+          commission_id?: string | null
+          created_at?: string | null
+          id?: string
+          shop_id?: string
+          status?: string
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          image: string | null
+          is_active: boolean
+          name: string
+          price: number
+          shop_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          name: string
+          price: number
+          shop_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          name?: string
+          price?: number
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          role: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id: string
+          role?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          role?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      role_requests: {
+        Row: {
+          created_at: string | null
+          id: string
+          requested_role: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          requested_role: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          requested_role?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      shops: {
+        Row: {
+          address: string
+          commission_rate: number | null
+          contact: string
+          created_at: string | null
+          id: string
+          logo: string | null
+          name: string
+          owner_id: string
+          postal_code: string
+        }
+        Insert: {
+          address: string
+          commission_rate?: number | null
+          contact: string
+          created_at?: string | null
+          id?: string
+          logo?: string | null
+          name: string
+          owner_id: string
+          postal_code: string
+        }
+        Update: {
+          address?: string
+          commission_rate?: number | null
+          contact?: string
+          created_at?: string | null
+          id?: string
+          logo?: string | null
+          name?: string
+          owner_id?: string
+          postal_code?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

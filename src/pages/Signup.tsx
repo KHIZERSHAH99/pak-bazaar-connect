@@ -38,7 +38,9 @@ const Signup: React.FC = () => {
 
     try {
       setIsLoading(true);
-      await signUp(email, password);
+      console.log('Signing up with email:', email);
+      const result = await signUp(email, password);
+      console.log('Signup result:', result);
       
       toast({
         title: 'Account created',

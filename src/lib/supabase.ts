@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase project URL and anon key
@@ -248,12 +247,12 @@ export const getAdsByWholesaler = async () => {
   return data as Ad[];
 };
 
-export const getActiveAds = async () => {
+export const getActiveAds = async (limit = 10) => {
   const { data, error } = await supabase
     .from('ads')
     .select('*')
     .eq('status', 'active')
-    .limit(10);
+    .limit(limit);
   
   if (error) {
     console.error('Error fetching active ads:', error);
@@ -296,15 +295,17 @@ export const getPendingAds = async () => {
   return data as Ad[];
 };
 
-export const approveAd = async (adId: string) => {
+export const approveAd = async (adId: string, approve = true) => {
+  const status = approve ? 'active' : 'rejected';
+  
   const { data, error } = await supabase
     .from('ads')
-    .update({ status: 'active' })
+    .update({ status })
     .eq('id', adId)
     .select();
   
   if (error) {
-    console.error('Error approving ad:', error);
+    console.error(`Error ${approve ? 'approving' : 'rejecting'} ad:`, error);
     throw error;
   }
   
@@ -325,8 +326,23 @@ export const getPendingRoleRequests = async () => {
   return data as (RoleRequest & { profiles: { email: string } })[];
 };
 
-export const approveRoleRequest = async (requestId: string) => {
-  // First, get the request to get the user id and requested role
+export const approveRoleRequest = async (requestId: string, approve = true) => {
+  if (!approve) {
+    // Just update the request status to rejected
+    const { error: updateRequestError } = await supabase
+      .from('role_requests')
+      .update({ status: 'rejected' })
+      .eq('id', requestId);
+    
+    if (updateRequestError) {
+      console.error('Error rejecting role request:', updateRequestError);
+      throw updateRequestError;
+    }
+    
+    return true;
+  }
+
+  // For approval, get the request to get the user id and requested role
   const { data: request, error: requestError } = await supabase
     .from('role_requests')
     .select('*')
@@ -530,13 +546,11 @@ export const getChatHistory = async () => {
 };
 
 // File upload function
-export const uploadImage = async (bucket: 'shop_images' | 'product_images' | 'ad_images', file: File) => {
+export const uploadImage = async (bucket: string, fileName: string, file: File) => {
   const user = await getCurrentUser();
   
   if (!user) throw new Error('User not authenticated');
   
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Math.random().toString(36).substring(2, 15)}-${Date.now()}.${fileExt}`;
   const filePath = `${user.id}/${fileName}`;
   
   const { error } = await supabase.storage

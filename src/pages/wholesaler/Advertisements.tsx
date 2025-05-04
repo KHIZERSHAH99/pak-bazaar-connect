@@ -95,7 +95,7 @@ const Advertisements: React.FC = () => {
       setIsSubmitting(true);
       
       const fileName = `ad_${Date.now()}_${imageFile.name}`;
-      const imageUrl = await uploadImage('ads', fileName, imageFile);
+      const imageUrl = await uploadImage('ad_images', fileName, imageFile);
 
       const adData = {
         headline: formData.headline,

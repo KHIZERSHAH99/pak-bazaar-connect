@@ -128,7 +128,7 @@ const Products: React.FC = () => {
       let imageUrl;
       if (imageFile) {
         const fileName = `product_${Date.now()}_${imageFile.name}`;
-        imageUrl = await uploadImage('products', fileName, imageFile);
+        imageUrl = await uploadImage('product_images', fileName, imageFile);
       }
 
       const price = parseFloat(formData.price);

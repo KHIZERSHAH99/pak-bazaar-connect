@@ -92,7 +92,7 @@ const Shops: React.FC = () => {
       let logoUrl;
       if (logoFile) {
         const fileName = `shop_${Date.now()}_${logoFile.name}`;
-        logoUrl = await uploadImage('shops', fileName, logoFile);
+        logoUrl = await uploadImage('shop_images', fileName, logoFile);
       }
 
       const shopData = {

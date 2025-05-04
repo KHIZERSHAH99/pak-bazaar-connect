@@ -164,7 +164,7 @@ export const getCurrentUser = async () => {
 
 export const getUserProfile = async () => {
   try {
-    const user = await getCurrentUser();
+    const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) return null;
     
@@ -188,7 +188,7 @@ export const getUserProfile = async () => {
 
 // Shop functions
 export const getShopsByOwner = async () => {
-  const user = await getCurrentUser();
+  const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) return [];
   

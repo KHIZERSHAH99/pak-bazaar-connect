@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { signIn } from '@/lib/supabase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -15,8 +14,16 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
-  const { checkAuthStatus } = useAuth();
+  const { user, checkAuthStatus } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +46,9 @@ const Login: React.FC = () => {
         description: 'You have successfully logged in'
       });
       
-      navigate('/dashboard');
+      // Redirect to dashboard or to the page they were trying to access
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
       setError(error.message || 'Login failed. Please check your credentials and try again');

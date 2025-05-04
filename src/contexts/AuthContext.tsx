@@ -1,10 +1,12 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase, Profile, getCurrentUser, getUserProfile } from '@/lib/supabase';
+import { Session, User } from '@supabase/supabase-js';
+import { supabase, Profile } from '@/lib/supabase';
 
 interface AuthState {
-  user: any | null;
+  user: User | null;
   profile: Profile | null;
+  session: Session | null;
   loading: boolean;
   checkAuthStatus: () => Promise<void>;
 }
@@ -12,6 +14,7 @@ interface AuthState {
 const AuthContext = createContext<AuthState>({
   user: null,
   profile: null,
+  session: null,
   loading: true,
   checkAuthStatus: async () => {},
 });
@@ -19,28 +22,54 @@ const AuthContext = createContext<AuthState>({
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return null;
+      }
+      
+      return data as Profile;
+    } catch (error) {
+      console.error('Get user profile error:', error);
+      return null;
+    }
+  };
 
   const checkAuthStatus = async () => {
     try {
       setLoading(true);
-      const currentUser = await getCurrentUser();
       
-      if (currentUser) {
-        setUser(currentUser);
+      // Get current session
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      
+      if (currentSession) {
+        setSession(currentSession);
+        setUser(currentSession.user);
         
         // Get user profile with role information
-        const userProfile = await getUserProfile();
+        const userProfile = await fetchUserProfile(currentSession.user.id);
         setProfile(userProfile);
       } else {
         setUser(null);
+        setSession(null);
         setProfile(null);
       }
     } catch (error) {
       console.error('Auth status check error:', error);
       setUser(null);
+      setSession(null);
       setProfile(null);
     } finally {
       setLoading(false);
@@ -48,31 +77,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // First check initial auth status
+    // First set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        console.log('Auth state changed:', event, currentSession?.user?.email);
+        
+        setSession(currentSession);
+        setUser(currentSession?.user || null);
+        
+        // Fetch user profile when auth state changes but defer to avoid deadlocks
+        if (currentSession?.user) {
+          setTimeout(async () => {
+            const userProfile = await fetchUserProfile(currentSession.user.id);
+            setProfile(userProfile);
+          }, 0);
+        } else {
+          setProfile(null);
+        }
+        
+        setLoading(false);
+      }
+    );
+
+    // Then check for existing session
     checkAuthStatus();
 
-    // Set up auth state change listener
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
-      
-      if (event === 'SIGNED_IN' && session?.user) {
-        setUser(session.user);
-        const userProfile = await getUserProfile();
-        setProfile(userProfile);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        setProfile(null);
-      }
-      setLoading(false);
-    });
-
     return () => {
-      authListener.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, checkAuthStatus }}>
+    <AuthContext.Provider value={{ user, profile, session, loading, checkAuthStatus }}>
       {children}
     </AuthContext.Provider>
   );

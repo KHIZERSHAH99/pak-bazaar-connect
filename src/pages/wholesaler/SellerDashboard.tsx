@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Commission, getOrdersForWholesaler, getSellerCommissions } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import CommissionSummary from '@/components/CommissionSummary';
-import { ChartIcon, LineChart, TrendingUp, Users } from 'lucide-react';
+import { LineChart, TrendingUp, Users, BarChart3 } from 'lucide-react';
 import { LineChart as RechartsLine, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format } from 'date-fns';
 
@@ -88,7 +88,7 @@ const SellerDashboard: React.FC = () => {
                 <CardContent>
                   <div className="flex items-center">
                     <div className="mr-2 rounded-full bg-pakistani_green-100 p-2">
-                      <ChartIcon className="h-4 w-4 text-pakistani_green-700" />
+                      <BarChart3 className="h-4 w-4 text-pakistani_green-700" />
                     </div>
                     <div className="text-2xl font-bold">{orders.length}</div>
                   </div>

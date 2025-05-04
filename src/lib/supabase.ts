@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = 'https://lljiqniebnmfbytbkjkv.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsamlxbmllYm5tZmJ5dGJramsiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4MTkyMCwiZXhwIjoxOTU4ODU3OTIwfQ.koZ0HHVE68ha3U8E06P0WGIl_TfA3MZcXWa7MdwrNcA';
 
-// Create Supabase client
+// Create Supabase client with explicit auth configuration
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
@@ -94,71 +94,96 @@ export interface RoleRequest {
 
 // Authentication functions
 export const signIn = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-  
-  if (error) {
-    console.error('Auth signin error:', error);
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    
+    if (error) {
+      console.error('Auth signin error:', error);
+      throw error;
+    }
+
+    console.log('Signin successful, user data:', data);
+    return data;
+  } catch (error) {
+    console.error('Sign in error:', error);
     throw error;
   }
-
-  console.log('Signin successful, user data:', data);
-  return data;
 };
 
 export const signUp = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-  
-  if (error) {
-    console.error('Auth signup error:', error);
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    
+    if (error) {
+      console.error('Auth signup error:', error);
+      throw error;
+    }
+
+    // The profile creation is now handled by the database trigger
+    // so we don't need to explicitly create it here
+
+    console.log('Signup successful, user data:', data);
+    return data;
+  } catch (error) {
+    console.error('Sign up error:', error);
     throw error;
   }
-
-  // The profile creation is now handled by the database trigger
-  // so we don't need to explicitly create it here
-
-  console.log('Signup successful, user data:', data);
-  return data;
 };
 
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut();
-  
-  if (error) {
+  try {
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      console.error('Sign out error:', error);
+      throw error;
+    }
+    
+    return true;
+  } catch (error) {
     console.error('Sign out error:', error);
     throw error;
   }
-  
-  return true;
 };
 
 export const getCurrentUser = async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  } catch (error) {
+    console.error('Get current user error:', error);
+    return null;
+  }
 };
 
 export const getUserProfile = async () => {
-  const user = await getCurrentUser();
-  
-  if (!user) return null;
-  
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-  
-  if (error) {
-    console.error('Error fetching user profile:', error);
+  try {
+    const user = await getCurrentUser();
+    
+    if (!user) return null;
+    
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+    
+    return data as Profile;
+  } catch (error) {
+    console.error('Get user profile error:', error);
     return null;
   }
-  
-  return data as Profile;
 };
 
 // Shop functions

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signUp } from '@/lib/supabase';
@@ -39,8 +38,7 @@ const Signup: React.FC = () => {
     try {
       setIsLoading(true);
       console.log('Signing up with email:', email);
-      const result = await signUp(email, password);
-      console.log('Signup result:', result);
+      await signUp(email, password);
       
       toast({
         title: 'Account created',

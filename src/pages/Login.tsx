@@ -29,14 +29,16 @@ const Login: React.FC = () => {
     try {
       setIsLoading(true);
       console.log('Logging in with:', { email });
-      const result = await signIn(email, password);
-      console.log('Login result:', result);
+      await signIn(email, password);
+      console.log('Login successful');
       await checkAuthStatus();
       console.log('Auth status checked');
+      
       toast({
         title: 'Success',
         description: 'You have successfully logged in'
       });
+      
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Login error:', error);

@@ -48,10 +48,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    // First check initial auth status
     checkAuthStatus();
 
     // Set up auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email);
+      
       if (event === 'SIGNED_IN' && session?.user) {
         setUser(session.user);
         const userProfile = await getUserProfile();

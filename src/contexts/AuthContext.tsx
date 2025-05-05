@@ -52,9 +52,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       
       // Get current session
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Error getting session:', error);
+        setUser(null);
+        setSession(null);
+        setProfile(null);
+        return;
+      }
       
       if (currentSession) {
+        console.log('Found existing session:', currentSession.user.email);
         setSession(currentSession);
         setUser(currentSession.user);
         
@@ -62,6 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userProfile = await fetchUserProfile(currentSession.user.id);
         setProfile(userProfile);
       } else {
+        console.log('No session found');
         setUser(null);
         setSession(null);
         setProfile(null);
@@ -82,6 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       (event, currentSession) => {
         console.log('Auth state changed:', event, currentSession?.user?.email);
         
+        // Only update state synchronously here to avoid deadlocks
         setSession(currentSession);
         setUser(currentSession?.user || null);
         

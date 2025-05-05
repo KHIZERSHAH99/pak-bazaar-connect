@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { signIn } from '@/lib/supabase';
@@ -36,6 +37,12 @@ const Login: React.FC = () => {
     try {
       setIsLoading(true);
       console.log('Logging in with:', { email });
+      
+      // Check internet connection before attempting login
+      if (!navigator.onLine) {
+        throw new Error('No internet connection. Please check your network and try again.');
+      }
+      
       await signIn(email, password);
       console.log('Login successful');
       await checkAuthStatus();
@@ -51,10 +58,27 @@ const Login: React.FC = () => {
       navigate(from, { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
-      setError(error.message || 'Login failed. Please check your credentials and try again');
+      
+      // Handle specific Supabase error messages to provide better user feedback
+      let errorMessage = 'Login failed. Please check your credentials and try again';
+      
+      if (error.message) {
+        if (error.message.includes('Invalid login credentials')) {
+          errorMessage = 'Invalid email or password. Please try again.';
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage = 'Please verify your email address before logging in.';
+        } else if (error.message.includes('rate limit')) {
+          errorMessage = 'Too many login attempts. Please try again later.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setError(errorMessage);
+      
       toast({
         title: 'Login failed',
-        description: error.message || 'Please check your credentials and try again',
+        description: errorMessage,
         variant: 'destructive'
       });
     } finally {

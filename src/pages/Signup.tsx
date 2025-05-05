@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signUp } from '@/lib/supabase';
@@ -47,20 +48,45 @@ const Signup: React.FC = () => {
     try {
       setIsLoading(true);
       console.log('Signing up with email:', email);
+      
+      // Check internet connection before attempting signup
+      if (!navigator.onLine) {
+        throw new Error('No internet connection. Please check your network and try again.');
+      }
+      
       await signUp(email, password);
+      console.log('Signup successful');
       
       toast({
         title: 'Account created',
         description: 'You can now login with your new account',
       });
       
+      // Redirect to login page after successful signup
       navigate('/login');
     } catch (error: any) {
       console.error('Signup error:', error);
-      setError(error.message || 'An error occurred while creating your account');
+      
+      // Handle specific Supabase error messages
+      let errorMessage = 'An error occurred while creating your account';
+      
+      if (error.message) {
+        if (error.message.includes('User already registered')) {
+          errorMessage = 'This email is already registered. Try logging in instead.';
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = 'Please enter a valid email address.';
+        } else if (error.message.includes('rate limit')) {
+          errorMessage = 'Too many signup attempts. Please try again later.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setError(errorMessage);
+      
       toast({
         title: 'Sign up failed',
-        description: error.message || 'An error occurred while creating your account',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {

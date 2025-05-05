@@ -1,8 +1,9 @@
+
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase project URL and anon key
-const supabaseUrl = 'https://lljiqniebnmfbytbkjkv.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsamlxbmllYm5tZmJ5dGJramsiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI4MTkyMCwiZXhwIjoxOTU4ODU3OTIwfQ.koZ0HHVE68ha3U8E06P0WGIl_TfA3MZcXWa7MdwrNcA';
+// Using the same configuration as the integrations/supabase/client.ts file
+const supabaseUrl = 'https://sxzxyuxtqqflahzncfre.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4enh5dXh0cXFmbGFoem5jZnJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYzNDYzMzQsImV4cCI6MjA2MTkyMjMzNH0.9XAJKIVXPjLx9L7pJOnqcc0lvraWmY2FtEa7mPmfjyw';
 
 // Create Supabase client with explicit auth configuration
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -95,6 +96,7 @@ export interface RoleRequest {
 // Authentication functions
 export const signIn = async (email: string, password: string) => {
   try {
+    console.log('Signing in with:', email);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -115,6 +117,7 @@ export const signIn = async (email: string, password: string) => {
 
 export const signUp = async (email: string, password: string) => {
   try {
+    console.log('Signing up with email:', email);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -125,9 +128,7 @@ export const signUp = async (email: string, password: string) => {
       throw error;
     }
 
-    // The profile creation is now handled by the database trigger
-    // so we don't need to explicitly create it here
-
+    // The profile creation is handled by the database trigger
     console.log('Signup successful, user data:', data);
     return data;
   } catch (error) {

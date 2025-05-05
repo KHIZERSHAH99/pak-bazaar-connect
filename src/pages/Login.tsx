@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { signIn } from '@/lib/supabase';
@@ -19,10 +18,10 @@ const Login: React.FC = () => {
   const { toast } = useToast();
   const { user, checkAuthStatus } = useAuth();
 
-  // Redirect if already logged in
+  // Redirect if already logged in - use React Router to avoid full page reloads
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
 
@@ -36,7 +35,6 @@ const Login: React.FC = () => {
     
     try {
       setIsLoading(true);
-      console.log('Logging in with:', { email });
       
       // Check internet connection before attempting login
       if (!navigator.onLine) {
@@ -44,22 +42,19 @@ const Login: React.FC = () => {
       }
       
       await signIn(email, password);
-      console.log('Login successful');
       await checkAuthStatus();
-      console.log('Auth status checked');
       
       toast({
         title: 'Success',
         description: 'You have successfully logged in'
       });
       
-      // Redirect to dashboard or to the page they were trying to access
+      // Use React Router for SPA navigation instead of page reload
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
       
-      // Handle specific Supabase error messages to provide better user feedback
       let errorMessage = 'Login failed. Please check your credentials and try again';
       
       if (error.message) {

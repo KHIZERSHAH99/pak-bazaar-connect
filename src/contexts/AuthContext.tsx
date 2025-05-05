@@ -1,7 +1,10 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase, Profile } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+
+type Profile = Database['public']['Tables']['profiles']['Row'];
 
 interface AuthState {
   user: User | null;
@@ -26,9 +29,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  // Add profile cache to prevent redundant fetches
+  const [profileFetchTimestamp, setProfileFetchTimestamp] = useState<number>(0);
 
-  const fetchUserProfile = async (userId: string) => {
+  const fetchUserProfile = async (userId: string, forceRefresh = false) => {
     try {
+      // Cache profile data for 5 minutes to reduce redundant fetches
+      const now = Date.now();
+      if (!forceRefresh && profile && profileFetchTimestamp > 0 && now - profileFetchTimestamp < 300000) {
+        console.log('Using cached profile data');
+        return profile;
+      }
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -40,6 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       }
       
+      setProfileFetchTimestamp(now);
       return data as Profile;
     } catch (error) {
       console.error('Get user profile error:', error);
@@ -87,21 +100,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    // Optimization: Only run auth check once on mount
+    let mounted = true;
+
     // First set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log('Auth state changed:', event, currentSession?.user?.email);
         
-        // Only update state synchronously here to avoid deadlocks
+        if (!mounted) return;
+        
+        // Update state synchronously here 
         setSession(currentSession);
         setUser(currentSession?.user || null);
         
-        // Fetch user profile when auth state changes but defer to avoid deadlocks
+        // Fetch user profile when auth state changes but optimize to avoid redundant fetches
         if (currentSession?.user) {
-          setTimeout(async () => {
-            const userProfile = await fetchUserProfile(currentSession.user.id);
+          const userProfile = await fetchUserProfile(currentSession.user.id, event === 'SIGNED_IN');
+          if (mounted) {
             setProfile(userProfile);
-          }, 0);
+          }
         } else {
           setProfile(null);
         }
@@ -110,10 +128,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Then check for existing session
+    // Check for existing session
     checkAuthStatus();
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);

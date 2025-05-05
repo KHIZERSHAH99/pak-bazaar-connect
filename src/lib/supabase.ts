@@ -1,29 +1,10 @@
-
-import { createClient } from '@supabase/supabase-js';
-
-// Using the same configuration as the integrations/supabase/client.ts file
-const supabaseUrl = 'https://sxzxyuxtqqflahzncfre.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4enh5dXh0cXFmbGFoem5jZnJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYzNDYzMzQsImV4cCI6MjA2MTkyMjMzNH0.9XAJKIVXPjLx9L7pJOnqcc0lvraWmY2FtEa7mPmfjyw';
-
-// Create Supabase client with explicit auth configuration
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    storage: localStorage
-  }
-});
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 
 // Define all the types needed for our application
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
 
-export interface Profile {
-  id: string;
-  email: string;
-  role: UserRole;
-  created_at?: string;
-  updated_at?: string;
-}
+export type Profile = Database['public']['Tables']['profiles']['Row'];
 
 export interface Shop {
   id: string;

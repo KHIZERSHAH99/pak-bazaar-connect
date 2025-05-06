@@ -32,12 +32,16 @@ export interface Product {
   created_at?: string;
 }
 
+export type AdStatus = 'pending' | 'approved' | 'active' | 'rejected';
+export type OrderStatus = 'pending' | 'completed' | 'cancelled';
+export type RoleRequestStatus = 'pending' | 'approved' | 'rejected';
+
 export interface Ad {
   id: string;
   wholesaler_id: string;
   headline: string;
   image?: string;
-  status: 'pending' | 'approved' | 'active' | 'rejected';
+  status: AdStatus;
   created_at?: string;
 }
 
@@ -46,7 +50,7 @@ export interface Order {
   buyer_id: string;
   shop_id: string;
   total_amount: number;
-  status: 'pending' | 'completed' | 'cancelled';
+  status: OrderStatus;
   commission_id?: string;
   created_at?: string;
 }
@@ -73,6 +77,6 @@ export interface RoleRequest {
   id: string;
   user_id: string;
   requested_role: UserRole;
-  status: 'pending' | 'approved' | 'rejected';
+  status: RoleRequestStatus;
   created_at?: string;
 }

@@ -1,24 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getPendingRoleRequests, approveRoleRequest } from '@/lib/supabase';
+import { getPendingRoleRequests, approveRoleRequest, RoleRequestWithProfile } from '@/lib/admin';
 import { useToast } from '@/hooks/use-toast';
-
-interface RoleRequestWithProfile {
-  id: string;
-  user_id: string;
-  requested_role: string;
-  status: string;
-  created_at: string;
-  profiles: {
-    id: string;
-    email: string;
-    role: string;
-  };
-}
 
 const RoleApprovals: React.FC = () => {
   const [requests, setRequests] = useState<RoleRequestWithProfile[]>([]);
@@ -30,7 +16,7 @@ const RoleApprovals: React.FC = () => {
     try {
       setLoading(true);
       const data = await getPendingRoleRequests();
-      setRequests(data as RoleRequestWithProfile[]);
+      setRequests(data);
     } catch (error) {
       console.error('Failed to fetch role requests:', error);
       toast({

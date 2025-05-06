@@ -13,8 +13,8 @@ import * as storageModule from './storage';
 // Re-export the Supabase client
 export const supabase = supabaseClient;
 
-// Re-export all types
-export { 
+// Re-export all types - using export type for TS isolatedModules compatibility
+export type { 
   UserRole,
   Profile,
   Shop,

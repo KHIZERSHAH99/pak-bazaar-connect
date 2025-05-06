@@ -19,7 +19,7 @@ export const getAdsByWholesaler = async () => {
     return [];
   }
   
-  return data;
+  return data as Ad[];
 };
 
 export const getActiveAds = async (limit = 10) => {
@@ -34,7 +34,7 @@ export const getActiveAds = async (limit = 10) => {
     return [];
   }
   
-  return data;
+  return data as Ad[];
 };
 
 export const createAd = async (ad: Omit<Ad, 'id' | 'wholesaler_id' | 'status' | 'created_at'>) => {
@@ -52,14 +52,14 @@ export const createAd = async (ad: Omit<Ad, 'id' | 'wholesaler_id' | 'status' | 
     throw error;
   }
   
-  return data[0];
+  return data[0] as Ad;
 };
 
 // Admin functions
 export const getPendingAds = async () => {
   const { data, error } = await supabase
     .from('ads')
-    .select('*')
+    .select('*, profiles:wholesaler_id(id, email)')
     .eq('status', 'pending');
   
   if (error) {
@@ -67,7 +67,7 @@ export const getPendingAds = async () => {
     return [];
   }
   
-  return data;
+  return data as Array<Ad & { profiles: { id: string; email: string } }>;
 };
 
 export const approveAd = async (adId: string, approve = true) => {
@@ -84,5 +84,5 @@ export const approveAd = async (adId: string, approve = true) => {
     throw error;
   }
   
-  return data[0];
+  return data[0] as Ad;
 };

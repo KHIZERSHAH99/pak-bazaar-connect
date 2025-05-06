@@ -1,19 +1,13 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getPendingAds, approveAd } from '@/lib/supabase';
+import { Ad } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-interface AdWithProfile {
-  id: string;
-  wholesaler_id: string;
-  headline: string;
-  image?: string;
-  status: string;
-  created_at: string;
+interface AdWithProfile extends Ad {
   profiles: {
     id: string;
     email: string;

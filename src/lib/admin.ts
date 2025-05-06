@@ -1,11 +1,20 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { RoleRequest } from '@/lib/types';
+
+export interface RoleRequestWithProfile extends RoleRequest {
+  profiles: {
+    id: string;
+    email: string;
+    role: string;
+  };
+}
 
 export const getPendingRoleRequests = async () => {
   try {
     const { data, error } = await supabase
       .from('role_requests')
-      .select('*, profiles:user_id(email)')
+      .select('*, profiles:user_id(id, email, role)')
       .eq('status', 'pending');
     
     if (error) {
@@ -13,7 +22,7 @@ export const getPendingRoleRequests = async () => {
       return [];
     }
     
-    return data;
+    return data as unknown as RoleRequestWithProfile[];
   } catch (err) {
     console.error('Error in getPendingRoleRequests:', err);
     return [];

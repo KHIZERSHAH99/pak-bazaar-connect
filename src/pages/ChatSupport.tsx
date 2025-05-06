@@ -5,9 +5,11 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { saveChat, getChatHistory, ChatMessage } from '@/lib/supabase';
+import { saveChat, getChatHistory } from '@/lib/chat';
 import { useToast } from '@/hooks/use-toast';
 import { Send, MessageSquare, User } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import type { ChatMessage } from '@/lib/types';
 
 const ChatSupport: React.FC = () => {
   const [message, setMessage] = useState('');
@@ -49,21 +51,21 @@ const ChatSupport: React.FC = () => {
     try {
       setSending(true);
       
-      // Call OpenAI API (to be replaced with an Edge Function)
-      const response = await fetch('https://lljiqniebnmfbytbkjkv.supabase.co/functions/v1/chatbot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message }),
+      // Get the current user ID to include in headers
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id;
+      
+      // Call OpenAI API through our Edge Function
+      const response = await supabase.functions.invoke('chatbot', {
+        body: { message },
+        headers: userId ? { 'x-user-id': userId } : undefined,
       });
       
-      if (!response.ok) {
+      if (!response.data) {
         throw new Error('Failed to get response from chatbot');
       }
       
-      const data = await response.json();
-      const botReply = data.reply || "I'm sorry, I couldn't process your request at the moment.";
+      const botReply = response.data.reply || "I'm sorry, I couldn't process your request at the moment.";
       
       // Save chat to database
       await saveChat(message, botReply);
@@ -71,7 +73,7 @@ const ChatSupport: React.FC = () => {
       // Update chat history
       setChatHistory(prev => [...prev, {
         id: Date.now().toString(),
-        user_id: '',
+        user_id: userId || '',
         message,
         reply: botReply,
         created_at: new Date().toISOString()
@@ -82,7 +84,7 @@ const ChatSupport: React.FC = () => {
       console.error('Failed to send message:', error);
       toast({
         title: 'Message Failed',
-        description: error.message || 'Failed to send your message',
+        description: error.message || 'Failed to send your message. Please check your connection and try again.',
         variant: 'destructive',
       });
     } finally {

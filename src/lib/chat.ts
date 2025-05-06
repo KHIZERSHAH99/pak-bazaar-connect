@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
+import type { ChatMessage } from '@/lib/types';
 
 // Chat functions
 export const saveChat = async (message: string, reply: string) => {
@@ -25,7 +26,7 @@ export const saveChat = async (message: string, reply: string) => {
   return data[0];
 };
 
-export const getChatHistory = async () => {
+export const getChatHistory = async (): Promise<ChatMessage[]> => {
   const user = await getCurrentUser();
   
   if (!user) return [];

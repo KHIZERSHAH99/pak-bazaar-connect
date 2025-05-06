@@ -1,18 +1,11 @@
+
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getPendingAds, approveAd } from '@/lib/supabase';
-import { Ad } from '@/lib/types';
+import { getPendingAds, approveAd, AdWithProfile } from '@/lib/ads';
 import { useToast } from '@/hooks/use-toast';
-
-interface AdWithProfile extends Ad {
-  profiles: {
-    id: string;
-    email: string;
-  };
-}
 
 const AdApprovals: React.FC = () => {
   const [ads, setAds] = useState<AdWithProfile[]>([]);
@@ -24,7 +17,7 @@ const AdApprovals: React.FC = () => {
     try {
       setLoading(true);
       const data = await getPendingAds();
-      setAds(data as AdWithProfile[]);
+      setAds(data);
     } catch (error) {
       console.error('Failed to fetch pending ads:', error);
       toast({
@@ -99,10 +92,12 @@ const AdApprovals: React.FC = () => {
                       <div>
                         <h3 className="font-semibold text-lg mb-2">{ad.headline}</h3>
                         <p className="text-gray-600 mb-2">
-                          Submitted by: <span className="font-medium">{ad.profiles.email}</span>
+                          Submitted by: <span className="font-medium">
+                            {ad.wholesaler_profile?.email || 'Unknown User'}
+                          </span>
                         </p>
                         <p className="text-sm text-gray-500">
-                          Submitted on: {new Date(ad.created_at).toLocaleDateString()}
+                          Submitted on: {new Date(ad.created_at || '').toLocaleDateString()}
                         </p>
                       </div>
                       <div className="mt-4 md:mt-0 flex space-x-4">

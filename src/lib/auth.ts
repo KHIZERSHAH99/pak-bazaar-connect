@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
@@ -162,7 +161,7 @@ export const requestRoleChange = async (requestedRole: UserRole) => {
     toast({
       title: "Request Pending",
       description: "You already have a pending role change request. Please wait for approval.",
-      variant: "warning"
+      variant: "default"
     });
     throw new Error('You already have a pending role change request');
   }

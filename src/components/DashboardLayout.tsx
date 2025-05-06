@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -28,6 +27,14 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
+// Add the badge property to the interface
+interface NavItem {
+  name: string;
+  path: string;
+  icon: React.ReactElement;
+  badge?: string; // Optional badge text
+}
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { profile, loading } = useAuth();
   const location = useLocation();
@@ -38,7 +45,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   const getNavItems = () => {
-    const commonItems = [
+    const commonItems: NavItem[] = [
       { 
         name: 'Dashboard', 
         path: '/dashboard', 
@@ -56,7 +63,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       },
     ];
 
-    const adminItems = [
+    const adminItems: NavItem[] = [
       { 
         name: 'Role Approvals', 
         path: '/dashboard/role-approvals', 
@@ -71,7 +78,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       },
     ];
 
-    const wholesalerItems = [
+    const wholesalerItems: NavItem[] = [
       { 
         name: 'My Shops', 
         path: '/dashboard/shops', 
@@ -99,7 +106,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       },
     ];
 
-    const sellerItems = [
+    const sellerItems: NavItem[] = [
       { 
         name: 'Browse Shops', 
         path: '/dashboard/browse-shops', 

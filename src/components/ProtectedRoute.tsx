@@ -31,7 +31,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // If roles are specified and user doesn't have required role, redirect to dashboard
-  if (allowedRoles && profile && !allowedRoles.includes(profile.role)) {
+  if (allowedRoles && profile && !allowedRoles.includes(profile.role as UserRole)) {
     return <Navigate to="/dashboard" replace />;
   }
 

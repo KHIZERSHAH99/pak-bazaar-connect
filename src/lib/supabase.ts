@@ -1,8 +1,11 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase as supabaseClient } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
 // Define all the types needed for our application
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
+
+// Re-export supabase client to ensure consistent usage across the application
+export const supabase = supabaseClient;
 
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -320,17 +323,23 @@ export const approveAd = async (adId: string, approve = true) => {
 };
 
 export const getPendingRoleRequests = async () => {
-  const { data, error } = await supabase
-    .from('role_requests')
-    .select('*, profiles(email)')
-    .eq('status', 'pending');
-  
-  if (error) {
-    console.error('Error fetching pending role requests:', error);
+  try {
+    const { data, error } = await supabase
+      .from('role_requests')
+      .select('*, profiles:user_id(email)')
+      .eq('status', 'pending');
+    
+    if (error) {
+      console.error('Error fetching pending role requests:', error);
+      return [];
+    }
+    
+    // Type assertion to handle the join properly
+    return (data as unknown) as (RoleRequest & { profiles: { email: string } })[];
+  } catch (err) {
+    console.error('Error in getPendingRoleRequests:', err);
     return [];
   }
-  
-  return data as (RoleRequest & { profiles: { email: string } })[];
 };
 
 export const approveRoleRequest = async (requestId: string, approve = true) => {
@@ -463,33 +472,39 @@ export const createOrder = async (shopId: string, totalAmount: number) => {
 };
 
 export const getOrdersForWholesaler = async () => {
-  const user = await getCurrentUser();
-  
-  if (!user) return [];
-  
-  const { data: shops, error: shopsError } = await supabase
-    .from('shops')
-    .select('id')
-    .eq('owner_id', user.id);
-  
-  if (shopsError || !shops.length) {
-    console.error('Error fetching shops:', shopsError);
+  try {
+    const user = await getCurrentUser();
+    
+    if (!user) return [];
+    
+    const { data: shops, error: shopsError } = await supabase
+      .from('shops')
+      .select('id')
+      .eq('owner_id', user.id);
+    
+    if (shopsError || !shops.length) {
+      console.error('Error fetching shops:', shopsError);
+      return [];
+    }
+    
+    const shopIds = shops.map(shop => shop.id);
+    
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*, profiles:buyer_id(email)')
+      .in('shop_id', shopIds);
+    
+    if (error) {
+      console.error('Error fetching orders:', error);
+      return [];
+    }
+    
+    // Type assertion to handle the join properly
+    return (data as unknown) as (Order & { profiles: { email: string } })[];
+  } catch (err) {
+    console.error('Error in getOrdersForWholesaler:', err);
     return [];
   }
-  
-  const shopIds = shops.map(shop => shop.id);
-  
-  const { data, error } = await supabase
-    .from('orders')
-    .select('*, profiles(email)')
-    .in('shop_id', shopIds);
-  
-  if (error) {
-    console.error('Error fetching orders:', error);
-    return [];
-  }
-  
-  return data as (Order & { profiles: { email: string } })[];
 };
 
 export const getSellerCommissions = async () => {

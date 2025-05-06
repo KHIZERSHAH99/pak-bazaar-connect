@@ -6,23 +6,30 @@ import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { getActiveAds, Ad } from '@/lib/supabase';
 import { Store, ShoppingBag, TrendingUp, ArrowRight, Package, UserCheck, Building } from 'lucide-react';
+import PromotionBanner from '@/components/PromotionBanner';
+
 const Index: React.FC = () => {
   const {
     user
   } = useAuth();
   const [activeAds, setActiveAds] = useState<Ad[]>([]);
+  
   useEffect(() => {
     const fetchAds = async () => {
       try {
         const ads = await getActiveAds(3);
-        setActiveAds(ads);
+        setActiveAds(ads as unknown as Ad[]);
       } catch (error) {
         console.error('Failed to fetch ads:', error);
       }
     };
     fetchAds();
   }, []);
+  
   return <Layout>
+      {/* Promotion Banner */}
+      <PromotionBanner message="Join Now! Free Ads for First 10 Wholesalers!" />
+      
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-pakistani_green-800 to-pakistani_green-700 py-16 md:py-24 px-4 rounded-xl overflow-hidden relative">
         <div className="absolute inset-0 opacity-10">
@@ -224,4 +231,5 @@ const Index: React.FC = () => {
       </section>
     </Layout>;
 };
+
 export default Index;

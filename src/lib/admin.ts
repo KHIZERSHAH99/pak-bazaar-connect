@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { RoleRequest } from '@/lib/types';
+import { RoleRequest, UserRole } from '@/lib/types';
+import { notifyRoleApproved, notifyRoleRejected } from '@/lib/notifications';
 
 export interface RoleRequestWithProfile extends RoleRequest {
   profiles: {
@@ -22,6 +23,7 @@ export const getPendingRoleRequests = async () => {
       return [];
     }
     
+    // Type cast to handle the joined data correctly
     return data as unknown as RoleRequestWithProfile[];
   } catch (err) {
     console.error('Error in getPendingRoleRequests:', err);
@@ -32,6 +34,17 @@ export const getPendingRoleRequests = async () => {
 export const approveRoleRequest = async (requestId: string, approve = true) => {
   if (!approve) {
     // Just update the request status to rejected
+    const { data: request, error: fetchError } = await supabase
+      .from('role_requests')
+      .select('user_id, requested_role')
+      .eq('id', requestId)
+      .single();
+      
+    if (fetchError) {
+      console.error('Error fetching role request:', fetchError);
+      throw fetchError;
+    }
+    
     const { error: updateRequestError } = await supabase
       .from('role_requests')
       .update({ status: 'rejected' })
@@ -40,6 +53,11 @@ export const approveRoleRequest = async (requestId: string, approve = true) => {
     if (updateRequestError) {
       console.error('Error rejecting role request:', updateRequestError);
       throw updateRequestError;
+    }
+    
+    // Send notification about rejection
+    if (request) {
+      await notifyRoleRejected(request.user_id, request.requested_role);
     }
     
     return true;
@@ -78,6 +96,9 @@ export const approveRoleRequest = async (requestId: string, approve = true) => {
     console.error('Error updating user profile:', updateProfileError);
     throw updateProfileError;
   }
+  
+  // Send notification about approval
+  await notifyRoleApproved(request.user_id, request.requested_role);
   
   return true;
 };

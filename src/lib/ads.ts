@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { Ad, AdStatus } from '@/lib/types';
+import { notifyAdApproved, notifyAdRejected, notifyAdSubmitted } from '@/lib/notifications';
 
 // Ad functions
 export const getAdsByWholesaler = async () => {
@@ -34,7 +35,7 @@ export const getActiveAds = async (limit = 10) => {
     return [];
   }
   
-  return data as Ad[];
+  return data as unknown as Ad[];
 };
 
 export const createAd = async (ad: Omit<Ad, 'id' | 'wholesaler_id' | 'status' | 'created_at'>) => {
@@ -52,7 +53,11 @@ export const createAd = async (ad: Omit<Ad, 'id' | 'wholesaler_id' | 'status' | 
     throw error;
   }
   
-  return data[0] as Ad;
+  // Send notification about ad submission
+  const newAd = data[0] as Ad;
+  await notifyAdSubmitted(user.id, newAd.headline);
+  
+  return newAd;
 };
 
 // Define the interface for ads with profile information
@@ -112,6 +117,18 @@ export const getPendingAds = async () => {
 export const approveAd = async (adId: string, approve = true) => {
   const status = approve ? 'active' : 'rejected';
   
+  // First, get the ad to get the wholesaler_id and headline
+  const { data: ad, error: adError } = await supabase
+    .from('ads')
+    .select('wholesaler_id, headline')
+    .eq('id', adId)
+    .single();
+  
+  if (adError || !ad) {
+    console.error('Error fetching ad:', adError);
+    throw adError;
+  }
+  
   const { data, error } = await supabase
     .from('ads')
     .update({ status })
@@ -121,6 +138,13 @@ export const approveAd = async (adId: string, approve = true) => {
   if (error) {
     console.error(`Error ${approve ? 'approving' : 'rejecting'} ad:`, error);
     throw error;
+  }
+  
+  // Send notification about approval/rejection
+  if (approve) {
+    await notifyAdApproved(ad.wholesaler_id, ad.headline);
+  } else {
+    await notifyAdRejected(ad.wholesaler_id, ad.headline);
   }
   
   return data[0] as Ad;

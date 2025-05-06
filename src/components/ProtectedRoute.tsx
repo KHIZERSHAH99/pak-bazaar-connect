@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, LoadingScreen } from '@/contexts/AuthContext';
 import { UserRole } from '@/lib/supabase';
 
 interface ProtectedRouteProps {
@@ -18,11 +18,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Show loading state
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // If not logged in, redirect to login page

@@ -1,85 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { signIn } from '@/lib/supabase';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+
+import React, { useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, LogIn, Mail, Key } from 'lucide-react';
+import LoginForm from '@/components/auth/LoginForm';
+import LoginHeader from '@/components/auth/LoginHeader';
+import DemoAccounts from '@/components/auth/DemoAccounts';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const { toast } = useToast();
-  const { user, checkAuthStatus } = useAuth();
+  const { user } = useAuth();
 
-  // Redirect if already logged in - use React Router to avoid full page reloads
+  // Redirect if already logged in
   useEffect(() => {
     if (user) {
       navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    if (!email || !password) {
-      setError('Please enter both email and password');
-      return;
-    }
-    
-    try {
-      setIsLoading(true);
-      
-      // Check internet connection before attempting login
-      if (!navigator.onLine) {
-        throw new Error('No internet connection. Please check your network and try again.');
-      }
-      
-      await signIn(email, password);
-      await checkAuthStatus();
-      
-      toast({
-        title: 'Success',
-        description: 'You have successfully logged in'
-      });
-      
-      // Use React Router for SPA navigation instead of page reload
-      const from = location.state?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
-    } catch (error: any) {
-      console.error('Login error:', error);
-      
-      let errorMessage = 'Login failed. Please check your credentials and try again';
-      
-      if (error.message) {
-        if (error.message.includes('Invalid login credentials')) {
-          errorMessage = 'Invalid email or password. Please try again.';
-        } else if (error.message.includes('Email not confirmed')) {
-          errorMessage = 'Please verify your email address before logging in.';
-        } else if (error.message.includes('rate limit')) {
-          errorMessage = 'Too many login attempts. Please try again later.';
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      
-      setError(errorMessage);
-      
-      toast({
-        title: 'Login failed',
-        description: errorMessage,
-        variant: 'destructive'
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-green-50 flex flex-col">
@@ -113,95 +51,11 @@ const Login: React.FC = () => {
       <div className="container mx-auto flex-grow py-12 px-4">
         <div className="max-w-md mx-auto">
           <Card className="border-none shadow-lg overflow-hidden">
-            <CardHeader className="bg-pakistani_green-700 text-white text-center pb-6">
-              <div className="flex justify-center mb-4">
-                <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm">
-                  <LogIn className="h-8 w-8" />
-                </div>
-              </div>
-              <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-              <CardDescription className="text-green-50">Log in to your account</CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              {error && (
-                <div className="mb-6 p-3 bg-red-50 rounded-lg flex items-center text-red-600 text-sm border border-red-100">
-                  <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 flex items-center">
-                    <Mail className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                    Email Address
-                  </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="w-full p-3 bg-white border border-gray-300 rounded-md focus-visible:ring-pakistani_green-500"
-                    disabled={isLoading}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 flex items-center">
-                    <Key className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                    Password
-                  </label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    className="w-full p-3 bg-white border border-gray-300 rounded-md focus-visible:ring-pakistani_green-500"
-                    disabled={isLoading}
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-colors"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Logging In...' : 'Log In'}
-                </Button>
-              </form>
-            </CardContent>
-            <CardFooter className="border-t border-gray-100 bg-gray-50 flex justify-center p-4">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <Link to="/signup" className="text-pakistani_green-700 hover:text-pakistani_green-800 font-medium">
-                  Sign Up Here
-                </Link>
-              </p>
-            </CardFooter>
+            <LoginHeader />
+            <LoginForm />
           </Card>
 
-          <div className="mt-8 text-center text-sm text-gray-500">
-            <p>Demo Accounts:</p>
-            <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
-              <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                <p className="font-semibold">Admin</p>
-                <p>admin@test.com</p>
-                <p className="text-gray-400">password</p>
-              </div>
-              <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                <p className="font-semibold">Wholesaler</p>
-                <p>wholesaler1@test.com</p>
-                <p className="text-gray-400">password</p>
-              </div>
-              <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                <p className="font-semibold">Seller</p>
-                <p>seller1@test.com</p>
-                <p className="text-gray-400">password</p>
-              </div>
-            </div>
-          </div>
+          <DemoAccounts />
         </div>
       </div>
 

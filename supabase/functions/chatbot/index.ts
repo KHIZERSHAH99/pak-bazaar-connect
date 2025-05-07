@@ -1,6 +1,6 @@
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.32.0';
-import { OpenAI } from 'https://esm.sh/openai@4.12.4';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.32.0";
+import { OpenAI } from "https://esm.sh/openai@4.12.4";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,12 +13,22 @@ Deno.serve(async (req) => {
   }
 
   try {
+    console.log("Chatbot function called");
     const { message } = await req.json();
+    console.log("Received message:", message);
 
     // Initialize OpenAI
+    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+    if (!OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY is not set");
+      throw new Error('OpenAI API key not configured. Please contact support.');
+    }
+
     const openAI = new OpenAI({
-      apiKey: Deno.env.get('OPENAI_API_KEY') || '',
+      apiKey: OPENAI_API_KEY,
     });
+
+    console.log("OpenAI client initialized");
 
     // System message to provide context about the application
     const systemMessage = `
@@ -30,8 +40,9 @@ Deno.serve(async (req) => {
       - Sellers can browse shops, view products, and place orders
       - Users can request role changes which require admin approval
       
-      Answer user questions helpfully, professionally, and concisely about using the platform.
+      Answer user questions professionally and concisely about using the platform.
       If you don't know something specific about the platform, base your answer on standard e-commerce practices.
+      Always aim to provide helpful, actionable advice.
     `;
 
     console.log("Generating AI response with OpenAI...");
@@ -47,30 +58,39 @@ Deno.serve(async (req) => {
       max_tokens: 500,
     });
 
+    console.log("OpenAI response received");
     const reply = completion.choices[0].message.content;
-    console.log("Generated response successfully");
+    console.log("Generated response successfully:", reply?.substring(0, 50) + "...");
 
     // Store the chat in the database
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Supabase credentials missing");
+      throw new Error('Supabase configuration is incomplete');
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     const userId = req.headers.get('x-user-id');
     console.log(`Saving chat for user: ${userId || 'anonymous'}`);
     
-    // We don't want to block the response on database operations
-    // so we don't await this
-    supabase.from('chat_history').insert({
-      user_id: userId || null,
-      message,
-      reply,
-    }).then((res) => {
-      if (res.error) {
-        console.error('Error saving chat:', res.error);
+    try {
+      const { data, error } = await supabase.from('chat_history').insert({
+        user_id: userId || null,
+        message,
+        reply,
+      }).select();
+      
+      if (error) {
+        console.error('Error saving chat:', error);
       } else {
-        console.log('Chat saved successfully');
+        console.log('Chat saved successfully:', data[0].id);
       }
-    });
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+    }
 
     return new Response(
       JSON.stringify({ reply }),
@@ -84,7 +104,10 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Error processing request:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message || 'Unknown error occurred',
+        stack: Deno.env.get('SUPABASE_ENV') === 'development' ? error.stack : undefined
+      }),
       { 
         status: 500, 
         headers: { 

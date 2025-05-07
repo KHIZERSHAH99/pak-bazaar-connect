@@ -15,7 +15,11 @@ export const useChatSupport = () => {
     try {
       setLoading(true);
       const history = await getChatHistory();
-      setChatHistory(history);
+      // Sort messages by creation time (oldest first)
+      const sortedHistory = history.sort((a, b) => 
+        new Date(a.created_at || '').getTime() - new Date(b.created_at || '').getTime()
+      );
+      setChatHistory(sortedHistory);
     } catch (error) {
       console.error('Failed to fetch chat history:', error);
       toast({
@@ -44,6 +48,17 @@ export const useChatSupport = () => {
       
       console.log("Calling chatbot edge function...");
       
+      // Add the message to the UI immediately for better UX
+      const tempMessage = {
+        id: `temp-${Date.now()}`,
+        user_id: userId || '',
+        message,
+        reply: '',
+        created_at: new Date().toISOString()
+      };
+      
+      setChatHistory(prev => [...prev, tempMessage]);
+      
       // Call OpenAI API through our Edge Function
       const response = await supabase.functions.invoke('chatbot', {
         body: { message },
@@ -58,29 +73,34 @@ export const useChatSupport = () => {
       
       const botReply = response.data.reply || "I'm sorry, I couldn't process your request at the moment.";
       
-      console.log("Saving chat to database...");
-      
       // Save chat to database
       await saveChat(message, botReply);
       
-      console.log("Updating chat history...");
-      
-      // Update chat history
-      setChatHistory(prev => [...prev, {
-        id: Date.now().toString(),
-        user_id: userId || '',
-        message,
-        reply: botReply,
-        created_at: new Date().toISOString()
-      }]);
+      // Update chat history with the actual response
+      setChatHistory(prev => 
+        prev.map(msg => 
+          msg.id === tempMessage.id 
+            ? {
+                id: Date.now().toString(),
+                user_id: userId || '',
+                message,
+                reply: botReply,
+                created_at: new Date().toISOString()
+              }
+            : msg
+        )
+      );
       
     } catch (error: any) {
       console.error('Failed to send message:', error);
       toast({
         title: 'Message Failed',
-        description: error.message || 'Failed to send your message. Please check your connection and try again.',
+        description: error.message || 'Failed to send your message. Please try again.',
         variant: 'destructive',
       });
+      
+      // Remove the temporary message if there was an error
+      setChatHistory(prev => prev.filter(msg => !msg.id.startsWith('temp-')));
     } finally {
       setSending(false);
     }
@@ -90,6 +110,7 @@ export const useChatSupport = () => {
     chatHistory,
     loading,
     sending,
-    sendMessage
+    sendMessage,
+    refreshHistory: fetchChatHistory
   };
 };

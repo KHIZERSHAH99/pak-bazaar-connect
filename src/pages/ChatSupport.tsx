@@ -16,13 +16,13 @@ const ChatSupport: React.FC = () => {
       <div>
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Chat Support</h1>
         
-        <Card className="overflow-hidden">
-          <div className="bg-pakistani-green-900 text-white px-6 py-4 flex items-center">
+        <Card className="overflow-hidden h-[calc(100vh-12rem)]">
+          <div className="bg-pakistani-green-700 text-white px-6 py-4 flex items-center">
             <MessageSquare className="h-5 w-5 mr-2" />
             <h2 className="font-semibold">AI Support Assistant</h2>
           </div>
           
-          <div className="h-[500px] flex flex-col">
+          <div className="h-[calc(100%-4rem)] flex flex-col">
             <div className="flex-grow overflow-y-auto p-6">
               <ChatHistory 
                 chatHistory={chatHistory} 

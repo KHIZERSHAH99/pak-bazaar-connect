@@ -1,6 +1,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { MessageSquare } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import ChatMessage from './ChatMessage';
 import ChatWelcomeMessage from './ChatWelcomeMessage';
 import type { ChatMessage as ChatMessageType } from '@/lib/types';
@@ -24,30 +25,30 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ chatHistory, loading }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (chatHistory.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-500">
-        <MessageSquare className="h-12 w-12 mb-2" />
-        <p>No messages yet. Ask anything about using the platform!</p>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pakistani-green-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <ScrollArea className="h-[calc(100%-2rem)] pr-4">
       <ChatWelcomeMessage />
       
-      {chatHistory.map((chat) => (
-        <ChatMessage key={chat.id} message={chat} />
-      ))}
+      {chatHistory.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-32 text-gray-500">
+          <MessageSquare className="h-12 w-12 mb-2" />
+          <p>No messages yet. Ask anything about using the platform!</p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {chatHistory.map((chat) => (
+            <ChatMessage key={chat.id} message={chat} />
+          ))}
+        </div>
+      )}
       
       <div ref={messagesEndRef} />
-    </div>
+    </ScrollArea>
   );
 };
 

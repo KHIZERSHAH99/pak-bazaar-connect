@@ -16,8 +16,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isSending }) => {
     e.preventDefault();
     if (!message.trim() || isSending) return;
     
-    await onSendMessage(message);
-    setMessage('');
+    try {
+      await onSendMessage(message);
+      setMessage('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
 
   return (
@@ -26,7 +30,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isSending }) => {
         placeholder="Type your message here..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        className="flex-grow"
+        className="flex-grow resize-none"
         disabled={isSending}
         rows={2}
         onKeyDown={(e) => {
@@ -40,7 +44,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isSending }) => {
       />
       <Button 
         type="submit"
-        className="bg-primary hover:bg-pakistani-green-800 self-end"
+        className="bg-pakistani-green-700 hover:bg-pakistani-green-800 self-end"
         disabled={!message.trim() || isSending}
       >
         {isSending ? (

@@ -17,21 +17,21 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   return (
     <div className="space-y-4">
       {/* User message */}
-      <div className="flex flex-col items-end">
-        <div className="bg-blue-100 rounded-lg p-4 max-w-[80%]">
+      <div className="flex flex-col items-end animate-slideIn">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl rounded-tr-sm p-4 max-w-[80%] shadow-md">
           <div className="flex items-center justify-between mb-1">
-            <div className="font-medium text-blue-800">You</div>
-            <div className="text-xs text-gray-500 ml-2">
+            <div className="font-medium">You</div>
+            <div className="text-xs text-blue-100 ml-2">
               {formatTimestamp(message.created_at)}
             </div>
           </div>
-          <p className="text-gray-700">{message.message}</p>
+          <p>{message.message}</p>
         </div>
       </div>
       
       {/* AI response */}
-      <div className="flex flex-col items-start">
-        <div className="bg-gray-100 rounded-lg p-4 max-w-[80%]">
+      <div className="flex flex-col items-start animate-slideIn" style={{ animationDelay: '0.2s' }}>
+        <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl rounded-tl-sm p-4 max-w-[80%] shadow-md">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center">
               <div className="bg-pakistani-green-200 rounded-full p-1 mr-1">

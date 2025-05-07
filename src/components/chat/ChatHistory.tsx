@@ -24,8 +24,9 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ chatHistory, loading }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pakistani-green-600"></div>
+      <div className="flex flex-col justify-center items-center h-full">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-pakistani-green-600 mb-4"></div>
+        <p className="text-pakistani-green-700 animate-pulse">Loading your conversation...</p>
       </div>
     );
   }
@@ -35,9 +36,14 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ chatHistory, loading }) => {
       <ChatWelcomeMessage />
       
       {chatHistory.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-32 text-gray-500">
-          <MessageSquare className="h-12 w-12 mb-2" />
-          <p>No messages yet. Ask anything about using the platform!</p>
+        <div className="flex flex-col items-center justify-center h-40 text-gray-500 animate-fadeIn">
+          <MessageSquare className="h-16 w-16 mb-4 text-gray-300" />
+          <p className="text-center">No messages yet. Ask anything about using the platform!</p>
+          <div className="mt-4 flex space-x-2">
+            <div className="typing-dot"></div>
+            <div className="typing-dot" style={{ animationDelay: '0.2s' }}></div>
+            <div className="typing-dot" style={{ animationDelay: '0.4s' }}></div>
+          </div>
         </div>
       ) : (
         <div className="space-y-8">

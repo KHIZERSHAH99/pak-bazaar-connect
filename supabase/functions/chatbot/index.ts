@@ -4,7 +4,7 @@ import { OpenAI } from 'https://esm.sh/openai@4.12.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-user-id',
 };
 
 Deno.serve(async (req) => {
@@ -34,6 +34,8 @@ Deno.serve(async (req) => {
       If you don't know something specific about the platform, base your answer on standard e-commerce practices.
     `;
 
+    console.log("Generating AI response with OpenAI...");
+    
     // Generate AI response
     const completion = await openAI.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -46,21 +48,27 @@ Deno.serve(async (req) => {
     });
 
     const reply = completion.choices[0].message.content;
+    console.log("Generated response successfully");
 
     // Store the chat in the database
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
+    const userId = req.headers.get('x-user-id');
+    console.log(`Saving chat for user: ${userId || 'anonymous'}`);
+    
     // We don't want to block the response on database operations
     // so we don't await this
     supabase.from('chat_history').insert({
-      user_id: req.headers.get('x-user-id') || null,
+      user_id: userId || null,
       message,
       reply,
     }).then((res) => {
       if (res.error) {
         console.error('Error saving chat:', res.error);
+      } else {
+        console.log('Chat saved successfully');
       }
     });
 

@@ -55,11 +55,15 @@ const ChatSupport: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       const userId = user?.id;
       
+      console.log("Calling chatbot edge function...");
+      
       // Call OpenAI API through our Edge Function
       const response = await supabase.functions.invoke('chatbot', {
         body: { message },
         headers: userId ? { 'x-user-id': userId } : undefined,
       });
+      
+      console.log("Response received:", response);
       
       if (!response.data) {
         throw new Error('Failed to get response from chatbot');
@@ -67,8 +71,12 @@ const ChatSupport: React.FC = () => {
       
       const botReply = response.data.reply || "I'm sorry, I couldn't process your request at the moment.";
       
+      console.log("Saving chat to database...");
+      
       // Save chat to database
       await saveChat(message, botReply);
+      
+      console.log("Updating chat history...");
       
       // Update chat history
       setChatHistory(prev => [...prev, {

@@ -1,16 +1,11 @@
 
-import { type Config } from "tailwindcss";
+import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import animatePlugin from "tailwindcss-animate";
 
-export default {
+const config = {
   darkMode: ["class"],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
-  prefix: "",
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
     container: {
       center: true,
@@ -20,7 +15,24 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["Poppins", ...fontFamily.sans],
+        poppins: ["Poppins", "sans-serif"],
+      },
       colors: {
+        pakistani_green: {
+          '50': '#f0faf0',
+          '100': '#dcf2de',
+          '200': '#bae5be',
+          '300': '#8ad291',
+          '400': '#54b95f',
+          '500': '#329a3e',
+          '600': '#217c2b',
+          '700': '#1B5E20',
+          '800': '#194d1e',
+          '900': '#15401a',
+          '950': '#01411C',  // Pakistan's official green color code
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -54,48 +66,45 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        pakistani: {
-          DEFAULT: "#01411C", // Pakistani flag green
-          light: "#128807", // Lighter shade
-        },
-        pakistani_green: {
-          DEFAULT: "#01411C", // Pakistani flag green
-          50: "#E6F0EB",
-          100: "#CCE1D7",
-          200: "#99C3AF",
-          300: "#66A587",
-          400: "#33875F",
-          500: "#016937", // Slightly lighter than DEFAULT
-          600: "#01522C", // Between 500 and DEFAULT
-          700: "#01411C", // DEFAULT value
-          800: "#013417", // Darker shade
-          900: "#012712", // Even darker
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
-        poppins: ["Poppins", "sans-serif"],
-      },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: { height: "0", opacity: "0" },
+          to: { height: "var(--radix-accordion-content-height)", opacity: "1" },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          from: { height: "var(--radix-accordion-content-height)", opacity: "1" },
+          to: { height: "0", opacity: "0" },
+        },
+        "fade-in": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(10px)"
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)"
+          }
+        },
+        "scale-in": {
+          from: { transform: "scale(0.95)", opacity: "0" },
+          to: { transform: "scale(1)", opacity: "1" }
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fadeIn": "fade-in 0.4s ease-out forwards",
+        "scale-in": "scale-in 0.2s ease-out",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config
+  plugins: [animatePlugin],
+} satisfies Config;
+
+export default config;

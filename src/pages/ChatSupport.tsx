@@ -18,7 +18,7 @@ const ChatSupport: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-800 mb-6 relative z-10">AI Chat Support</h1>
         
         <Card className="overflow-hidden h-[calc(100vh-12rem)] shadow-xl border-gray-100 relative z-10 bg-white bg-opacity-95 backdrop-blur-sm">
-          <div className="bg-gradient-to-r from-pakistani-green-600 to-pakistani-green-800 text-white px-6 py-4 flex items-center">
+          <div className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-800 text-white px-6 py-4 flex items-center">
             <MessageSquare className="h-5 w-5 mr-2" />
             <h2 className="font-semibold">AI Support Assistant</h2>
             <div className="ml-auto flex space-x-2">

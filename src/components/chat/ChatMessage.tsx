@@ -34,8 +34,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl rounded-tl-sm p-4 max-w-[80%] shadow-md">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center">
-              <div className="bg-pakistani-green-200 rounded-full p-1 mr-1">
-                <MessageSquare className="h-3 w-3 text-pakistani-green-700" />
+              <div className="bg-pakistani_green-200 rounded-full p-1 mr-1">
+                <MessageSquare className="h-3 w-3 text-pakistani_green-700" />
               </div>
               <div className="font-medium text-gray-800">AI Support</div>
             </div>

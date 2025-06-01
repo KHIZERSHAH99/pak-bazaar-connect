@@ -12,8 +12,7 @@ import {
   User, 
   Home, 
   LayoutDashboard,
-  ChevronDown,
-  Bell
+  ChevronDown
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -43,6 +42,11 @@ const Navbar: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
   
   // If we're on an auth page, don't show the navbar
   if (isAuthPage) {
@@ -77,10 +81,12 @@ const Navbar: React.FC = () => {
       bgColor = "bg-green-100 text-green-800";
     } else if (profile.role === "seller") {
       bgColor = "bg-purple-100 text-purple-800";
+    } else if (profile.role === "pending") {
+      bgColor = "bg-yellow-100 text-yellow-800";
     }
     
     return (
-      <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${bgColor}`}>
+      <span className={`text-xs px-2 py-0.5 rounded-full capitalize font-poppins ${bgColor}`}>
         {profile.role}
       </span>
     );
@@ -89,54 +95,54 @@ const Navbar: React.FC = () => {
   return (
     <header className={`bg-white sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-md' : 'border-b border-gray-200'}`}>
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 md:h-16">
           <Link to="/" className="flex items-center">
             <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
-              <span className="text-white text-xl font-bold">PBC</span>
+              <span className="text-white text-lg md:text-xl font-bold font-poppins">PBC</span>
             </div>
-            <span className="text-xl font-bold text-pakistani_green-800 ml-2 hidden md:inline-block">Pak Bazaar Connect</span>
+            <span className="text-lg md:text-xl font-bold text-pakistani_green-800 ml-2 hidden sm:inline-block font-poppins">Pak Bazaar Connect</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-gray-700 hover:text-pakistani_green-700 font-medium flex items-center gap-1.5 transition-colors duration-200">
+          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
+            <Link to="/" className="text-gray-700 hover:text-pakistani_green-700 font-medium flex items-center gap-1.5 transition-colors duration-200 font-poppins">
               <Home className="w-4 h-4" />
               Home
             </Link>
             
             {user ? (
               <>
-                <Link to="/dashboard" className="text-gray-700 hover:text-pakistani_green-700 font-medium flex items-center gap-1.5 transition-colors duration-200">
+                <Link to="/dashboard" className="text-gray-700 hover:text-pakistani_green-700 font-medium flex items-center gap-1.5 transition-colors duration-200 font-poppins">
                   <LayoutDashboard className="w-4 h-4" />
                   Dashboard
                 </Link>
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex items-center gap-1.5">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-1.5 font-poppins">
                       <User className="h-4 w-4" />
-                      <span className="font-medium">{profile?.email?.split('@')[0]}</span>
+                      <span className="font-medium max-w-20 truncate">{profile?.email?.split('@')[0]}</span>
                       {getRoleBadge()}
                       <ChevronDown className="h-4 w-4 opacity-50" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuLabel className="font-poppins">My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer flex items-center gap-2">
+                      <Link to="/profile" className="cursor-pointer flex items-center gap-2 font-poppins">
                         <User className="h-4 w-4" />
                         Profile
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/dashboard" className="cursor-pointer flex items-center gap-2">
+                      <Link to="/dashboard" className="cursor-pointer flex items-center gap-2 font-poppins">
                         <LayoutDashboard className="h-4 w-4" />
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer flex items-center gap-2">
+                    <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer flex items-center gap-2 font-poppins">
                       <LogOut className="h-4 w-4" />
                       Logout
                     </DropdownMenuItem>
@@ -146,12 +152,12 @@ const Navbar: React.FC = () => {
             ) : (
               <div className="flex items-center space-x-3">
                 <Link to="/login">
-                  <Button variant="outline" className="border-pakistani_green-700 text-pakistani_green-700">
+                  <Button variant="outline" className="border-pakistani_green-700 text-pakistani_green-700 font-poppins">
                     Login
                   </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white">
+                  <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins">
                     Sign Up
                   </Button>
                 </Link>
@@ -161,8 +167,9 @@ const Navbar: React.FC = () => {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden focus:outline-none"
+            className="md:hidden focus:outline-none p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
           >
             {isMenuOpen ? (
               <X className="h-6 w-6 text-gray-700" />
@@ -177,7 +184,7 @@ const Navbar: React.FC = () => {
           <div className="md:hidden py-4 px-2 space-y-3 border-t border-gray-200 animate-in slide-in-from-top">
             <Link 
               to="/" 
-              className="flex items-center gap-2 py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+              className="flex items-center gap-2 py-3 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700 font-poppins"
               onClick={() => setIsMenuOpen(false)}
             >
               <Home className="h-5 w-5" />
@@ -188,7 +195,7 @@ const Navbar: React.FC = () => {
               <>
                 <Link 
                   to="/dashboard" 
-                  className="flex items-center gap-2 py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+                  className="flex items-center gap-2 py-3 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700 font-poppins"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <LayoutDashboard className="h-5 w-5" />
@@ -197,15 +204,18 @@ const Navbar: React.FC = () => {
                 
                 <Link 
                   to="/profile" 
-                  className="flex items-center gap-2 py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+                  className="flex items-center gap-2 py-3 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700 font-poppins"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <User className="h-5 w-5" />
-                  Profile {getRoleBadge()}
+                  <span className="flex items-center gap-2">
+                    Profile 
+                    {getRoleBadge()}
+                  </span>
                 </Link>
                 
                 <button
-                  className="w-full text-left flex items-center gap-2 py-2 px-4 rounded-md hover:bg-red-50 text-red-600"
+                  className="w-full text-left flex items-center gap-2 py-3 px-4 rounded-md hover:bg-red-50 text-red-600 font-poppins"
                   onClick={() => {
                     handleLogout();
                     setIsMenuOpen(false);
@@ -216,10 +226,10 @@ const Navbar: React.FC = () => {
                 </button>
               </>
             ) : (
-              <>
+              <div className="space-y-3">
                 <Link 
                   to="/login" 
-                  className="block py-2 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700"
+                  className="block py-3 px-4 rounded-md hover:bg-pakistani_green-50 text-gray-700 font-poppins"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Login
@@ -227,12 +237,12 @@ const Navbar: React.FC = () => {
                 
                 <Link 
                   to="/signup" 
-                  className="block py-2 px-4 rounded-md bg-pakistani_green-700 text-white"
+                  className="block py-3 px-4 rounded-md bg-pakistani_green-700 text-white font-poppins text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign Up
                 </Link>
-              </>
+              </div>
             )}
           </div>
         )}

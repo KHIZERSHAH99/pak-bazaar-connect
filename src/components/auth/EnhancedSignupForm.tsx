@@ -42,11 +42,10 @@ import {
   Shield, 
   Calendar, 
   FileText,
-  AlertCircle,
-  ShoppingCart
+  AlertCircle
 } from 'lucide-react';
 
-// Define form schema with zod
+// Define form schema with zod - removed preferredRole
 const formSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -63,7 +62,6 @@ const formSchema = z.object({
   contactName: z.string().min(3, 'Contact name must be at least 3 characters'),
   phoneNumber: z.string().min(10, 'Please enter a valid phone number'),
   whatsappNumber: z.string().optional(),
-  preferredRole: z.enum(['wholesaler', 'seller']),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword']
@@ -96,17 +94,15 @@ const EnhancedSignupForm = () => {
       contactName: '',
       phoneNumber: '',
       whatsappNumber: '',
-      preferredRole: 'wholesaler',
     }
   });
   
-  const totalSteps = 3;
+  const totalSteps = 2; // Reduced from 3 to 2
   
   const nextStep = () => {
     const stepFields = {
-      1: ['email', 'password', 'confirmPassword', 'preferredRole'],
-      2: ['businessName', 'businessType', 'ntnNumber', 'address', 'city', 'postalCode', 'industry', 'yearsInBusiness'],
-      3: ['contactName', 'phoneNumber'],
+      1: ['email', 'password', 'confirmPassword'],
+      2: ['businessName', 'businessType', 'ntnNumber', 'address', 'city', 'postalCode', 'industry', 'yearsInBusiness', 'contactName', 'phoneNumber'],
     };
     
     // Validate only the fields for the current step
@@ -138,15 +134,12 @@ const EnhancedSignupForm = () => {
     setErrorMessage(null);
     
     try {
-      // First, create the auth account
+      // Create the auth account - user will get 'pending' role by default
       await signUp(values.email, values.password);
-      
-      // After successful signup, we would typically add the additional info to a profile 
-      // or business table in the database, but for now, we'll just simulate success
       
       toast({
         title: 'Account created',
-        description: 'Your registration is pending verification. You can now login to your account.',
+        description: 'Your registration is complete. You can now login and select your role.',
         variant: 'default',
       });
       
@@ -181,9 +174,7 @@ const EnhancedSignupForm = () => {
       case 1:
         return 'Account Information';
       case 2:
-        return 'Business Information';
-      case 3:
-        return 'Contact Information';
+        return 'Business & Contact Information';
       default:
         return 'Sign Up';
     }
@@ -214,20 +205,15 @@ const EnhancedSignupForm = () => {
             <Briefcase className="h-8 w-8" />
           </div>
         </div>
-        <CardTitle className="text-2xl font-bold">Business Registration</CardTitle>
-        <CardDescription className="text-green-50">Step {currentStep} of {totalSteps}: {getStepTitle()}</CardDescription>
+        <CardTitle className="text-2xl font-bold font-poppins">Business Registration</CardTitle>
+        <CardDescription className="text-green-50 font-poppins">Step {currentStep} of {totalSteps}: {getStepTitle()}</CardDescription>
         
-        <div className="w-full mt-4 flex justify-between">
+        <div className="w-full mt-4 flex gap-2">
           {Array.from({ length: totalSteps }).map((_, idx) => (
             <div 
               key={idx} 
-              className={`h-2 rounded-full ${idx + 1 <= currentStep ? 'bg-white' : 'bg-white/30'} ${idx === 0 ? 'w-full' : idx === totalSteps - 1 ? 'w-full' : 'w-full'}`}
-            >
-              <div 
-                className={`h-full rounded-full ${idx + 1 < currentStep ? 'bg-green-400' : 'bg-transparent'}`}
-                style={{ width: idx + 1 === currentStep ? '50%' : '0%' }}
-              />
-            </div>
+              className={`h-2 rounded-full flex-1 ${idx + 1 <= currentStep ? 'bg-white' : 'bg-white/30'}`}
+            />
           ))}
         </div>
       </CardHeader>
@@ -236,7 +222,7 @@ const EnhancedSignupForm = () => {
         {errorMessage && (
           <div className="mb-6 p-3 bg-red-50 rounded-lg flex items-center text-red-600 text-sm border border-red-100">
             <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-            <span>{errorMessage}</span>
+            <span className="font-poppins">{errorMessage}</span>
           </div>
         )}
         
@@ -246,39 +232,10 @@ const EnhancedSignupForm = () => {
               <div className="space-y-4 animate-fadeIn">
                 <FormField
                   control={form.control}
-                  name="preferredRole"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
-                        <User className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                        I want to register as
-                      </FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                        disabled={isLoading}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your role" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="wholesaler">Wholesaler (I want to sell products)</SelectItem>
-                          <SelectItem value="seller">Seller (I want to buy products)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
+                      <FormLabel className="flex items-center text-gray-700 font-poppins">
                         <AtSign className="h-4 w-4 mr-1 text-pakistani_green-700" />
                         Business Email
                       </FormLabel>
@@ -286,6 +243,7 @@ const EnhancedSignupForm = () => {
                         <Input 
                           placeholder="your.business@example.com" 
                           disabled={isLoading} 
+                          className="font-poppins"
                           {...field} 
                         />
                       </FormControl>
@@ -299,7 +257,7 @@ const EnhancedSignupForm = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
+                      <FormLabel className="flex items-center text-gray-700 font-poppins">
                         <Shield className="h-4 w-4 mr-1 text-pakistani_green-700" />
                         Password
                       </FormLabel>
@@ -308,6 +266,7 @@ const EnhancedSignupForm = () => {
                           type="password" 
                           placeholder="Create a secure password" 
                           disabled={isLoading} 
+                          className="font-poppins"
                           {...field} 
                         />
                       </FormControl>
@@ -321,7 +280,7 @@ const EnhancedSignupForm = () => {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
+                      <FormLabel className="flex items-center text-gray-700 font-poppins">
                         <Shield className="h-4 w-4 mr-1 text-pakistani_green-700" />
                         Confirm Password
                       </FormLabel>
@@ -330,6 +289,7 @@ const EnhancedSignupForm = () => {
                           type="password" 
                           placeholder="Confirm your password" 
                           disabled={isLoading} 
+                          className="font-poppins"
                           {...field} 
                         />
                       </FormControl>
@@ -337,111 +297,124 @@ const EnhancedSignupForm = () => {
                     </FormItem>
                   )}
                 />
+
+                <div className="p-4 bg-pakistani_green-50 rounded-lg border border-pakistani_green-200">
+                  <p className="text-sm text-pakistani_green-800 font-poppins">
+                    <strong>Note:</strong> After registration, you'll be able to choose whether you want to be a Wholesaler or Seller from your dashboard.
+                  </p>
+                </div>
               </div>
             )}
             
             {currentStep === 2 && (
               <div className="space-y-4 animate-fadeIn">
-                <FormField
-                  control={form.control}
-                  name="businessName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
-                        <Building className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                        Business Name
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Enter registered business name" 
-                          disabled={isLoading} 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="businessType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
-                        <Briefcase className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                        Business Type
-                      </FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value} 
-                        disabled={isLoading}
-                      >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="businessName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
+                          <Building className="h-4 w-4 mr-1 text-pakistani_green-700" />
+                          Business Name
+                        </FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select business type" />
-                          </SelectTrigger>
+                          <Input 
+                            placeholder="Enter registered business name" 
+                            disabled={isLoading} 
+                            className="font-poppins"
+                            {...field} 
+                          />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Manufacturer">Manufacturer</SelectItem>
-                          <SelectItem value="Wholesaler">Wholesaler</SelectItem>
-                          <SelectItem value="Distributor">Distributor</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="businessType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
+                          <Briefcase className="h-4 w-4 mr-1 text-pakistani_green-700" />
+                          Business Type
+                        </FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value} 
+                          disabled={isLoading}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="font-poppins">
+                              <SelectValue placeholder="Select business type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Manufacturer">Manufacturer</SelectItem>
+                            <SelectItem value="Wholesaler">Wholesaler</SelectItem>
+                            <SelectItem value="Distributor">Distributor</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 
-                <FormField
-                  control={form.control}
-                  name="ntnNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
-                        <Hash className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                        National Tax Number (NTN)
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Enter NTN issued by FBR" 
-                          disabled={isLoading} 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="strnNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
-                        <Hash className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                        Sales Tax Registration Number (optional)
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Enter STRN if applicable" 
-                          disabled={isLoading} 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="ntnNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
+                          <Hash className="h-4 w-4 mr-1 text-pakistani_green-700" />
+                          National Tax Number (NTN)
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Enter NTN issued by FBR" 
+                            disabled={isLoading} 
+                            className="font-poppins"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="strnNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
+                          <Hash className="h-4 w-4 mr-1 text-pakistani_green-700" />
+                          STRN (optional)
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Enter STRN if applicable" 
+                            disabled={isLoading} 
+                            className="font-poppins"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 
                 <FormField
                   control={form.control}
                   name="address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
+                      <FormLabel className="flex items-center text-gray-700 font-poppins">
                         <MapPin className="h-4 w-4 mr-1 text-pakistani_green-700" />
                         Business Address
                       </FormLabel>
@@ -449,6 +422,7 @@ const EnhancedSignupForm = () => {
                         <Input 
                           placeholder="Enter complete business address" 
                           disabled={isLoading} 
+                          className="font-poppins"
                           {...field} 
                         />
                       </FormControl>
@@ -457,13 +431,13 @@ const EnhancedSignupForm = () => {
                   )}
                 />
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center text-gray-700">
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
                           <MapPin className="h-4 w-4 mr-1 text-pakistani_green-700" />
                           City
                         </FormLabel>
@@ -471,6 +445,7 @@ const EnhancedSignupForm = () => {
                           <Input 
                             placeholder="e.g. Karachi, Lahore" 
                             disabled={isLoading} 
+                            className="font-poppins"
                             {...field} 
                           />
                         </FormControl>
@@ -484,7 +459,7 @@ const EnhancedSignupForm = () => {
                     name="postalCode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center text-gray-700">
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
                           <MapPin className="h-4 w-4 mr-1 text-pakistani_green-700" />
                           Postal Code
                         </FormLabel>
@@ -492,9 +467,42 @@ const EnhancedSignupForm = () => {
                           <Input 
                             placeholder="Enter postal code" 
                             disabled={isLoading} 
+                            className="font-poppins"
                             {...field} 
                           />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="industry"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
+                          <Briefcase className="h-4 w-4 mr-1 text-pakistani_green-700" />
+                          Industry
+                        </FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value} 
+                          disabled={isLoading}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="font-poppins">
+                              <SelectValue placeholder="Select your industry" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {industries.map((industry) => (
+                              <SelectItem key={industry} value={industry}>
+                                {industry}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -503,42 +511,10 @@ const EnhancedSignupForm = () => {
                 
                 <FormField
                   control={form.control}
-                  name="industry"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
-                        <Briefcase className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                        Industry Category
-                      </FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value} 
-                        disabled={isLoading}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select your industry" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {industries.map((industry) => (
-                            <SelectItem key={industry} value={industry}>
-                              {industry}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
                   name="yearsInBusiness"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
+                      <FormLabel className="flex items-center text-gray-700 font-poppins">
                         <Calendar className="h-4 w-4 mr-1 text-pakistani_green-700" />
                         Years in Business
                       </FormLabel>
@@ -548,7 +524,7 @@ const EnhancedSignupForm = () => {
                         disabled={isLoading}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="font-poppins">
                             <SelectValue placeholder="Select experience" />
                           </SelectTrigger>
                         </FormControl>
@@ -563,59 +539,59 @@ const EnhancedSignupForm = () => {
                     </FormItem>
                   )}
                 />
-              </div>
-            )}
-            
-            {currentStep === 3 && (
-              <div className="space-y-4 animate-fadeIn">
-                <FormField
-                  control={form.control}
-                  name="contactName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
-                        <User className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                        Primary Contact Name
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Full name of business owner/representative" 
-                          disabled={isLoading} 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 
-                <FormField
-                  control={form.control}
-                  name="phoneNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
-                        <Phone className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                        Phone Number
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="e.g. +92XXXXXXXXXX" 
-                          disabled={isLoading} 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="contactName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
+                          <User className="h-4 w-4 mr-1 text-pakistani_green-700" />
+                          Contact Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Full name of contact person" 
+                            disabled={isLoading} 
+                            className="font-poppins"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center text-gray-700 font-poppins">
+                          <Phone className="h-4 w-4 mr-1 text-pakistani_green-700" />
+                          Phone Number
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="e.g. +92XXXXXXXXXX" 
+                            disabled={isLoading} 
+                            className="font-poppins"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 
                 <FormField
                   control={form.control}
                   name="whatsappNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center text-gray-700">
+                      <FormLabel className="flex items-center text-gray-700 font-poppins">
                         <Phone className="h-4 w-4 mr-1 text-pakistani_green-700" />
                         WhatsApp Number (optional)
                       </FormLabel>
@@ -623,6 +599,7 @@ const EnhancedSignupForm = () => {
                         <Input 
                           placeholder="e.g. +92XXXXXXXXXX" 
                           disabled={isLoading} 
+                          className="font-poppins"
                           {...field} 
                         />
                       </FormControl>
@@ -631,27 +608,12 @@ const EnhancedSignupForm = () => {
                   )}
                 />
                 
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded-md">
-                  <div className="flex items-start">
-                    <FileText className="h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0" />
-                    <div className="text-sm text-amber-800">
-                      <p className="font-medium mb-1">Document Verification</p>
-                      <p>After registration, you'll be asked to upload:</p>
-                      <ul className="list-disc list-inside mt-1 space-y-1">
-                        <li>Business registration document (NTN certificate)</li>
-                        <li>Proof of address (utility bill or lease agreement)</li>
-                        <li>Product certifications (if applicable)</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                
                 <div className="p-4 bg-green-50 border border-green-200 rounded-md">
                   <div className="flex items-center">
                     <div className="h-5 w-5 bg-pakistani_green-700 rounded-full flex items-center justify-center text-white mr-2">
                       <Shield className="h-3 w-3" />
                     </div>
-                    <p className="text-sm text-green-800">
+                    <p className="text-sm text-green-800 font-poppins">
                       By clicking "Complete Registration", you agree to our Terms of Service and Privacy Policy. 
                       Your data will be securely stored and verified by our team.
                     </p>
@@ -667,6 +629,7 @@ const EnhancedSignupForm = () => {
                   onClick={prevStep}
                   variant="outline"
                   disabled={isLoading}
+                  className="font-poppins"
                 >
                   Previous
                 </Button>
@@ -676,7 +639,7 @@ const EnhancedSignupForm = () => {
                 <Button
                   type="button"
                   onClick={nextStep}
-                  className="ml-auto bg-pakistani_green-700 hover:bg-pakistani_green-800"
+                  className="ml-auto bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
                   disabled={isLoading}
                 >
                   Continue
@@ -684,7 +647,7 @@ const EnhancedSignupForm = () => {
               ) : (
                 <Button
                   type="submit"
-                  className="ml-auto bg-pakistani_green-700 hover:bg-pakistani_green-800"
+                  className="ml-auto bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
                   disabled={isLoading}
                 >
                   {isLoading ? "Processing..." : "Complete Registration"}
@@ -695,33 +658,13 @@ const EnhancedSignupForm = () => {
         </Form>
       </CardContent>
       
-      <CardFooter className="border-t border-gray-100 bg-gray-50 flex justify-center p-4 flex-col space-y-2">
-        <p className="text-sm text-gray-600">
+      <CardFooter className="border-t border-gray-100 bg-gray-50 flex justify-center p-4">
+        <p className="text-sm text-gray-600 font-poppins">
           Already have an account?{' '}
           <a href="/login" className="text-pakistani_green-700 hover:text-pakistani_green-800 font-medium">
             Login Here
           </a>
         </p>
-        {currentStep === 1 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
-            <Button 
-              variant="ghost" 
-              className="flex items-center justify-center text-xs md:text-sm" 
-              onClick={() => form.setValue('preferredRole', 'wholesaler')}
-            >
-              <Building className="h-3 w-3 mr-1" />
-              Register as Wholesaler
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="flex items-center justify-center text-xs md:text-sm" 
-              onClick={() => form.setValue('preferredRole', 'seller')}
-            >
-              <ShoppingCart className="h-3 w-3 mr-1" />
-              Register as Seller
-            </Button>
-          </div>
-        )}
       </CardFooter>
     </Card>
   );

@@ -36,6 +36,7 @@ export interface Shop {
   created_at?: string;
   // Joined data
   cities?: City;
+  company_profiles?: CompanyProfile;
 }
 
 export interface Product {
@@ -48,7 +49,7 @@ export interface Product {
   is_active: boolean;
   category_id?: string;
   moq?: number;
-  verification_status: 'pending' | 'approved' | 'rejected';
+  verification_status: string; // Changed from union type to string to match database
   created_at?: string;
   // Joined data
   categories?: Category;
@@ -67,7 +68,7 @@ export interface CompanyProfile {
   city_id?: string;
   address: string;
   business_type: string;
-  verification_status: 'pending' | 'approved' | 'rejected';
+  verification_status: string; // Changed from union type to string to match database
   created_at?: string;
   updated_at?: string;
   // Joined data
@@ -84,7 +85,7 @@ export interface Inquiry {
   buyer_email?: string;
   message: string;
   quantity_needed?: number;
-  status: 'pending' | 'responded' | 'closed';
+  status: string; // Changed from union type to string to match database
   created_at?: string;
   // Joined data
   products?: Product;

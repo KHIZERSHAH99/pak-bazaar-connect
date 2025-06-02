@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Product, Shop, Category, City, CompanyProfile, Inquiry } from '@/lib/types';
 
 // Categories
-export const getCategories = async () => {
+export const getCategories = async (): Promise<Category[]> => {
   const { data, error } = await supabase
     .from('categories')
     .select('*')
@@ -14,11 +14,11 @@ export const getCategories = async () => {
     return [];
   }
   
-  return data;
+  return data as Category[];
 };
 
 // Cities
-export const getCities = async () => {
+export const getCities = async (): Promise<City[]> => {
   const { data, error } = await supabase
     .from('cities')
     .select('*')
@@ -29,7 +29,7 @@ export const getCities = async () => {
     return [];
   }
   
-  return data;
+  return data as City[];
 };
 
 // Products for marketplace
@@ -38,7 +38,7 @@ export const getMarketplaceProducts = async (filters?: {
   city_id?: string;
   search?: string;
   limit?: number;
-}) => {
+}): Promise<Product[]> => {
   let query = supabase
     .from('products')
     .select(`
@@ -73,11 +73,11 @@ export const getMarketplaceProducts = async (filters?: {
     return [];
   }
   
-  return data;
+  return data as Product[];
 };
 
 // Get single product with details
-export const getProductById = async (id: string) => {
+export const getProductById = async (id: string): Promise<Product | null> => {
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -109,7 +109,7 @@ export const getProductById = async (id: string) => {
     return null;
   }
   
-  return data;
+  return data as Product;
 };
 
 // Shops for marketplace
@@ -118,7 +118,7 @@ export const getMarketplaceShops = async (filters?: {
   city_id?: string;
   search?: string;
   limit?: number;
-}) => {
+}): Promise<Shop[]> => {
   let query = supabase
     .from('shops')
     .select(`
@@ -153,11 +153,11 @@ export const getMarketplaceShops = async (filters?: {
     return [];
   }
   
-  return data;
+  return data as Shop[];
 };
 
 // Get single shop with details
-export const getShopById = async (id: string) => {
+export const getShopById = async (id: string): Promise<Shop | null> => {
   const { data, error } = await supabase
     .from('shops')
     .select(`
@@ -181,11 +181,11 @@ export const getShopById = async (id: string) => {
     return null;
   }
   
-  return data;
+  return data as Shop;
 };
 
 // Get products by shop for seller profile
-export const getProductsByShopPublic = async (shopId: string) => {
+export const getProductsByShopPublic = async (shopId: string): Promise<Product[]> => {
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -202,11 +202,11 @@ export const getProductsByShopPublic = async (shopId: string) => {
     return [];
   }
   
-  return data;
+  return data as Product[];
 };
 
 // Company profiles
-export const getCompanyProfile = async (userId: string) => {
+export const getCompanyProfile = async (userId: string): Promise<CompanyProfile | null> => {
   const { data, error } = await supabase
     .from('company_profiles')
     .select(`
@@ -221,10 +221,10 @@ export const getCompanyProfile = async (userId: string) => {
     return null;
   }
   
-  return data;
+  return data as CompanyProfile;
 };
 
-export const createCompanyProfile = async (profile: Omit<CompanyProfile, 'id' | 'created_at' | 'updated_at'>) => {
+export const createCompanyProfile = async (profile: Omit<CompanyProfile, 'id' | 'created_at' | 'updated_at'>): Promise<CompanyProfile> => {
   const { data, error } = await supabase
     .from('company_profiles')
     .insert([profile])
@@ -236,10 +236,10 @@ export const createCompanyProfile = async (profile: Omit<CompanyProfile, 'id' | 
     throw error;
   }
   
-  return data;
+  return data as CompanyProfile;
 };
 
-export const updateCompanyProfile = async (userId: string, profile: Partial<CompanyProfile>) => {
+export const updateCompanyProfile = async (userId: string, profile: Partial<CompanyProfile>): Promise<CompanyProfile> => {
   const { data, error } = await supabase
     .from('company_profiles')
     .update(profile)
@@ -252,11 +252,11 @@ export const updateCompanyProfile = async (userId: string, profile: Partial<Comp
     throw error;
   }
   
-  return data;
+  return data as CompanyProfile;
 };
 
 // Inquiries
-export const createInquiry = async (inquiry: Omit<Inquiry, 'id' | 'created_at'>) => {
+export const createInquiry = async (inquiry: Omit<Inquiry, 'id' | 'created_at'>): Promise<Inquiry> => {
   const { data, error } = await supabase
     .from('inquiries')
     .insert([inquiry])
@@ -268,10 +268,10 @@ export const createInquiry = async (inquiry: Omit<Inquiry, 'id' | 'created_at'>)
     throw error;
   }
   
-  return data;
+  return data as Inquiry;
 };
 
-export const getInquiriesForSeller = async () => {
+export const getInquiriesForSeller = async (): Promise<Inquiry[]> => {
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) return [];
@@ -290,10 +290,10 @@ export const getInquiriesForSeller = async () => {
     return [];
   }
   
-  return data;
+  return data as Inquiry[];
 };
 
-export const getInquiriesForBuyer = async () => {
+export const getInquiriesForBuyer = async (): Promise<Inquiry[]> => {
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) return [];
@@ -312,10 +312,10 @@ export const getInquiriesForBuyer = async () => {
     return [];
   }
   
-  return data;
+  return data as Inquiry[];
 };
 
-export const updateInquiryStatus = async (inquiryId: string, status: 'pending' | 'responded' | 'closed') => {
+export const updateInquiryStatus = async (inquiryId: string, status: string): Promise<Inquiry> => {
   const { data, error } = await supabase
     .from('inquiries')
     .update({ status })
@@ -328,5 +328,5 @@ export const updateInquiryStatus = async (inquiryId: string, status: 'pending' |
     throw error;
   }
   
-  return data;
+  return data as Inquiry;
 };

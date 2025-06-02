@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/lib/types';
 
 // Product functions
-export const getProductsByShop = async (shopId: string) => {
+export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
   const { data, error } = await supabase
     .from('products')
     .select('*')
@@ -15,7 +15,7 @@ export const getProductsByShop = async (shopId: string) => {
     return [];
   }
   
-  return data;
+  return data as Product[];
 };
 
 export const createProduct = async (product: Omit<Product, 'id' | 'created_at'>) => {
@@ -29,5 +29,5 @@ export const createProduct = async (product: Omit<Product, 'id' | 'created_at'>)
     throw error;
   }
   
-  return data[0];
+  return data[0] as Product;
 };

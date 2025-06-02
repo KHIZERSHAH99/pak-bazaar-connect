@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -16,16 +15,16 @@ const Products: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedCity, setSelectedCity] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCity, setSelectedCity] = useState<string>('all');
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const [productsData, categoriesData, citiesData] = await Promise.all([
         getMarketplaceProducts({
-          category_id: selectedCategory || undefined,
-          city_id: selectedCity || undefined,
+          category_id: selectedCategory === 'all' ? undefined : selectedCategory,
+          city_id: selectedCity === 'all' ? undefined : selectedCity,
           search: searchTerm || undefined,
         }),
         getCategories(),
@@ -52,8 +51,8 @@ const Products: React.FC = () => {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setSelectedCategory('');
-    setSelectedCity('');
+    setSelectedCategory('all');
+    setSelectedCity('all');
   };
 
   if (loading) {
@@ -95,7 +94,7 @@ const Products: React.FC = () => {
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.name}
@@ -109,7 +108,7 @@ const Products: React.FC = () => {
                 <SelectValue placeholder="All Cities" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Cities</SelectItem>
+                <SelectItem value="all">All Cities</SelectItem>
                 {cities.map((city) => (
                   <SelectItem key={city.id} value={city.id}>
                     {city.name}
@@ -125,7 +124,7 @@ const Products: React.FC = () => {
               Search
             </Button>
             
-            {(searchTerm || selectedCategory || selectedCity) && (
+            {(searchTerm || selectedCategory !== 'all' || selectedCity !== 'all') && (
               <Button variant="outline" onClick={clearFilters}>
                 <Filter className="h-4 w-4 mr-2" />
                 Clear Filters

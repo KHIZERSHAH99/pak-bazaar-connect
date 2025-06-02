@@ -14,7 +14,7 @@ interface RoleCardProps {
   targetRole: UserRole;
   currentRole?: string;
   isRequesting: boolean;
-  onRoleRequest: (role: UserRole) => void;
+  onRoleChange: (role: UserRole) => void;
 }
 
 const RoleCard: React.FC<RoleCardProps> = ({
@@ -25,10 +25,9 @@ const RoleCard: React.FC<RoleCardProps> = ({
   targetRole,
   currentRole,
   isRequesting,
-  onRoleRequest
+  onRoleChange
 }) => {
   const isCurrentRole = currentRole === targetRole;
-  const isPending = currentRole === 'pending';
 
   return (
     <Card className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md ${
@@ -50,7 +49,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
             </div>
           </div>
           {isCurrentRole && (
-            <Badge variant="success" className="flex items-center gap-1 font-poppins">
+            <Badge variant="default" className="flex items-center gap-1 font-poppins bg-pakistani_green-100 text-pakistani_green-800">
               <CheckCircle className="h-3 w-3" />
               Current
             </Badge>
@@ -67,10 +66,10 @@ const RoleCard: React.FC<RoleCardProps> = ({
           <Button 
             variant="outline" 
             className="w-full group font-poppins"
-            onClick={() => onRoleRequest(targetRole)}
-            disabled={isRequesting || isPending}
+            onClick={() => onRoleChange(targetRole)}
+            disabled={isRequesting}
           >
-            Request {title} Role
+            Switch to {title}
             <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
         )}
@@ -80,3 +79,4 @@ const RoleCard: React.FC<RoleCardProps> = ({
 };
 
 export default RoleCard;
+

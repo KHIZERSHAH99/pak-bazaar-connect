@@ -3,7 +3,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Clock, Store, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Store, ShoppingCart, ArrowRight, Zap } from 'lucide-react';
 
 const PendingDashboard: React.FC = () => (
   <div className="animate-fadeIn">
@@ -13,17 +13,17 @@ const PendingDashboard: React.FC = () => (
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
         <div className="flex items-center mb-4 md:mb-0">
           <div className="bg-pakistani_green-100 p-3 rounded-full mr-4">
-            <Clock className="h-6 w-6 text-pakistani_green-700" />
+            <Zap className="h-6 w-6 text-pakistani_green-700" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold font-poppins text-pakistani_green-800">Choose Your Role</h3>
+            <h3 className="text-lg font-semibold font-poppins text-pakistani_green-800">Choose Your Role - Get Instant Access</h3>
             <p className="text-pakistani_green-700 font-poppins text-sm md:text-base">
-              Select how you want to use our platform to get started
+              Select your role and start using the platform immediately - no waiting for approval!
             </p>
           </div>
         </div>
         <Link to="/profile">
-          <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins">
+          <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
             Select Role <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
@@ -110,8 +110,8 @@ const PendingDashboard: React.FC = () => (
             2
           </div>
           <div>
-            <p className="font-medium font-poppins">Wait for approval</p>
-            <p className="text-gray-600 font-poppins text-sm md:text-base">An admin will review and approve your role request.</p>
+            <p className="font-medium font-poppins">Get instant access</p>
+            <p className="text-gray-600 font-poppins text-sm md:text-base">Your role is activated immediately - no waiting for approval!</p>
           </div>
         </div>
         
@@ -120,8 +120,8 @@ const PendingDashboard: React.FC = () => (
             3
           </div>
           <div>
-            <p className="font-medium font-poppins">Start using the platform</p>
-            <p className="text-gray-600 font-poppins text-sm md:text-base">Once approved, you'll have access to all features for your role.</p>
+            <p className="font-medium font-poppins">Start trading</p>
+            <p className="text-gray-600 font-poppins text-sm md:text-base">Begin using all features for your role and start growing your business.</p>
           </div>
         </div>
       </div>
@@ -130,3 +130,4 @@ const PendingDashboard: React.FC = () => (
 );
 
 export default PendingDashboard;
+

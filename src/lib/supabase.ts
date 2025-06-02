@@ -5,7 +5,6 @@ import * as authModule from './auth';
 import * as shopsModule from './shops';
 import * as productsModule from './products';
 import * as adsModule from './ads';
-import * as adminModule from './admin';
 import * as ordersModule from './orders';
 import * as chatModule from './chat';
 import * as storageModule from './storage';
@@ -24,7 +23,6 @@ export type {
   Order,
   Commission,
   ChatMessage,
-  RoleRequest,
   Category,
   City,
   CompanyProfile,
@@ -38,7 +36,7 @@ export const {
   signOut,
   getCurrentUser,
   getUserProfile,
-  requestRoleChange
+  changeRole
 } = authModule;
 
 export const {
@@ -59,11 +57,6 @@ export const {
   getPendingAds,
   approveAd
 } = adsModule;
-
-export const {
-  getPendingRoleRequests,
-  approveRoleRequest
-} = adminModule;
 
 export const {
   createOrder,
@@ -97,3 +90,4 @@ export const {
   getInquiriesForBuyer,
   updateInquiryStatus
 } = marketplaceModule;
+

@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
@@ -51,9 +52,9 @@ export const signIn = async (email: string, password: string) => {
   }
 };
 
-export const signUp = async (email: string, password: string) => {
+export const signUp = async (email: string, password: string, role: UserRole = 'wholesaler') => {
   try {
-    console.log('Signing up with email:', email);
+    console.log('Signing up with email:', email, 'and role:', role);
     
     // Clean up existing auth state before signing up
     cleanupAuthState();
@@ -61,6 +62,11 @@ export const signUp = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          role: role // Store role in user metadata
+        }
+      }
     });
     
     if (error) {
@@ -68,7 +74,18 @@ export const signUp = async (email: string, password: string) => {
       throw error;
     }
 
-    // The profile creation is handled by the database trigger
+    // Update the profile with the selected role immediately
+    if (data.user) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ role: role })
+        .eq('id', data.user.id);
+      
+      if (profileError) {
+        console.error('Error updating profile role:', profileError);
+      }
+    }
+
     console.log('Signup successful, user data:', data);
     return data;
   } catch (error) {
@@ -134,59 +151,34 @@ export const getUserProfile = async () => {
   }
 };
 
-// Role change request with improved error handling and notifications
-export const requestRoleChange = async (requestedRole: UserRole) => {
+// Instant role change - no approval needed
+export const changeRole = async (newRole: UserRole) => {
   const user = await getCurrentUser();
   
   if (!user) throw new Error('User not authenticated');
   
-  // Check if there's already a pending request
-  const { data: existingRequests, error: checkError } = await supabase
-    .from('role_requests')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('status', 'pending');
-  
-  if (checkError) {
-    console.error('Error checking existing requests:', checkError);
-    toast({
-      title: "Request Failed",
-      description: "Error checking existing requests. Please try again later.",
-      variant: "destructive"
-    });
-    throw checkError;
-  }
-  
-  if (existingRequests && existingRequests.length > 0) {
-    toast({
-      title: "Request Pending",
-      description: "You already have a pending role change request. Please wait for approval.",
-      variant: "default"
-    });
-    throw new Error('You already have a pending role change request');
-  }
-  
-  // Create new role request
   const { data, error } = await supabase
-    .from('role_requests')
-    .insert([{ user_id: user.id, requested_role: requestedRole, status: 'pending' }])
+    .from('profiles')
+    .update({ role: newRole })
+    .eq('id', user.id)
     .select();
   
   if (error) {
-    console.error('Error creating role change request:', error);
+    console.error('Error changing role:', error);
     toast({
-      title: "Request Failed",
-      description: "Error creating role change request. Please try again later.",
+      title: "Role Change Failed",
+      description: "Error changing role. Please try again later.",
       variant: "destructive"
     });
     throw error;
   }
   
   toast({
-    title: "Request Submitted",
-    description: "Your role change request has been submitted successfully.",
+    title: "Role Changed Successfully",
+    description: `Your role has been changed to ${newRole}.`,
     variant: "default"
   });
   
   return data[0];
 };
+

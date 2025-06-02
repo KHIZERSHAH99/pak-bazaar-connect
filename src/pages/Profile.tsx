@@ -6,9 +6,8 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { requestRoleChange, UserRole } from '@/lib/supabase';
-import { ProfileSkeleton } from '@/contexts/AuthContext';
-import { UserCog, Store, ShoppingBag, Clock } from 'lucide-react';
+import { changeRole, UserRole } from '@/lib/auth';
+import { UserCog, Store, ShoppingBag } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import AccountInfo from '@/components/profile/AccountInfo';
 import RoleManagement from '@/components/profile/RoleManagement';
@@ -16,39 +15,32 @@ import RoleManagement from '@/components/profile/RoleManagement';
 const Profile: React.FC = () => {
   const { profile, checkAuthStatus, loading } = useAuth();
   const { toast } = useToast();
-  const [isRequesting, setIsRequesting] = useState(false);
+  const [isChangingRole, setIsChangingRole] = useState(false);
 
-  const handleRoleRequest = async (requestedRole: UserRole) => {
+  const handleRoleChange = async (newRole: UserRole) => {
     if (!profile) return;
     
     try {
-      setIsRequesting(true);
-      await requestRoleChange(requestedRole);
-      
-      toast({
-        title: 'Role request submitted',
-        description: 'Your request has been submitted and is pending admin approval',
-      });
-      
+      setIsChangingRole(true);
+      await changeRole(newRole);
       await checkAuthStatus();
     } catch (error: any) {
-      console.error('Role request error:', error);
+      console.error('Role change error:', error);
     } finally {
-      setIsRequesting(false);
+      setIsChangingRole(false);
     }
   };
 
-  const getRoleBadgeVariant = (role: string): "success" | "warning" | "pending" | "info" => {
+  const getRoleBadgeVariant = (role: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (role) {
       case 'admin':
-        return 'info';
+        return 'default';
       case 'wholesaler':
-        return 'success';
+        return 'default';
       case 'seller':
-        return 'success';
-      case 'pending':
+        return 'default';
       default:
-        return 'pending';
+        return 'secondary';
     }
   };
   
@@ -60,9 +52,8 @@ const Profile: React.FC = () => {
         return <Store className="h-5 w-5" />;
       case 'seller':
         return <ShoppingBag className="h-5 w-5" />;
-      case 'pending':
       default:
-        return <Clock className="h-5 w-5" />;
+        return <Store className="h-5 w-5" />;
     }
   };
   
@@ -96,7 +87,7 @@ const Profile: React.FC = () => {
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 font-poppins">Profile Not Found</h1>
             <p className="text-gray-600 mb-6 font-poppins">Unable to load your profile information at this time.</p>
-            <Button onClick={() => checkAuthStatus()} className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins">
+            <Button onClick={() => checkAuthStatus()} className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
               Try Again
             </Button>
           </div>
@@ -129,8 +120,8 @@ const Profile: React.FC = () => {
           
           <RoleManagement
             currentRole={profile.role}
-            isRequesting={isRequesting}
-            onRoleRequest={handleRoleRequest}
+            isRequesting={isChangingRole}
+            onRoleChange={handleRoleChange}
           />
         </div>
       </div>
@@ -145,3 +136,4 @@ const ProfileWithAuth = () => (
 );
 
 export default ProfileWithAuth;
+

@@ -9,6 +9,7 @@ import * as adminModule from './admin';
 import * as ordersModule from './orders';
 import * as chatModule from './chat';
 import * as storageModule from './storage';
+import * as marketplaceModule from './marketplace';
 
 // Re-export the Supabase client
 export const supabase = supabaseClient;
@@ -23,7 +24,11 @@ export type {
   Order,
   Commission,
   ChatMessage,
-  RoleRequest
+  RoleRequest,
+  Category,
+  City,
+  CompanyProfile,
+  Inquiry
 } from './types';
 
 // Re-export all functions to maintain backward compatibility
@@ -74,3 +79,21 @@ export const {
 export const {
   uploadImage
 } = storageModule;
+
+// New marketplace functions
+export const {
+  getCategories,
+  getCities,
+  getMarketplaceProducts,
+  getProductById,
+  getMarketplaceShops,
+  getShopById,
+  getProductsByShopPublic,
+  getCompanyProfile,
+  createCompanyProfile,
+  updateCompanyProfile,
+  createInquiry,
+  getInquiriesForSeller,
+  getInquiriesForBuyer,
+  updateInquiryStatus
+} = marketplaceModule;

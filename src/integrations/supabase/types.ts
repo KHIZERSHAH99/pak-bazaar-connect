@@ -36,6 +36,27 @@ export type Database = {
         }
         Relationships: []
       }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       chat_history: {
         Row: {
           created_at: string | null
@@ -57,6 +78,27 @@ export type Database = {
           message?: string
           reply?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      cities: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          province: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          province: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          province?: string
         }
         Relationships: []
       }
@@ -94,6 +136,115 @@ export type Database = {
             columns: ["transaction_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_profiles: {
+        Row: {
+          address: string
+          business_type: string
+          city_id: string | null
+          company_name: string
+          created_at: string
+          description: string | null
+          id: string
+          logo: string | null
+          phone: string
+          updated_at: string
+          user_id: string
+          verification_status: string
+          website: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          address: string
+          business_type?: string
+          city_id?: string | null
+          company_name: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo?: string | null
+          phone: string
+          updated_at?: string
+          user_id: string
+          verification_status?: string
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string
+          business_type?: string
+          city_id?: string | null
+          company_name?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo?: string | null
+          phone?: string
+          updated_at?: string
+          user_id?: string
+          verification_status?: string
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_profiles_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inquiries: {
+        Row: {
+          buyer_email: string | null
+          buyer_id: string
+          buyer_name: string
+          buyer_phone: string
+          created_at: string
+          id: string
+          message: string
+          product_id: string | null
+          quantity_needed: number | null
+          seller_id: string
+          status: string
+        }
+        Insert: {
+          buyer_email?: string | null
+          buyer_id: string
+          buyer_name: string
+          buyer_phone: string
+          created_at?: string
+          id?: string
+          message: string
+          product_id?: string | null
+          quantity_needed?: number | null
+          seller_id: string
+          status?: string
+        }
+        Update: {
+          buyer_email?: string | null
+          buyer_id?: string
+          buyer_name?: string
+          buyer_phone?: string
+          created_at?: string
+          id?: string
+          message?: string
+          product_id?: string | null
+          quantity_needed?: number | null
+          seller_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -138,36 +289,52 @@ export type Database = {
       }
       products: {
         Row: {
+          category_id: string | null
           created_at: string | null
           description: string | null
           id: string
           image: string | null
           is_active: boolean
+          moq: number | null
           name: string
           price: number
           shop_id: string
+          verification_status: string
         }
         Insert: {
+          category_id?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
           image?: string | null
           is_active?: boolean
+          moq?: number | null
           name: string
           price: number
           shop_id: string
+          verification_status?: string
         }
         Update: {
+          category_id?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
           image?: string | null
           is_active?: boolean
+          moq?: number | null
           name?: string
           price?: number
           shop_id?: string
+          verification_status?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "products_shop_id_fkey"
             columns: ["shop_id"]
@@ -228,6 +395,7 @@ export type Database = {
       shops: {
         Row: {
           address: string
+          city_id: string | null
           commission_rate: number | null
           contact: string
           created_at: string | null
@@ -239,6 +407,7 @@ export type Database = {
         }
         Insert: {
           address: string
+          city_id?: string | null
           commission_rate?: number | null
           contact: string
           created_at?: string | null
@@ -250,6 +419,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          city_id?: string | null
           commission_rate?: number | null
           contact?: string
           created_at?: string | null
@@ -259,7 +429,15 @@ export type Database = {
           owner_id?: string
           postal_code?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shops_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

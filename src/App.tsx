@@ -14,13 +14,20 @@ import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
+// Public marketplace pages
+import Products from "./pages/Products";
+import Sellers from "./pages/Sellers";
+import ProductDetail from "./pages/ProductDetail";
+import SellerProfile from "./pages/SellerProfile";
+import InquiryForm from "./pages/InquiryForm";
+
 // Admin pages
 import RoleApprovals from "./pages/admin/RoleApprovals";
 import AdApprovals from "./pages/admin/AdApprovals";
 
 // Wholesaler pages
 import Shops from "./pages/wholesaler/Shops";
-import Products from "./pages/wholesaler/Products";
+import WholesalerProducts from "./pages/wholesaler/Products";
 import Advertisements from "./pages/wholesaler/Advertisements";
 import SellerDashboard from "./pages/wholesaler/SellerDashboard";
 
@@ -46,6 +53,13 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
+            {/* Public marketplace pages */}
+            <Route path="/products" element={<Products />} />
+            <Route path="/sellers" element={<Sellers />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/seller/:id" element={<SellerProfile />} />
+            <Route path="/inquiry" element={<InquiryForm />} />
+
             {/* Protected pages */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -56,7 +70,7 @@ const App = () => (
 
             {/* Wholesaler pages */}
             <Route path="/dashboard/shops" element={<Shops />} />
-            <Route path="/dashboard/products" element={<Products />} />
+            <Route path="/dashboard/products" element={<WholesalerProducts />} />
             <Route path="/dashboard/ads" element={<Advertisements />} />
             <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />
             <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />

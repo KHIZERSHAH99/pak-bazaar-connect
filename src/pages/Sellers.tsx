@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -15,14 +14,14 @@ const Sellers: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCity, setSelectedCity] = useState<string>('');
+  const [selectedCity, setSelectedCity] = useState<string>('all');
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const [shopsData, citiesData] = await Promise.all([
         getMarketplaceShops({
-          city_id: selectedCity || undefined,
+          city_id: selectedCity === 'all' ? undefined : selectedCity,
           search: searchTerm || undefined,
         }),
         getCities(),
@@ -47,7 +46,7 @@ const Sellers: React.FC = () => {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setSelectedCity('');
+    setSelectedCity('all');
   };
 
   if (loading) {
@@ -89,7 +88,7 @@ const Sellers: React.FC = () => {
                 <SelectValue placeholder="All Cities" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Cities</SelectItem>
+                <SelectItem value="all">All Cities</SelectItem>
                 {cities.map((city) => (
                   <SelectItem key={city.id} value={city.id}>
                     {city.name}
@@ -105,7 +104,7 @@ const Sellers: React.FC = () => {
               Search
             </Button>
             
-            {(searchTerm || selectedCity) && (
+            {(searchTerm || selectedCity !== 'all') && (
               <Button variant="outline" onClick={clearFilters}>
                 <Filter className="h-4 w-4 mr-2" />
                 Clear Filters

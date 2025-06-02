@@ -19,9 +19,15 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
 };
 
 export const createProduct = async (product: Omit<Product, 'id' | 'created_at'>) => {
+  // Ensure verification_status is set to pending by default
+  const productData = {
+    ...product,
+    verification_status: 'pending'
+  };
+
   const { data, error } = await supabase
     .from('products')
-    .insert([product])
+    .insert([productData])
     .select();
   
   if (error) {

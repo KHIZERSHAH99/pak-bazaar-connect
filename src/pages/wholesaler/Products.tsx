@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -143,6 +142,7 @@ const Products: React.FC = () => {
         price,
         image: imageUrl,
         is_active: formData.is_active,
+        verification_status: 'pending' as const,
       };
 
       await createProduct(productData);

@@ -44,7 +44,18 @@ export const getMarketplaceProducts = async (filters?: {
     .select(`
       *,
       categories (id, name),
-      shops (id, name, city_id, cities (id, name, province))
+      shops!inner (
+        id, 
+        name, 
+        contact, 
+        address, 
+        postal_code, 
+        owner_id, 
+        commission_rate, 
+        logo, 
+        city_id,
+        cities (id, name, province)
+      )
     `)
     .eq('is_active', true)
     .eq('verification_status', 'approved')
@@ -73,7 +84,7 @@ export const getMarketplaceProducts = async (filters?: {
     return [];
   }
   
-  return data as Product[];
+  return data as any[];
 };
 
 // Get single product with details
@@ -83,20 +94,17 @@ export const getProductById = async (id: string): Promise<Product | null> => {
     .select(`
       *,
       categories (id, name),
-      shops (
+      shops!inner (
         id, 
         name, 
         contact, 
         address,
+        postal_code,
+        owner_id,
+        commission_rate,
+        logo,
         city_id,
-        cities (id, name, province),
-        company_profiles (
-          company_name,
-          phone,
-          whatsapp,
-          description,
-          logo
-        )
+        cities (id, name, province)
       )
     `)
     .eq('id', id)
@@ -109,7 +117,20 @@ export const getProductById = async (id: string): Promise<Product | null> => {
     return null;
   }
   
-  return data as Product;
+  // Get company profile separately to avoid relation issues
+  if (data?.shops?.owner_id) {
+    const { data: companyProfile } = await supabase
+      .from('company_profiles')
+      .select('*')
+      .eq('user_id', data.shops.owner_id)
+      .single();
+    
+    if (companyProfile) {
+      (data as any).shops.company_profiles = companyProfile;
+    }
+  }
+  
+  return data as any;
 };
 
 // Shops for marketplace
@@ -123,14 +144,7 @@ export const getMarketplaceShops = async (filters?: {
     .from('shops')
     .select(`
       *,
-      cities (id, name, province),
-      company_profiles (
-        company_name,
-        description,
-        logo,
-        phone,
-        verification_status
-      )
+      cities (id, name, province)
     `)
     .order('created_at', { ascending: false });
 
@@ -152,8 +166,24 @@ export const getMarketplaceShops = async (filters?: {
     console.error('Error fetching marketplace shops:', error);
     return [];
   }
+
+  // Get company profiles separately for each shop
+  const shopsWithProfiles = await Promise.all(
+    (data || []).map(async (shop: any) => {
+      const { data: companyProfile } = await supabase
+        .from('company_profiles')
+        .select('*')
+        .eq('user_id', shop.owner_id)
+        .single();
+      
+      return {
+        ...shop,
+        company_profiles: companyProfile || null
+      };
+    })
+  );
   
-  return data as Shop[];
+  return shopsWithProfiles as Shop[];
 };
 
 // Get single shop with details
@@ -162,16 +192,7 @@ export const getShopById = async (id: string): Promise<Shop | null> => {
     .from('shops')
     .select(`
       *,
-      cities (id, name, province),
-      company_profiles (
-        company_name,
-        description,
-        logo,
-        phone,
-        whatsapp,
-        website,
-        verification_status
-      )
+      cities (id, name, province)
     `)
     .eq('id', id)
     .single();
@@ -180,8 +201,21 @@ export const getShopById = async (id: string): Promise<Shop | null> => {
     console.error('Error fetching shop:', error);
     return null;
   }
+
+  // Get company profile separately
+  if (data?.owner_id) {
+    const { data: companyProfile } = await supabase
+      .from('company_profiles')
+      .select('*')
+      .eq('user_id', data.owner_id)
+      .single();
+    
+    if (companyProfile) {
+      (data as any).company_profiles = companyProfile;
+    }
+  }
   
-  return data as Shop;
+  return data as any;
 };
 
 // Get products by shop for seller profile

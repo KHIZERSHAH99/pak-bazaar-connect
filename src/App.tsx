@@ -22,7 +22,6 @@ import SellerProfile from "./pages/SellerProfile";
 import InquiryForm from "./pages/InquiryForm";
 
 // Admin pages
-import RoleApprovals from "./pages/admin/RoleApprovals";
 import AdApprovals from "./pages/admin/AdApprovals";
 
 // Wholesaler pages
@@ -65,7 +64,6 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
 
             {/* Admin pages */}
-            <Route path="/dashboard/role-approvals" element={<RoleApprovals />} />
             <Route path="/dashboard/ad-approvals" element={<AdApprovals />} />
 
             {/* Wholesaler pages */}

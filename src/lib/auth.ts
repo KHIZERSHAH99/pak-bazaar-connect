@@ -3,6 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 
+// Export UserRole for use in other components
+export type { UserRole } from '@/lib/types';
+
 // Clean up auth state to prevent "limbo" states
 const cleanupAuthState = () => {
   Object.keys(localStorage).forEach((key) => {

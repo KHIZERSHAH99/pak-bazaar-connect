@@ -31,13 +31,12 @@ const CommissionTracker: React.FC = () => {
     monthly_earnings: 0
   });
   const [loading, setLoading] = useState(true);
-  const [timeFilter, setTimeFilter] = useState('all');
 
   useEffect(() => {
     if (user) {
       loadCommissionData();
     }
-  }, [user, timeFilter]);
+  }, [user]);
 
   const loadCommissionData = async () => {
     try {
@@ -260,6 +259,12 @@ const CommissionTracker: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        {transactions.length === 0 && (
+          <div className="p-8 text-center">
+            <p className="text-gray-500 font-poppins">No transactions yet. Start trading to see your commission history!</p>
+          </div>
+        )}
       </Card>
     </div>
   );

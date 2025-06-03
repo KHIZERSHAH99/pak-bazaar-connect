@@ -145,8 +145,8 @@ const EnhancedSignupForm = () => {
 
   const handleRoleSelect = (role: UserRole) => {
     setSelectedRole(role);
-    // Update form defaults based on role
-    form.setValue('businessType', role === 'seller' ? 'Retailer' : 'Wholesaler');
+    // Update form defaults based on role with proper type casting
+    form.setValue('businessType', role === 'seller' ? 'Retailer' as any : 'Wholesaler' as any);
   };
 
   return (

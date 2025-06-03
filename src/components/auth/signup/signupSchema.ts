@@ -6,7 +6,7 @@ export const formSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string(),
   businessName: z.string().min(3, 'Business name must be at least 3 characters'),
-  businessType: z.enum(['Manufacturer', 'Wholesaler', 'Distributor', 'Other']),
+  businessType: z.enum(['Manufacturer', 'Wholesaler', 'Distributor', 'Retailer', 'Other']),
   ntnNumber: z.string().min(7, 'NTN number must be at least 7 characters'),
   strnNumber: z.string().optional(),
   address: z.string().min(10, 'Please enter your complete business address'),

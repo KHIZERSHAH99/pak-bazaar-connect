@@ -5,22 +5,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { signUp } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Briefcase, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { formSchema, FormValues } from './signup/signupSchema';
 import AccountInfoStep from './signup/AccountInfoStep';
 import BusinessInfoStep from './signup/BusinessInfoStep';
 import SellerInfoStep from './SellerInfoStep';
 import RoleSelectionStep from './RoleSelectionStep';
+import SignupHeader from './signup/SignupHeader';
+import ErrorDisplay from './signup/ErrorDisplay';
+import NavigationButtons from './signup/NavigationButtons';
 import { UserRole } from '@/lib/types';
 
 const EnhancedSignupForm = () => {
@@ -52,16 +46,26 @@ const EnhancedSignupForm = () => {
     }
   });
   
-  const totalSteps = selectedRole === 'seller' ? 3 : 4; // Sellers skip the detailed business step
+  const totalSteps = selectedRole === 'seller' ? 3 : 4;
   
+  const getStepTitle = () => {
+    switch(currentStep) {
+      case 1: return 'Choose Your Role';
+      case 2: return 'Account Information';
+      case 3: return selectedRole === 'seller' ? 'Basic Information' : 'Business Information';
+      case 4: return 'Complete Registration';
+      default: return 'Sign Up';
+    }
+  };
+
   const nextStep = async () => {
     const stepFields = {
-      1: [], // Role selection step - no validation needed
+      1: [],
       2: ['email', 'password', 'confirmPassword'],
       3: selectedRole === 'seller' 
         ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber']
         : ['businessName', 'businessType', 'ntnNumber', 'address', 'city', 'postalCode', 'industry', 'yearsInBusiness', 'contactName', 'phoneNumber'],
-      4: [] // Final step for wholesalers
+      4: []
     };
     
     const currentFields = stepFields[currentStep as keyof typeof stepFields];
@@ -83,6 +87,11 @@ const EnhancedSignupForm = () => {
       setCurrentStep(prev => prev - 1);
       setErrorMessage(null);
     }
+  };
+  
+  const handleRoleSelect = (role: UserRole) => {
+    setSelectedRole(role);
+    form.setValue('businessType', role === 'seller' ? 'Retailer' as any : 'Wholesaler' as any);
   };
   
   const onSubmit = async (values: FormValues) => {
@@ -127,62 +136,18 @@ const EnhancedSignupForm = () => {
       setIsLoading(false);
     }
   };
-  
-  const getStepTitle = () => {
-    switch(currentStep) {
-      case 1:
-        return 'Choose Your Role';
-      case 2:
-        return 'Account Information';
-      case 3:
-        return selectedRole === 'seller' ? 'Basic Information' : 'Business Information';
-      case 4:
-        return 'Complete Registration';
-      default:
-        return 'Sign Up';
-    }
-  };
-
-  const handleRoleSelect = (role: UserRole) => {
-    setSelectedRole(role);
-    // Update form defaults based on role with proper type casting
-    form.setValue('businessType', role === 'seller' ? 'Retailer' as any : 'Wholesaler' as any);
-  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto border-none shadow-lg overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-500 text-white text-center pb-6">
-        <div className="flex justify-center mb-4">
-          <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm">
-            <Briefcase className="h-8 w-8" />
-          </div>
-        </div>
-        <CardTitle className="text-2xl font-bold font-poppins">
-          {selectedRole === 'seller' ? 'Seller Registration' : 'Business Registration'}
-        </CardTitle>
-        <CardDescription className="text-green-50 font-poppins">
-          Step {currentStep} of {totalSteps}: {getStepTitle()}
-        </CardDescription>
-        
-        <div className="w-full mt-4 flex gap-2">
-          {Array.from({ length: totalSteps }).map((_, idx) => (
-            <div 
-              key={idx} 
-              className={`h-2 rounded-full flex-1 transition-all duration-300 ${
-                idx + 1 <= currentStep ? 'bg-white' : 'bg-white/30'
-              }`}
-            />
-          ))}
-        </div>
-      </CardHeader>
+      <SignupHeader 
+        selectedRole={selectedRole}
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        getStepTitle={getStepTitle}
+      />
       
       <CardContent className="pt-6">
-        {errorMessage && (
-          <div className="mb-6 p-3 bg-red-50 rounded-lg flex items-center text-red-600 text-sm border border-red-100">
-            <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-            <span className="font-poppins">{errorMessage}</span>
-          </div>
-        )}
+        <ErrorDisplay errorMessage={errorMessage} />
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -243,38 +208,14 @@ const EnhancedSignupForm = () => {
               </div>
             )}
             
-            <div className="flex justify-between pt-4">
-              {currentStep > 1 && (
-                <Button
-                  type="button"
-                  onClick={prevStep}
-                  variant="outline"
-                  disabled={isLoading}
-                  className="font-poppins"
-                >
-                  Previous
-                </Button>
-              )}
-              
-              {currentStep < totalSteps ? (
-                <Button
-                  type="button"
-                  onClick={nextStep}
-                  className="ml-auto bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
-                  disabled={isLoading || (currentStep === 1 && !selectedRole)}
-                >
-                  Continue
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  className="ml-auto bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Creating Account..." : `Create ${selectedRole === 'seller' ? 'Seller' : 'Wholesaler'} Account`}
-                </Button>
-              )}
-            </div>
+            <NavigationButtons
+              currentStep={currentStep}
+              totalSteps={totalSteps}
+              isLoading={isLoading}
+              selectedRole={selectedRole}
+              onPrevStep={prevStep}
+              onNextStep={nextStep}
+            />
           </form>
         </Form>
       </CardContent>

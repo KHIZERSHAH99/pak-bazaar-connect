@@ -7,14 +7,16 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { AlertCircle, Mail, Key } from 'lucide-react';
+import { AlertCircle, Mail, Key, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import AdminLoginForm from './AdminLoginForm';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -31,7 +33,6 @@ const LoginForm: React.FC = () => {
     try {
       setIsLoading(true);
       
-      // Check internet connection before attempting login
       if (!navigator.onLine) {
         throw new Error('No internet connection. Please check your network and try again.');
       }
@@ -44,7 +45,6 @@ const LoginForm: React.FC = () => {
         description: 'You have successfully logged in'
       });
       
-      // Use React Router for SPA navigation instead of page reload
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     } catch (error: any) {
@@ -75,6 +75,16 @@ const LoginForm: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  if (showAdminLogin) {
+    return (
+      <Card className="border-none shadow-lg overflow-hidden">
+        <CardContent className="pt-6">
+          <AdminLoginForm onBackToRegular={() => setShowAdminLogin(false)} />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border-none shadow-lg overflow-hidden">
@@ -127,6 +137,16 @@ const LoginForm: React.FC = () => {
             {isLoading ? 'Logging In...' : 'Log In'}
           </Button>
         </form>
+
+        <div className="mt-4 text-center">
+          <button
+            onClick={() => setShowAdminLogin(true)}
+            className="inline-flex items-center text-xs text-gray-500 hover:text-pakistani_green-600 transition-colors"
+          >
+            <Shield className="h-3 w-3 mr-1" />
+            Admin Access
+          </button>
+        </div>
       </CardContent>
       <CardFooter className="border-t border-gray-100 bg-gray-50 flex justify-center p-4">
         <p className="text-sm text-gray-600">

@@ -9,6 +9,7 @@ import * as ordersModule from './orders';
 import * as chatModule from './chat';
 import * as storageModule from './storage';
 import * as marketplaceModule from './marketplace';
+import * as paymentModule from './payment';
 
 // Re-export the Supabase client
 export const supabase = supabaseClient;
@@ -91,3 +92,13 @@ export const {
   updateInquiryStatus
 } = marketplaceModule;
 
+// New payment functions
+export const {
+  getPaymentMethods,
+  calculateCommission,
+  createTransaction,
+  updateTransactionStatus,
+  getUserTransactions,
+  processPayment,
+  getCommissionRates
+} = paymentModule;

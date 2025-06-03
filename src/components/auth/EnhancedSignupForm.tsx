@@ -15,10 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Briefcase, AlertCircle, Store, ShoppingBag } from 'lucide-react';
+import { Briefcase, AlertCircle } from 'lucide-react';
 import { formSchema, FormValues } from './signup/signupSchema';
 import AccountInfoStep from './signup/AccountInfoStep';
 import BusinessInfoStep from './signup/BusinessInfoStep';
+import SellerInfoStep from './SellerInfoStep';
+import RoleSelectionStep from './RoleSelectionStep';
 import { UserRole } from '@/lib/types';
 
 const EnhancedSignupForm = () => {
@@ -36,7 +38,7 @@ const EnhancedSignupForm = () => {
       password: '',
       confirmPassword: '',
       businessName: '',
-      businessType: 'Wholesaler',
+      businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
       ntnNumber: '',
       strnNumber: '',
       address: '',
@@ -50,26 +52,26 @@ const EnhancedSignupForm = () => {
     }
   });
   
-  const totalSteps = 3;
+  const totalSteps = selectedRole === 'seller' ? 3 : 4; // Sellers skip the detailed business step
   
-  const nextStep = () => {
+  const nextStep = async () => {
     const stepFields = {
-      1: ['email', 'password', 'confirmPassword'],
-      2: ['businessName', 'businessType', 'ntnNumber', 'address', 'city', 'postalCode', 'industry', 'yearsInBusiness', 'contactName', 'phoneNumber'],
-      3: [] // Role selection step
+      1: [], // Role selection step - no validation needed
+      2: ['email', 'password', 'confirmPassword'],
+      3: selectedRole === 'seller' 
+        ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber']
+        : ['businessName', 'businessType', 'ntnNumber', 'address', 'city', 'postalCode', 'industry', 'yearsInBusiness', 'contactName', 'phoneNumber'],
+      4: [] // Final step for wholesalers
     };
     
-    // Validate only the fields for the current step
     const currentFields = stepFields[currentStep as keyof typeof stepFields];
-    let isValid = true;
     
-    for (const field of currentFields) {
-      form.trigger(field as any).then(result => {
-        if (!result) isValid = false;
-      });
+    if (currentFields.length > 0) {
+      const isValid = await form.trigger(currentFields as any);
+      if (!isValid) return;
     }
     
-    if (isValid && currentStep < totalSteps) {
+    if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
       setErrorMessage(null);
       window.scrollTo(0, 0);
@@ -92,7 +94,11 @@ const EnhancedSignupForm = () => {
       
       toast({
         title: 'Account created successfully!',
-        description: `Your ${selectedRole} account is ready to use. You can start using all features immediately.`,
+        description: `Your ${selectedRole} account is ready to use. ${
+          selectedRole === 'seller' 
+            ? 'You can start browsing products immediately!' 
+            : 'Please complete business verification to access all features.'
+        }`,
         variant: 'default',
       });
       
@@ -125,32 +131,46 @@ const EnhancedSignupForm = () => {
   const getStepTitle = () => {
     switch(currentStep) {
       case 1:
-        return 'Account Information';
-      case 2:
-        return 'Business & Contact Information';
-      case 3:
         return 'Choose Your Role';
+      case 2:
+        return 'Account Information';
+      case 3:
+        return selectedRole === 'seller' ? 'Basic Information' : 'Business Information';
+      case 4:
+        return 'Complete Registration';
       default:
         return 'Sign Up';
     }
   };
 
+  const handleRoleSelect = (role: UserRole) => {
+    setSelectedRole(role);
+    // Update form defaults based on role
+    form.setValue('businessType', role === 'seller' ? 'Retailer' : 'Wholesaler');
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto border-none shadow-lg overflow-hidden">
-      <CardHeader className="bg-pakistani_green-600 text-white text-center pb-6">
+      <CardHeader className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-500 text-white text-center pb-6">
         <div className="flex justify-center mb-4">
           <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm">
             <Briefcase className="h-8 w-8" />
           </div>
         </div>
-        <CardTitle className="text-2xl font-bold font-poppins">Business Registration</CardTitle>
-        <CardDescription className="text-green-50 font-poppins">Step {currentStep} of {totalSteps}: {getStepTitle()}</CardDescription>
+        <CardTitle className="text-2xl font-bold font-poppins">
+          {selectedRole === 'seller' ? 'Seller Registration' : 'Business Registration'}
+        </CardTitle>
+        <CardDescription className="text-green-50 font-poppins">
+          Step {currentStep} of {totalSteps}: {getStepTitle()}
+        </CardDescription>
         
         <div className="w-full mt-4 flex gap-2">
           {Array.from({ length: totalSteps }).map((_, idx) => (
             <div 
               key={idx} 
-              className={`h-2 rounded-full flex-1 ${idx + 1 <= currentStep ? 'bg-white' : 'bg-white/30'}`}
+              className={`h-2 rounded-full flex-1 transition-all duration-300 ${
+                idx + 1 <= currentStep ? 'bg-white' : 'bg-white/30'
+              }`}
             />
           ))}
         </div>
@@ -167,67 +187,57 @@ const EnhancedSignupForm = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {currentStep === 1 && (
-              <AccountInfoStep form={form} isLoading={isLoading} />
+              <RoleSelectionStep
+                selectedRole={selectedRole}
+                onRoleSelect={handleRoleSelect}
+                isLoading={isLoading}
+              />
             )}
             
             {currentStep === 2 && (
+              <AccountInfoStep form={form} isLoading={isLoading} />
+            )}
+            
+            {currentStep === 3 && selectedRole === 'seller' && (
+              <SellerInfoStep form={form} isLoading={isLoading} />
+            )}
+
+            {currentStep === 3 && selectedRole === 'wholesaler' && (
               <BusinessInfoStep form={form} isLoading={isLoading} />
             )}
 
-            {currentStep === 3 && (
+            {currentStep === 4 && selectedRole === 'wholesaler' && (
               <div className="space-y-6">
                 <div className="text-center mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 font-poppins">Select Your Role</h3>
-                  <p className="text-gray-600 font-poppins">Choose how you want to use the platform. You can change this later anytime.</p>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 font-poppins">Complete Your Registration</h3>
+                  <p className="text-gray-600 font-poppins">Review your information and create your wholesaler account</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div 
-                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      selectedRole === 'wholesaler' 
-                        ? 'border-pakistani_green-500 bg-pakistani_green-50' 
-                        : 'border-gray-200 hover:border-pakistani_green-300'
-                    }`}
-                    onClick={() => setSelectedRole('wholesaler')}
-                  >
-                    <div className="flex items-center mb-3">
-                      <div className={`p-2 rounded-full mr-3 ${
-                        selectedRole === 'wholesaler' ? 'bg-pakistani_green-100' : 'bg-gray-100'
-                      }`}>
-                        <Store className={`h-5 w-5 ${
-                          selectedRole === 'wholesaler' ? 'text-pakistani_green-600' : 'text-gray-600'
-                        }`} />
-                      </div>
-                      <h4 className="font-semibold font-poppins">Wholesaler</h4>
-                    </div>
-                    <p className="text-sm text-gray-600 font-poppins">Sell products to retailers across Pakistan</p>
-                  </div>
-
-                  <div 
-                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      selectedRole === 'seller' 
-                        ? 'border-pakistani_green-500 bg-pakistani_green-50' 
-                        : 'border-gray-200 hover:border-pakistani_green-300'
-                    }`}
-                    onClick={() => setSelectedRole('seller')}
-                  >
-                    <div className="flex items-center mb-3">
-                      <div className={`p-2 rounded-full mr-3 ${
-                        selectedRole === 'seller' ? 'bg-pakistani_green-100' : 'bg-gray-100'
-                      }`}>
-                        <ShoppingBag className={`h-5 w-5 ${
-                          selectedRole === 'seller' ? 'text-pakistani_green-600' : 'text-gray-600'
-                        }`} />
-                      </div>
-                      <h4 className="font-semibold font-poppins">Seller</h4>
-                    </div>
-                    <p className="text-sm text-gray-600 font-poppins">Purchase from wholesalers and grow your business</p>
-                  </div>
+                <div className="bg-gradient-to-r from-pakistani_green-50 to-green-50 p-6 rounded-lg border border-pakistani_green-200">
+                  <h4 className="font-semibold text-pakistani_green-800 mb-3 font-poppins">What happens next?</h4>
+                  <ul className="space-y-2 text-sm text-pakistani_green-700 font-poppins">
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+                      Your account will be created immediately
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+                      You can start using basic features right away
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+                      Complete business verification for full access
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+                      Start creating shops and listing products
+                    </li>
+                  </ul>
                 </div>
 
-                <div className="bg-pakistani_green-50 p-4 rounded-lg border border-pakistani_green-200">
-                  <p className="text-sm text-pakistani_green-700 font-poppins">
-                    ✨ <strong>Instant Access:</strong> Your role will be activated immediately after registration. No waiting for approval!
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-sm text-blue-800 font-poppins">
+                    <strong>Commission Structure:</strong> We charge a low 2.5% commission on successful sales to maintain and improve the platform.
                   </p>
                 </div>
               </div>
@@ -251,7 +261,7 @@ const EnhancedSignupForm = () => {
                   type="button"
                   onClick={nextStep}
                   className="ml-auto bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
-                  disabled={isLoading}
+                  disabled={isLoading || (currentStep === 1 && !selectedRole)}
                 >
                   Continue
                 </Button>
@@ -261,7 +271,7 @@ const EnhancedSignupForm = () => {
                   className="ml-auto bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Creating Account..." : "Create Account & Start Trading"}
+                  {isLoading ? "Creating Account..." : `Create ${selectedRole === 'seller' ? 'Seller' : 'Wholesaler'} Account`}
                 </Button>
               )}
             </div>
@@ -282,4 +292,3 @@ const EnhancedSignupForm = () => {
 };
 
 export default EnhancedSignupForm;
-

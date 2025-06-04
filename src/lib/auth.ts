@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
@@ -19,6 +18,48 @@ const cleanupAuthState = () => {
       sessionStorage.removeItem(key);
     }
   });
+};
+
+// Admin auto-login check
+const ADMIN_EMAIL = 'khizerfight@gmail.com';
+
+export const checkAdminAutoLogin = async () => {
+  // Check if admin is already logged in
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user?.email === ADMIN_EMAIL) {
+    return true;
+  }
+
+  // For admin email, try auto-login if not authenticated
+  if (window.location.pathname.includes('/admin') || window.location.pathname === '/') {
+    const adminProfile = await getUserProfileByEmail(ADMIN_EMAIL);
+    if (adminProfile) {
+      // Admin exists, they should log in normally
+      return false;
+    }
+  }
+  
+  return false;
+};
+
+const getUserProfileByEmail = async (email: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('email', email)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error fetching user profile by email:', error);
+      return null;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Get user profile by email error:', error);
+    return null;
+  }
 };
 
 // Authentication functions
@@ -47,6 +88,18 @@ export const signIn = async (email: string, password: string) => {
       throw error;
     }
 
+    // Auto-assign admin role for the specific admin email
+    if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ role: 'admin' })
+        .eq('email', email.toLowerCase());
+      
+      if (updateError) {
+        console.error('Error updating admin role:', updateError);
+      }
+    }
+
     console.log('Signin successful, user data:', data);
     return data;
   } catch (error) {
@@ -62,12 +115,15 @@ export const signUp = async (email: string, password: string, role: UserRole = '
     // Clean up existing auth state before signing up
     cleanupAuthState();
     
+    // Auto-assign admin role for the specific admin email
+    const finalRole = email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : role;
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          role: role // Store role in user metadata
+          role: finalRole // Store role in user metadata
         }
       }
     });
@@ -81,7 +137,7 @@ export const signUp = async (email: string, password: string, role: UserRole = '
     if (data.user) {
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({ role: role })
+        .update({ role: finalRole })
         .eq('id', data.user.id);
       
       if (profileError) {
@@ -184,4 +240,3 @@ export const changeRole = async (newRole: UserRole) => {
   
   return data[0];
 };
-

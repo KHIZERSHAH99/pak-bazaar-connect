@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,9 +22,11 @@ import InquiryForm from "./pages/InquiryForm";
 
 // Admin pages
 import AdApprovals from "./pages/admin/AdApprovals";
+import AdminPanel from "./pages/admin/AdminPanel";
 
 // Wholesaler pages
 import Shops from "./pages/wholesaler/Shops";
+import ShopDetails from "./pages/wholesaler/ShopDetails";
 import WholesalerProducts from "./pages/wholesaler/Products";
 import Advertisements from "./pages/wholesaler/Advertisements";
 import SellerDashboard from "./pages/wholesaler/SellerDashboard";
@@ -65,9 +66,11 @@ const App = () => (
 
             {/* Admin pages */}
             <Route path="/dashboard/ad-approvals" element={<AdApprovals />} />
+            <Route path="/admin" element={<AdminPanel />} />
 
             {/* Wholesaler pages */}
             <Route path="/dashboard/shops" element={<Shops />} />
+            <Route path="/dashboard/shops/:shopId" element={<ShopDetails />} />
             <Route path="/dashboard/products" element={<WholesalerProducts />} />
             <Route path="/dashboard/ads" element={<Advertisements />} />
             <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />

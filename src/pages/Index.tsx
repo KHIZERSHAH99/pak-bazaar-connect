@@ -1,63 +1,52 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  Store, 
-  ShoppingBag, 
-  TrendingUp, 
-  Shield, 
-  Zap, 
-  Users, 
-  Globe, 
-  ArrowRight,
-  CheckCircle,
-  Star,
-  Award,
-  Heart,
-  Flag
-} from 'lucide-react';
-
+import { Store, ShoppingBag, TrendingUp, Shield, Zap, Users, Globe, ArrowRight, CheckCircle, Star, Award, Heart, Flag } from 'lucide-react';
 const Index = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-
-  const features = [
-    {
-      icon: <Store className="h-8 w-8" />,
-      title: 'For Wholesalers',
-      description: 'Create shops, list products, and reach retailers across Pakistan',
-      color: 'from-blue-500 to-blue-600',
-      benefits: ['Unlimited product listings', 'Advanced analytics', 'Promotional ads']
-    },
-    {
-      icon: <ShoppingBag className="h-8 w-8" />,
-      title: 'For Sellers',
-      description: 'Source quality products directly from verified wholesalers',
-      color: 'from-purple-500 to-purple-600',
-      benefits: ['Bulk pricing', 'Quick ordering', 'Inventory management']
-    },
-    {
-      icon: <Shield className="h-8 w-8" />,
-      title: 'Secure Trading',
-      description: 'End-to-end security with verified businesses and secure payments',
-      color: 'from-green-500 to-green-600',
-      benefits: ['Business verification', 'Secure payments', 'Dispute resolution']
-    }
-  ];
-
-  const stats = [
-    { number: '10,000+', label: 'Active Businesses', icon: <Users className="h-5 w-5" /> },
-    { number: '500+', label: 'Cities Covered', icon: <Globe className="h-5 w-5" /> },
-    { number: '2.5%', label: 'Low Commission', icon: <TrendingUp className="h-5 w-5" /> },
-    { number: '24/7', label: 'Support', icon: <Heart className="h-5 w-5" /> }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-green-50 to-pakistani_green-50">
+  const features = [{
+    icon: <Store className="h-8 w-8" />,
+    title: 'For Wholesalers',
+    description: 'Create shops, list products, and reach retailers across Pakistan',
+    color: 'from-blue-500 to-blue-600',
+    benefits: ['Unlimited product listings', 'Advanced analytics', 'Promotional ads']
+  }, {
+    icon: <ShoppingBag className="h-8 w-8" />,
+    title: 'For Sellers',
+    description: 'Source quality products directly from verified wholesalers',
+    color: 'from-purple-500 to-purple-600',
+    benefits: ['Bulk pricing', 'Quick ordering', 'Inventory management']
+  }, {
+    icon: <Shield className="h-8 w-8" />,
+    title: 'Secure Trading',
+    description: 'End-to-end security with verified businesses and secure payments',
+    color: 'from-green-500 to-green-600',
+    benefits: ['Business verification', 'Secure payments', 'Dispute resolution']
+  }];
+  const stats = [{
+    number: '10,000+',
+    label: 'Active Businesses',
+    icon: <Users className="h-5 w-5" />
+  }, {
+    number: '500+',
+    label: 'Cities Covered',
+    icon: <Globe className="h-5 w-5" />
+  }, {
+    number: '2.5%',
+    label: 'Low Commission',
+    icon: <TrendingUp className="h-5 w-5" />
+  }, {
+    number: '24/7',
+    label: 'Support',
+    icon: <Heart className="h-5 w-5" />
+  }];
+  return <div className="min-h-screen bg-gradient-to-b from-white via-green-50 to-pakistani_green-50">
       {/* Top Banner */}
       <div className="bg-gradient-to-r from-pakistani_green-700 via-pakistani_green-600 to-green-600 text-white py-3 px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
@@ -88,14 +77,11 @@ const Index = () => {
                 Browse Products
               </Button>
             </Link>
-            {user ? (
-              <Link to="/dashboard">
+            {user ? <Link to="/dashboard">
                 <Button size="sm" className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 font-poppins shadow-lg">
                   Dashboard
                 </Button>
-              </Link>
-            ) : (
-              <>
+              </Link> : <>
                 <Link to="/login">
                   <Button variant="outline" size="sm" className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 font-poppins">
                     Login
@@ -106,8 +92,7 @@ const Index = () => {
                     Get Started
                   </Button>
                 </Link>
-              </>
-            )}
+              </>}
           </nav>
         </div>
       </header>
@@ -136,20 +121,13 @@ const Index = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Link to="/signup">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 text-white px-8 py-4 text-lg font-poppins shadow-2xl hover:shadow-3xl transition-all duration-300 group"
-              >
+              <Button size="lg" className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 text-white px-8 py-4 text-lg font-poppins shadow-2xl hover:shadow-3xl transition-all duration-300 group">
                 Start Trading Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
             <Link to="/products">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="border-2 border-pakistani_green-600 text-pakistani_green-700 hover:bg-pakistani_green-50 px-8 py-4 text-lg font-poppins"
-              >
+              <Button variant="outline" size="lg" className="border-2 border-pakistani_green-600 text-pakistani_green-700 hover:bg-pakistani_green-50 px-8 py-4 text-lg font-poppins">
                 Browse Products
               </Button>
             </Link>
@@ -157,8 +135,7 @@ const Index = () => {
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            {stats.map((stat, index) => (
-              <Card key={index} className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-xl hover:shadow-2xl transition-all duration-300 group">
+            {stats.map((stat, index) => <Card key={index} className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-xl hover:shadow-2xl transition-all duration-300 group">
                 <div className="flex items-center justify-center mb-3">
                   <div className="bg-gradient-to-r from-pakistani_green-100 to-green-100 p-3 rounded-full group-hover:scale-110 transition-transform">
                     <div className="text-pakistani_green-600">{stat.icon}</div>
@@ -166,8 +143,7 @@ const Index = () => {
                 </div>
                 <div className="text-2xl md:text-3xl font-bold text-gray-800 mb-1 font-poppins">{stat.number}</div>
                 <div className="text-gray-600 font-poppins text-sm">{stat.label}</div>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -185,8 +161,7 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="p-8 border-none shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2 bg-gradient-to-br from-white to-gray-50">
+            {features.map((feature, index) => <Card key={index} className="p-8 border-none shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2 bg-gradient-to-br from-white to-gray-50">
                 <div className={`bg-gradient-to-r ${feature.color} p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                   <div className="text-white">{feature.icon}</div>
                 </div>
@@ -195,15 +170,12 @@ const Index = () => {
                 <p className="text-gray-600 mb-6 font-poppins leading-relaxed">{feature.description}</p>
                 
                 <ul className="space-y-3">
-                  {feature.benefits.map((benefit, idx) => (
-                    <li key={idx} className="flex items-center text-sm text-gray-700 font-poppins">
+                  {feature.benefits.map((benefit, idx) => <li key={idx} className="flex items-center text-sm text-gray-700 font-poppins">
                       <CheckCircle className="h-4 w-4 text-pakistani_green-600 mr-3 flex-shrink-0" />
                       {benefit}
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -227,19 +199,12 @@ const Index = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/signup">
-              <Button 
-                size="lg" 
-                className="bg-white text-pakistani_green-700 hover:bg-gray-100 px-8 py-4 text-lg font-bold font-poppins shadow-2xl hover:shadow-3xl transition-all duration-300"
-              >
+              <Button size="lg" className="bg-white text-pakistani_green-700 hover:bg-gray-100 px-8 py-4 text-lg font-bold font-poppins shadow-2xl hover:shadow-3xl transition-all duration-300">
                 Create Free Account
               </Button>
             </Link>
             <Link to="/products">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="border-2 border-white text-white hover:bg-white/10 px-8 py-4 text-lg font-poppins backdrop-blur-sm"
-              >
+              <Button variant="outline" size="lg" className="border-2 border-white hover:bg-white/10 px-8 py-4 text-lg font-poppins backdrop-blur-sm text-pakistani_green-950">
                 Explore Marketplace
               </Button>
             </Link>
@@ -267,8 +232,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;

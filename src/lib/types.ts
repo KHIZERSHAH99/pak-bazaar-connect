@@ -37,6 +37,10 @@ export interface Shop {
   // Joined data
   cities?: City;
   company_profiles?: CompanyProfile;
+  // Review data
+  avg_rating?: number;
+  total_reviews?: number;
+  is_verified?: boolean;
 }
 
 export interface Product {
@@ -49,11 +53,14 @@ export interface Product {
   is_active: boolean;
   category_id?: string;
   moq?: number;
-  verification_status: string; // Changed from union type to string to match database
+  verification_status: string;
   created_at?: string;
   // Joined data
   categories?: Category;
   shops?: Shop;
+  // Review data
+  avg_rating?: number;
+  total_reviews?: number;
 }
 
 export interface CompanyProfile {
@@ -68,7 +75,7 @@ export interface CompanyProfile {
   city_id?: string;
   address: string;
   business_type: string;
-  verification_status: string; // Changed from union type to string to match database
+  verification_status: string;
   created_at?: string;
   updated_at?: string;
   // Joined data
@@ -85,10 +92,21 @@ export interface Inquiry {
   buyer_email?: string;
   message: string;
   quantity_needed?: number;
-  status: string; // Changed from union type to string to match database
+  status: string;
   created_at?: string;
   // Joined data
   products?: Product;
+}
+
+export interface Review {
+  id: string;
+  reviewer_id: string;
+  shop_id?: string;
+  product_id?: string;
+  rating: number;
+  comment?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export type AdStatus = 'pending' | 'approved' | 'active' | 'rejected';

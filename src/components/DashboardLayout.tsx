@@ -27,12 +27,11 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-// Add the badge property to the interface
 interface NavItem {
   name: string;
   path: string;
   icon: React.ReactElement;
-  badge?: string; // Optional badge text
+  badge?: string;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
@@ -64,12 +63,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     ];
 
     const adminItems: NavItem[] = [
-      { 
-        name: 'Role Approvals', 
-        path: '/dashboard/role-approvals', 
-        icon: <Users className="w-5 h-5 mr-3" />,
-        badge: 'Admin'
-      },
       { 
         name: 'Ad Approvals', 
         path: '/dashboard/ad-approvals', 

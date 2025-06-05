@@ -20,3 +20,11 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
     return false;
   }
 };
+
+export const validateMOQ = (moq: number): boolean => {
+  return moq > 0 && Number.isInteger(moq);
+};
+
+export const validateRating = (rating: number): boolean => {
+  return rating >= 1 && rating <= 5;
+};

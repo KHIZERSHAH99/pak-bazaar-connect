@@ -114,10 +114,7 @@ const Index = () => {
             <span className="text-gray-800">Your Business</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed font-poppins">
-            Join thousands of Pakistani businesses trading on our secure platform. 
-            Low 2.5% commission, verified sellers, and instant payments.
-          </p>
+          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed font-poppins">Join thousands of Pakistani businesses trading on our secure platform. verified sellers, and instant payments.</p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Link to="/signup">

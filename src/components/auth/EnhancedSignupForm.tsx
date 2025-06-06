@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,7 +41,6 @@ const EnhancedSignupForm = () => {
       yearsInBusiness: '1-3 years',
       contactName: '',
       phoneNumber: '',
-      whatsappNumber: '',
     }
   });
   
@@ -119,7 +117,7 @@ const EnhancedSignupForm = () => {
       
       if (error.message) {
         if (error.message.includes('User already registered')) {
-          errorMsg = 'This email is already registered. Please try logging in.';
+          errorMsg = `This email is already registered as a ${selectedRole}. Please try logging in or use a different email.`;
         } else {
           errorMsg = error.message;
         }

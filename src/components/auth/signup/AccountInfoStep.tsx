@@ -10,9 +10,10 @@ import { useDebounce } from '@/hooks/useDebounce';
 interface AccountInfoStepProps {
   form: UseFormReturn<any>;
   isLoading: boolean;
+  selectedRole?: string;
 }
 
-const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading }) => {
+const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, selectedRole = 'wholesaler' }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [emailStatus, setEmailStatus] = useState<'checking' | 'available' | 'taken' | null>(null);
@@ -24,7 +25,8 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading }) =>
     const checkEmail = async () => {
       if (debouncedEmail && debouncedEmail.includes('@')) {
         setEmailStatus('checking');
-        const exists = await checkEmailExists(debouncedEmail);
+        // Allow same email for different roles
+        const exists = await checkEmailExists(debouncedEmail, selectedRole);
         setEmailStatus(exists ? 'taken' : 'available');
       } else {
         setEmailStatus(null);
@@ -32,13 +34,13 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading }) =>
     };
 
     checkEmail();
-  }, [debouncedEmail]);
+  }, [debouncedEmail, selectedRole]);
 
   return (
     <div className="space-y-4 animate-fadeIn">
       <div className="text-center mb-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-2 font-poppins">Account Information</h3>
-        <p className="text-gray-600 font-poppins text-sm">Create your account credentials</p>
+        <p className="text-gray-600 font-poppins text-sm">Create your {selectedRole} account credentials</p>
       </div>
 
       <FormField
@@ -74,12 +76,12 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading }) =>
             </FormControl>
             {emailStatus === 'taken' && (
               <p className="text-sm text-red-600 font-poppins">
-                This email is already registered. Please try logging in or use a different email.
+                This email is already registered as a {selectedRole}. Please try logging in or use a different email.
               </p>
             )}
             {emailStatus === 'available' && (
               <p className="text-sm text-green-600 font-poppins">
-                Email is available!
+                Email is available for {selectedRole} registration!
               </p>
             )}
             <FormMessage />

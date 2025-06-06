@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import {
@@ -103,12 +102,13 @@ const BusinessInfoStep: React.FC<BusinessInfoStepProps> = ({ form, isLoading }) 
               </FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="Enter NTN issued by FBR" 
+                  placeholder="Format: 1234567-8" 
                   disabled={isLoading} 
                   className="font-poppins"
                   {...field} 
                 />
               </FormControl>
+              <p className="text-xs text-gray-500 font-poppins">Must be in format XXXXXXX-X (issued by FBR)</p>
               <FormMessage />
             </FormItem>
           )}
@@ -125,7 +125,7 @@ const BusinessInfoStep: React.FC<BusinessInfoStepProps> = ({ form, isLoading }) 
               </FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="Enter STRN if applicable" 
+                  placeholder="11-15 digits (if applicable)" 
                   disabled={isLoading} 
                   className="font-poppins"
                   {...field} 
@@ -268,7 +268,7 @@ const BusinessInfoStep: React.FC<BusinessInfoStepProps> = ({ form, isLoading }) 
         )}
       />
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <FormField
           control={form.control}
           name="contactName"
@@ -302,7 +302,7 @@ const BusinessInfoStep: React.FC<BusinessInfoStepProps> = ({ form, isLoading }) 
               </FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="e.g. +92XXXXXXXXXX" 
+                  placeholder="e.g. +923001234567 or 03001234567" 
                   disabled={isLoading} 
                   className="font-poppins"
                   {...field} 
@@ -313,28 +313,6 @@ const BusinessInfoStep: React.FC<BusinessInfoStepProps> = ({ form, isLoading }) 
           )}
         />
       </div>
-      
-      <FormField
-        control={form.control}
-        name="whatsappNumber"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <Phone className="h-4 w-4 mr-1 text-pakistani_green-700" />
-              WhatsApp Number (optional)
-            </FormLabel>
-            <FormControl>
-              <Input 
-                placeholder="e.g. +92XXXXXXXXXX" 
-                disabled={isLoading} 
-                className="font-poppins"
-                {...field} 
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
       
       <div className="p-4 bg-green-50 border border-green-200 rounded-md">
         <div className="flex items-center">

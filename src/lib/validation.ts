@@ -2,24 +2,29 @@
 import { supabase } from '@/integrations/supabase/client';
 import { validateEmail } from './security';
 
-export const checkEmailExists = async (email: string): Promise<boolean> => {
+export const checkEmailExists = async (email: string, excludeRole?: string): Promise<boolean> => {
   try {
     if (!validateEmail(email)) {
       return false;
     }
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('profiles')
-      .select('email')
-      .eq('email', email.toLowerCase().trim())
-      .single();
+      .select('email, role')
+      .eq('email', email.toLowerCase().trim());
+    
+    if (excludeRole) {
+      query = query.neq('role', excludeRole);
+    }
+
+    const { data, error } = await query;
     
     if (error && error.code !== 'PGRST116') {
       console.error('Error checking email:', error);
       return false;
     }
     
-    return !!data;
+    return data && data.length > 0;
   } catch (error) {
     console.error('Email check error:', error);
     return false;
@@ -50,15 +55,39 @@ export const validatePostalCode = (code: string): boolean => {
 };
 
 export const validateNTN = (ntn: string): boolean => {
-  // Pakistani NTN validation (7 digits followed by dash and 1 digit)
+  // Pakistani NTN validation - must be exactly 7 digits followed by dash and 1 digit
   const ntnRegex = /^\d{7}-\d{1}$/;
-  return ntnRegex.test(ntn.trim());
+  const cleanNtn = ntn.trim();
+  
+  if (!ntnRegex.test(cleanNtn)) {
+    return false;
+  }
+  
+  // Additional validation: check if it's not all zeros or sequential numbers
+  const digits = cleanNtn.replace('-', '');
+  if (digits === '0000000' || digits === '1234567' || digits === '7654321') {
+    return false;
+  }
+  
+  return true;
 };
 
 export const validateSTRN = (strn: string): boolean => {
-  // Pakistani STRN validation (format varies, basic check for 11-15 digits)
+  // Pakistani STRN validation - must be 11-15 digits, no sequential or repeated patterns
   const strnRegex = /^\d{11,15}$/;
-  return strnRegex.test(strn.replace(/[-\s]/g, ''));
+  const cleanStrn = strn.replace(/[-\s]/g, '');
+  
+  if (!strnRegex.test(cleanStrn)) {
+    return false;
+  }
+  
+  // Check for invalid patterns
+  const invalidPatterns = ['11111111111', '12345678901', '00000000000'];
+  if (invalidPatterns.includes(cleanStrn.substring(0, 11))) {
+    return false;
+  }
+  
+  return true;
 };
 
 export const validateURL = (url: string): boolean => {

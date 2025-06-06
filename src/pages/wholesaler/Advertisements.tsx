@@ -7,21 +7,22 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { getAdsByWholesaler, Ad, createAd, uploadImage } from '@/lib/supabase';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getAdsByWholesaler, Ad, createAd } from '@/lib/supabase';
+import { getProductsByWholesaler } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, FileText, Edit } from 'lucide-react';
+import { Plus, FileText, Edit, Package } from 'lucide-react';
 
 const Advertisements: React.FC = () => {
   const [ads, setAds] = useState<Ad[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     headline: '',
+    productId: '',
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   const { toast } = useToast();
 
@@ -37,37 +38,27 @@ const Advertisements: React.FC = () => {
     }
   };
 
+  const fetchProducts = async () => {
+    try {
+      const data = await getProductsByWholesaler();
+      setProducts(data);
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+    }
+  };
+
   useEffect(() => {
     fetchAds();
+    fetchProducts();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Check file size (limit to 100KB)
-    if (file.size > 100 * 1024) {
-      toast({
-        title: 'File too large',
-        description: 'Advertisement image must be less than 100KB',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setImageFile(file);
-    
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+  const handleProductSelect = (productId: string) => {
+    setFormData(prev => ({ ...prev, productId }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,10 +73,10 @@ const Advertisements: React.FC = () => {
       return;
     }
 
-    if (!imageFile) {
+    if (!formData.productId) {
       toast({
-        title: 'Missing image',
-        description: 'Please upload an image for your advertisement',
+        title: 'Missing product',
+        description: 'Please select a product to advertise',
         variant: 'destructive',
       });
       return;
@@ -94,12 +85,12 @@ const Advertisements: React.FC = () => {
     try {
       setIsSubmitting(true);
       
-      const fileName = `ad_${Date.now()}_${imageFile.name}`;
-      const imageUrl = await uploadImage('ad_images', fileName, imageFile);
-
+      const selectedProduct = products.find(p => p.id === formData.productId);
+      
       const adData = {
         headline: formData.headline,
-        image: imageUrl,
+        image: selectedProduct?.image || '',
+        product_id: formData.productId,
       };
 
       await createAd(adData);
@@ -126,9 +117,8 @@ const Advertisements: React.FC = () => {
   const resetForm = () => {
     setFormData({
       headline: '',
+      productId: '',
     });
-    setImageFile(null);
-    setImagePreview(null);
   };
 
   const getStatusBadge = (status: string) => {
@@ -152,10 +142,25 @@ const Advertisements: React.FC = () => {
           <Button 
             onClick={() => setIsDialogOpen(true)}
             className="bg-primary hover:bg-pakistani-green-800"
+            disabled={products.length === 0}
           >
             <Plus className="w-4 h-4 mr-2" /> Create Ad
           </Button>
         </div>
+        
+        {products.length === 0 && (
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <div className="flex">
+              <Package className="h-5 w-5 text-blue-400 mr-3 mt-0.5" />
+              <div>
+                <p className="text-sm text-blue-700">
+                  You need to add products to your shop before creating advertisements. 
+                  <a href="/dashboard/products" className="underline ml-1">Add products now</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
           <div className="flex">
@@ -260,28 +265,26 @@ const Advertisements: React.FC = () => {
               </div>
               
               <div>
-                <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
-                  Advertisement Image (required, max 100KB)
+                <label htmlFor="product" className="block text-sm font-medium text-gray-700 mb-1">
+                  Select Product to Advertise
                 </label>
-                <Input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  disabled={isSubmitting}
-                  required
-                />
-                {imagePreview && (
-                  <div className="mt-2">
-                    <img 
-                      src={imagePreview} 
-                      alt="Advertisement Preview" 
-                      className="h-40 w-auto object-contain rounded-md"
-                    />
-                  </div>
-                )}
+                <Select onValueChange={handleProductSelect} disabled={isSubmitting}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a product from your shop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {products.map((product) => (
+                      <SelectItem key={product.id} value={product.id}>
+                        <div className="flex items-center">
+                          <Package className="h-4 w-4 mr-2" />
+                          {product.name} - PKR {product.price}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-xs text-gray-500 mt-1">
-                  Recommended size: 1200 x 628 pixels (16:9 ratio)
+                  The product's image will be used for the advertisement
                 </p>
               </div>
             </div>

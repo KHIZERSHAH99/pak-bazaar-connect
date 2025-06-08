@@ -7,10 +7,10 @@ import { getCurrentUser } from '@/lib/auth';
 
 interface FavoriteButtonProps {
   productId: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'lg' | 'default';
 }
 
-const FavoriteButton: React.FC<FavoriteButtonProps> = ({ productId, size = 'md' }) => {
+const FavoriteButton: React.FC<FavoriteButtonProps> = ({ productId, size = 'default' }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
 

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -29,7 +30,7 @@ import AdminPanel from "./pages/admin/AdminPanel";
 // Wholesaler pages
 import Shops from "./pages/wholesaler/Shops";
 import ShopDetails from "./pages/wholesaler/ShopDetails";
-import WholesalerProducts from "./pages/wholesaler/Products";
+import WholesalerProductsManagement from "./pages/wholesaler/Products";
 import Advertisements from "./pages/wholesaler/Advertisements";
 import SellerDashboard from "./pages/wholesaler/SellerDashboard";
 
@@ -50,7 +51,7 @@ import Messages from './pages/Messages';
 // Analytics
 import Analytics from './pages/Analytics';
 
-// Wholesaler products
+// Wholesaler marketplace page
 import WholesalerProducts from './pages/WholesalerProducts';
 
 const queryClient = new QueryClient();
@@ -87,7 +88,7 @@ function App() {
                   {/* Wholesaler pages */}
                   <Route path="/dashboard/shops" element={<Shops />} />
                   <Route path="/dashboard/shops/:shopId" element={<ShopDetails />} />
-                  <Route path="/dashboard/products" element={<WholesalerProducts />} />
+                  <Route path="/dashboard/products" element={<WholesalerProductsManagement />} />
                   <Route path="/dashboard/ads" element={<Advertisements />} />
                   <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />
                   <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />
@@ -124,7 +125,7 @@ function App() {
                     </ProtectedRoute>
                   } />
 
-                  {/* Wholesaler products */}
+                  {/* Wholesaler products marketplace */}
                   <Route path="/wholesaler-products" element={<WholesalerProducts />} />
                 </Routes>
                 <Toaster />

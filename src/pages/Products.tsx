@@ -15,6 +15,9 @@ const Products: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedCity, setSelectedCity] = useState<string>('all');
+  const [selectedRating, setSelectedRating] = useState<string>('all');
+  const [minPrice, setMinPrice] = useState<string>('');
+  const [maxPrice, setMaxPrice] = useState<string>('');
 
   const fetchData = async () => {
     try {
@@ -24,6 +27,9 @@ const Products: React.FC = () => {
           category_id: selectedCategory === 'all' ? undefined : selectedCategory,
           city_id: selectedCity === 'all' ? undefined : selectedCity,
           search: searchTerm || undefined,
+          min_price: minPrice ? parseFloat(minPrice) : undefined,
+          max_price: maxPrice ? parseFloat(maxPrice) : undefined,
+          min_rating: selectedRating === 'all' ? undefined : parseInt(selectedRating),
         }),
         getCategories(),
         getCities(),
@@ -51,6 +57,9 @@ const Products: React.FC = () => {
     setSearchTerm('');
     setSelectedCategory('all');
     setSelectedCity('all');
+    setSelectedRating('all');
+    setMinPrice('');
+    setMaxPrice('');
   };
 
   return (
@@ -65,6 +74,12 @@ const Products: React.FC = () => {
           setSelectedCategory={setSelectedCategory}
           selectedCity={selectedCity}
           setSelectedCity={setSelectedCity}
+          selectedRating={selectedRating}
+          setSelectedRating={setSelectedRating}
+          minPrice={minPrice}
+          setMinPrice={setMinPrice}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
           categories={categories}
           cities={cities}
           onSearch={handleSearch}

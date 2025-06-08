@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Store, ShoppingBag } from 'lucide-react';
+import { Store, ShoppingBag, AlertTriangle } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
 import RoleCard from './RoleCard';
 
@@ -20,13 +20,24 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
     <Card className="overflow-hidden border-none shadow-md">
       <div className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-500 p-4 md:p-6 text-white">
         <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins">Role Management</h2>
-        <p className="text-white/90 text-sm font-poppins">Choose your role to access platform features instantly</p>
+        <p className="text-white/90 text-sm font-poppins">Choose your role to access platform features</p>
       </div>
       
       <div className="p-4 md:p-6">
-        <p className="text-gray-600 mb-6 font-poppins text-sm md:text-base">
-          Select your role to access specific features. Changes are applied immediately.
-        </p>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm text-amber-800 font-poppins font-medium mb-1">
+                Role Change Notice
+              </p>
+              <p className="text-sm text-amber-700 font-poppins">
+                Role changes update your account permissions immediately. To maintain security, 
+                switching to a Wholesaler role requires proper business verification.
+              </p>
+            </div>
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <RoleCard
@@ -67,4 +78,3 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
 };
 
 export default RoleManagement;
-

@@ -3,8 +3,9 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { Category, City } from '@/lib/types';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Star } from 'lucide-react';
 
 interface ProductsFiltersProps {
   searchTerm: string;
@@ -13,6 +14,12 @@ interface ProductsFiltersProps {
   setSelectedCategory: (category: string) => void;
   selectedCity: string;
   setSelectedCity: (city: string) => void;
+  selectedRating: string;
+  setSelectedRating: (rating: string) => void;
+  minPrice: string;
+  setMinPrice: (price: string) => void;
+  maxPrice: string;
+  setMaxPrice: (price: string) => void;
   categories: Category[];
   cities: City[];
   onSearch: () => void;
@@ -26,17 +33,23 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
   setSelectedCategory,
   selectedCity,
   setSelectedCity,
+  selectedRating,
+  setSelectedRating,
+  minPrice,
+  setMinPrice,
+  maxPrice,
+  setMaxPrice,
   categories,
   cities,
   onSearch,
   onClearFilters,
 }) => {
-  const hasActiveFilters = searchTerm || selectedCategory !== 'all' || selectedCity !== 'all';
+  const hasActiveFilters = searchTerm || selectedCategory !== 'all' || selectedCity !== 'all' || selectedRating !== 'all' || minPrice || maxPrice;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="md:col-span-2">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="md:col-span-2 lg:col-span-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <Input
@@ -76,9 +89,75 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
             ))}
           </SelectContent>
         </Select>
+
+        <Select value={selectedRating} onValueChange={setSelectedRating}>
+          <SelectTrigger>
+            <SelectValue placeholder="All Ratings" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Ratings</SelectItem>
+            <SelectItem value="5">
+              <div className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                <span>5 stars only</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="4">
+              <div className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                <span>4+ stars</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="3">
+              <div className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                <span>3+ stars</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="2">
+              <div className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                <span>2+ stars</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="1">
+              <div className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                <span>1+ stars</span>
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="flex justify-between items-center mt-4">
+      {/* Price Range Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        <div>
+          <Label htmlFor="minPrice" className="text-sm font-medium">Min Price (PKR)</Label>
+          <Input
+            id="minPrice"
+            type="number"
+            placeholder="0"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="maxPrice" className="text-sm font-medium">Max Price (PKR)</Label>
+          <Input
+            id="maxPrice"
+            type="number"
+            placeholder="No limit"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mt-6">
         <Button onClick={onSearch} className="bg-primary hover:bg-pakistani-green-800">
           <Search className="h-4 w-4 mr-2" />
           Search

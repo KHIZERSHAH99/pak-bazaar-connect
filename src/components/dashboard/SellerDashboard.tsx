@@ -21,7 +21,7 @@ const SellerDashboard: React.FC = () => (
         </Card>
       </Link>
       
-      <Link to="/dashboard/orders">
+      <Link to="/dashboard/seller-orders">
         <Card className="p-4 md:p-6 hover:bg-gray-50 transition-colors cursor-pointer h-full hover:shadow-md">
           <div className="flex items-center mb-4">
             <div className="bg-yellow-100 p-3 rounded-full mr-4">

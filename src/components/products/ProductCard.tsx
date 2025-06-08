@@ -24,7 +24,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <Link to={`/product/${product.id}`}>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
-        <div className="h-48 bg-gray-100 relative">
+        <div className="h-48 bg-gray-100 dark:bg-gray-700 relative">
           {product.image ? (
             <img 
               src={product.image} 
@@ -53,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </h3>
           
           {product.description && (
-            <p className="text-gray-600 text-sm mb-3 line-clamp-2 font-poppins">
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2 font-poppins">
               {product.description}
             </p>
           )}
@@ -64,7 +64,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 PKR {product.price.toLocaleString()}
               </p>
               {product.moq && product.moq > 1 && (
-                <p className="text-xs text-gray-500 font-poppins">
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-poppins">
                   MOQ: {product.moq} pieces
                 </p>
               )}
@@ -73,7 +73,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.avg_rating && product.avg_rating > 0 && (
               <div className="flex items-center space-x-1">
                 <StarRating rating={product.avg_rating} size="sm" />
-                <span className="text-sm text-gray-600 font-poppins">
+                <span className="text-sm text-gray-600 dark:text-gray-300 font-poppins">
                   ({product.total_reviews || 0})
                 </span>
               </div>
@@ -84,11 +84,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <div className="border-t pt-3">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="font-medium text-gray-800 font-poppins">
+                  <p className="font-medium text-gray-800 dark:text-gray-200 font-poppins">
                     {product.shops.name}
                   </p>
                   {product.shops.cities && (
-                    <div className="flex items-center text-sm text-gray-600 mt-1">
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-1">
                       <MapPin className="h-3 w-3 mr-1" />
                       <span className="font-poppins">{product.shops.cities.name}</span>
                     </div>

@@ -1,21 +1,20 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Shield } from 'lucide-react';
 
 interface VerifiedBadgeProps {
   isVerified: boolean;
   size?: 'sm' | 'md' | 'lg';
+  showText?: boolean;
 }
 
-const VerifiedBadge: React.FC<VerifiedBadgeProps> = ({ isVerified, size = 'md' }) => {
+const VerifiedBadge: React.FC<VerifiedBadgeProps> = ({ 
+  isVerified, 
+  size = 'md', 
+  showText = true 
+}) => {
   if (!isVerified) return null;
-
-  const sizeClasses = {
-    sm: 'text-xs px-2 py-1',
-    md: 'text-sm px-2 py-1',
-    lg: 'text-base px-3 py-1'
-  };
 
   const iconSizes = {
     sm: 'h-3 w-3',
@@ -23,12 +22,16 @@ const VerifiedBadge: React.FC<VerifiedBadgeProps> = ({ isVerified, size = 'md' }
     lg: 'h-5 w-5'
   };
 
+  const textSizes = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base'
+  };
+
   return (
-    <Badge 
-      className={`bg-green-100 text-green-800 border-green-200 ${sizeClasses[size]} font-poppins flex items-center gap-1`}
-    >
-      <CheckCircle className={iconSizes[size]} />
-      Verified
+    <Badge className={`bg-green-100 text-green-800 border-green-200 ${textSizes[size]} flex items-center gap-1`}>
+      <CheckCircle className={`${iconSizes[size]} text-green-600`} />
+      {showText && 'Verified'}
     </Badge>
   );
 };

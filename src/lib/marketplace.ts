@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Shop, Category, City, CompanyProfile, Inquiry } from '@/lib/types';
 
@@ -56,11 +55,14 @@ const getShopStats = async (shopId: string) => {
   }
 };
 
-// Products for marketplace with reviews and ratings
+// Products for marketplace with enhanced filtering
 export const getMarketplaceProducts = async (filters?: {
   category_id?: string;
   city_id?: string;
   search?: string;
+  min_price?: number;
+  max_price?: number;
+  min_rating?: number;
   limit?: number;
 }): Promise<Product[]> => {
   let query = supabase
@@ -97,6 +99,14 @@ export const getMarketplaceProducts = async (filters?: {
     query = query.ilike('name', `%${filters.search}%`);
   }
 
+  if (filters?.min_price) {
+    query = query.gte('price', filters.min_price);
+  }
+
+  if (filters?.max_price) {
+    query = query.lte('price', filters.max_price);
+  }
+
   if (filters?.limit) {
     query = query.limit(filters.limit);
   }
@@ -108,8 +118,8 @@ export const getMarketplaceProducts = async (filters?: {
     return [];
   }
   
-  // Get ratings for each product
-  const productsWithRatings = await Promise.all(
+  // Get ratings for each product and apply rating filter
+  let productsWithRatings = await Promise.all(
     (data || []).map(async (product: any) => {
       const stats = await getProductStats(product.id);
       
@@ -121,6 +131,13 @@ export const getMarketplaceProducts = async (filters?: {
       };
     })
   );
+
+  // Apply rating filter
+  if (filters?.min_rating) {
+    productsWithRatings = productsWithRatings.filter(
+      product => product.avg_rating >= filters.min_rating!
+    );
+  }
   
   return productsWithRatings as any[];
 };

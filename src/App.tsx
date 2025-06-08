@@ -1,11 +1,11 @@
-
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { LanguageProvider } from './contexts/LanguageContext';
+import { Toaster } from './components/ui/toaster';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages
 import Index from "./pages/Index";
@@ -41,61 +41,100 @@ import SellerOrders from "./pages/seller/SellerOrders";
 // Common pages
 import ChatSupport from "./pages/ChatSupport";
 
+// Favorites
+import Favorites from './pages/Favorites';
+
+// Messages
+import Messages from './pages/Messages';
+
+// Analytics
+import Analytics from './pages/Analytics';
+
+// Wholesaler products
+import WholesalerProducts from './pages/WholesalerProducts';
+
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AuthProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Public pages */}
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <Router>
+              <div className="min-h-screen bg-background text-foreground">
+                <Routes>
+                  {/* Public pages */}
+                  <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
 
-              {/* Public marketplace pages */}
-              <Route path="/products" element={<Products />} />
-              <Route path="/sellers" element={<Sellers />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/seller/:id" element={<SellerProfile />} />
-              <Route path="/inquiry" element={<InquiryForm />} />
+                  {/* Public marketplace pages */}
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/sellers" element={<Sellers />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/seller/:id" element={<SellerProfile />} />
+                  <Route path="/inquiry" element={<InquiryForm />} />
 
-              {/* Protected pages */}
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+                  {/* Protected pages */}
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
 
-              {/* Admin pages */}
-              <Route path="/dashboard/ad-approvals" element={<AdApprovals />} />
-              <Route path="/admin" element={<AdminPanel />} />
+                  {/* Admin pages */}
+                  <Route path="/dashboard/ad-approvals" element={<AdApprovals />} />
+                  <Route path="/admin" element={<AdminPanel />} />
 
-              {/* Wholesaler pages */}
-              <Route path="/dashboard/shops" element={<Shops />} />
-              <Route path="/dashboard/shops/:shopId" element={<ShopDetails />} />
-              <Route path="/dashboard/products" element={<WholesalerProducts />} />
-              <Route path="/dashboard/ads" element={<Advertisements />} />
-              <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />
-              <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />
+                  {/* Wholesaler pages */}
+                  <Route path="/dashboard/shops" element={<Shops />} />
+                  <Route path="/dashboard/shops/:shopId" element={<ShopDetails />} />
+                  <Route path="/dashboard/products" element={<WholesalerProducts />} />
+                  <Route path="/dashboard/ads" element={<Advertisements />} />
+                  <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />
+                  <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />
 
-              {/* Seller pages */}
-              <Route path="/dashboard/browse-shops" element={<BrowseShops />} />
-              <Route path="/dashboard/browse-shops/:shopId" element={<ShopProducts />} />
-              <Route path="/dashboard/seller-orders" element={<SellerOrders />} />
+                  {/* Seller pages */}
+                  <Route path="/dashboard/browse-shops" element={<BrowseShops />} />
+                  <Route path="/dashboard/browse-shops/:shopId" element={<ShopProducts />} />
+                  <Route path="/dashboard/seller-orders" element={<SellerOrders />} />
 
-              {/* Common pages */}
-              <Route path="/dashboard/chat" element={<ChatSupport />} />
+                  {/* Common pages */}
+                  <Route path="/dashboard/chat" element={<ChatSupport />} />
 
-              {/* 404 page */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+                  {/* 404 page */}
+                  <Route path="*" element={<NotFound />} />
+
+                  {/* Favorites */}
+                  <Route path="/favorites" element={
+                    <ProtectedRoute allowedRoles={['seller', 'wholesaler']}>
+                      <Favorites />
+                    </ProtectedRoute>
+                  } />
+
+                  {/* Messages */}
+                  <Route path="/messages" element={
+                    <ProtectedRoute allowedRoles={['seller', 'wholesaler']}>
+                      <Messages />
+                    </ProtectedRoute>
+                  } />
+
+                  {/* Analytics */}
+                  <Route path="/analytics" element={
+                    <ProtectedRoute allowedRoles={['wholesaler']}>
+                      <Analytics />
+                    </ProtectedRoute>
+                  } />
+
+                  {/* Wholesaler products */}
+                  <Route path="/wholesaler-products" element={<WholesalerProducts />} />
+                </Routes>
+                <Toaster />
+              </div>
+            </Router>
+          </AuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

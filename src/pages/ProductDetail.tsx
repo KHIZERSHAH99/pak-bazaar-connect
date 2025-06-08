@@ -5,17 +5,23 @@ import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getProductById } from '@/lib/marketplace';
+import { trackProductView } from '@/lib/analytics';
 import { Product } from '@/lib/types';
-import { Package, MapPin, Phone, MessageSquare, Store, ArrowLeft, ExternalLink } from 'lucide-react';
+import { Package, MapPin, Phone, Store, ArrowLeft, ExternalLink } from 'lucide-react';
+import MessageButton from '@/components/messaging/MessageButton';
+import FavoriteButton from '@/components/favorites/FavoriteButton';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (id) {
       fetchProduct();
+      trackProductView(id);
     }
   }, [id]);
 
@@ -79,11 +85,12 @@ const ProductDetail: React.FC = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <Link to="/products" className="inline-flex items-center text-primary hover:text-pakistani-green-800 font-poppins">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Products
+            {t('products')}
           </Link>
+          <FavoriteButton productId={product.id} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -126,7 +133,7 @@ const ProductDetail: React.FC = () => {
                 </p>
                 {product.moq && product.moq > 1 && (
                   <p className="text-gray-600 font-poppins">
-                    Minimum Order Quantity: {product.moq} pieces
+                    {t('minimum_order')}: {product.moq} pieces
                   </p>
                 )}
               </div>
@@ -183,19 +190,15 @@ const ProductDetail: React.FC = () => {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {product.shops.company_profiles?.whatsapp && (
-                    <Button 
-                      onClick={handleWhatsAppContact}
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      WhatsApp
-                    </Button>
-                  )}
+                  <MessageButton 
+                    sellerId={product.shops.owner_id} 
+                    sellerName={product.shops.name}
+                    productId={product.id}
+                  />
                   
                   {product.shops.company_profiles?.phone && (
                     <Button 
-                      onClick={handlePhoneContact}
+                      onClick={() => window.open(`tel:${product.shops.company_profiles.phone}`, '_self')}
                       variant="outline"
                     >
                       <Phone className="h-4 w-4 mr-2" />
@@ -206,7 +209,7 @@ const ProductDetail: React.FC = () => {
 
                 <Link to="/inquiry" state={{ product, shop: product.shops }}>
                   <Button className="w-full mt-3 bg-primary hover:bg-pakistani-green-800">
-                    Send Inquiry
+                    {t('request_quote')}
                   </Button>
                 </Link>
               </Card>

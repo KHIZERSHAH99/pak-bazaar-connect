@@ -10,8 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
+import { User, LayoutDashboard, LogOut, ChevronDown, Heart, MessageSquare, BarChart } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
+import LanguageToggle from '@/components/LanguageToggle';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface UserMenuProps {
   email?: string;
@@ -21,8 +23,11 @@ interface UserMenuProps {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex items-center gap-2">
+      <LanguageToggle />
       <ThemeToggle />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -39,19 +44,39 @@ const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge
           <DropdownMenuItem asChild>
             <Link to="/profile" className="cursor-pointer flex items-center gap-2 font-poppins">
               <User className="h-4 w-4" />
-              Profile
+              {t('profile')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link to="/dashboard" className="cursor-pointer flex items-center gap-2 font-poppins">
               <LayoutDashboard className="h-4 w-4" />
-              Dashboard
+              {t('dashboard')}
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/favorites" className="cursor-pointer flex items-center gap-2 font-poppins">
+              <Heart className="h-4 w-4" />
+              Favorites
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/messages" className="cursor-pointer flex items-center gap-2 font-poppins">
+              <MessageSquare className="h-4 w-4" />
+              Messages
+            </Link>
+          </DropdownMenuItem>
+          {role === 'wholesaler' && (
+            <DropdownMenuItem asChild>
+              <Link to="/analytics" className="cursor-pointer flex items-center gap-2 font-poppins">
+                <BarChart className="h-4 w-4" />
+                Analytics
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onLogout} className="text-red-600 cursor-pointer flex items-center gap-2 font-poppins">
             <LogOut className="h-4 w-4" />
-            Logout
+            {t('logout')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

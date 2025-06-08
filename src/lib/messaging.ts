@@ -1,5 +1,4 @@
 
-import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 
 export interface Conversation {
@@ -21,22 +20,37 @@ export interface Message {
   created_at: string;
 }
 
+// Mock storage for conversations and messages since the tables don't exist yet
+let mockConversations: Conversation[] = [];
+let mockMessages: Message[] = [];
+
 export const createConversation = async (data: {
   buyer_id: string;
   seller_id: string;
   product_id?: string;
 }): Promise<Conversation> => {
-  const { data: conversation, error } = await supabase
-    .from('conversations')
-    .insert([data])
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error creating conversation:', error);
-    throw error;
+  // Check if conversation already exists
+  const existingConversation = mockConversations.find(
+    conv => conv.buyer_id === data.buyer_id && conv.seller_id === data.seller_id
+  );
+  
+  if (existingConversation) {
+    return existingConversation;
   }
 
+  const conversation: Conversation = {
+    id: `conv_${Date.now()}`,
+    buyer_id: data.buyer_id,
+    seller_id: data.seller_id,
+    product_id: data.product_id,
+    created_at: new Date().toISOString()
+  };
+
+  mockConversations.push(conversation);
+  
+  // Store in localStorage for persistence
+  localStorage.setItem('conversations', JSON.stringify(mockConversations));
+  
   return conversation;
 };
 
@@ -44,38 +58,29 @@ export const getUserConversations = async (): Promise<Conversation[]> => {
   const user = await getCurrentUser();
   if (!user) return [];
 
-  const { data, error } = await supabase
-    .from('conversations')
-    .select(`
-      *,
-      products (name),
-      buyer:profiles!buyer_id (email),
-      seller:profiles!seller_id (email)
-    `)
-    .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
-    .order('last_message_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching conversations:', error);
-    return [];
+  // Load from localStorage if empty
+  if (mockConversations.length === 0) {
+    const stored = localStorage.getItem('conversations');
+    if (stored) {
+      mockConversations = JSON.parse(stored);
+    }
   }
 
-  return data as Conversation[];
+  return mockConversations.filter(
+    conv => conv.buyer_id === user.id || conv.seller_id === user.id
+  );
 };
 
 export const getConversationMessages = async (conversationId: string): Promise<Message[]> => {
-  const { data, error } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('conversation_id', conversationId)
-    .order('created_at', { ascending: true });
-
-  if (error) {
-    console.error('Error fetching messages:', error);
-    return [];
+  // Load from localStorage if empty
+  if (mockMessages.length === 0) {
+    const stored = localStorage.getItem('messages');
+    if (stored) {
+      mockMessages = JSON.parse(stored);
+    }
   }
 
-  return data as Message[];
+  return mockMessages.filter(msg => msg.conversation_id === conversationId);
 };
 
 export const createMessage = async (data: {
@@ -84,25 +89,30 @@ export const createMessage = async (data: {
   content: string;
   attachment?: string;
 }): Promise<Message> => {
-  const { data: message, error } = await supabase
-    .from('messages')
-    .insert([data])
-    .select()
-    .single();
+  const message: Message = {
+    id: `msg_${Date.now()}`,
+    conversation_id: data.conversation_id,
+    sender_id: data.sender_id,
+    content: data.content,
+    attachment: data.attachment,
+    created_at: new Date().toISOString()
+  };
 
-  if (error) {
-    console.error('Error creating message:', error);
-    throw error;
-  }
-
+  mockMessages.push(message);
+  
   // Update conversation last message
-  await supabase
-    .from('conversations')
-    .update({
-      last_message: data.content,
-      last_message_at: new Date().toISOString()
-    })
-    .eq('id', data.conversation_id);
+  const conversationIndex = mockConversations.findIndex(
+    conv => conv.id === data.conversation_id
+  );
+  
+  if (conversationIndex !== -1) {
+    mockConversations[conversationIndex].last_message = data.content;
+    mockConversations[conversationIndex].last_message_at = new Date().toISOString();
+  }
+  
+  // Store in localStorage for persistence
+  localStorage.setItem('messages', JSON.stringify(mockMessages));
+  localStorage.setItem('conversations', JSON.stringify(mockConversations));
 
   return message;
 };

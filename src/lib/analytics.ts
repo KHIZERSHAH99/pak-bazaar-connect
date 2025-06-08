@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -38,8 +39,6 @@ export const getSellerAnalytics = async (timeframe: string = '7d'): Promise<Anal
     };
   }
 
-  const shopIds = shops.map(shop => shop.id);
-
   // Mock data for now - in a real implementation, you'd track these metrics
   const mockAnalytics: AnalyticsData = {
     views: Math.floor(Math.random() * 1000) + 100,
@@ -64,13 +63,17 @@ export const trackProductView = async (productId: string): Promise<void> => {
   try {
     const user = await getCurrentUser();
     
-    await supabase
-      .from('product_views')
-      .insert([{
-        product_id: productId,
-        user_id: user?.id,
-        viewed_at: new Date().toISOString()
-      }]);
+    // Mock implementation - in the future this would insert into product_views table
+    console.log(`Product view tracked for product ${productId} by user ${user?.id}`);
+    
+    // Store in localStorage for now
+    const views = JSON.parse(localStorage.getItem('product_views') || '[]');
+    views.push({
+      product_id: productId,
+      user_id: user?.id,
+      viewed_at: new Date().toISOString()
+    });
+    localStorage.setItem('product_views', JSON.stringify(views));
   } catch (error) {
     console.error('Error tracking product view:', error);
   }

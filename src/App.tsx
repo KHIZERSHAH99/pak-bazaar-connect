@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -54,7 +53,22 @@ import Analytics from './pages/Analytics';
 // Wholesaler marketplace page
 import WholesalerProducts from './pages/WholesalerProducts';
 
-const queryClient = new QueryClient();
+// Policy pages
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import Contact from "./pages/Contact";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 10 * 60 * 1000, // 10 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (
@@ -69,6 +83,13 @@ function App() {
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+
+                  {/* Policy pages */}
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/refund-policy" element={<RefundPolicy />} />
+                  <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="/contact" element={<Contact />} />
 
                   {/* Public marketplace pages */}
                   <Route path="/products" element={<Products />} />

@@ -15,39 +15,41 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { User, ChevronDown } from 'lucide-react';
-import { useProfile } from '@/hooks/useProfile';
+// Removed: import { useProfile } from '@/hooks/useProfile';
 import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';
 
 const Navbar: React.FC = () => {
-  const { user, signOut } = useAuth(); // changed logout to signOut
+  const { user, profile, logout } = useAuth(); // Use logout, use profile from useAuth
   const { theme } = useTheme();
   const { t } = useLanguage();
-  const { userProfile } = useProfile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await signOut();
+    await logout();
   };
 
   const getRoleBadge = () => {
-    if (!userProfile?.role) return null;
+    if (!profile?.role) return null;
 
     let badgeColor = 'bg-gray-500';
-    if (userProfile.role === 'admin') {
+    if (profile.role === 'admin') {
       badgeColor = 'bg-red-500';
-    } else if (userProfile.role === 'wholesaler') {
+    } else if (profile.role === 'wholesaler') {
       badgeColor = 'bg-green-500';
-    } else if (userProfile.role === 'seller') {
+    } else if (profile.role === 'seller') {
       badgeColor = 'bg-blue-500';
     }
 
     return (
       <span className={`ml-1 px-2 py-0.5 rounded text-xs font-medium ${badgeColor} text-white`}>
-        {userProfile.role}
+        {profile.role}
       </span>
     );
   };
+
+  // MobileMenu expected: isOpen, user, onItemClick, onLogout, getRoleBadge
+  const handleMobileMenuItemClick = () => setIsMenuOpen(false);
 
   return (
     <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -146,13 +148,11 @@ const Navbar: React.FC = () => {
             <LanguageToggle />
             <ThemeToggle />
             <MobileMenu
-              isOpen={isMenuOpen} // changed prop name to isOpen
-              setIsMenuOpen={setIsMenuOpen}
+              isOpen={isMenuOpen}
               user={user}
-              userProfile={userProfile}
-              handleLogout={handleLogout}
+              onItemClick={handleMobileMenuItemClick}
+              onLogout={handleLogout}
               getRoleBadge={getRoleBadge}
-              t={t}
             />
           </div>
         </div>

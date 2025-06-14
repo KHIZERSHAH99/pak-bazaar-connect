@@ -54,22 +54,7 @@ import Analytics from './pages/Analytics';
 // Wholesaler marketplace page
 import WholesalerProducts from './pages/WholesalerProducts';
 
-// Policy pages
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import RefundPolicy from "./pages/RefundPolicy";
-import ShippingPolicy from "./pages/ShippingPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import Contact from "./pages/Contact";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 function App() {
   return (
@@ -84,13 +69,6 @@ function App() {
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
-
-                  {/* Policy pages */}
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/refund-policy" element={<RefundPolicy />} />
-                  <Route path="/shipping-policy" element={<ShippingPolicy />} />
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
-                  <Route path="/contact" element={<Contact />} />
 
                   {/* Public marketplace pages */}
                   <Route path="/products" element={<Products />} />
@@ -112,13 +90,13 @@ function App() {
                   <Route path="/dashboard/shops/:shopId" element={<ShopDetails />} />
                   <Route path="/dashboard/products" element={<WholesalerProductsManagement />} />
                   <Route path="/dashboard/ads" element={<Advertisements />} />
-                  <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} /> {/* TODO: Should this be a specific component? */}
+                  <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />
                   <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />
 
                   {/* Seller pages */}
                   <Route path="/dashboard/browse-shops" element={<BrowseShops />} />
                   <Route path="/dashboard/browse-shops/:shopId" element={<ShopProducts />} />
-                  <Route path="/dashboard/seller-orders" element={<SellerOrders />} /> {/* TODO: Verify this path or component */}
+                  <Route path="/dashboard/seller-orders" element={<SellerOrders />} />
 
                   {/* Common pages */}
                   <Route path="/dashboard/chat" element={<ChatSupport />} />

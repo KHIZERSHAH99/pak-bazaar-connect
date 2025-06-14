@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
@@ -135,12 +134,6 @@ export const secureChangeRole = async (newRole: UserRole) => {
     await logSecurityEvent('role_change_success', { 
       user_id: user.id, 
       new_role: newRole 
-    });
-
-    toast({
-      title: "Role Changed Successfully",
-      description: `Your role has been changed to ${newRole}.`,
-      variant: "default"
     });
     
     return data[0];

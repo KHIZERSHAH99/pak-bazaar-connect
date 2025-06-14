@@ -1,10 +1,11 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -23,11 +24,11 @@ const AdminPanel: React.FC = () => {
     queryKey: ['admin-stats'],
     queryFn: async () => {
       const [usersRes, shopsRes, productsRes, ordersRes, adsRes] = await Promise.all([
-        supabase.from('profiles').select('id, role').neq('role', 'admin'),
-        supabase.from('shops').select('id, commission_rate'),
-        supabase.from('products').select('id, price, is_active'),
-        supabase.from('orders').select('id, total_amount, status'),
-        supabase.from('ads').select('id, status')
+        supabase.from('profiles').select('id, role', { count: 'exact' }).neq('role', 'admin'),
+        supabase.from('shops').select('id, commission_rate', { count: 'exact' }),
+        supabase.from('products').select('id, price, is_active', { count: 'exact' }),
+        supabase.from('orders').select('id, total_amount, status', { count: 'exact' }),
+        supabase.from('ads').select('id, status', { count: 'exact' })
       ]);
 
       const users = usersRes.data || [];
@@ -43,23 +44,24 @@ const AdminPanel: React.FC = () => {
       const commission = totalRevenue * 0.025; // 2.5% platform commission
 
       return {
-        totalUsers: users.length,
+        totalUsers: usersRes.count || 0,
         wholesalers: users.filter(u => u.role === 'wholesaler').length,
         sellers: users.filter(u => u.role === 'seller').length,
         pending: users.filter(u => u.role === 'pending').length,
-        totalShops: shops.length,
-        totalProducts: products.length,
+        totalShops: shopsRes.count || 0,
+        totalProducts: productsRes.count || 0,
         activeProducts: products.filter(p => p.is_active).length,
-        totalOrders: orders.length,
+        totalOrders: ordersRes.count || 0,
         completedOrders: orders.filter(o => o.status === 'completed').length,
         pendingOrders: orders.filter(o => o.status === 'pending').length,
         totalRevenue,
         platformCommission: commission,
-        totalAds: ads.length,
+        totalAds: adsRes.count || 0,
         pendingAds: ads.filter(a => a.status === 'pending').length,
         approvedAds: ads.filter(a => a.status === 'approved').length,
       };
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: recentActivity, isLoading: activityLoading } = useQuery({
@@ -125,13 +127,13 @@ const AdminPanel: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 font-poppins">Platform Revenue</p>
-                <p className="text-2xl font-bold text-gray-800">Rs. {stats?.platformCommission?.toLocaleString() || 0}</p>
+                <p className="text-2xl font-bold text-gray-800">Rs. {stats?.platformCommission?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</p>
               </div>
               <div className="bg-green-100 p-3 rounded-full">
                 <DollarSign className="h-6 w-6 text-green-700" />
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-1">From Rs. {stats?.totalRevenue?.toLocaleString() || 0} total</p>
+            <p className="text-xs text-gray-500 mt-1">From Rs. {stats?.totalRevenue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'} total</p>
           </Card>
 
           <Card className="p-6">
@@ -177,20 +179,22 @@ const AdminPanel: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-3">
-                {recentActivity?.newUsers.map((user, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium text-gray-800 font-poppins">{user.email}</p>
-                      <p className="text-xs text-gray-500">{new Date(user.created_at).toLocaleDateString()}</p>
+                {recentActivity?.newUsers && recentActivity.newUsers.length > 0 ? 
+                  recentActivity.newUsers.map((user, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-800 dark:text-gray-200 font-poppins">{user.email}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{new Date(user.created_at).toLocaleDateString()}</p>
+                      </div>
+                      <Badge variant={
+                        user.role === 'wholesaler' ? 'success' : 
+                        user.role === 'seller' ? 'info' : 'pending'
+                      }>
+                        {user.role}
+                      </Badge>
                     </div>
-                    <Badge variant={
-                      user.role === 'wholesaler' ? 'success' : 
-                      user.role === 'seller' ? 'info' : 'pending'
-                    }>
-                      {user.role}
-                    </Badge>
-                  </div>
-                )) || <p className="text-gray-500 text-center py-4">No recent registrations</p>}
+                  )) : <p className="text-gray-500 dark:text-gray-400 text-center py-4">No recent registrations</p>
+                }
               </div>
             )}
           </Card>
@@ -198,26 +202,28 @@ const AdminPanel: React.FC = () => {
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 font-poppins flex items-center">
               <FileText className="h-5 w-5 mr-2" />
-              Pending Approvals
+              Approvals Overview
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 mr-3" />
-                  <div>
-                    <p className="font-medium text-gray-800 font-poppins">Pending Ads</p>
-                    <p className="text-xs text-gray-600">Require approval</p>
+              <Link to="/dashboard/ad-approvals" className="block">
+                <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-800/30 rounded-lg border border-yellow-200 dark:border-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-800/50 transition-colors">
+                  <div className="flex items-center">
+                    <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mr-3" />
+                    <div>
+                      <p className="font-medium text-gray-800 dark:text-gray-200 font-poppins">Pending Ads</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Require approval</p>
+                    </div>
                   </div>
+                  <Badge variant="warning">{stats?.pendingAds || 0}</Badge>
                 </div>
-                <Badge variant="warning">{stats?.pendingAds || 0}</Badge>
-              </div>
+              </Link>
 
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-800/30 rounded-lg border border-green-200 dark:border-green-700">
                 <div className="flex items-center">
-                  <TrendingUp className="h-5 w-5 text-green-600 mr-3" />
+                  <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400 mr-3" />
                   <div>
-                    <p className="font-medium text-gray-800 font-poppins">Approved Ads</p>
-                    <p className="text-xs text-gray-600">Currently active</p>
+                    <p className="font-medium text-gray-800 dark:text-gray-200 font-poppins">Approved Ads</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Currently active or approved</p>
                   </div>
                 </div>
                 <Badge variant="success">{stats?.approvedAds || 0}</Badge>
@@ -228,22 +234,39 @@ const AdminPanel: React.FC = () => {
 
         {/* Quick Actions */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 font-poppins">Quick Actions</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 font-poppins">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-              <FileText className="h-8 w-8 text-blue-600 mb-2" />
-              <h4 className="font-medium text-gray-800 font-poppins">Review Ads</h4>
-              <p className="text-sm text-gray-600">Approve pending advertisements</p>
+            <Link to="/dashboard/ad-approvals" className="block">
+              <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors h-full flex flex-col justify-between">
+                <div>
+                  <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400 mb-2" />
+                  <h4 className="font-medium text-gray-800 dark:text-gray-200 font-poppins">Review Ads</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Approve pending advertisements</p>
+                </div>
+                <Button variant="outline" size="sm" className="mt-3 w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white dark:bg-pakistani_green-700 dark:hover:bg-pakistani_green-800">
+                  Go to Ad Approvals
+                </Button>
+              </div>
+            </Link>
+            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-700/30 h-full flex flex-col justify-between"> {/* Non-clickable for now */}
+              <div>
+                <Users className="h-8 w-8 text-green-600 dark:text-green-400 mb-2" />
+                <h4 className="font-medium text-gray-800 dark:text-gray-200 font-poppins">Manage Users</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">View and manage user accounts (coming soon).</p>
+              </div>
+               <Button variant="outline" size="sm" className="mt-3 w-full" disabled>
+                  Feature Unavailable
+                </Button>
             </div>
-            <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-              <Users className="h-8 w-8 text-green-600 mb-2" />
-              <h4 className="font-medium text-gray-800 font-poppins">Manage Users</h4>
-              <p className="text-sm text-gray-600">View and manage user accounts</p>
-            </div>
-            <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-              <TrendingUp className="h-8 w-8 text-purple-600 mb-2" />
-              <h4 className="font-medium text-gray-800 font-poppins">Analytics</h4>
-              <p className="text-sm text-gray-600">View detailed platform analytics</p>
+            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-700/30 h-full flex flex-col justify-between"> {/* Non-clickable for now */}
+              <div>
+                <TrendingUp className="h-8 w-8 text-purple-600 dark:text-purple-400 mb-2" />
+                <h4 className="font-medium text-gray-800 dark:text-gray-200 font-poppins">Platform Analytics</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">View detailed platform analytics (coming soon).</p>
+              </div>
+              <Button variant="outline" size="sm" className="mt-3 w-full" disabled>
+                  Feature Unavailable
+                </Button>
             </div>
           </div>
         </Card>

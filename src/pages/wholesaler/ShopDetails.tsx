@@ -14,6 +14,7 @@ import ShopInformationCard from '@/components/shop/details/ShopInformationCard';
 import ShopProductsSection from '@/components/shop/details/ShopProductsSection';
 import ShopStatisticsCard from '@/components/shop/details/ShopStatisticsCard';
 import ShopQuickActionsCard from '@/components/shop/details/ShopQuickActionsCard';
+import type { ShopWithCity, ProductWithCategory } from '@/lib/types'; // Assuming these more specific types exist or can be defined
 
 const ShopDetails: React.FC = () => {
   const { shopId } = useParams<{ shopId: string }>();
@@ -29,6 +30,7 @@ const ShopDetails: React.FC = () => {
         .select(`
           *,
           cities (
+            id, 
             name,
             province
           )
@@ -37,7 +39,7 @@ const ShopDetails: React.FC = () => {
         .single();
       
       if (shopError) throw shopError;
-      return data;
+      return data as ShopWithCity; // Cast to a more specific type if needed
     },
     enabled: !!shopId,
   });
@@ -52,6 +54,7 @@ const ShopDetails: React.FC = () => {
         .select(`
           *,
           categories (
+            id, 
             name
           )
         `)
@@ -59,7 +62,7 @@ const ShopDetails: React.FC = () => {
         .eq('is_active', true); // Only active products for this shop
       
       if (productsError) throw productsError;
-      return data || [];
+      return (data || []) as ProductWithCategory[]; // Cast to a more specific type if needed
     },
     enabled: !!shopId,
   });
@@ -132,4 +135,3 @@ const ShopDetailsWithAuth = () => (
 );
 
 export default ShopDetailsWithAuth;
-

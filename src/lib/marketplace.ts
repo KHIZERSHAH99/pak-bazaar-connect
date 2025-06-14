@@ -34,8 +34,8 @@ export const getCities = async (): Promise<City[]> => {
 // Helper function to get product stats using direct query
 const getProductStats = async (productId: string) => {
   try {
-    const { data: user } = await supabase.auth.getUser();
     // For now, return mock data since reviews table might not exist yet
+    // console.log(`Fetching stats for product ${productId}`);
     return { avg_rating: 0, total_reviews: 0 };
   } catch (error) {
     console.error('Error fetching product stats:', error);
@@ -46,8 +46,8 @@ const getProductStats = async (productId: string) => {
 // Helper function to get shop stats using direct query
 const getShopStats = async (shopId: string) => {
   try {
-    const { data: user } = await supabase.auth.getUser();
     // For now, return mock data since reviews table might not exist yet
+    // console.log(`Fetching stats for shop ${shopId}`);
     return { avg_rating: 0, total_reviews: 0, is_verified: false };
   } catch (error) {
     console.error('Error fetching shop stats:', error);
@@ -65,6 +65,7 @@ export const getMarketplaceProducts = async (filters?: {
   min_rating?: number;
   limit?: number;
 }): Promise<Product[]> => {
+  console.log('[getMarketplaceProducts] Fetching with filters:', filters);
   let query = supabase
     .from('products')
     .select(`
@@ -117,6 +118,7 @@ export const getMarketplaceProducts = async (filters?: {
     console.error('Error fetching marketplace products:', error);
     return [];
   }
+  console.log('[getMarketplaceProducts] Fetched raw products:', data);
   
   // Get ratings for each product and apply rating filter
   let productsWithRatings = await Promise.all(
@@ -138,12 +140,13 @@ export const getMarketplaceProducts = async (filters?: {
       product => product.avg_rating >= filters.min_rating!
     );
   }
-  
+  console.log('[getMarketplaceProducts] Products with ratings:', productsWithRatings);
   return productsWithRatings as any[];
 };
 
 // Get single product with details and reviews
 export const getProductById = async (id: string): Promise<Product | null> => {
+  console.log(`[getProductById] Fetching product with id: ${id}`);
   const { data, error } = await supabase
     .from('products')
     .select(`
@@ -171,6 +174,7 @@ export const getProductById = async (id: string): Promise<Product | null> => {
     console.error('Error fetching product:', error);
     return null;
   }
+  console.log(`[getProductById] Fetched product data:`, data);
   
   // Get company profile and product stats
   if (data?.shops?.owner_id) {

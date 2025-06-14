@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Home, LayoutDashboard, User, LogOut } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import ThemeToggle from '@/components/ThemeToggle';
 import LanguageToggle from '@/components/LanguageToggle';
+import RoleSwitcher from './RoleSwitcher';
 
 interface MobileMenuProps {
   isOpen: boolean;

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,8 +28,6 @@ const RoleCard: React.FC<RoleCardProps> = ({
   onRoleChange
 }) => {
   const isCurrentRole = currentRole === targetRole;
-  
-  // Check if user is trying to switch from seller to wholesaler
   const isSellerToWholesaler = currentRole === 'seller' && targetRole === 'wholesaler';
 
   return (
@@ -69,16 +66,15 @@ const RoleCard: React.FC<RoleCardProps> = ({
         {!isCurrentRole && (
           <>
             {isSellerToWholesaler ? (
-              <Link to="/signup" className="block">
-                <Button 
-                  variant="outline" 
-                  className="w-full group font-poppins"
-                  disabled={isRequesting}
-                >
-                  Sign Up as {title}
-                  <ExternalLink className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Button>
-              </Link>
+              <Button 
+                variant="outline" 
+                className="w-full group font-poppins cursor-not-allowed"
+                disabled
+                title="Already signed in. Please request a role change from your profile."
+              >
+                Sign Up as {title}
+                <ExternalLink className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
             ) : (
               <Button 
                 variant="outline" 

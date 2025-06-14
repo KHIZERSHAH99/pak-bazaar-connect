@@ -84,6 +84,64 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+  
+  /* RTL Layout Handling */
+  [dir="rtl"] {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .flex {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .flex-col {
+    flex-direction: column;
+  }
+  
+  [dir="rtl"] .grid {
+    direction: ltr;
+  }
+  
+  /* Ensure text remains readable in RTL */
+  [dir="rtl"] p,
+  [dir="rtl"] span,
+  [dir="rtl"] h1,
+  [dir="rtl"] h2,
+  [dir="rtl"] h3,
+  [dir="rtl"] h4,
+  [dir="rtl"] h5,
+  [dir="rtl"] h6,
+  [dir="rtl"] button,
+  [dir="rtl"] a,
+  [dir="rtl"] label {
+    direction: rtl;
+    unicode-bidi: embed;
+  }
+  
+  /* Fix specific layouts for RTL */
+  [dir="rtl"] .justify-between {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .ml-2 {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+  
+  [dir="rtl"] .mr-2 {
+    margin-right: 0;
+    margin-left: 0.5rem;
+  }
+  
+  [dir="rtl"] .ml-4 {
+    margin-left: 0;
+    margin-right: 1rem;
+  }
+  
+  [dir="rtl"] .mr-4 {
+    margin-right: 0;
+    margin-left: 1rem;
+  }
 }
 
 @layer base {
@@ -97,6 +155,21 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-poppins;
+  }
+  
+  /* Fix image loading issues */
+  img {
+    @apply transition-opacity duration-300;
+  }
+  
+  img[src=""],
+  img:not([src]),
+  img[src*="placeholder"] {
+    @apply opacity-0;
+  }
+  
+  img[data-loaded="true"] {
+    @apply opacity-100;
   }
 }
 
@@ -174,6 +247,15 @@
   .typing-dot {
     @apply w-2 h-2 rounded-full bg-pakistani_green-500;
     animation: bounce 1.4s infinite ease-in-out;
+  }
+  
+  /* Translucent backgrounds */
+  .bg-translucent-green {
+    @apply bg-pakistani_green-500/20 dark:bg-pakistani_green-600/30 backdrop-blur-sm;
+  }
+  
+  .border-translucent-green {
+    @apply border-pakistani_green-200/50 dark:border-pakistani_green-700/50;
   }
 }
 

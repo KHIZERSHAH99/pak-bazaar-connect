@@ -20,20 +20,20 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
 
   return (
     <Card className="overflow-hidden border-none shadow-md">
-      <div className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-500 p-4 md:p-6 text-white">
-        <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins">Role Management</h2>
-        <p className="text-white/90 text-sm font-poppins">Choose your role to access platform features</p>
+      <div className="bg-pakistani_green-500/20 dark:bg-pakistani_green-600/30 backdrop-blur-sm p-4 md:p-6 border-b border-pakistani_green-200/50 dark:border-pakistani_green-700/50">
+        <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins text-pakistani_green-800 dark:text-pakistani_green-100">Role Management</h2>
+        <p className="text-pakistani_green-700 dark:text-pakistani_green-200 text-sm font-poppins">Choose your role to access platform features</p>
       </div>
       
       <div className="p-4 md:p-6">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+        <div className="bg-amber-50/80 dark:bg-amber-900/30 border border-amber-200/60 dark:border-amber-700/50 rounded-lg p-4 mb-6 backdrop-blur-sm">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-sm text-amber-800 font-poppins font-medium mb-1">
+              <p className="text-sm text-amber-800 dark:text-amber-200 font-poppins font-medium mb-1">
                 Role Change Notice
               </p>
-              <p className="text-sm text-amber-700 font-poppins">
+              <p className="text-sm text-amber-700 dark:text-amber-300 font-poppins">
                 Role changes update your account permissions immediately. To maintain security, 
                 switching to a Wholesaler role requires proper business verification.
               </p>
@@ -42,14 +42,14 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
         </div>
 
         {isSellerRole && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-700/50 rounded-lg p-4 mb-6 backdrop-blur-sm">
             <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm text-blue-800 font-poppins font-medium mb-1">
+                <p className="text-sm text-blue-800 dark:text-blue-200 font-poppins font-medium mb-1">
                   Becoming a Wholesaler
                 </p>
-                <p className="text-sm text-blue-700 font-poppins">
+                <p className="text-sm text-blue-700 dark:text-blue-300 font-poppins">
                   To become a wholesaler, you'll need to complete a separate signup process with business verification. 
                   This ensures all wholesalers on our platform are legitimate businesses.
                 </p>

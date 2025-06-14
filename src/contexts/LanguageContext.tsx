@@ -60,6 +60,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Update document direction for RTL support
     document.documentElement.dir = lang === 'ur' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
+    
+    // Add CSS class for Urdu to handle specific styling
+    if (lang === 'ur') {
+      document.documentElement.classList.add('urdu-layout');
+    } else {
+      document.documentElement.classList.remove('urdu-layout');
+    }
   };
 
   const t = (key: string): string => {

@@ -43,16 +43,16 @@ const BrowseShops: React.FC = () => {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Browse Wholesale Shops</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6 font-poppins">Browse Wholesale Shops</h1>
 
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search shops by name or location..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-background border-border"
             />
           </div>
         </div>
@@ -62,53 +62,53 @@ const BrowseShops: React.FC = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : filteredShops.length === 0 ? (
-          <Card className="p-8 text-center">
+          <Card className="p-8 text-center bg-card border-border">
             <div className="flex justify-center mb-4">
-              <Store className="h-16 w-16 text-gray-300" />
+              <Store className="h-16 w-16 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium text-gray-700 mb-2">No shops found</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-medium text-foreground mb-2 font-poppins">No shops found</h3>
+            <p className="text-muted-foreground font-poppins">
               {searchTerm ? 'No shops match your search. Try different keywords.' : 'There are no shops available at the moment.'}
             </p>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredShops.map((shop) => (
-              <Card key={shop.id} className="overflow-hidden">
+              <Card key={shop.id} className="overflow-hidden bg-card border-border hover:shadow-lg transition-shadow">
                 <div className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="h-12 w-12 bg-pakistani-green-100 rounded-full flex items-center justify-center mr-4">
+                    <div className="h-12 w-12 bg-pakistani_green-100 dark:bg-pakistani_green-800/50 rounded-full flex items-center justify-center mr-4">
                       {shop.logo ? (
                         <img 
                           src={shop.logo} 
                           alt={shop.name} 
                           className="h-full w-full rounded-full object-cover"
                           onError={(e) => {
-                            e.currentTarget.src = "https://via.placeholder.com/100?text=Shop";
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
                           }}
                         />
-                      ) : (
-                        <Store className="h-6 w-6 text-primary" />
-                      )}
+                      ) : null}
+                      <Store className={`h-6 w-6 text-primary ${shop.logo ? 'hidden' : ''}`} />
                     </div>
-                    <h3 className="font-semibold text-lg">{shop.name}</h3>
+                    <h3 className="font-semibold text-lg text-foreground font-poppins">{shop.name}</h3>
                   </div>
                   
                   <div className="space-y-2 mb-6">
-                    <p className="text-gray-600">
-                      <span className="font-medium">Contact:</span> {shop.contact}
+                    <p className="text-muted-foreground font-poppins">
+                      <span className="font-medium text-foreground">Contact:</span> {shop.contact}
                     </p>
-                    <p className="text-gray-600">
-                      <span className="font-medium">Address:</span> {shop.address}
+                    <p className="text-muted-foreground font-poppins">
+                      <span className="font-medium text-foreground">Address:</span> {shop.address}
                     </p>
-                    <p className="text-gray-600">
-                      <span className="font-medium">Postal Code:</span> {shop.postal_code}
+                    <p className="text-muted-foreground font-poppins">
+                      <span className="font-medium text-foreground">Postal Code:</span> {shop.postal_code}
                     </p>
                   </div>
 
                   <Button 
                     onClick={() => handleViewProducts(shop.id)}
-                    className="w-full bg-primary hover:bg-pakistani-green-800"
+                    className="w-full bg-primary hover:bg-pakistani_green-800 text-primary-foreground font-poppins"
                   >
                     <Package className="h-4 w-4 mr-2" /> Browse Products
                   </Button>

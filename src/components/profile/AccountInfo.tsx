@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { User, Calendar } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface AccountInfoProps {
   email?: string;
@@ -9,38 +10,41 @@ interface AccountInfoProps {
 }
 
 const AccountInfo: React.FC<AccountInfoProps> = ({ email, createdAt }) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Unknown';
+    try {
+      return format(new Date(dateString), 'MMMM dd, yyyy');
+    } catch (error) {
+      return 'Invalid date';
+    }
+  };
+
   return (
-    <Card className="mb-8 overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300">
-      <div className="bg-gradient-to-r from-pakistani_green-700 to-pakistani_green-600 p-4 md:p-6 text-white">
-        <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins">Account Information</h2>
-        <p className="text-white/80 text-sm font-poppins">Your personal account details</p>
+    <Card className="mb-8 overflow-hidden border-none shadow-md">
+      <div className="bg-pakistani_green-500/20 dark:bg-pakistani_green-600/30 backdrop-blur-sm p-4 md:p-6 border-b border-pakistani_green-200/50 dark:border-pakistani_green-700/50">
+        <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins text-pakistani_green-800 dark:text-pakistani_green-100">Account Information</h2>
+        <p className="text-pakistani_green-700 dark:text-pakistani_green-200 text-sm font-poppins">Your personal account details</p>
       </div>
       
-      <div className="p-4 md:p-6">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-pakistani_green-100 p-2 rounded-full">
-              <User className="h-5 w-5 text-pakistani_green-700" />
+      <div className="p-4 md:p-6 bg-background/95 dark:bg-background/95">
+        <div className="grid gap-4 md:gap-6">
+          <div className="flex items-center gap-4 p-4 bg-muted/50 dark:bg-muted/30 rounded-lg border border-border/50">
+            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-800/50 p-3 rounded-full">
+              <User className="h-5 w-5 text-pakistani_green-700 dark:text-pakistani_green-300" />
             </div>
-            <div>
-              <p className="text-sm text-gray-500 font-poppins">Email Address</p>
-              <p className="text-gray-800 font-medium font-poppins break-all">{email}</p>
+            <div className="flex-1">
+              <p className="text-sm text-muted-foreground font-poppins mb-1">Email Address</p>
+              <p className="font-medium text-foreground font-poppins">{email || 'Not provided'}</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="bg-pakistani_green-100 p-2 rounded-full">
-              <Calendar className="h-5 w-5 text-pakistani_green-700" />
+          <div className="flex items-center gap-4 p-4 bg-muted/50 dark:bg-muted/30 rounded-lg border border-border/50">
+            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-800/50 p-3 rounded-full">
+              <Calendar className="h-5 w-5 text-pakistani_green-700 dark:text-pakistani_green-300" />
             </div>
-            <div>
-              <p className="text-sm text-gray-500 font-poppins">Member Since</p>
-              <p className="text-gray-800 font-medium font-poppins">
-                {createdAt ? new Date(createdAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                }) : 'N/A'}
-              </p>
+            <div className="flex-1">
+              <p className="text-sm text-muted-foreground font-poppins mb-1">Member Since</p>
+              <p className="font-medium text-foreground font-poppins">{formatDate(createdAt)}</p>
             </div>
           </div>
         </div>

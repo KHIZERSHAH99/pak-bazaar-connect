@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -64,7 +65,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
-      cacheTime: 10 * 60 * 1000, // 10 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
       refetchOnWindowFocus: false,
     },
   },
@@ -111,13 +112,13 @@ function App() {
                   <Route path="/dashboard/shops/:shopId" element={<ShopDetails />} />
                   <Route path="/dashboard/products" element={<WholesalerProductsManagement />} />
                   <Route path="/dashboard/ads" element={<Advertisements />} />
-                  <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />
+                  <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} /> {/* TODO: Should this be a specific component? */}
                   <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />
 
                   {/* Seller pages */}
                   <Route path="/dashboard/browse-shops" element={<BrowseShops />} />
                   <Route path="/dashboard/browse-shops/:shopId" element={<ShopProducts />} />
-                  <Route path="/dashboard/seller-orders" element={<SellerOrders />} />
+                  <Route path="/dashboard/seller-orders" element={<SellerOrders />} /> {/* TODO: Verify this path or component */}
 
                   {/* Common pages */}
                   <Route path="/dashboard/chat" element={<ChatSupport />} />

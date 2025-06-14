@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/lib/types';
-import { Package, MapPin, edit, eye } from 'lucide-react';
+import { Package, MapPin, Edit, Eye } from 'lucide-react'; // Corrected: Edit, Eye
 import { Button } from '@/components/ui/button';
 import StarRating from '@/components/reviews/StarRating';
 import VerifiedBadge from '@/components/reviews/VerifiedBadge';
@@ -77,7 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({
             )}
 
             {product.is_active && (
-              <Badge className="absolute top-2 right-2 bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200">
+              <Badge variant="success" className="absolute top-2 right-2"> {/* Use variant="success" for consistency */}
                 Active
               </Badge>
             )}
@@ -144,7 +144,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({
                   onClick={handleEdit}
                   className="flex-1"
                 >
-                  <edit className="h-4 w-4 mr-2" />
+                  <Edit className="h-4 w-4 mr-2" /> {/* Corrected: Edit */}
                   Edit
                 </Button>
                 <Button
@@ -153,7 +153,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({
                   onClick={handlePreview}
                   className="flex-1"
                 >
-                  <eye className="h-4 w-4 mr-2" />
+                  <Eye className="h-4 w-4 mr-2" /> {/* Corrected: Eye */}
                   Preview
                 </Button>
               </div>

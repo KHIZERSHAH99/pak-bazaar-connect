@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -20,7 +19,7 @@ const ShopDetails: React.FC = () => {
     queryFn: async () => {
       if (!shopId) throw new Error('Shop ID is required');
       
-      const { data, error } = await supabase
+      const { data, error: shopError } = await supabase
         .from('shops')
         .select(`
           *,
@@ -32,7 +31,7 @@ const ShopDetails: React.FC = () => {
         .eq('id', shopId)
         .single();
       
-      if (error) throw error;
+      if (shopError) throw shopError;
       return data;
     },
     enabled: !!shopId,
@@ -43,7 +42,7 @@ const ShopDetails: React.FC = () => {
     queryFn: async () => {
       if (!shopId) return [];
       
-      const { data, error } = await supabase
+      const { data, error: productsError } = await supabase
         .from('products')
         .select(`
           *,
@@ -54,7 +53,7 @@ const ShopDetails: React.FC = () => {
         .eq('shop_id', shopId)
         .eq('is_active', true);
       
-      if (error) throw error;
+      if (productsError) throw productsError;
       return data || [];
     },
     enabled: !!shopId,
@@ -189,7 +188,7 @@ const ShopDetails: React.FC = () => {
                           <h4 className="font-medium text-gray-800 truncate font-poppins">{product.name}</h4>
                           <p className="text-sm text-gray-600 font-poppins">Rs. {product.price}</p>
                           {product.categories && (
-                            <Badge variant="secondary" size="sm" className="mt-1">
+                            <Badge variant="secondary" className="mt-1">
                               {product.categories.name}
                             </Badge>
                           )}
@@ -238,7 +237,7 @@ const ShopDetails: React.FC = () => {
                 <Button variant="outline" className="w-full" onClick={() => navigate('/dashboard/ads')}>
                   Create Advertisement
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={() => navigate('/analytics')}>
                   View Analytics
                 </Button>
               </div>

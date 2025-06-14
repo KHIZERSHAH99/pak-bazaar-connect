@@ -1,62 +1,71 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import Layout from '@/components/Layout';
-import { Card } from '@/components/ui/card';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, ShoppingCart, MessageCircle, Star, MapPin, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getProductById } from '@/lib/marketplace';
-import { trackProductView } from '@/lib/analytics';
-import { Product } from '@/lib/types';
-import { Package, MapPin, Phone, Store, ArrowLeft, ExternalLink } from 'lucide-react';
-import MessageButton from '@/components/messaging/MessageButton';
-import FavoriteButton from '@/components/favorites/FavoriteButton';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import Layout from '@/components/Layout';
+import { getProductById, DemoProduct } from '@/data/demoProducts';
+import { useToast } from '@/hooks/use-toast';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [product, setProduct] = useState<DemoProduct | null>(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage();
 
   useEffect(() => {
-    if (id) {
-      fetchProduct();
-      trackProductView(id);
+    console.log('ProductDetail - Product ID from params:', id);
+    
+    if (!id) {
+      console.log('No product ID provided');
+      setLoading(false);
+      return;
     }
+
+    // Get product from demo data
+    const foundProduct = getProductById(id);
+    console.log('Found product:', foundProduct);
+    
+    setProduct(foundProduct || null);
+    setLoading(false);
   }, [id]);
 
-  const fetchProduct = async () => {
-    if (!id) return;
-    
-    try {
-      setLoading(true);
-      const data = await getProductById(id);
-      setProduct(data);
-    } catch (error) {
-      console.error('Failed to fetch product:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleBackToProducts = () => {
+    navigate('/products');
   };
 
-  const handleWhatsAppContact = () => {
-    if (!product?.shops?.company_profiles?.whatsapp) return;
-    
-    const message = `Hello! I'm interested in your product: ${product.name}. Please provide more details.`;
-    const whatsappUrl = `https://wa.me/${product.shops.company_profiles.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+  const handleInquiry = () => {
+    toast({
+      title: "Inquiry Sent",
+      description: "Your inquiry has been sent to the wholesaler. They will contact you soon.",
+    });
   };
 
-  const handlePhoneContact = () => {
-    if (!product?.shops?.company_profiles?.phone) return;
-    window.open(`tel:${product.shops.company_profiles.phone}`, '_self');
+  const handleAddToCart = () => {
+    toast({
+      title: "Added to Cart",
+      description: `${product?.name} has been added to your cart.`,
+    });
   };
 
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="h-96 bg-gray-200 rounded"></div>
+              <div className="space-y-4">
+                <div className="h-8 bg-gray-200 rounded"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                <div className="h-20 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </Layout>
     );
@@ -65,18 +74,21 @@ const ProductDetail: React.FC = () => {
   if (!product) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Card className="p-12 text-center">
-            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">Product not found</h3>
-            <p className="text-gray-600 mb-6 font-poppins">The product you're looking for doesn't exist or has been removed.</p>
-            <Link to="/products">
-              <Button className="bg-primary hover:bg-pakistani-green-800">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Products
-              </Button>
-            </Link>
-          </Card>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center py-16">
+            <Package className="h-24 w-24 text-gray-400 mx-auto mb-6" />
+            <h1 className="text-2xl font-bold text-gray-800 mb-4 font-poppins">Product not found</h1>
+            <p className="text-gray-600 mb-8 font-poppins">
+              The product you're looking for doesn't exist or has been removed.
+            </p>
+            <Button
+              onClick={handleBackToProducts}
+              className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Products
+            </Button>
+          </div>
         </div>
       </Layout>
     );
@@ -84,138 +96,118 @@ const ProductDetail: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <Link to="/products" className="inline-flex items-center text-primary hover:text-pakistani-green-800 font-poppins">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('products')}
-          </Link>
-          <FavoriteButton productId={product.id} />
-        </div>
+      <div className="container mx-auto px-4 py-8">
+        <Button
+          variant="outline"
+          onClick={handleBackToProducts}
+          className="mb-6 font-poppins"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Products
+        </Button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           {/* Product Image */}
           <div className="space-y-4">
-            <Card className="overflow-hidden">
-              <div className="h-96 bg-gray-100">
-                {product.image ? (
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = "https://via.placeholder.com/600x400?text=Product";
-                    }}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <Package className="h-24 w-24 text-gray-400" />
-                  </div>
-                )}
-              </div>
-            </Card>
+            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
 
           {/* Product Details */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4 font-poppins">{product.name}</h1>
-              
-              {product.categories && (
-                <span className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full mb-4">
-                  {product.categories.name}
-                </span>
-              )}
-              
-              <div className="mb-6">
-                <p className="text-4xl font-bold text-primary mb-2 font-poppins">
-                  PKR {product.price.toLocaleString()}
-                </p>
-                {product.moq && product.moq > 1 && (
-                  <p className="text-gray-600 font-poppins">
-                    {t('minimum_order')}: {product.moq} pieces
-                  </p>
-                )}
+              <Badge variant="secondary" className="mb-2 font-poppins">
+                {product.category}
+              </Badge>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2 font-poppins">
+                {product.name}
+              </h1>
+              <div className="flex items-center gap-2 text-gray-600 mb-4">
+                <MapPin className="h-4 w-4" />
+                <span className="font-poppins">{product.location}</span>
               </div>
-
-              {product.description && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-2 font-poppins">Description</h3>
-                  <p className="text-gray-700 leading-relaxed font-poppins">{product.description}</p>
-                </div>
-              )}
             </div>
 
-            {/* Supplier Info */}
-            {product.shops && (
-              <Card className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center">
-                    {product.shops.company_profiles?.logo ? (
-                      <img 
-                        src={product.shops.company_profiles.logo} 
-                        alt={product.shops.name} 
-                        className="h-12 w-12 rounded-full object-cover mr-4"
-                      />
-                    ) : (
-                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
-                        <Store className="h-6 w-6 text-primary" />
-                      </div>
-                    )}
-                    <div>
-                      <h3 className="font-semibold text-lg font-poppins">
-                        {product.shops.company_profiles?.company_name || product.shops.name}
-                      </h3>
-                      {product.shops.cities && (
-                        <div className="flex items-center text-gray-600 mt-1">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          <span className="font-poppins">{product.shops.cities.name}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <Link to={`/seller/${product.shops.id}`}>
-                    <Button variant="outline" size="sm">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View Profile
-                    </Button>
-                  </Link>
-                </div>
+            <div className="text-3xl font-bold text-pakistani_green-600 font-poppins">
+              Rs. {product.price.toLocaleString()}
+            </div>
 
-                {product.shops.company_profiles?.description && (
-                  <p className="text-gray-600 mb-4 font-poppins">
-                    {product.shops.company_profiles.description}
-                  </p>
-                )}
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-600 font-poppins">Wholesaler:</span>
+                <span className="font-medium font-poppins">{product.wholesaler}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600 font-poppins">Minimum Order:</span>
+                <span className="font-medium font-poppins">{product.minOrder} units</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600 font-poppins">Stock Status:</span>
+                <Badge variant={product.inStock ? "default" : "destructive"} className="font-poppins">
+                  {product.inStock ? "In Stock" : "Out of Stock"}
+                </Badge>
+              </div>
+            </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <MessageButton 
-                    sellerId={product.shops.owner_id} 
-                    sellerName={product.shops.name}
-                    productId={product.id}
-                  />
-                  
-                  {product.shops.company_profiles?.phone && (
-                    <Button 
-                      onClick={() => window.open(`tel:${product.shops.company_profiles.phone}`, '_self')}
-                      variant="outline"
-                    >
-                      <Phone className="h-4 w-4 mr-2" />
-                      Call Now
-                    </Button>
-                  )}
-                </div>
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold font-poppins">Description</h3>
+              <p className="text-gray-700 font-poppins">{product.description}</p>
+            </div>
 
-                <Link to="/inquiry" state={{ product, shop: product.shops }}>
-                  <Button className="w-full mt-3 bg-primary hover:bg-pakistani-green-800">
-                    {t('request_quote')}
-                  </Button>
-                </Link>
-              </Card>
-            )}
+            <div className="flex gap-3">
+              <Button
+                onClick={handleAddToCart}
+                disabled={!product.inStock}
+                className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+              >
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Add to Cart
+              </Button>
+              <Button
+                onClick={handleInquiry}
+                variant="outline"
+                className="flex-1 font-poppins"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Send Inquiry
+              </Button>
+            </div>
           </div>
         </div>
+
+        {/* Additional Information */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-xl font-semibold mb-4 font-poppins">Wholesaler Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <h4 className="font-medium text-gray-900 mb-2 font-poppins">Business Name</h4>
+                <p className="text-gray-600 font-poppins">{product.wholesaler}</p>
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-900 mb-2 font-poppins">Location</h4>
+                <p className="text-gray-600 font-poppins">{product.location}</p>
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-900 mb-2 font-poppins">Rating</h4>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                  <span className="text-sm text-gray-600 ml-2 font-poppins">(4.8/5)</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );

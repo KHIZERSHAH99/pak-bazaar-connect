@@ -1,133 +1,151 @@
 
-import { Product } from '@/lib/types';
+export interface DemoProduct {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  description: string;
+  category: string;
+  wholesaler: string;
+  location: string;
+  minOrder: number;
+  inStock: boolean;
+}
 
-export const demoProducts: Product[] = [
+export const demoProducts: DemoProduct[] = [
   {
-    id: 'demo-prod-1',
-    shop_id: 'shop-textile-master',
-    name: 'Premium Cotton Rolls (100m)',
-    description: 'High-quality, 100% pure cotton fabric rolls, perfect for garments and home textiles. Available in various colors.',
-    price: 12000, // Price per roll
-    image: 'https://images.unsplash.com/photo-1544062089-9991049f73cf?w=300&h=200&fit=crop&q=80',
-    is_active: true,
-    verification_status: 'approved',
-    category_id: 'cat-textiles',
-    categories: { id: 'cat-textiles', name: 'Textiles' },
-    shops: { id: 'shop-textile-master', owner_id: 'owner1', name: 'Textile Masters PK', contact: '0301-1112233', address: 'Shop 1, Textile City, Faisalabad', postal_code: '38000', cities: { id: 'city-fsd', name: 'Faisalabad', province: 'Punjab' }, is_verified: true },
-    moq: 5, // Minimum 5 rolls
-    avg_rating: 4.7,
-    total_reviews: 112,
-  },
-  {
-    id: 'demo-prod-2',
-    shop_id: 'shop-electro-hub',
-    name: 'Advanced Microcontroller Units (Pack of 50)',
-    description: 'Powerful and versatile microcontroller units for various electronic projects and industrial applications.',
-    price: 7500, // Price per pack
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=300&h=200&fit=crop&q=80',
-    is_active: true,
-    verification_status: 'approved',
-    category_id: 'cat-electronics',
-    categories: { id: 'cat-electronics', name: 'Electronics' },
-    shops: { id: 'shop-electro-hub', owner_id: 'owner2', name: 'Electro Hub', contact: '0302-2223344', address: 'Al-Hafeez Center, Lahore', postal_code: '54000', cities: { id: 'city-lhr', name: 'Lahore', province: 'Punjab' }, is_verified: true },
-    moq: 1, // Pack of 50 is 1 unit
-    avg_rating: 4.9,
-    total_reviews: 250,
-  },
-  {
-    id: 'demo-prod-3',
-    shop_id: 'shop-spice-kings',
-    name: 'Organic Turmeric Powder (1kg Bulk)',
-    description: 'Premium quality, organically grown turmeric powder. Rich in color and flavor, ideal for culinary and medicinal uses.',
-    price: 850, // Price per kg
-    image: 'https://images.unsplash.com/photo-1599700406393-d1906e0e09ad?w=300&h=200&fit=crop&q=80',
-    is_active: true,
-    verification_status: 'approved',
-    category_id: 'cat-food-bev',
-    categories: { id: 'cat-food-bev', name: 'Food & Beverages' },
-    shops: { id: 'shop-spice-kings', owner_id: 'owner3', name: 'Spice Kings Pakistan', contact: '0303-3334455', address: 'Jodia Bazaar, Karachi', postal_code: '74000', cities: { id: 'city-khi', name: 'Karachi', province: 'Sindh' }, is_verified: false }, // Example of not verified
-    moq: 10, // Minimum 10 kg
-    avg_rating: 4.5,
-    total_reviews: 78,
-  },
-  {
-    id: 'demo-prod-4',
-    shop_id: 'shop-tool-zone',
-    name: 'Heavy Duty Wrench Set (12 Pieces)',
-    description: 'Durable and reliable 12-piece wrench set for industrial and mechanical use. Made from high-grade steel.',
-    price: 3200,
-    image: 'https://images.unsplash.com/photo-1571970718729-67850165c368?w=300&h=200&fit=crop&q=80',
-    is_active: true,
-    verification_status: 'approved',
-    category_id: 'cat-industrial',
-    categories: { id: 'cat-industrial', name: 'Industrial Equipment' },
-    shops: { id: 'shop-tool-zone', owner_id: 'owner4', name: 'Tool Zone Pro', contact: '0304-4445566', address: 'Industrial Area, Gujranwala', postal_code: '52250', cities: { id: 'city-guj', name: 'Gujranwala', province: 'Punjab' }, is_verified: true },
-    moq: 3,
-    avg_rating: 4.6,
-    total_reviews: 55,
-  },
-  {
-    id: 'demo-prod-5',
-    shop_id: 'shop-beauty-essentials',
-    name: 'Natural Aloe Vera Gel (5L Container)',
-    description: 'Pure and natural aloe vera gel, perfect for skincare formulations and cosmetic products. Soothing and moisturizing.',
-    price: 4500,
-    image: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=300&h=200&fit=crop&q=80',
-    is_active: true,
-    verification_status: 'approved',
-    category_id: 'cat-beauty',
-    categories: { id: 'cat-beauty', name: 'Beauty & Personal Care' },
-    shops: { id: 'shop-beauty-essentials', owner_id: 'owner5', name: 'Beauty Essentials Ltd.', contact: '0305-5556677', address: 'Liberty Market, Lahore', postal_code: '54000', cities: { id: 'city-lhr', name: 'Lahore', province: 'Punjab' }, is_verified: true },
-    moq: 2,
-    avg_rating: 4.8,
-    total_reviews: 92,
-  },
-  {
-    id: 'demo-prod-6',
-    shop_id: 'shop-agri-fresh',
-    name: 'Fresh Sindhri Mangoes (Export Quality - 10kg Box)',
-    description: 'Juicy and delicious Sindhri mangoes, export quality, sourced directly from farms in Sindh. Seasonal availability.',
+    id: "demo-prod-1",
+    name: "Premium Basmati Rice",
     price: 2500,
-    image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=300&h=200&fit=crop&q=80', // Using fruit image
-    is_active: true,
-    verification_status: 'approved',
-    category_id: 'cat-agri',
-    categories: { id: 'cat-agri', name: 'Agricultural Products' },
-    shops: { id: 'shop-agri-fresh', owner_id: 'owner6', name: 'AgriFresh Produce', contact: '0306-6667788', address: 'Sabzi Mandi, Hyderabad', postal_code: '71000', cities: { id: 'city-hyd', name: 'Hyderabad', province: 'Sindh' }, is_verified: true },
-    moq: 20, // Boxes
-    avg_rating: 4.9,
-    total_reviews: 150,
+    image: "/placeholder.svg",
+    description: "High quality basmati rice sourced from Punjab. Perfect for restaurants and retailers.",
+    category: "Food & Beverages",
+    wholesaler: "Punjab Rice Mills",
+    location: "Lahore, Punjab",
+    minOrder: 50,
+    inStock: true
   },
   {
-    id: 'demo-prod-7',
-    shop_id: 'shop-tech-parts',
-    name: 'Refurbished Business Laptops (Core i5, 8GB RAM)',
-    description: 'Grade A refurbished business laptops with Core i5 processor, 8GB RAM, and SSD. Ideal for office use.',
-    price: 45000,
-    image: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=300&h=200&fit=crop&q=80',
-    is_active: true,
-    verification_status: 'approved',
-    category_id: 'cat-computers',
-    categories: { id: 'cat-computers', name: 'Computer Parts' },
-    shops: { id: 'shop-tech-parts', owner_id: 'owner7', name: 'Tech Parts Solutions', contact: '0307-7778899', address: 'Blue Area, Islamabad', postal_code: '44000', cities: { id: 'city-isb', name: 'Islamabad', province: 'Capital Territory' }, is_verified: false },
-    moq: 1,
-    avg_rating: 4.3,
-    total_reviews: 40,
+    id: "demo-prod-2", 
+    name: "Cotton Fabric Rolls",
+    price: 450,
+    image: "/placeholder.svg",
+    description: "Premium cotton fabric rolls for textile manufacturing. Various colors available.",
+    category: "Textiles",
+    wholesaler: "Karachi Textiles Ltd",
+    location: "Karachi, Sindh",
+    minOrder: 100,
+    inStock: true
   },
   {
-    id: 'demo-prod-8',
-    shop_id: 'shop-pack-pros',
-    name: 'Corrugated Shipping Boxes (Pack of 100)',
-    description: 'Durable corrugated cardboard boxes for shipping and packaging. Various sizes available. This pack: Medium size.',
-    price: 1800,
-    image: 'https://images.unsplash.com/photo-1586455120339-a6a4c0f29e29?w=300&h=200&fit=crop&q=80',
-    is_active: true,
-    verification_status: 'approved',
-    category_id: 'cat-packaging',
-    categories: { id: 'cat-packaging', name: 'Packaging Supplies' },
-    shops: { id: 'shop-pack-pros', owner_id: 'owner8', name: 'Packaging Pros', contact: '0308-8889900', address: 'SITE Area, Karachi', postal_code: '75 SITE', cities: { id: 'city-khi', name: 'Karachi', province: 'Sindh' }, is_verified: true },
-    moq: 1, // Pack of 100 is 1 unit
-    avg_rating: 4.6,
-    total_reviews: 65,
+    id: "demo-prod-3",
+    name: "Surgical Instruments Set",
+    price: 15000,
+    image: "/placeholder.svg", 
+    description: "Professional grade surgical instruments manufactured in Sialkot.",
+    category: "Medical Equipment",
+    wholesaler: "Sialkot Surgical Co",
+    location: "Sialkot, Punjab",
+    minOrder: 10,
+    inStock: true
   },
+  {
+    id: "demo-prod-4",
+    name: "Football Manufacturing Kit",
+    price: 800,
+    image: "/placeholder.svg",
+    description: "Complete football manufacturing materials and components.",
+    category: "Sports Goods", 
+    wholesaler: "Sports City Sialkot",
+    location: "Sialkot, Punjab",
+    minOrder: 25,
+    inStock: true
+  },
+  {
+    id: "demo-prod-5",
+    name: "Leather Goods Bundle",
+    price: 3200,
+    image: "/placeholder.svg",
+    description: "Premium leather products including bags, wallets, and belts.",
+    category: "Leather Goods",
+    wholesaler: "Karachi Leather Works",
+    location: "Karachi, Sindh", 
+    minOrder: 20,
+    inStock: true
+  },
+  {
+    id: "demo-prod-6",
+    name: "Electronic Components",
+    price: 1200,
+    image: "/placeholder.svg",
+    description: "Various electronic components for manufacturing and repair.",
+    category: "Electronics",
+    wholesaler: "Tech Components Hub",
+    location: "Islamabad, ICT",
+    minOrder: 50,
+    inStock: true
+  },
+  {
+    id: "demo-prod-7",
+    name: "Pharmaceutical Supplies",
+    price: 5500,
+    image: "/placeholder.svg",
+    description: "Quality pharmaceutical raw materials and supplies.",
+    category: "Pharmaceuticals", 
+    wholesaler: "Medical Supply Co",
+    location: "Lahore, Punjab",
+    minOrder: 15,
+    inStock: true
+  },
+  {
+    id: "demo-prod-8",
+    name: "Construction Materials",
+    price: 850,
+    image: "/placeholder.svg",
+    description: "Building and construction materials in bulk quantities.",
+    category: "Construction",
+    wholesaler: "Build Pro Materials",
+    location: "Rawalpindi, Punjab",
+    minOrder: 100,
+    inStock: true
+  },
+  {
+    id: "demo-prod-9",
+    name: "Automotive Parts",
+    price: 2800,
+    image: "/placeholder.svg",
+    description: "Genuine automotive parts and accessories for various vehicle models.",
+    category: "Automotive",
+    wholesaler: "Auto Parts Pakistan",
+    location: "Gujranwala, Punjab", 
+    minOrder: 30,
+    inStock: true
+  },
+  {
+    id: "demo-prod-10",
+    name: "Agricultural Tools",
+    price: 1650,
+    image: "/placeholder.svg",
+    description: "Modern agricultural tools and equipment for farming.",
+    category: "Agriculture",
+    wholesaler: "Farm Tech Solutions",
+    location: "Faisalabad, Punjab",
+    minOrder: 40,
+    inStock: true
+  }
 ];
+
+// Helper function to get a product by ID
+export const getProductById = (id: string): DemoProduct | undefined => {
+  return demoProducts.find(product => product.id === id);
+};
+
+// Helper function to get products by category  
+export const getProductsByCategory = (category: string): DemoProduct[] => {
+  return demoProducts.filter(product => product.category === category);
+};
+
+// Helper function to get all categories
+export const getCategories = (): string[] => {
+  return [...new Set(demoProducts.map(product => product.category))];
+};

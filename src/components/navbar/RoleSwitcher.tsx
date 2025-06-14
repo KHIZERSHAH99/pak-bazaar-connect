@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ArrowDown, CheckCircle } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { changeRole, UserRole } from '@/lib/auth';
+import { useToast } from '@/hooks/use-toast';
 
 const roleDisplay: Record<UserRole, string> = {
   admin: 'Admin',
@@ -30,6 +30,7 @@ const nextRole: Record<UserRole, UserRole> = {
 const RoleSwitcher: React.FC = () => {
   const { profile, checkAuthStatus } = useAuth();
   const [isSwitching, setIsSwitching] = useState(false);
+  const { toast } = useToast();
 
   if (!profile) return null;
 
@@ -40,8 +41,17 @@ const RoleSwitcher: React.FC = () => {
     try {
       await changeRole(nextRole[profile.role as UserRole]);
       await checkAuthStatus();
+      toast({
+        title: "Role Switched",
+        description: `Your role has been changed to ${roleDisplay[nextRole[profile.role as UserRole]]}.`,
+        variant: "success"
+      });
     } catch(e) {
-      //
+      toast({
+        title: "Failed to switch role",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsSwitching(false);
     }
@@ -55,9 +65,11 @@ const RoleSwitcher: React.FC = () => {
         style={canSwitch ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
       >
         {roleDisplay[profile.role as UserRole]}
-        {canSwitch && !isSwitching && <ArrowDown className="w-3 h-3 ml-1" />}
-        {isSwitching && <span className="ml-1 animate-spin">&#9696;</span>}
-        {!canSwitch && <CheckCircle className="w-3 h-3 ml-1" />}
+        {isSwitching ? (
+          <span className="ml-1 animate-spin">&#9696;</span>
+        ) : (
+          canSwitch && <ArrowDown className="w-3 h-3 ml-1" />
+        )}
       </Badge>
     </div>
   );

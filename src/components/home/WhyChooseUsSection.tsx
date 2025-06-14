@@ -1,0 +1,69 @@
+
+import React from 'react';
+import { Card } from '@/components/ui/card';
+import { Store, ShoppingBag, Shield, CheckCircle } from 'lucide-react';
+
+const featuresData = [
+  {
+    icon: <Store className="h-8 w-8" />,
+    title: 'For Wholesalers',
+    description: 'Create shops, list products, and reach retailers across Pakistan',
+    color: 'from-blue-500 to-blue-600',
+    benefits: ['Unlimited product listings', 'Advanced analytics', 'Promotional ads'],
+  },
+  {
+    icon: <ShoppingBag className="h-8 w-8" />,
+    title: 'For Sellers',
+    description: 'Source quality products directly from verified wholesalers',
+    color: 'from-purple-500 to-purple-600',
+    benefits: ['Bulk pricing', 'Quick ordering', 'Inventory management'],
+  },
+  {
+    icon: <Shield className="h-8 w-8" />,
+    title: 'Secure Trading',
+    description: 'End-to-end security with verified businesses and secure payments',
+    color: 'from-green-500 to-green-600',
+    benefits: ['Business verification', 'Secure payments', 'Dispute resolution'],
+  },
+];
+
+const WhyChooseUsSection: React.FC = () => {
+  return (
+    <section className="py-20 px-6 bg-white">
+      <div className="container mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-poppins">
+            Why Choose Pak Bazaar Connect?
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-poppins">
+            Designed specifically for Pakistani businesses with local payment methods and regional expertise
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {featuresData.map((feature, index) => (
+            <Card key={index} className="p-8 border-none shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2 bg-gradient-to-br from-white to-gray-50">
+              <div className={`bg-gradient-to-r ${feature.color} p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                <div className="text-white">{feature.icon}</div>
+              </div>
+              
+              <h3 className="text-xl font-bold text-gray-800 mb-3 font-poppins">{feature.title}</h3>
+              <p className="text-gray-600 mb-6 font-poppins leading-relaxed">{feature.description}</p>
+              
+              <ul className="space-y-3">
+                {feature.benefits.map((benefit, idx) => (
+                  <li key={idx} className="flex items-center text-sm text-gray-700 font-poppins">
+                    <CheckCircle className="h-4 w-4 text-pakistani_green-600 mr-3 flex-shrink-0" />
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default WhyChooseUsSection;

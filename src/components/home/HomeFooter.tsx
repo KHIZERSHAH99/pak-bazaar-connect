@@ -1,0 +1,29 @@
+
+import React from 'react';
+import { Shield } from 'lucide-react';
+
+const HomeFooter: React.FC = () => {
+  return (
+    <footer className="bg-pakistani_green-800 text-white py-8 px-6">
+      <div className="container mx-auto text-center">
+        <div className="flex justify-center items-center mb-4">
+          <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md mr-3">
+            <span className="text-white text-lg font-bold">PBC</span>
+          </div>
+          <span className="text-lg font-bold font-poppins">Pak Bazaar Connect</span>
+        </div>
+        <p className="text-pakistani_green-200 mb-4 font-poppins">
+          Connecting Pakistani businesses for sustainable growth
+        </p>
+        <div className="flex justify-center items-center space-x-4 text-sm">
+          <span className="flex items-center font-poppins">
+            <Shield className="h-4 w-4 mr-1" />
+            Build Successful, API Keys Secured
+          </span>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default HomeFooter;

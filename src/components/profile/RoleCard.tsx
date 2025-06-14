@@ -1,10 +1,14 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, ArrowRight, ExternalLink } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { changeRole } from '@/lib/auth';
+import { useToast } from '@/hooks/use-toast';
 
 interface RoleCardProps {
   title: string;
@@ -17,6 +21,7 @@ interface RoleCardProps {
   onRoleChange: (role: UserRole) => void;
 }
 
+// RoleCard lets sellers request upgrade to wholesaler even if logged in
 const RoleCard: React.FC<RoleCardProps> = ({
   title,
   description,
@@ -29,6 +34,24 @@ const RoleCard: React.FC<RoleCardProps> = ({
 }) => {
   const isCurrentRole = currentRole === targetRole;
   const isSellerToWholesaler = currentRole === 'seller' && targetRole === 'wholesaler';
+
+  const { profile, checkAuthStatus } = useAuth();
+  const { toast } = useToast();
+  const [switching, setSwitching] = useState(false);
+
+  // Seller can upgrade directly from here
+  const handleSellerToWholesaler = async () => {
+    try {
+      setSwitching(true);
+      await changeRole('wholesaler');
+      await checkAuthStatus();
+      toast({ title: "Role change requested!", description: "Your request to become a wholesaler is submitted for admin approval." });
+    } catch (e) {
+      toast({ title: "Upgrade failed", description: "Could not request upgrade. Please try again or contact support.", variant: "destructive" });
+    } finally {
+      setSwitching(false);
+    }
+  };
 
   return (
     <Card className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md ${
@@ -63,19 +86,31 @@ const RoleCard: React.FC<RoleCardProps> = ({
           ))}
         </ul>
         
+        {/* Enable wholesaler upgrade for sellers */}
         {!isCurrentRole && (
           <>
-            {isSellerToWholesaler ? (
+            {/* If the current user is 'seller' and this card is 'wholesaler', allow upgrade */}
+            {isSellerToWholesaler && profile?.role === 'seller' ? (
               <Button 
-                variant="outline" 
-                className="w-full group font-poppins cursor-not-allowed"
-                disabled
-                title="Already signed in. Please request a role change from your profile."
+                variant="outline"
+                className="w-full group font-poppins"
+                onClick={handleSellerToWholesaler}
+                disabled={switching}
+                title="Request to become a wholesaler"
               >
-                Sign Up as {title}
-                <ExternalLink className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                {switching ? (
+                  <>
+                    Requesting...
+                  </>
+                ) : (
+                  <>
+                    Apply as Wholesaler
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </>
+                )}
               </Button>
             ) : (
+              // Fallback for all others (including logged-out)
               <Button 
                 variant="outline" 
                 className="w-full group font-poppins"
@@ -94,3 +129,4 @@ const RoleCard: React.FC<RoleCardProps> = ({
 };
 
 export default RoleCard;
+

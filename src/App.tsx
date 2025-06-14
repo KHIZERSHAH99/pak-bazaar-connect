@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -54,6 +53,12 @@ import Analytics from './pages/Analytics';
 // Wholesaler marketplace page
 import WholesalerProducts from './pages/WholesalerProducts';
 
+// Policy Pages
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import RefundPolicy from './pages/RefundPolicy';
+import ShippingPolicy from './pages/ShippingPolicy'; // New Policy Page
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -77,6 +82,12 @@ function App() {
                   <Route path="/seller/:id" element={<SellerProfile />} />
                   <Route path="/inquiry" element={<InquiryForm />} />
 
+                  {/* Policy Pages */}
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="/refund-policy" element={<RefundPolicy />} />
+                  <Route path="/shipping-policy" element={<ShippingPolicy />} />
+
                   {/* Protected pages */}
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/dashboard" element={<Dashboard />} />
@@ -90,7 +101,7 @@ function App() {
                   <Route path="/dashboard/shops/:shopId" element={<ShopDetails />} />
                   <Route path="/dashboard/products" element={<WholesalerProductsManagement />} />
                   <Route path="/dashboard/ads" element={<Advertisements />} />
-                  <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} />
+                  <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} /> {/* Assuming Dashboard is a placeholder */}
                   <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />
 
                   {/* Seller pages */}
@@ -100,10 +111,7 @@ function App() {
 
                   {/* Common pages */}
                   <Route path="/dashboard/chat" element={<ChatSupport />} />
-
-                  {/* 404 page */}
-                  <Route path="*" element={<NotFound />} />
-
+                  
                   {/* Favorites */}
                   <Route path="/favorites" element={
                     <ProtectedRoute allowedRoles={['seller', 'wholesaler']}>
@@ -124,9 +132,12 @@ function App() {
                       <Analytics />
                     </ProtectedRoute>
                   } />
-
+                  
                   {/* Wholesaler products marketplace */}
                   <Route path="/wholesaler-products" element={<WholesalerProducts />} />
+
+                  {/* 404 page */}
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Toaster />
               </div>

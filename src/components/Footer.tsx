@@ -32,8 +32,10 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4 text-gray-800">Resources</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-gray-600 hover:text-pakistani_green-700">Help Center</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-pakistani_green-700">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-pakistani_green-700">Terms of Service</a></li>
+              <li><Link to="/privacy-policy" className="text-gray-600 hover:text-pakistani_green-700">Privacy Policy</Link></li>
+              <li><Link to="/terms-of-service" className="text-gray-600 hover:text-pakistani_green-700">Terms of Service</Link></li>
+              <li><Link to="/refund-policy" className="text-gray-600 hover:text-pakistani_green-700">Refund Policy</Link></li>
+              <li><Link to="/shipping-policy" className="text-gray-600 hover:text-pakistani_green-700">Shipping Policy</Link></li>
             </ul>
           </div>
           
@@ -48,7 +50,7 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-600 text-sm">&copy; 2024 Pak Bazaar Connect. All rights reserved.</p>
+          <p className="text-gray-600 text-sm">&copy; 2025 Pak Bazaar Connect. All rights reserved.</p> {/* Updated year */}
           <p className="text-gray-600 text-sm mt-4 md:mt-0">Build Successful, API Keys Secured</p>
         </div>
       </div>

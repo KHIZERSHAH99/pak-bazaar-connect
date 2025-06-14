@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { User } from '@supabase/supabase-js'; // Changed import from '@/lib/types'
+import { User } from '@supabase/supabase-js';
 
 interface HomeHeaderProps {
   user: User | null;
@@ -10,7 +10,7 @@ interface HomeHeaderProps {
 
 const HomeHeader: React.FC<HomeHeaderProps> = ({ user }) => {
   return (
-    <header className="bg-white/80 backdrop-blur-sm shadow-lg py-4 px-6 sticky top-0 z-50">
+    <header className="bg-card/80 backdrop-blur-sm shadow-lg py-4 px-6 sticky top-0 z-50 border-b border-border">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center group">
           <div className="bg-gradient-to-r from-pakistani_green-700 to-pakistani_green-600 rounded-xl p-3 shadow-lg group-hover:shadow-xl transition-all duration-300">
@@ -23,7 +23,7 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({ user }) => {
         
         <nav className="flex items-center space-x-3">
           <Link to="/products">
-            <Button variant="ghost" size="sm" className="text-pakistani_green-700 hover:bg-pakistani_green-50 font-poppins">
+            <Button variant="ghost" size="sm" className="text-pakistani_green-700 hover:bg-pakistani_green-50 dark:text-pakistani_green-400 dark:hover:bg-pakistani_green-950/50 font-poppins">
               Browse Products
             </Button>
           </Link>
@@ -36,7 +36,7 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({ user }) => {
           ) : (
             <>
               <Link to="/login">
-                <Button variant="outline" size="sm" className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 font-poppins">
+                <Button variant="outline" size="sm" className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 dark:border-pakistani_green-400 dark:text-pakistani_green-400 dark:hover:bg-pakistani_green-950/50 font-poppins">
                   Login
                 </Button>
               </Link>

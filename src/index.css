@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -105,19 +106,19 @@
   }
   
   .btn-secondary {
-    @apply bg-white text-pakistani_green-600 border border-pakistani_green-600 px-4 py-2 rounded-md hover:bg-pakistani_green-50 transition-colors font-poppins;
+    @apply bg-card text-pakistani_green-600 border border-pakistani_green-600 px-4 py-2 rounded-md hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-950/50 transition-colors font-poppins;
   }
 
   .input-field {
-    @apply w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pakistani_green-500 font-poppins;
+    @apply w-full p-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-pakistani_green-500 bg-background text-foreground font-poppins;
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-md p-6;
+    @apply bg-card rounded-lg shadow-md p-6;
   }
 
   .section-title {
-    @apply text-2xl font-semibold text-gray-800 mb-4 font-poppins;
+    @apply text-2xl font-semibold text-foreground mb-4 font-poppins;
   }
 
   .badge {
@@ -125,20 +126,20 @@
   }
 
   .badge-success {
-    @apply bg-green-100 text-green-800;
+    @apply bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200;
   }
 
   .badge-warning {
-    @apply bg-yellow-100 text-yellow-800;
+    @apply bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200;
   }
 
   .badge-danger {
-    @apply bg-red-100 text-red-800;
+    @apply bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200;
   }
   
   .animated-background {
     @apply absolute inset-0 z-0 overflow-hidden;
-    background: linear-gradient(120deg, #f0f5f0 0%, #e8f5ec 100%);
+    background: linear-gradient(120deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
   }
   
   .animated-background::before {
@@ -148,7 +149,7 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 60%);
+    background: radial-gradient(circle, hsla(var(--background), 0.8) 0%, hsla(var(--background), 0) 60%);
     animation: rotate 30s linear infinite;
     z-index: -1;
   }

@@ -4,14 +4,16 @@ import { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Building2 } from 'lucide-react';
+import { UserRole } from '@/lib/types';
 import BusinessTypeSelect from './BusinessTypeSelect';
 
 interface BasicInfoFieldsProps {
   form: UseFormReturn<any>;
   isLoading: boolean;
+  userRole?: UserRole;
 }
 
-const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form, isLoading }) => {
+const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form, isLoading, userRole }) => {
   return (
     <div className="space-y-4">
       <FormField
@@ -36,7 +38,7 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form, isLoading }) =>
         )}
       />
       
-      <BusinessTypeSelect form={form} isLoading={isLoading} />
+      <BusinessTypeSelect form={form} isLoading={isLoading} userRole={userRole} />
     </div>
   );
 };

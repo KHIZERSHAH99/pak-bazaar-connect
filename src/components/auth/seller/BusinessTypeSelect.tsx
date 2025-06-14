@@ -4,20 +4,32 @@ import { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Building2 } from 'lucide-react';
+import { UserRole } from '@/lib/types';
 
 interface BusinessTypeSelectProps {
   form: UseFormReturn<any>;
   isLoading: boolean;
+  userRole?: UserRole;
 }
 
-const BusinessTypeSelect: React.FC<BusinessTypeSelectProps> = ({ form, isLoading }) => {
-  const businessTypes = [
-    'Retailer',
-    'Wholesaler', 
-    'Manufacturer',
-    'Distributor',
-    'Other'
-  ];
+const BusinessTypeSelect: React.FC<BusinessTypeSelectProps> = ({ form, isLoading, userRole }) => {
+  // Filter business types based on user role
+  const getBusinessTypes = () => {
+    if (userRole === 'seller') {
+      return ['Retailer', 'Distributor', 'Other'];
+    }
+    // For wholesaler or other roles
+    return ['Manufacturer', 'Wholesaler', 'Distributor', 'Other'];
+  };
+
+  const businessTypes = getBusinessTypes();
+
+  const getHelpText = () => {
+    if (userRole === 'seller') {
+      return "Select the type that best describes your retail business";
+    }
+    return "Select your primary business type";
+  };
 
   return (
     <FormField
@@ -43,6 +55,9 @@ const BusinessTypeSelect: React.FC<BusinessTypeSelectProps> = ({ form, isLoading
               ))}
             </SelectContent>
           </Select>
+          <p className="text-xs text-gray-500 font-poppins mt-1">
+            {getHelpText()}
+          </p>
           <FormMessage />
         </FormItem>
       )}

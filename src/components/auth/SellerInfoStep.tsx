@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -20,7 +19,7 @@ const SellerInfoStep: React.FC<SellerInfoStepProps> = ({ form, isLoading }) => {
         <p className="text-gray-600 font-poppins text-sm">Simple setup to get you started quickly</p>
       </div>
 
-      <BasicInfoFields form={form} isLoading={isLoading} />
+      <BasicInfoFields form={form} isLoading={isLoading} userRole="seller" />
       
       <FormField
         control={form.control}

@@ -25,6 +25,14 @@ interface BasicBusinessFieldsProps {
 }
 
 const BasicBusinessFields: React.FC<BasicBusinessFieldsProps> = ({ form, isLoading }) => {
+  // Business types for wholesaler registration
+  const wholesalerBusinessTypes = [
+    'Manufacturer',
+    'Wholesaler', 
+    'Distributor',
+    'Other'
+  ];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <FormField
@@ -69,12 +77,16 @@ const BasicBusinessFields: React.FC<BasicBusinessFieldsProps> = ({ form, isLoadi
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="Manufacturer">Manufacturer</SelectItem>
-                <SelectItem value="Wholesaler">Wholesaler</SelectItem>
-                <SelectItem value="Distributor">Distributor</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
+                {wholesalerBusinessTypes.map((type) => (
+                  <SelectItem key={type} value={type} className="font-poppins">
+                    {type}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
+            <p className="text-xs text-gray-500 font-poppins mt-1">
+              Select the type that best describes your wholesale business
+            </p>
             <FormMessage />
           </FormItem>
         )}

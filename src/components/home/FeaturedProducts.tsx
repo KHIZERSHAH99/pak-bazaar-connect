@@ -20,20 +20,25 @@ const FeaturedProducts: React.FC = () => {
     verification_status: product.verification_status,
     moq: product.minOrder,
     shops: {
+      id: product.shop_id,
       name: product.wholesaler,
+      owner_id: 'demo-owner',
+      contact: '+92-300-0000000',
+      address: product.location.split(',')[0],
+      postal_code: '00000',
       cities: { name: product.location }
     }
   }));
 
   return (
-    <section className="py-16 px-6 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-16 px-6 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-poppins flex items-center justify-center">
-            <ShoppingCart className="h-8 w-8 mr-3 text-pakistani_green-700" />
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4 font-poppins flex items-center justify-center">
+            <ShoppingCart className="h-8 w-8 mr-3 text-pakistani_green-700 dark:text-pakistani_green-400" />
             Featured Products
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-poppins">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto font-poppins">
             Discover a selection of top-quality products from verified wholesalers across Pakistan.
           </p>
         </div>

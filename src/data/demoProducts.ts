@@ -10,6 +10,10 @@ export interface DemoProduct {
   location: string;
   minOrder: number;
   inStock: boolean;
+  // Added properties to match Product interface
+  shop_id: string;
+  is_active: boolean;
+  verification_status: string;
 }
 
 export const demoProducts: DemoProduct[] = [
@@ -23,7 +27,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Punjab Rice Mills",
     location: "Lahore, Punjab",
     minOrder: 50,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-1",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-2", 
@@ -35,7 +42,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Karachi Textiles Ltd",
     location: "Karachi, Sindh",
     minOrder: 100,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-2",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-3",
@@ -47,7 +57,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Sialkot Surgical Co",
     location: "Sialkot, Punjab",
     minOrder: 10,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-3",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-4",
@@ -59,7 +72,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Sports City Sialkot",
     location: "Sialkot, Punjab",
     minOrder: 25,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-4",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-5",
@@ -71,7 +87,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Karachi Leather Works",
     location: "Karachi, Sindh", 
     minOrder: 20,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-5",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-6",
@@ -83,7 +102,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Tech Components Hub",
     location: "Islamabad, ICT",
     minOrder: 50,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-6",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-7",
@@ -95,7 +117,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Medical Supply Co",
     location: "Lahore, Punjab",
     minOrder: 15,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-7",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-8",
@@ -107,7 +132,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Build Pro Materials",
     location: "Rawalpindi, Punjab",
     minOrder: 100,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-8",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-9",
@@ -119,7 +147,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Auto Parts Pakistan",
     location: "Gujranwala, Punjab", 
     minOrder: 30,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-9",
+    is_active: true,
+    verification_status: "approved"
   },
   {
     id: "demo-prod-10",
@@ -131,7 +162,10 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: "Farm Tech Solutions",
     location: "Faisalabad, Punjab",
     minOrder: 40,
-    inStock: true
+    inStock: true,
+    shop_id: "demo-shop-10",
+    is_active: true,
+    verification_status: "approved"
   }
 ];
 

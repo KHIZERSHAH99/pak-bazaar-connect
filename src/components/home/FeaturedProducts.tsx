@@ -5,10 +5,25 @@ import { Button } from '@/components/ui/button';
 import ProductsGrid from '@/components/products/ProductsGrid';
 import { demoProducts } from '@/data/demoProducts';
 import { ShoppingCart, ArrowRight } from 'lucide-react';
+import { Product } from '@/lib/types';
 
 const FeaturedProducts: React.FC = () => {
-  // Select first 8 products for display, or fewer if less than 8.
-  const productsToDisplay = demoProducts.slice(0, 8);
+  // Convert DemoProduct to Product format for ProductsGrid compatibility
+  const productsToDisplay: Product[] = demoProducts.slice(0, 8).map(product => ({
+    id: product.id,
+    shop_id: product.shop_id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    image: product.image,
+    is_active: product.is_active,
+    verification_status: product.verification_status,
+    moq: product.minOrder,
+    shops: {
+      name: product.wholesaler,
+      cities: { name: product.location }
+    }
+  }));
 
   return (
     <section className="py-16 px-6 bg-gradient-to-b from-gray-50 to-white">

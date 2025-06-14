@@ -1,161 +1,233 @@
-
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { signOut } from '@/lib/supabase';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { Menu, X, Home, LayoutDashboard } from 'lucide-react';
-import UserMenu from './navbar/UserMenu';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { User, LogOut, ChevronDown, Moon, Sun, Globe } from 'lucide-react';
+import { useProfile } from '@/hooks/useProfile';
 import MobileMenu from './navbar/MobileMenu';
-import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
 
 const Navbar: React.FC = () => {
+  const { user, logout } = useAuth();
+  const { theme } = useTheme();
+  const { t } = useLanguage();
+  const { userProfile } = useProfile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const { user, profile } = useAuth();
-  const { toast } = useToast();
-  const location = useLocation();
-  
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
-  
-  // Track scroll position to add shadow when scrolled
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location.pathname]);
-  
-  // If we're on an auth page, don't show the navbar
-  if (isAuthPage) {
-    return null;
-  }
 
   const handleLogout = async () => {
-    try {
-      await signOut();
-      toast({
-        title: 'Logged out',
-        description: 'You have been successfully logged out',
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to log out',
-        variant: 'destructive',
-      });
-    }
+    await logout();
   };
 
-  // Helper to get role badge
   const getRoleBadge = () => {
-    if (!profile) return null;
-    
-    let bgColor = "bg-muted text-muted-foreground";
-    
-    if (profile.role === "admin") {
-      bgColor = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-    } else if (profile.role === "wholesaler") {
-      bgColor = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-    } else if (profile.role === "seller") {
-      bgColor = "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
-    } else if (profile.role === "pending") {
-      bgColor = "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+    if (!userProfile?.role) return null;
+
+    let badgeColor = 'bg-gray-500';
+    if (userProfile.role === 'admin') {
+      badgeColor = 'bg-red-500';
+    } else if (userProfile.role === 'wholesaler') {
+      badgeColor = 'bg-green-500';
+    } else if (userProfile.role === 'seller') {
+      badgeColor = 'bg-blue-500';
     }
-    
+
     return (
-      <span className={`text-xs px-2 py-0.5 rounded-full capitalize font-poppins ${bgColor}`}>
-        {profile.role}
+      <span className={`ml-1 px-2 py-0.5 rounded text-xs font-medium ${badgeColor} text-white`}>
+        {userProfile.role}
       </span>
     );
   };
 
   return (
-    <header className={`bg-card/95 backdrop-blur-sm sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-md' : 'border-b border-border'}`}>
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-14 md:h-16">
-          <Link to="/" className="flex items-center">
-            <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
-              <span className="text-white text-lg md:text-xl font-bold font-poppins">PBC</span>
+    <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <div className="flex-shrink-0 flex items-center">
+              <Link to="/" className="flex items-center">
+                <img className="h-8 w-auto" src="/placeholder.svg" alt="Pak Bazaar Connect" />
+                <span className="ml-2 text-lg font-bold text-primary font-poppins">Pak Bazaar Connect</span>
+              </Link>
             </div>
-            <span className="text-lg md:text-xl font-bold text-pakistani_green-800 dark:text-pakistani_green-400 ml-2 hidden sm:inline-block font-poppins">Pak Bazaar Connect</span>
-          </Link>
+            <div className="hidden md:ml-6 md:flex md:space-x-8">
+              <Link
+                to="/"
+                className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
+              >
+                Home
+              </Link>
+              <Link
+                to="/products"
+                className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
+              >
+                Products
+              </Link>
+              <Link
+                to="/sellers"
+                className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
+              >
+                Suppliers
+              </Link>
+              <Link
+                to="/features"
+                className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
+              >
+                Features
+              </Link>
+            </div>
+          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            <Link to="/" className="text-foreground hover:text-pakistani_green-700 dark:hover:text-pakistani_green-400 font-medium flex items-center gap-1.5 transition-colors duration-200 font-poppins">
-              <Home className="w-4 h-4" />
-              Home
-            </Link>
+          <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
+            <LanguageToggle />
+            <ThemeToggle />
             
             {user ? (
-              <>
-                <Link to="/dashboard" className="text-foreground hover:text-pakistani_green-700 dark:hover:text-pakistani_green-400 font-medium flex items-center gap-1.5 transition-colors duration-200 font-poppins">
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
-                
-                <LanguageToggle />
-                <ThemeToggle />
-                
-                <UserMenu
-                  email={profile?.email}
-                  role={profile?.role}
-                  onLogout={handleLogout}
-                  getRoleBadge={getRoleBadge}
-                />
-              </>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="flex items-center gap-1.5 font-poppins">
+                    <User className="h-4 w-4" />
+                    <span className="font-medium max-w-20 truncate">{user.email?.split('@')[0]}</span>
+                    {getRoleBadge()}
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-popover border-border">
+                  <DropdownMenuLabel className="font-poppins">My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer flex items-center gap-2 font-poppins">
+                      <User className="h-4 w-4" />
+                      {t('profile')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="cursor-pointer flex items-center gap-2 font-poppins">
+                      <LayoutDashboard className="h-4 w-4" />
+                      {t('dashboard')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer flex items-center gap-2 font-poppins">
+                    <LogOut className="h-4 w-4" />
+                    {t('logout')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <div className="flex items-center space-x-3">
-                <LanguageToggle />
-                <ThemeToggle />
-                <Link to="/login">
-                  <Button variant="outline" className="border-pakistani_green-700 text-pakistani_green-700 dark:border-pakistani_green-400 dark:text-pakistani_green-400 font-poppins">
-                    Login
-                  </Button>
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/login"
+                  className="text-foreground hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium font-poppins"
+                >
+                  {t('login')}
                 </Link>
-                <Link to="/signup">
-                  <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins">
-                    Sign Up
-                  </Button>
+                <Link
+                  to="/signup"
+                  className="bg-primary hover:bg-pakistani_green-700 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium font-poppins"
+                >
+                  {t('signup')}
                 </Link>
               </div>
             )}
-          </nav>
+          </div>
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden focus:outline-none p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6 text-foreground" />
-            ) : (
-              <Menu className="h-6 w-6 text-foreground" />
-            )}
-          </button>
+          <div className="md:hidden flex items-center space-x-2">
+            <LanguageToggle />
+            <ThemeToggle />
+            <MobileMenu
+              isMenuOpen={isMenuOpen}
+              setIsMenuOpen={setIsMenuOpen}
+              user={user}
+              userProfile={userProfile}
+              handleLogout={handleLogout}
+              getRoleBadge={getRoleBadge}
+              t={t}
+            />
+          </div>
         </div>
-
-        {/* Mobile Navigation */}
-        <MobileMenu
-          isOpen={isMenuOpen}
-          user={user}
-          onItemClick={() => setIsMenuOpen(false)}
-          onLogout={handleLogout}
-          getRoleBadge={getRoleBadge}
-        />
       </div>
-    </header>
+    </nav>
+  );
+};
+
+export default Navbar;
+import { LayoutDashboard, LogOut, ChevronDown, Moon, Sun, Globe } from 'lucide-react';
+import { useProfile } from '@/hooks/useProfile';
+import MobileMenu from './navbar/MobileMenu';
+import LanguageToggle from './LanguageToggle';
+
+interface UserMenuProps {
+  email?: string;
+  role?: string;
+  onLogout: () => void;
+  getRoleBadge: () => React.ReactNode;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge }) => {
+  const { t } = useLanguage();
+  
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="flex items-center gap-1.5 font-poppins">
+          <User className="h-4 w-4" />
+          <span className="font-medium max-w-20 truncate">{email?.split('@')[0]}</span>
+          {getRoleBadge()}
+          <ChevronDown className="h-4 w-4 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56 bg-popover border-border">
+        <DropdownMenuLabel className="font-poppins">My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/profile" className="cursor-pointer flex items-center gap-2 font-poppins">
+            <User className="h-4 w-4" />
+            {t('profile')}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/dashboard" className="cursor-pointer flex items-center gap-2 font-poppins">
+            <LayoutDashboard className="h-4 w-4" />
+            {t('dashboard')}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/favorites" className="cursor-pointer flex items-center gap-2 font-poppins">
+            <Heart className="h-4 w-4" />
+            Favorites
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/messages" className="cursor-pointer flex items-center gap-2 font-poppins">
+            <MessageSquare className="h-4 w-4" />
+            Messages
+          </Link>
+        </DropdownMenuItem>
+        {role === 'wholesaler' && (
+          <DropdownMenuItem asChild>
+            <Link to="/analytics" className="cursor-pointer flex items-center gap-2 font-poppins">
+              <BarChart className="h-4 w-4" />
+              Analytics
+            </Link>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onLogout} className="text-destructive cursor-pointer flex items-center gap-2 font-poppins">
+          <LogOut className="h-4 w-4" />
+          {t('logout')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

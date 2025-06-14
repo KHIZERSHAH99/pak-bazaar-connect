@@ -59,6 +59,9 @@ import TermsOfService from './pages/TermsOfService';
 import RefundPolicy from './pages/RefundPolicy';
 import ShippingPolicy from './pages/ShippingPolicy'; // New Policy Page
 
+// Import the new Features page
+import Features from './pages/Features';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -81,6 +84,9 @@ function App() {
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/seller/:id" element={<SellerProfile />} />
                   <Route path="/inquiry" element={<InquiryForm />} />
+
+                  {/* Features showcase page */}
+                  <Route path="/features" element={<Features />} />
 
                   {/* Policy Pages */}
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />

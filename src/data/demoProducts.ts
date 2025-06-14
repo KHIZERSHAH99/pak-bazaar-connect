@@ -12,6 +12,7 @@ export interface DemoProduct {
   location: string;
   minOrder: number;
   category: string;
+  inStock: boolean;
 }
 
 export const demoProducts: DemoProduct[] = [
@@ -27,7 +28,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Punjab Rice Mills',
     location: 'Lahore, Punjab',
     minOrder: 50,
-    category: 'Food & Agriculture'
+    category: 'Food & Agriculture',
+    inStock: true
   },
   {
     id: '2',
@@ -41,7 +43,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Textile Industries Ltd',
     location: 'Faisalabad, Punjab',
     minOrder: 100,
-    category: 'Textiles'
+    category: 'Textiles',
+    inStock: true
   },
   {
     id: '3',
@@ -55,7 +58,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Sialkot Leather Works',
     location: 'Sialkot, Punjab',
     minOrder: 25,
-    category: 'Leather Goods'
+    category: 'Leather Goods',
+    inStock: true
   },
   {
     id: '4',
@@ -69,7 +73,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Sports Goods International',
     location: 'Sialkot, Punjab',
     minOrder: 50,
-    category: 'Sports Equipment'
+    category: 'Sports Equipment',
+    inStock: true
   },
   {
     id: '5',
@@ -83,7 +88,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Salt Traders Co.',
     location: 'Khewra, Punjab',
     minOrder: 200,
-    category: 'Food & Agriculture'
+    category: 'Food & Agriculture',
+    inStock: true
   },
   {
     id: '6',
@@ -97,7 +103,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Medical Instruments Ltd',
     location: 'Sialkot, Punjab',
     minOrder: 10,
-    category: 'Medical Equipment'
+    category: 'Medical Equipment',
+    inStock: false
   },
   {
     id: '7',
@@ -111,7 +118,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Sindh Fruit Exporters',
     location: 'Hyderabad, Sindh',
     minOrder: 30,
-    category: 'Food & Agriculture'
+    category: 'Food & Agriculture',
+    inStock: true
   },
   {
     id: '8',
@@ -125,7 +133,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Construction Materials Co.',
     location: 'Karachi, Sindh',
     minOrder: 100,
-    category: 'Construction Materials'
+    category: 'Construction Materials',
+    inStock: true
   },
   {
     id: '9',
@@ -139,7 +148,8 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Heritage Carpets',
     location: 'Lahore, Punjab',
     minOrder: 5,
-    category: 'Home Decor'
+    category: 'Home Decor',
+    inStock: true
   },
   {
     id: '10',
@@ -153,6 +163,42 @@ export const demoProducts: DemoProduct[] = [
     wholesaler: 'Tech Components Ltd',
     location: 'Karachi, Sindh',
     minOrder: 500,
-    category: 'Electronics'
+    category: 'Electronics',
+    inStock: true
+  },
+  {
+    id: '11',
+    shop_id: 'shop-11',
+    name: 'Fresh Citrus Fruits',
+    description: 'Premium oranges and grapefruits from Sargodha orchards',
+    price: 2800,
+    image: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=400&h=300&fit=crop&auto=format',
+    is_active: true,
+    verification_status: 'approved',
+    wholesaler: 'Sargodha Citrus Co.',
+    location: 'Sargodha, Punjab',
+    minOrder: 40,
+    category: 'Food & Agriculture',
+    inStock: true
+  },
+  {
+    id: '12',
+    shop_id: 'shop-12',
+    name: 'Handmade Pottery',
+    description: 'Traditional clay pottery and ceramics from local artisans',
+    price: 1800,
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&auto=format',
+    is_active: true,
+    verification_status: 'approved',
+    wholesaler: 'Punjab Pottery House',
+    location: 'Multan, Punjab',
+    minOrder: 20,
+    category: 'Handicrafts',
+    inStock: true
   }
 ];
+
+// Helper function to get a product by ID
+export const getProductById = (id: string): DemoProduct | undefined => {
+  return demoProducts.find(product => product.id === id);
+};

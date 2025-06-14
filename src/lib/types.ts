@@ -1,4 +1,3 @@
-
 // Define all the types needed for our application
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
 
@@ -157,3 +156,10 @@ export interface RoleRequest {
   status: RoleRequestStatus;
   created_at?: string;
 }
+
+// Add type aliases for ShopWithCity and ProductWithCategory
+// These types are essentially the base Shop and Product types,
+// used in contexts where their respective nested 'cities' or 'categories'
+// are expected to be populated by a query.
+export type ShopWithCity = Shop;
+export type ProductWithCategory = Product;

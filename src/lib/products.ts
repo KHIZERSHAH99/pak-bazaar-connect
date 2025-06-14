@@ -69,3 +69,35 @@ export const createProduct = async (product: Omit<Product, 'id' | 'created_at'>)
   
   return data[0] as Product;
 };
+
+export const updateProduct = async (productId: string, updates: Partial<Product>) => {
+  const { data, error } = await supabase
+    .from('products')
+    .update(updates)
+    .eq('id', productId)
+    .select();
+  
+  if (error) {
+    console.error('Error updating product:', error);
+    throw error;
+  }
+  
+  return data[0] as Product;
+};
+
+export const uploadImage = async (bucket: string, fileName: string, file: File): Promise<string> => {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(fileName, file);
+    
+  if (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+  
+  const { data: urlData } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(fileName);
+    
+  return urlData.publicUrl;
+};

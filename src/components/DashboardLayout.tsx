@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -132,7 +133,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       <div className="flex flex-grow">
         {/* Mobile sidebar toggle button */}
@@ -149,7 +150,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <aside 
           className={`fixed inset-0 z-20 transform md:relative md:translate-x-0 transition-transform duration-300 ease-in-out 
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-            md:block bg-white border-r border-gray-200 w-64 flex-shrink-0`}
+            md:block bg-card border-r border-border w-64 flex-shrink-0`}
         >
           {/* Mobile close button */}
           <div className="md:hidden flex justify-end p-4">
@@ -164,18 +165,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           <div className="p-4">
             {profile ? (
-              <div className="mb-6 flex flex-col items-center p-4 bg-pakistani_green-50 rounded-lg">
-                <Avatar className="h-16 w-16 border-2 border-pakistani_green-100 mb-3">
+              <div className="mb-6 flex flex-col items-center p-4 bg-pakistani_green-50 dark:bg-pakistani_green-900/20 rounded-lg">
+                <Avatar className="h-16 w-16 border-2 border-pakistani_green-100 dark:border-pakistani_green-800 mb-3">
                   <AvatarFallback className="bg-pakistani_green-700 text-white text-xl">
                     {profile.email?.substring(0, 2).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-center">
-                  <p className="font-medium text-gray-800 mb-1">{profile.email?.split('@')[0]}</p>
+                  <p className="font-medium text-foreground mb-1">{profile.email?.split('@')[0]}</p>
                   <Badge variant={
-                    profile.role === 'admin' ? 'info' : 
-                    profile.role === 'wholesaler' || profile.role === 'seller' ? 'success' : 
-                    'pending'
+                    profile.role === 'admin' ? 'default' : 
+                    profile.role === 'wholesaler' || profile.role === 'seller' ? 'secondary' : 
+                    'outline'
                   } className="capitalize">
                     {profile.role}
                   </Badge>
@@ -189,7 +190,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </div>
             )}
 
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 px-3">Dashboard</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4 px-3">Dashboard</h2>
             <nav className="space-y-1">
               {getNavItems().map((item) => (
                 <Link
@@ -199,7 +200,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   className={`flex items-center justify-between px-4 py-3 rounded-md text-sm font-medium group transition-all duration-200 ${
                     isActive(item.path)
                       ? 'bg-pakistani_green-700 text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      : 'text-foreground hover:bg-muted'
                   }`}
                 >
                   <div className="flex items-center">
@@ -208,7 +209,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   </div>
                   
                   {item.badge && (
-                    <Badge variant="info" size="sm" className="ml-2">
+                    <Badge variant="secondary" size="sm" className="ml-2">
                       {item.badge}
                     </Badge>
                   )}
@@ -230,7 +231,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           />
         )}
 
-        <main className="flex-grow p-4 md:p-6 bg-gray-50">
+        <main className="flex-grow p-4 md:p-6 bg-background">
           <div className="container mx-auto">
             {children}
           </div>

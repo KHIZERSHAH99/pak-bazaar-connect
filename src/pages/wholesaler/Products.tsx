@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { getShopsByOwner, Shop, createProduct, Product, getProductsByShop, uploadImage } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Package, Edit, Eye, Store } from 'lucide-react';
+import EditProductDialog from '@/components/products/EditProductDialog';
 
 const Products: React.FC = () => {
   const [shops, setShops] = useState<Shop[]>([]);
@@ -28,6 +29,8 @@ const Products: React.FC = () => {
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
   const { toast } = useToast();
 
@@ -180,6 +183,22 @@ const Products: React.FC = () => {
     setImagePreview(null);
   };
 
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditDialogClose = () => {
+    setIsEditDialogOpen(false);
+    setEditingProduct(null);
+  };
+
+  const handleProductUpdated = () => {
+    if (selectedShop) {
+      fetchProducts(selectedShop);
+    }
+  };
+
   if (shops.length === 0 && !loading) {
     return (
       <DashboardLayout>
@@ -253,7 +272,7 @@ const Products: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <Card key={product.id} className="overflow-hidden">
-                <div className="h-48 bg-gray-100">
+                <div className="h-48 bg-muted">
                   {product.image ? (
                     <img 
                       src={product.image} 
@@ -265,20 +284,20 @@ const Products: React.FC = () => {
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full">
-                      <Package className="h-12 w-12 text-gray-400" />
+                      <Package className="h-12 w-12 text-muted-foreground" />
                     </div>
                   )}
                 </div>
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-semibold text-lg">{product.name}</h3>
-                    <span className={`px-2 py-1 text-xs rounded-full ${product.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                    <span className={`px-2 py-1 text-xs rounded-full ${product.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-muted text-muted-foreground'}`}>
                       {product.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                   
                   {product.description && (
-                    <p className="text-gray-600 mb-4 line-clamp-2">{product.description}</p>
+                    <p className="text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
                   )}
                   
                   <p className="text-lg font-bold text-primary mb-4">
@@ -289,7 +308,7 @@ const Products: React.FC = () => {
                     <Button 
                       variant="outline"
                       className="flex-1"
-                      // To be implemented
+                      onClick={() => handleEditProduct(product)}
                     >
                       <Edit className="h-4 w-4 mr-2" /> Edit
                     </Button>
@@ -417,6 +436,13 @@ const Products: React.FC = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      <EditProductDialog
+        isOpen={isEditDialogOpen}
+        onClose={handleEditDialogClose}
+        product={editingProduct}
+        onProductUpdated={handleProductUpdated}
+      />
     </DashboardLayout>
   );
 };

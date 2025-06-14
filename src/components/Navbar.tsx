@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,13 +19,13 @@ import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';
 
 const Navbar: React.FC = () => {
-  const { user, profile, logout } = useAuth(); // Use logout, use profile from useAuth
+  const { user, profile } = useAuth(); // Remove logout from destructuring
   const { theme } = useTheme();
   const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
+    await signOut();
   };
 
   const getRoleBadge = () => {

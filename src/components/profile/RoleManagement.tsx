@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Store, ShoppingBag, AlertTriangle } from 'lucide-react';
+import { Store, ShoppingBag, AlertTriangle, Info } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
 import RoleCard from './RoleCard';
 
@@ -16,6 +16,8 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
   isRequesting,
   onRoleChange
 }) => {
+  const isSellerRole = currentRole === 'seller';
+
   return (
     <Card className="overflow-hidden border-none shadow-md">
       <div className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-500 p-4 md:p-6 text-white">
@@ -38,6 +40,23 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
             </div>
           </div>
         </div>
+
+        {isSellerRole && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm text-blue-800 font-poppins font-medium mb-1">
+                  Becoming a Wholesaler
+                </p>
+                <p className="text-sm text-blue-700 font-poppins">
+                  To become a wholesaler, you'll need to complete a separate signup process with business verification. 
+                  This ensures all wholesalers on our platform are legitimate businesses.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <RoleCard

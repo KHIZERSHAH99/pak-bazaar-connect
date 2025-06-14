@@ -3,8 +3,9 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle, ArrowRight, ExternalLink } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
+import { Link } from 'react-router-dom';
 
 interface RoleCardProps {
   title: string;
@@ -28,6 +29,9 @@ const RoleCard: React.FC<RoleCardProps> = ({
   onRoleChange
 }) => {
   const isCurrentRole = currentRole === targetRole;
+  
+  // Check if user is trying to switch from seller to wholesaler
+  const isSellerToWholesaler = currentRole === 'seller' && targetRole === 'wholesaler';
 
   return (
     <Card className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md ${
@@ -63,15 +67,30 @@ const RoleCard: React.FC<RoleCardProps> = ({
         </ul>
         
         {!isCurrentRole && (
-          <Button 
-            variant="outline" 
-            className="w-full group font-poppins"
-            onClick={() => onRoleChange(targetRole)}
-            disabled={isRequesting}
-          >
-            Switch to {title}
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Button>
+          <>
+            {isSellerToWholesaler ? (
+              <Link to="/signup" className="block">
+                <Button 
+                  variant="outline" 
+                  className="w-full group font-poppins"
+                  disabled={isRequesting}
+                >
+                  Sign Up as {title}
+                  <ExternalLink className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Button>
+              </Link>
+            ) : (
+              <Button 
+                variant="outline" 
+                className="w-full group font-poppins"
+                onClick={() => onRoleChange(targetRole)}
+                disabled={isRequesting}
+              >
+                Switch to {title}
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
+            )}
+          </>
         )}
       </div>
     </Card>
@@ -79,4 +98,3 @@ const RoleCard: React.FC<RoleCardProps> = ({
 };
 
 export default RoleCard;
-

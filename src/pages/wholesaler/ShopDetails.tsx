@@ -1,14 +1,19 @@
+
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, Package, Store, MapPin, Phone, Star } from 'lucide-react';
+import { ArrowLeft, Store } from 'lucide-react';
+
+import ShopDetailsHeader from '@/components/shop/details/ShopDetailsHeader';
+import ShopInformationCard from '@/components/shop/details/ShopInformationCard';
+import ShopProductsSection from '@/components/shop/details/ShopProductsSection';
+import ShopStatisticsCard from '@/components/shop/details/ShopStatisticsCard';
+import ShopQuickActionsCard from '@/components/shop/details/ShopQuickActionsCard';
 
 const ShopDetails: React.FC = () => {
   const { shopId } = useParams<{ shopId: string }>();
@@ -51,7 +56,7 @@ const ShopDetails: React.FC = () => {
           )
         `)
         .eq('shop_id', shopId)
-        .eq('is_active', true);
+        .eq('is_active', true); // Only active products for this shop
       
       if (productsError) throw productsError;
       return data || [];
@@ -62,15 +67,18 @@ const ShopDetails: React.FC = () => {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          <Skeleton className="h-8 w-64" />
-          <Card className="p-6">
-            <div className="space-y-4">
-              <Skeleton className="h-6 w-48" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
+        <div className="space-y-6 p-4 md:p-6">
+          <Skeleton className="h-10 w-3/4 mb-4" /> {/* Header skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <Skeleton className="h-40 w-full" /> {/* Shop info card skeleton */}
+              <Skeleton className="h-64 w-full" /> {/* Products section skeleton */}
             </div>
-          </Card>
+            <div className="space-y-6">
+              <Skeleton className="h-32 w-full" /> {/* Stats card skeleton */}
+              <Skeleton className="h-48 w-full" /> {/* Quick actions skeleton */}
+            </div>
+          </div>
         </div>
       </DashboardLayout>
     );
@@ -80,9 +88,9 @@ const ShopDetails: React.FC = () => {
     return (
       <DashboardLayout>
         <div className="text-center py-12">
-          <Store className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Shop Not Found</h2>
-          <p className="text-gray-600 mb-4">The shop you're looking for doesn't exist or has been removed.</p>
+          <Store className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Shop Not Found</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">The shop you're looking for doesn't exist or has been removed.</p>
           <Button onClick={() => navigate('/dashboard/shops')} variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Shops
@@ -95,153 +103,21 @@ const ShopDetails: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button 
-              onClick={() => navigate('/dashboard/shops')} 
-              variant="outline" 
-              size="sm"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Shops
-            </Button>
-            <h1 className="text-2xl font-bold text-gray-800 font-poppins">{shop.name}</h1>
-          </div>
-          <Badge variant="success" className="font-poppins">
-            Active Shop
-          </Badge>
-        </div>
+        <ShopDetailsHeader shop={shop} onBack={() => navigate('/dashboard/shops')} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <Card className="p-6">
-              <div className="flex items-start space-x-4">
-                {shop.logo ? (
-                  <img 
-                    src={shop.logo} 
-                    alt={shop.name}
-                    className="w-16 h-16 rounded-lg object-cover border"
-                  />
-                ) : (
-                  <div className="w-16 h-16 bg-pakistani_green-100 rounded-lg flex items-center justify-center">
-                    <Store className="h-8 w-8 text-pakistani_green-700" />
-                  </div>
-                )}
-                <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2 font-poppins">{shop.name}</h2>
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      <span className="font-poppins">{shop.address}</span>
-                    </div>
-                    {shop.cities && (
-                      <div className="flex items-center">
-                        <span className="font-poppins">{shop.cities.name}, {shop.cities.province}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 mr-2" />
-                      <span className="font-poppins">{shop.contact}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800 font-poppins flex items-center">
-                  <Package className="h-5 w-5 mr-2" />
-                  Products ({products?.length || 0})
-                </h3>
-                <Button 
-                  onClick={() => navigate('/dashboard/products')} 
-                  size="sm"
-                >
-                  Manage Products
-                </Button>
-              </div>
-              
-              {productsLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[1, 2, 3, 4].map((i) => (
-                    <Skeleton key={i} className="h-32 w-full" />
-                  ))}
-                </div>
-              ) : products && products.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {products.slice(0, 6).map((product) => (
-                    <div key={product.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                      <div className="flex items-start space-x-3">
-                        {product.image ? (
-                          <img 
-                            src={product.image} 
-                            alt={product.name}
-                            className="w-12 h-12 rounded object-cover"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
-                            <Package className="h-6 w-6 text-gray-400" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-gray-800 truncate font-poppins">{product.name}</h4>
-                          <p className="text-sm text-gray-600 font-poppins">Rs. {product.price}</p>
-                          {product.categories && (
-                            <Badge variant="secondary" className="mt-1">
-                              {product.categories.name}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p className="font-poppins">No products added yet</p>
-                </div>
-              )}
-            </Card>
+            <ShopInformationCard shop={shop} />
+            <ShopProductsSection 
+              products={products} 
+              productsLoading={productsLoading}
+              shopId={shopId}
+            />
           </div>
 
           <div className="space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 font-poppins">Shop Statistics</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-poppins">Total Products</span>
-                  <span className="font-semibold font-poppins">{products?.length || 0}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-poppins">Commission Rate</span>
-                  <span className="font-semibold font-poppins">{shop.commission_rate || 5}%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-poppins">Shop Rating</span>
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="font-semibold ml-1 font-poppins">4.5</span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 font-poppins">Quick Actions</h3>
-              <div className="space-y-3">
-                <Button className="w-full" onClick={() => navigate('/dashboard/products')}>
-                  Add New Product
-                </Button>
-                <Button variant="outline" className="w-full" onClick={() => navigate('/dashboard/ads')}>
-                  Create Advertisement
-                </Button>
-                <Button variant="outline" className="w-full" onClick={() => navigate('/analytics')}>
-                  View Analytics
-                </Button>
-              </div>
-            </Card>
+            <ShopStatisticsCard shop={shop} productsCount={products?.length || 0} />
+            <ShopQuickActionsCard />
           </div>
         </div>
       </div>
@@ -256,3 +132,4 @@ const ShopDetailsWithAuth = () => (
 );
 
 export default ShopDetailsWithAuth;
+

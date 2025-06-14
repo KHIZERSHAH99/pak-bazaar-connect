@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
@@ -11,11 +10,11 @@
   --pakistani-green-200: #bae6ba;
   --pakistani-green-300: #8cd68c;
   --pakistani-green-400: #5bbf5b;
-  --pakistani-green-500: #1B5E20;
-  --pakistani-green-600: #2e7d32;
-  --pakistani-green-700: #1b5e20;
-  --pakistani-green-800: #1565c0;
-  --pakistani-green-900: #0d3f14;
+  --pakistani-green-500: #1B5E20; /* Main Theme Green */
+  --pakistani-green-600: #2e7d32; /* Darker Green */
+  --pakistani-green-700: #1b5e20; /* Same as 500, often used for primary actions */
+  --pakistani-green-800: #104d1b; /* Even Darker Green - Corrected from blue */
+  --pakistani-green-900: #0d3f14; /* Darkest Green */
   
   /* Light mode colors */
   --background: 255 255 255;
@@ -24,7 +23,7 @@
   --card-foreground: 15 23 42;
   --popover: 255 255 255;
   --popover-foreground: 15 23 42;
-  --primary: 27 94 32;
+  --primary: 27 94 32; /* Equivalent to #1B5E20 */
   --primary-foreground: 248 250 252;
   --secondary: 241 245 249;
   --secondary-foreground: 15 23 42;
@@ -36,31 +35,31 @@
   --destructive-foreground: 248 250 252;
   --border: 226 232 240;
   --input: 226 232 240;
-  --ring: 27 94 32;
+  --ring: 27 94 32; /* Equivalent to #1B5E20 */
   --radius: 0.5rem;
 }
 
 .dark {
   /* Dark mode colors */
-  --background: 15 23 42;
-  --foreground: 248 250 252;
-  --card: 30 41 59;
-  --card-foreground: 248 250 252;
-  --popover: 30 41 59;
-  --popover-foreground: 248 250 252;
-  --primary: 74 222 128;
-  --primary-foreground: 15 23 42;
-  --secondary: 51 65 85;
-  --secondary-foreground: 248 250 252;
-  --muted: 51 65 85;
-  --muted-foreground: 148 163 184;
-  --accent: 51 65 85;
-  --accent-foreground: 248 250 252;
-  --destructive: 239 68 68;
-  --destructive-foreground: 248 250 252;
-  --border: 51 65 85;
-  --input: 51 65 85;
-  --ring: 74 222 128;
+  --background: 15 23 42; /* slate-900 */
+  --foreground: 248 250 252; /* slate-50 */
+  --card: 30 41 59; /* slate-800 */
+  --card-foreground: 248 250 252; /* slate-50 */
+  --popover: 30 41 59; /* slate-800 */
+  --popover-foreground: 248 250 252; /* slate-50 */
+  --primary: 74 222 128; /* green-400 (adjust if needed for dark mode green) */
+  --primary-foreground: 15 23 42; /* slate-900 (for text on primary buttons) */
+  --secondary: 51 65 85; /* slate-700 */
+  --secondary-foreground: 248 250 252; /* slate-50 */
+  --muted: 51 65 85; /* slate-700 */
+  --muted-foreground: 148 163 184; /* slate-400 */
+  --accent: 51 65 85; /* slate-700 */
+  --accent-foreground: 248 250 252; /* slate-50 */
+  --destructive: 239 68 68; /* red-500 */
+  --destructive-foreground: 248 250 252; /* slate-50 */
+  --border: 51 65 85; /* slate-700 */
+  --input: 51 65 85; /* slate-700 */
+  --ring: 74 222 128; /* green-400 (focus ring color) */
 }
 
 @layer base {

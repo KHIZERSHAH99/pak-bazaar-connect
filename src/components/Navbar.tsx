@@ -97,15 +97,25 @@ const Navbar: React.FC = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center gap-1.5 font-poppins">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-1.5 font-poppins focus:outline-none focus:ring-2 focus:ring-primary/70 px-2"
+                  >
                     <User className="h-4 w-4" />
                     <span className="font-medium max-w-20 truncate">{user.email?.split('@')[0]}</span>
-                    {/* Insert the new role badge/selector */}
-                    <RoleSwitcher />
+                    {/* RoleSwitcher for visually obvious role info */}
+                    <div className="inline-flex ml-1">
+                      <RoleSwitcher />
+                    </div>
                     <ChevronDown className="h-4 w-4 opacity-50" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-popover border-border">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-56 bg-popover border-border shadow-lg rounded-md animate-fade-in"
+                  style={{ background: "rgba(255,255,255,0.97)" }}
+                >
                   <DropdownMenuLabel className="font-poppins">My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
@@ -116,13 +126,14 @@ const Navbar: React.FC = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard" className="cursor-pointer flex items-center gap-2 font-poppins">
-                      {/* Use an icon here if needed */}
                       {t('dashboard')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer flex items-center gap-2 font-poppins">
-                    {/* Use an icon here if needed */}
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="text-destructive cursor-pointer flex items-center gap-2 font-poppins"
+                  >
                     {t('logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -135,12 +146,15 @@ const Navbar: React.FC = () => {
                 >
                   {t('login')}
                 </Link>
-                <Link
-                  to="/signup"
-                  className="bg-primary hover:bg-pakistani_green-700 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium font-poppins"
-                >
-                  {t('signup')}
-                </Link>
+                {/* Only show Sign Up when user is NOT logged in */}
+                {!user && (
+                  <Link
+                    to="/signup"
+                    className="bg-primary hover:bg-pakistani_green-700 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium font-poppins"
+                  >
+                    {t('signup')}
+                  </Link>
+                )}
               </div>
             )}
           </div>
@@ -155,6 +169,18 @@ const Navbar: React.FC = () => {
               onLogout={handleLogout}
               getRoleBadge={getRoleBadge}
             />
+            {/* Add Hamburger Button */}
+            <button
+              type="button"
+              aria-label="Open menu"
+              className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <span className="sr-only">Open menu</span>
+              <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M4 8h16M4 16h16" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

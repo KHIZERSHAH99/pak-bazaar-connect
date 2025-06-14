@@ -59,16 +59,23 @@ const RoleSwitcher: React.FC = () => {
 
   return (
     <div className="flex items-center gap-1 relative ml-2">
-      <Badge className={`capitalize px-2 py-1 text-xs font-poppins cursor-pointer transition ${roleColors[profile.role as UserRole]} flex items-center gap-1`}
+      <Badge className={`capitalize px-2 py-1 text-xs font-poppins transition ${roleColors[profile.role as UserRole]} flex items-center gap-1 ring-1 ring-pakistani_green-200`}
         onClick={canSwitch ? handleSwitch : undefined}
         title={canSwitch ? `Switch to ${roleDisplay[nextRole[profile.role as UserRole]]}` : 'Role cannot be changed here'}
         style={canSwitch ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
+        tabIndex={canSwitch ? 0 : -1}
+        aria-label={canSwitch ? `Switch to ${roleDisplay[nextRole[profile.role as UserRole]]}` : undefined}
+        data-testid="role-switcher"
       >
         {roleDisplay[profile.role as UserRole]}
         {isSwitching ? (
           <span className="ml-1 animate-spin">&#9696;</span>
         ) : (
-          canSwitch && <ArrowDown className="w-3 h-3 ml-1" />
+          canSwitch && <span className="ml-1">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeWidth="2" d="M6 9l6 6 6-6" />
+            </svg>
+          </span>
         )}
       </Badge>
     </div>

@@ -26,7 +26,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="md:hidden py-4 px-2 space-y-3 border-t border-border animate-slideIn bg-card/95 backdrop-blur-sm">
+    <div className="md:hidden py-4 px-2 space-y-3 border-t border-border animate-slideIn bg-white/95 backdrop-blur-sm shadow-xl z-50 fixed left-0 right-0 top-16">
       <Link 
         to="/" 
         className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-muted text-foreground transition-all duration-200 font-poppins group"
@@ -58,6 +58,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               {getRoleBadge()}
             </div>
           </Link>
+          <div className="mt-1 mb-2 px-4">
+            {/* Show role switcher inline for mobile */}
+            <div>
+              <RoleSwitcher />
+            </div>
+          </div>
           
           <div className="flex items-center justify-between py-3 px-4">
             <span className="font-medium text-foreground font-poppins">Settings</span>

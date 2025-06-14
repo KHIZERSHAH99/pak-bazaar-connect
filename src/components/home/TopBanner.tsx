@@ -1,19 +1,28 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Flag, Star } from 'lucide-react';
 
 const TopBanner: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-gradient-to-r from-pakistani_green-700 via-pakistani_green-600 to-green-600 text-white py-3 px-4 text-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
-      <div className="relative flex items-center justify-center">
-        <Flag className="w-5 h-5 mr-2 animate-bounce" />
-        <p className="font-semibold text-sm md:text-base font-poppins">
+    <button
+      type="button"
+      className="group w-full bg-gradient-to-r from-pakistani_green-700 via-pakistani_green-600 to-green-600 text-white py-3 px-2 text-center relative overflow-hidden cursor-pointer transition-all duration-200 hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-pakistani_green-300"
+      aria-label="Join Now! Free Ads for First 10 Wholesalers! Click to start registration"
+      onClick={() => navigate('/signup')}
+      tabIndex={0}
+    >
+      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse pointer-events-none"></span>
+      <div className="relative flex items-center justify-center text-sm md:text-base font-poppins gap-2">
+        <Flag className="w-5 h-5 mr-1 animate-bounce inline-block" aria-hidden="true" />
+        <span className="font-semibold leading-tight shadow-text-drop drop-shadow-lg text-shadow-pakistani">{/* Add shadow for contrast */}
           🎉 Join Now! Free Ads for First 10 Wholesalers! Limited Time Offer
-        </p>
-        <Star className="w-5 h-5 ml-2 animate-spin" />
+        </span>
+        <Star className="w-5 h-5 ml-1 animate-spin inline-block" aria-hidden="true" />
       </div>
-    </div>
+    </button>
   );
 };
 

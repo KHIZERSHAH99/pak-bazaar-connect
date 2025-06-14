@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Store, ShoppingBag, TrendingUp, Shield, Zap, Users, Globe, ArrowRight, CheckCircle, Star, Award, Heart, Flag } from 'lucide-react';
+import FeaturedProducts from '@/components/home/FeaturedProducts';
+
 const Index = () => {
   const {
     user
@@ -176,6 +178,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Featured Products Section */}
+      <FeaturedProducts />
 
       {/* CTA Section */}
       <section className="py-20 px-6 bg-gradient-to-r from-pakistani_green-600 via-pakistani_green-700 to-green-600 text-white relative overflow-hidden">

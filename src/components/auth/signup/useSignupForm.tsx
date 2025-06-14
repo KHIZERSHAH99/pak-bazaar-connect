@@ -49,6 +49,8 @@ export const useSignupForm = () => {
   };
 
   const nextStep = async () => {
+    console.log('NextStep called, current step:', currentStep, 'selected role:', selectedRole);
+    
     const stepFields = {
       1: [],
       2: ['email', 'password', 'confirmPassword'],
@@ -59,10 +61,17 @@ export const useSignupForm = () => {
     };
     
     const currentFields = stepFields[currentStep as keyof typeof stepFields];
+    console.log('Validating fields for step', currentStep, ':', currentFields);
     
     if (currentFields.length > 0) {
       const isValid = await form.trigger(currentFields as any);
-      if (!isValid) return;
+      console.log('Validation result:', isValid);
+      
+      if (!isValid) {
+        const errors = form.formState.errors;
+        console.log('Validation errors:', errors);
+        return;
+      }
     }
     
     if (currentStep < totalSteps) {
@@ -80,18 +89,29 @@ export const useSignupForm = () => {
   };
   
   const handleRoleSelect = (role: UserRole) => {
+    console.log('Role selected:', role);
     setSelectedRole(role);
-    form.setValue('businessType', role === 'seller' ? 'Retailer' as any : 'Wholesaler' as any);
+    // Update business type default based on role
+    const defaultBusinessType = role === 'seller' ? 'Retailer' : 'Wholesaler';
+    form.setValue('businessType', defaultBusinessType as any);
+    console.log('Set default business type to:', defaultBusinessType);
   };
   
   const onSubmit = async (values: FormValues) => {
     console.log('Form submission started for role:', selectedRole);
     console.log('Form values:', values);
     
+    // Validate we're on the final step
+    if (currentStep !== totalSteps) {
+      console.log('Not on final step, current:', currentStep, 'total:', totalSteps);
+      return;
+    }
+    
     setIsLoading(true);
     setErrorMessage(null);
     
     try {
+      console.log('Calling signUp with:', values.email, selectedRole);
       await signUp(values.email, values.password, selectedRole);
       
       toast({
@@ -104,6 +124,7 @@ export const useSignupForm = () => {
         variant: 'default',
       });
       
+      console.log('Registration successful, navigating to dashboard');
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Signup error:', error);

@@ -27,6 +27,20 @@ const EnhancedSignupForm = () => {
     onSubmit
   } = useSignupForm();
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    console.log('Form submit event triggered');
+    e.preventDefault();
+    
+    // If we're on the final step, trigger the actual submission
+    if (currentStep === totalSteps) {
+      console.log('On final step, calling onSubmit');
+      form.handleSubmit(onSubmit)();
+    } else {
+      console.log('Not on final step, calling nextStep');
+      nextStep();
+    }
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto border-none shadow-lg overflow-hidden">
       <SignupHeader 
@@ -40,7 +54,7 @@ const EnhancedSignupForm = () => {
         <ErrorDisplay errorMessage={errorMessage} />
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleFormSubmit} className="space-y-6">
             {currentStep === 1 && (
               <RoleStep
                 selectedRole={selectedRole}

@@ -19,6 +19,22 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   onPrevStep,
   onNextStep
 }) => {
+  console.log('NavigationButtons render - currentStep:', currentStep, 'totalSteps:', totalSteps, 'isLoading:', isLoading);
+  
+  const handleSubmitClick = (e: React.MouseEvent) => {
+    console.log('Submit button clicked for step:', currentStep);
+    e.preventDefault();
+    
+    // Trigger form submission by calling onNextStep which will handle form validation and submission
+    onNextStep();
+  };
+
+  const handleNextClick = (e: React.MouseEvent) => {
+    console.log('Next button clicked for step:', currentStep);
+    e.preventDefault();
+    onNextStep();
+  };
+
   return (
     <div className="flex justify-between pt-4">
       {currentStep > 1 && (
@@ -36,7 +52,7 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
       {currentStep < totalSteps ? (
         <Button
           type="button"
-          onClick={onNextStep}
+          onClick={handleNextClick}
           className="ml-auto bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
           disabled={isLoading || (currentStep === 1 && !selectedRole)}
         >
@@ -44,7 +60,8 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
         </Button>
       ) : (
         <Button
-          type="submit"
+          type="button"
+          onClick={handleSubmitClick}
           className="ml-auto bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
           disabled={isLoading}
         >

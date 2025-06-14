@@ -14,9 +14,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { User, ChevronDown } from 'lucide-react';
-// Removed: import { useProfile } from '@/hooks/useProfile';
 import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';
+import { signOut } from '@/lib/auth';
 
 const Navbar: React.FC = () => {
   const { user, profile } = useAuth(); // Remove logout from destructuring

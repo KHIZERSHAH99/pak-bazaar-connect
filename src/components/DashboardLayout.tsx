@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import LoadingSpinner from './ui/loading-spinner';
 import { 
   Home, 
   Package, 
@@ -94,7 +95,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         icon: <ShoppingCart className="w-5 h-5 mr-3" /> 
       },
       { 
-        name: 'Seller Dashboard', 
+        name: 'Analytics', 
         path: '/dashboard/seller-dashboard', 
         icon: <BarChart3 className="w-5 h-5 mr-3" /> 
       },
@@ -137,20 +138,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       <Navbar />
       <div className="flex flex-grow">
         {/* Mobile sidebar toggle button */}
-        <div className="md:hidden fixed bottom-4 right-4 z-30">
+        <div className="md:hidden fixed bottom-6 right-6 z-30">
           <Button 
-            className="rounded-full w-12 h-12 flex items-center justify-center bg-pakistani_green-700 hover:bg-pakistani_green-800 shadow-lg"
+            className="rounded-full w-14 h-14 flex items-center justify-center bg-primary hover:bg-primary/90 shadow-lg border-2 border-background"
             onClick={toggleSidebar}
           >
             {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
         </div>
 
-        {/* Sidebar - shown by default on desktop, toggled on mobile */}
+        {/* Sidebar */}
         <aside 
           className={`fixed inset-0 z-20 transform md:relative md:translate-x-0 transition-transform duration-300 ease-in-out 
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-            md:block bg-card border-r border-border w-64 flex-shrink-0`}
+            md:block bg-card/95 md:bg-card backdrop-blur-sm md:backdrop-blur-none border-r border-border w-64 flex-shrink-0`}
         >
           {/* Mobile close button */}
           <div className="md:hidden flex justify-end p-4">
@@ -158,6 +159,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               variant="ghost"
               size="icon"
               onClick={toggleSidebar}
+              className="hover:bg-muted"
             >
               <X className="h-6 w-6" />
             </Button>
@@ -165,19 +167,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           <div className="p-4">
             {profile ? (
-              <div className="mb-6 flex flex-col items-center p-4 bg-pakistani_green-50 dark:bg-pakistani_green-900/20 rounded-lg">
-                <Avatar className="h-16 w-16 border-2 border-pakistani_green-100 dark:border-pakistani_green-800 mb-3">
-                  <AvatarFallback className="bg-pakistani_green-700 text-white text-xl">
+              <div className="mb-6 flex flex-col items-center p-4 bg-muted/50 rounded-lg border border-border/50">
+                <Avatar className="h-16 w-16 border-2 border-primary/20 mb-3">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
                     {profile.email?.substring(0, 2).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-center">
-                  <p className="font-medium text-foreground mb-1">{profile.email?.split('@')[0]}</p>
+                  <p className="font-medium text-foreground mb-1 font-poppins truncate max-w-32">
+                    {profile.email?.split('@')[0]}
+                  </p>
                   <Badge variant={
                     profile.role === 'admin' ? 'default' : 
                     profile.role === 'wholesaler' || profile.role === 'seller' ? 'secondary' : 
                     'outline'
-                  } className="capitalize">
+                  } className="capitalize font-poppins">
                     {profile.role}
                   </Badge>
                 </div>
@@ -190,17 +194,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </div>
             )}
 
-            <h2 className="text-lg font-semibold text-foreground mb-4 px-3">Dashboard</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4 px-3 font-poppins">Navigation</h2>
             <nav className="space-y-1">
               {getNavItems().map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center justify-between px-4 py-3 rounded-md text-sm font-medium group transition-all duration-200 ${
+                  className={`flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium group transition-all duration-200 font-poppins ${
                     isActive(item.path)
-                      ? 'bg-pakistani_green-700 text-white'
-                      : 'text-foreground hover:bg-muted'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
                   <div className="flex items-center">
@@ -209,7 +213,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   </div>
                   
                   {item.badge && (
-                    <Badge variant="secondary" size="sm" className="ml-2">
+                    <Badge variant="secondary" size="sm" className="ml-2 font-poppins">
                       {item.badge}
                     </Badge>
                   )}
@@ -226,13 +230,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         {/* Semi-transparent overlay on mobile when sidebar is open */}
         {sidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black bg-opacity-30 z-10 md:hidden"
+            className="fixed inset-0 bg-black/30 z-10 md:hidden backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)} 
           />
         )}
 
         <main className="flex-grow p-4 md:p-6 bg-background">
-          <div className="container mx-auto">
+          <div className="container mx-auto max-w-7xl">
             {children}
           </div>
         </main>

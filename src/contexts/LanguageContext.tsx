@@ -17,6 +17,8 @@ interface Translations {
 }
 
 const translations: Translations = {
+  // Navigation
+  'home': { en: 'Home', ur: 'گھر' },
   'dashboard': { en: 'Dashboard', ur: 'ڈیش بورڈ' },
   'products': { en: 'Products', ur: 'پروڈکٹس' },
   'shops': { en: 'Shops', ur: 'دکانیں' },
@@ -25,6 +27,8 @@ const translations: Translations = {
   'logout': { en: 'Logout', ur: 'لاگ آؤٹ' },
   'login': { en: 'Login', ur: 'لاگ ان' },
   'signup': { en: 'Sign Up', ur: 'سائن اپ' },
+  
+  // Search and actions
   'search': { en: 'Search', ur: 'تلاش' },
   'add_to_cart': { en: 'Add to Cart', ur: 'کارٹ میں شامل کریں' },
   'price': { en: 'Price', ur: 'قیمت' },
@@ -32,6 +36,8 @@ const translations: Translations = {
   'location': { en: 'Location', ur: 'مقام' },
   'rating': { en: 'Rating', ur: 'ریٹنگ' },
   'verified': { en: 'Verified', ur: 'تصدیق شدہ' },
+  
+  // Business terms
   'message_seller': { en: 'Message Seller', ur: 'بیچنے والے کو پیغام' },
   'request_quote': { en: 'Request Quote', ur: 'قوٹ کی درخواست' },
   'minimum_order': { en: 'Minimum Order', ur: 'کم سے کم آرڈر' },

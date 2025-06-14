@@ -17,6 +17,7 @@ import { User, ChevronDown } from 'lucide-react';
 import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';
 import { signOut } from '@/lib/auth';
+import RoleSwitcher from './navbar/RoleSwitcher';
 
 const Navbar: React.FC = () => {
   const { user, profile } = useAuth(); // Remove logout from destructuring
@@ -99,7 +100,8 @@ const Navbar: React.FC = () => {
                   <Button variant="ghost" size="sm" className="flex items-center gap-1.5 font-poppins">
                     <User className="h-4 w-4" />
                     <span className="font-medium max-w-20 truncate">{user.email?.split('@')[0]}</span>
-                    {getRoleBadge()}
+                    {/* Insert the new role badge/selector */}
+                    <RoleSwitcher />
                     <ChevronDown className="h-4 w-4 opacity-50" />
                   </Button>
                 </DropdownMenuTrigger>

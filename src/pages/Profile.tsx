@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
@@ -10,7 +9,6 @@ import { changeRole, UserRole } from '@/lib/auth';
 import { UserCog, Store, ShoppingBag } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import AccountInfo from '@/components/profile/AccountInfo';
-import RoleManagement from '@/components/profile/RoleManagement';
 
 const Profile: React.FC = () => {
   const { profile, checkAuthStatus, loading } = useAuth();
@@ -117,12 +115,6 @@ const Profile: React.FC = () => {
             email={profile.email}
             createdAt={profile.created_at}
           />
-          
-          <RoleManagement
-            currentRole={profile.role}
-            isRequesting={isChangingRole}
-            onRoleChange={handleRoleChange}
-          />
         </div>
       </div>
     </Layout>
@@ -136,4 +128,3 @@ const ProfileWithAuth = () => (
 );
 
 export default ProfileWithAuth;
-

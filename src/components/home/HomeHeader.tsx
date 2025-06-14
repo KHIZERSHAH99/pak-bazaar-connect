@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { User } from '@/lib/types'; // Assuming User type is defined here or adjust as needed
+import { User } from '@supabase/supabase-js'; // Changed import from '@/lib/types'
 
 interface HomeHeaderProps {
   user: User | null;

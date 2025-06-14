@@ -10,10 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { getShopsByOwner, Shop, createProduct, Product, getProductsByShop, uploadImage } from '@/lib/supabase';
-import { updateProduct } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Package, Edit, Eye, Store } from 'lucide-react';
-import EditProductDialog from '@/components/products/EditProductDialog';
 
 const Products: React.FC = () => {
   const [shops, setShops] = useState<Shop[]>([]);
@@ -21,8 +19,6 @@ const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -184,31 +180,20 @@ const Products: React.FC = () => {
     setImagePreview(null);
   };
 
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleProductUpdated = () => {
-    if (selectedShop) {
-      fetchProducts(selectedShop);
-    }
-  };
-
   if (shops.length === 0 && !loading) {
     return (
       <DashboardLayout>
         <div>
-          <h1 className="text-2xl font-bold text-foreground mb-6">Products</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">Products</h1>
           <Card className="p-8 text-center">
             <div className="flex justify-center mb-4">
-              <Store className="h-16 w-16 text-muted-foreground" />
+              <Store className="h-16 w-16 text-gray-300" />
             </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">No shops created yet</h3>
-            <p className="text-muted-foreground mb-6">You need to create a shop before adding products.</p>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">No shops created yet</h3>
+            <p className="text-gray-600 mb-6">You need to create a shop before adding products.</p>
             <Button
               onClick={() => window.location.href = '/dashboard/shops'}
-              className="bg-pakistani_green-700 hover:bg-pakistani_green-800 dark:bg-pakistani_green-600 dark:hover:bg-pakistani_green-700"
+              className="bg-primary hover:bg-pakistani-green-800"
             >
               Create a Shop
             </Button>
@@ -222,7 +207,7 @@ const Products: React.FC = () => {
     <DashboardLayout>
       <div>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-2xl font-bold text-foreground">Products</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Products</h1>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Select value={selectedShop || ''} onValueChange={handleShopChange}>
               <SelectTrigger className="w-full sm:w-[200px]">
@@ -239,7 +224,7 @@ const Products: React.FC = () => {
             
             <Button 
               onClick={() => setIsDialogOpen(true)}
-              className="bg-pakistani_green-700 hover:bg-pakistani_green-800 dark:bg-pakistani_green-600 dark:hover:bg-pakistani_green-700"
+              className="bg-primary hover:bg-pakistani-green-800"
             >
               <Plus className="w-4 h-4 mr-2" /> Add Product
             </Button>
@@ -248,18 +233,18 @@ const Products: React.FC = () => {
 
         {loading ? (
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pakistani_green-700"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : products.length === 0 ? (
           <Card className="p-8 text-center">
             <div className="flex justify-center mb-4">
-              <Package className="h-16 w-16 text-muted-foreground" />
+              <Package className="h-16 w-16 text-gray-300" />
             </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">No products yet</h3>
-            <p className="text-muted-foreground mb-6">Add your first product to start selling.</p>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">No products yet</h3>
+            <p className="text-gray-600 mb-6">Add your first product to start selling.</p>
             <Button 
               onClick={() => setIsDialogOpen(true)}
-              className="bg-pakistani_green-700 hover:bg-pakistani_green-800 dark:bg-pakistani_green-600 dark:hover:bg-pakistani_green-700"
+              className="bg-primary hover:bg-pakistani-green-800"
             >
               <Plus className="w-4 h-4 mr-2" /> Add Product
             </Button>
@@ -268,7 +253,7 @@ const Products: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <Card key={product.id} className="overflow-hidden">
-                <div className="h-48 bg-muted">
+                <div className="h-48 bg-gray-100">
                   {product.image ? (
                     <img 
                       src={product.image} 
@@ -280,23 +265,23 @@ const Products: React.FC = () => {
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full">
-                      <Package className="h-12 w-12 text-muted-foreground" />
+                      <Package className="h-12 w-12 text-gray-400" />
                     </div>
                   )}
                 </div>
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-lg text-foreground">{product.name}</h3>
-                    <span className={`px-2 py-1 text-xs rounded-full ${product.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-muted text-muted-foreground'}`}>
+                    <h3 className="font-semibold text-lg">{product.name}</h3>
+                    <span className={`px-2 py-1 text-xs rounded-full ${product.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                       {product.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </div>
                   
                   {product.description && (
-                    <p className="text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
+                    <p className="text-gray-600 mb-4 line-clamp-2">{product.description}</p>
                   )}
                   
-                  <p className="text-lg font-bold text-pakistani_green-700 dark:text-pakistani_green-400 mb-4">
+                  <p className="text-lg font-bold text-primary mb-4">
                     PKR {product.price.toLocaleString()}
                   </p>
 
@@ -304,14 +289,14 @@ const Products: React.FC = () => {
                     <Button 
                       variant="outline"
                       className="flex-1"
-                      onClick={() => handleEdit(product)}
+                      // To be implemented
                     >
                       <Edit className="h-4 w-4 mr-2" /> Edit
                     </Button>
                     <Button 
                       variant="outline" 
                       className="flex-1"
-                      onClick={() => window.open(`/product/${product.id}`, '_blank')}
+                      // To be implemented
                     >
                       <Eye className="h-4 w-4 mr-2" /> Preview
                     </Button>
@@ -323,7 +308,6 @@ const Products: React.FC = () => {
         )}
       </div>
 
-      {/* Add Product Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -333,7 +317,7 @@ const Products: React.FC = () => {
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 py-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Product Name
                 </label>
                 <Input
@@ -347,7 +331,7 @@ const Products: React.FC = () => {
               </div>
               
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-foreground mb-1">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                   Description (optional)
                 </label>
                 <Textarea
@@ -362,7 +346,7 @@ const Products: React.FC = () => {
               </div>
               
               <div>
-                <label htmlFor="price" className="block text-sm font-medium text-foreground mb-1">
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
                   Price (PKR)
                 </label>
                 <Input
@@ -388,7 +372,7 @@ const Products: React.FC = () => {
               </div>
               
               <div>
-                <label htmlFor="image" className="block text-sm font-medium text-foreground mb-1">
+                <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
                   Product Image (optional, max 100KB)
                 </label>
                 <Input
@@ -424,7 +408,7 @@ const Products: React.FC = () => {
               </Button>
               <Button 
                 type="submit"
-                className="bg-pakistani_green-700 hover:bg-pakistani_green-800 dark:bg-pakistani_green-600 dark:hover:bg-pakistani_green-700"
+                className="bg-primary hover:bg-pakistani-green-800"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Adding...' : 'Add Product'}
@@ -433,14 +417,6 @@ const Products: React.FC = () => {
           </form>
         </DialogContent>
       </Dialog>
-
-      {/* Edit Product Dialog */}
-      <EditProductDialog
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        product={editingProduct}
-        onProductUpdated={handleProductUpdated}
-      />
     </DashboardLayout>
   );
 };

@@ -13,7 +13,7 @@ const Index = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-green-50 to-pakistani_green-50 dark:from-background dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-b from-white via-green-50 to-pakistani_green-50">
       <TopBanner />
       <HomeHeader user={user} />
       <HeroSection />

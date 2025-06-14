@@ -3,28 +3,28 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Store, ShoppingCart, ArrowRight, Zap } from 'lucide-react';
+import { Store, ShoppingCart, ArrowRight, UserCheck } from 'lucide-react';
 
 const PendingDashboard: React.FC = () => (
   <div className="animate-fadeIn">
-    <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 font-poppins">Welcome to Pak Bazaar Connect</h1>
+    <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 font-poppins">Complete Your Profile Setup</h1>
     
     <Card className="p-6 mb-6 bg-gradient-to-r from-pakistani_green-50 to-green-50 border-pakistani_green-200">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
         <div className="flex items-center mb-4 md:mb-0">
           <div className="bg-pakistani_green-100 p-3 rounded-full mr-4">
-            <Zap className="h-6 w-6 text-pakistani_green-700" />
+            <UserCheck className="h-6 w-6 text-pakistani_green-700" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold font-poppins text-pakistani_green-800">Choose Your Role - Get Instant Access</h3>
+            <h3 className="text-lg font-semibold font-poppins text-pakistani_green-800">One More Step to Get Started</h3>
             <p className="text-pakistani_green-700 font-poppins text-sm md:text-base">
-              Select your role and start using the platform immediately - no waiting for approval!
+              Choose your business role to unlock all platform features and start trading immediately.
             </p>
           </div>
         </div>
         <Link to="/profile">
           <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
-            Select Role <ArrowRight className="ml-2 h-4 w-4" />
+            Choose Role <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
       </div>
@@ -93,15 +93,15 @@ const PendingDashboard: React.FC = () => (
     </div>
 
     <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4 font-poppins">How It Works</h3>
+      <h3 className="text-lg font-semibold mb-4 font-poppins">Quick Setup Process</h3>
       <div className="space-y-4">
         <div className="flex items-start">
           <div className="bg-pakistani_green-100 p-2 rounded-full mr-4 h-8 w-8 flex items-center justify-center text-pakistani_green-700 font-bold text-sm">
             1
           </div>
           <div>
-            <p className="font-medium font-poppins">Choose a role</p>
-            <p className="text-gray-600 font-poppins text-sm md:text-base">Decide if you want to be a wholesaler or a seller on the platform.</p>
+            <p className="font-medium font-poppins">Select your business role</p>
+            <p className="text-gray-600 font-poppins text-sm md:text-base">Choose whether you want to sell products or purchase from suppliers.</p>
           </div>
         </div>
         
@@ -110,8 +110,8 @@ const PendingDashboard: React.FC = () => (
             2
           </div>
           <div>
-            <p className="font-medium font-poppins">Get instant access</p>
-            <p className="text-gray-600 font-poppins text-sm md:text-base">Your role is activated immediately - no waiting for approval!</p>
+            <p className="font-medium font-poppins">Access unlocked immediately</p>
+            <p className="text-gray-600 font-poppins text-sm md:text-base">Your dashboard and features become available instantly after role selection.</p>
           </div>
         </div>
         
@@ -120,8 +120,8 @@ const PendingDashboard: React.FC = () => (
             3
           </div>
           <div>
-            <p className="font-medium font-poppins">Start trading</p>
-            <p className="text-gray-600 font-poppins text-sm md:text-base">Begin using all features for your role and start growing your business.</p>
+            <p className="font-medium font-poppins">Start trading today</p>
+            <p className="text-gray-600 font-poppins text-sm md:text-base">Begin creating shops, listing products, or browsing suppliers right away.</p>
           </div>
         </div>
       </div>
@@ -130,4 +130,3 @@ const PendingDashboard: React.FC = () => (
 );
 
 export default PendingDashboard;
-

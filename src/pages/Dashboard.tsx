@@ -14,6 +14,11 @@ const Dashboard: React.FC = () => {
   const renderDashboardContent = () => {
     if (!profile) return null;
     
+    // Only show role selection for users who explicitly have 'pending' role or no role at all
+    if (!profile.role || profile.role === 'pending') {
+      return <PendingDashboard />;
+    }
+    
     switch (profile.role) {
       case 'admin':
         return <AdminDashboard />;

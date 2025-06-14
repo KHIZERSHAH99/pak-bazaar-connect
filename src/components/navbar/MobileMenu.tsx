@@ -3,6 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Home, LayoutDashboard, User, LogOut } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import ThemeToggle from '@/components/ThemeToggle';
+import LanguageToggle from '@/components/LanguageToggle';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -57,6 +59,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             </div>
           </Link>
           
+          <div className="flex items-center justify-between py-3 px-4">
+            <span className="font-medium text-foreground font-poppins">Settings</span>
+            <div className="flex items-center gap-2">
+              <LanguageToggle />
+              <ThemeToggle />
+            </div>
+          </div>
+          
           <button
             className="w-full text-left flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-destructive/10 text-destructive transition-all duration-200 font-poppins group"
             onClick={() => {
@@ -70,6 +80,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         </>
       ) : (
         <div className="space-y-3 pt-2">
+          <div className="flex items-center justify-between py-3 px-4">
+            <span className="font-medium text-foreground font-poppins">Settings</span>
+            <div className="flex items-center gap-2">
+              <LanguageToggle />
+              <ThemeToggle />
+            </div>
+          </div>
+          
           <Link 
             to="/login" 
             className="block py-3 px-4 rounded-lg hover:bg-muted text-foreground transition-all duration-200 font-poppins text-center font-medium"

@@ -2,7 +2,6 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import TopBanner from '@/components/home/TopBanner';
-import HomeHeader from '@/components/home/HomeHeader';
 import HeroSection from '@/components/home/HeroSection';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
@@ -13,9 +12,8 @@ const Index = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-green-50/50 dark:via-green-950/20 to-pakistani_green-50/50 dark:to-pakistani_green-950/30">
+    <div className="min-h-screen bg-gradient-to-b from-background via-green-50/20 dark:via-green-950/20 to-pakistani_green-50/20 dark:to-pakistani_green-950/30">
       <TopBanner />
-      <HomeHeader user={user} />
       <HeroSection />
       <WhyChooseUsSection />
       <FeaturedProducts />

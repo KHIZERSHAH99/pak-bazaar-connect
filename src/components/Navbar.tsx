@@ -9,6 +9,7 @@ import { Menu, X, Home, LayoutDashboard } from 'lucide-react';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 import ThemeToggle from './ThemeToggle';
+import LanguageToggle from './LanguageToggle';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,30 +80,31 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <header className={`bg-card sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-md' : 'border-b border-border'}`}>
+    <header className={`bg-card/95 backdrop-blur-sm sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-md' : 'border-b border-border'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-14 md:h-16">
           <Link to="/" className="flex items-center">
             <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
               <span className="text-white text-lg md:text-xl font-bold font-poppins">PBC</span>
             </div>
-            <span className="text-lg md:text-xl font-bold text-pakistani_green-800 ml-2 hidden sm:inline-block font-poppins">Pak Bazaar Connect</span>
+            <span className="text-lg md:text-xl font-bold text-pakistani_green-800 dark:text-pakistani_green-400 ml-2 hidden sm:inline-block font-poppins">Pak Bazaar Connect</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            <Link to="/" className="text-foreground hover:text-pakistani_green-700 font-medium flex items-center gap-1.5 transition-colors duration-200 font-poppins">
+            <Link to="/" className="text-foreground hover:text-pakistani_green-700 dark:hover:text-pakistani_green-400 font-medium flex items-center gap-1.5 transition-colors duration-200 font-poppins">
               <Home className="w-4 h-4" />
               Home
             </Link>
             
             {user ? (
               <>
-                <Link to="/dashboard" className="text-foreground hover:text-pakistani_green-700 font-medium flex items-center gap-1.5 transition-colors duration-200 font-poppins">
+                <Link to="/dashboard" className="text-foreground hover:text-pakistani_green-700 dark:hover:text-pakistani_green-400 font-medium flex items-center gap-1.5 transition-colors duration-200 font-poppins">
                   <LayoutDashboard className="w-4 h-4" />
                   Dashboard
                 </Link>
                 
+                <LanguageToggle />
                 <ThemeToggle />
                 
                 <UserMenu
@@ -114,9 +116,10 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <div className="flex items-center space-x-3">
+                <LanguageToggle />
                 <ThemeToggle />
                 <Link to="/login">
-                  <Button variant="outline" className="border-pakistani_green-700 text-pakistani_green-700 font-poppins">
+                  <Button variant="outline" className="border-pakistani_green-700 text-pakistani_green-700 dark:border-pakistani_green-400 dark:text-pakistani_green-400 font-poppins">
                     Login
                   </Button>
                 </Link>

@@ -14,14 +14,14 @@ const StatsDisplay: React.FC = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
       {statsData.map((stat, index) => (
-        <Card key={index} className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-xl hover:shadow-2xl transition-all duration-300 group">
+        <Card key={index} className="p-6 bg-card/80 backdrop-blur-sm border-border shadow-xl hover:shadow-2xl transition-all duration-300 group">
           <div className="flex items-center justify-center mb-3">
-            <div className="bg-gradient-to-r from-pakistani_green-100 to-green-100 p-3 rounded-full group-hover:scale-110 transition-transform">
-              <div className="text-pakistani_green-600">{stat.icon}</div>
+            <div className="bg-primary/10 p-3 rounded-full group-hover:scale-110 transition-transform">
+              <div className="text-primary">{stat.icon}</div>
             </div>
           </div>
-          <div className="text-2xl md:text-3xl font-bold text-gray-800 mb-1 font-poppins">{stat.number}</div>
-          <div className="text-gray-600 font-poppins text-sm">{stat.label}</div>
+          <div className="text-2xl md:text-3xl font-bold text-foreground mb-1 font-poppins">{stat.number}</div>
+          <div className="text-muted-foreground font-poppins text-sm">{stat.label}</div>
         </Card>
       ))}
     </div>

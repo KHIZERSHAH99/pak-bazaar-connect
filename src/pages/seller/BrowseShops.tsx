@@ -65,6 +65,13 @@ const BrowseShops: React.FC = () => {
     e.currentTarget.style.opacity = '1';
   };
 
+  const getShopImageSrc = (logo?: string) => {
+    if (logo && !logo.includes('placeholder.svg')) {
+      return logo;
+    }
+    return `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=200&fit=crop&auto=format`;
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -109,15 +116,13 @@ const BrowseShops: React.FC = () => {
                 <div className="p-6">
                   <div className="flex items-center mb-4">
                     <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4 bg-muted">
-                      {shop.logo ? (
-                        <img 
-                          src={shop.logo} 
-                          alt={shop.name} 
-                          className="h-full w-full object-cover opacity-0 transition-opacity duration-300"
-                          onError={handleImageError}
-                          onLoad={handleImageLoad}
-                        />
-                      ) : null}
+                      <img 
+                        src={getShopImageSrc(shop.logo)} 
+                        alt={shop.name} 
+                        className="h-full w-full object-cover opacity-0 transition-opacity duration-300"
+                        onError={handleImageError}
+                        onLoad={handleImageLoad}
+                      />
                       <div className={`absolute inset-0 flex items-center justify-center ${shop.logo ? 'hidden' : ''}`}>
                         <Store className="h-6 w-6 text-muted-foreground" />
                       </div>

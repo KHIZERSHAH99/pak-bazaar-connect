@@ -29,31 +29,31 @@ const featuresData = [
 
 const WhyChooseUsSection: React.FC = () => {
   return (
-    <section className="py-20 px-6 bg-white">
+    <section className="py-20 px-6 bg-background">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-poppins">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-poppins">
             Why Choose Pak Bazaar Connect?
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-poppins">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-poppins">
             Designed specifically for Pakistani businesses with local payment methods and regional expertise
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {featuresData.map((feature, index) => (
-            <Card key={index} className="p-8 border-none shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2 bg-gradient-to-br from-white to-gray-50">
+            <Card key={index} className="p-8 border border-border shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2 bg-card">
               <div className={`bg-gradient-to-r ${feature.color} p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                 <div className="text-white">{feature.icon}</div>
               </div>
               
-              <h3 className="text-xl font-bold text-gray-800 mb-3 font-poppins">{feature.title}</h3>
-              <p className="text-gray-600 mb-6 font-poppins leading-relaxed">{feature.description}</p>
+              <h3 className="text-xl font-bold text-foreground mb-3 font-poppins">{feature.title}</h3>
+              <p className="text-muted-foreground mb-6 font-poppins leading-relaxed">{feature.description}</p>
               
               <ul className="space-y-3">
                 {feature.benefits.map((benefit, idx) => (
-                  <li key={idx} className="flex items-center text-sm text-gray-700 font-poppins">
-                    <CheckCircle className="h-4 w-4 text-pakistani_green-600 mr-3 flex-shrink-0" />
+                  <li key={idx} className="flex items-center text-sm text-foreground font-poppins">
+                    <CheckCircle className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
                     {benefit}
                   </li>
                 ))}

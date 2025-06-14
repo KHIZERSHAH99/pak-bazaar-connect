@@ -85,6 +85,9 @@ export const useSignupForm = () => {
   };
   
   const onSubmit = async (values: FormValues) => {
+    console.log('Form submission started for role:', selectedRole);
+    console.log('Form values:', values);
+    
     setIsLoading(true);
     setErrorMessage(null);
     

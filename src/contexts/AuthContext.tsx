@@ -1,19 +1,19 @@
-
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { Profile as AppProfileType, UserRole } from '@/lib/types'; // Renamed to AppProfileType and imported UserRole
 
-type Profile = Database['public']['Tables']['profiles']['Row'];
+// type Profile = Database['public']['Tables']['profiles']['Row']; // Original Supabase profile type
 
 interface AuthState {
   user: User | null;
-  profile: Profile | null;
+  profile: AppProfileType | null; // Changed to use AppProfileType
   session: Session | null;
   loading: boolean;
   checkAuthStatus: () => Promise<void>;
-  refreshProfile: () => Promise<Profile | null>;
+  refreshProfile: () => Promise<AppProfileType | null>; // Changed to use AppProfileType
 }
 
 const AuthContext = createContext<AuthState>({
@@ -45,15 +45,13 @@ const cleanupAuthState = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<AppProfileType | null>(null); // Changed to use AppProfileType
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  // Add profile cache to prevent redundant fetches
   const [profileFetchTimestamp, setProfileFetchTimestamp] = useState<number>(0);
 
-  const fetchUserProfile = useCallback(async (userId: string, forceRefresh = false): Promise<Profile | null> => {
+  const fetchUserProfile = useCallback(async (userId: string, forceRefresh = false): Promise<AppProfileType | null> => {
     try {
-      // Cache profile data for 5 minutes to reduce redundant fetches
       const now = Date.now();
       if (!forceRefresh && profile && profileFetchTimestamp > 0 && now - profileFetchTimestamp < 300000) {
         console.log('Using cached profile data');
@@ -71,16 +69,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       }
       
-      setProfile(data as Profile);
-      setProfileFetchTimestamp(now);
-      return data as Profile;
+      if (data) {
+        // Explicitly cast the role to UserRole and ensure the object matches AppProfileType
+        const userProfile: AppProfileType = {
+          id: data.id,
+          email: data.email,
+          role: data.role as UserRole, // Cast role to UserRole
+          created_at: data.created_at ?? undefined,
+          // Supabase raw type might have 'updated_at', AppProfileType from lib/types.ts does not.
+          // This mapping ensures we conform to AppProfileType.
+        };
+        setProfile(userProfile);
+        setProfileFetchTimestamp(now);
+        return userProfile;
+      }
+      return null;
     } catch (error) {
       console.error('Get user profile error:', error);
       return null;
     }
-  }, [profile, profileFetchTimestamp]);
+  }, [profile, profileFetchTimestamp]); // Removed 'setProfile' and 'setProfileFetchTimestamp' as they are stable
 
-  const refreshProfile = useCallback(async (): Promise<Profile | null> => {
+  const refreshProfile = useCallback(async (): Promise<AppProfileType | null> => {
     if (!user) return null;
     return fetchUserProfile(user.id, true);
   }, [user, fetchUserProfile]);
@@ -89,7 +99,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      // Get current session
       const { data: { session: currentSession }, error } = await supabase.auth.getSession();
       
       if (error) {
@@ -105,9 +114,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(currentSession);
         setUser(currentSession.user);
         
-        // Get user profile with role information
         const userProfile = await fetchUserProfile(currentSession.user.id);
-        setProfile(userProfile);
+        // setProfile is handled by fetchUserProfile
       } else {
         console.log('No session found');
         setUser(null);
@@ -122,39 +130,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setLoading(false);
     }
-  }, [fetchUserProfile]);
+  }, [fetchUserProfile]); // Removed 'setLoading', 'setUser', 'setSession', 'setProfile' as they are stable
 
   useEffect(() => {
-    // First set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         console.log('Auth state changed:', event, currentSession?.user?.email);
         
-        // Update state synchronously here
         setSession(currentSession);
         setUser(currentSession?.user || null);
         
-        // Fetch user profile when auth state changes but optimize to avoid redundant fetches
         if (currentSession?.user) {
-          // Use setTimeout to prevent potential deadlocks
           setTimeout(() => {
-            fetchUserProfile(currentSession.user.id, event === 'SIGNED_IN');
+            fetchUserProfile(currentSession.user.id, event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED');
           }, 0);
         } else {
           setProfile(null);
         }
         
-        setLoading(false);
+        // Only set loading to false once, ideally after initial check or first auth event.
+        // For simplicity, keeping it here, but could be refined.
+        if (loading) setLoading(false);
       }
     );
 
-    // Check for existing session
     checkAuthStatus();
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [checkAuthStatus, fetchUserProfile]);
+  }, [checkAuthStatus, fetchUserProfile, loading]); // Added loading to dependencies of useEffect
 
   return (
     <AuthContext.Provider value={{ 

@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Product } from '@/lib/types';
-import { updateProduct, uploadImage } from '@/lib/supabase';
+import { updateProduct } from '@/lib/products';
+import { uploadImage } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 interface EditProductDialogProps {

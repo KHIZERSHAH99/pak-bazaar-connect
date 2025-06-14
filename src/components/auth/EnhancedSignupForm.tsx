@@ -27,18 +27,10 @@ const EnhancedSignupForm = () => {
     onSubmit
   } = useSignupForm();
 
+  // Prevent default form submission and let NavigationButtons handle it
   const handleFormSubmit = (e: React.FormEvent) => {
-    console.log('Form submit event triggered');
+    console.log('Form submit event prevented');
     e.preventDefault();
-    
-    // If we're on the final step, trigger the actual submission
-    if (currentStep === totalSteps) {
-      console.log('On final step, calling onSubmit');
-      form.handleSubmit(onSubmit)();
-    } else {
-      console.log('Not on final step, calling nextStep');
-      nextStep();
-    }
   };
 
   return (
@@ -64,7 +56,11 @@ const EnhancedSignupForm = () => {
             )}
             
             {currentStep === 2 && (
-              <AccountInfoStep form={form} isLoading={isLoading} />
+              <AccountInfoStep 
+                form={form} 
+                isLoading={isLoading} 
+                selectedRole={selectedRole}
+              />
             )}
             
             {currentStep === 3 && selectedRole === 'seller' && (

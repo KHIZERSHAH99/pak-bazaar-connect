@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -51,12 +50,13 @@ export const useSignupForm = () => {
   const nextStep = async () => {
     console.log('NextStep called, current step:', currentStep, 'selected role:', selectedRole);
     
+    // Define required fields for each step based on role
     const stepFields = {
       1: [],
       2: ['email', 'password', 'confirmPassword'],
       3: selectedRole === 'seller' 
         ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber']
-        : ['businessName', 'businessType', 'ntnNumber', 'address', 'city', 'postalCode', 'industry', 'yearsInBusiness', 'contactName', 'phoneNumber'],
+        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber'],
       4: []
     };
     
@@ -70,14 +70,33 @@ export const useSignupForm = () => {
       if (!isValid) {
         const errors = form.formState.errors;
         console.log('Validation errors:', errors);
+        
+        // Show validation error toast
+        const errorFields = Object.keys(errors);
+        toast({
+          title: 'Validation Error',
+          description: `Please fix the following fields: ${errorFields.join(', ')}`,
+          variant: 'destructive',
+        });
+        
+        setErrorMessage(`Please complete all required fields: ${errorFields.join(', ')}`);
         return;
       }
     }
     
+    // If we're on the final step, proceed to submission
+    if (currentStep === totalSteps) {
+      console.log('On final step, triggering form submission');
+      form.handleSubmit(onSubmit)();
+      return;
+    }
+    
+    // Otherwise, move to next step
     if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
       setErrorMessage(null);
       window.scrollTo(0, 0);
+      console.log('Moved to step:', currentStep + 1);
     }
   };
   
@@ -85,6 +104,7 @@ export const useSignupForm = () => {
     if (currentStep > 1) {
       setCurrentStep(prev => prev - 1);
       setErrorMessage(null);
+      console.log('Moved back to step:', currentStep - 1);
     }
   };
   
@@ -104,6 +124,11 @@ export const useSignupForm = () => {
     // Validate we're on the final step
     if (currentStep !== totalSteps) {
       console.log('Not on final step, current:', currentStep, 'total:', totalSteps);
+      toast({
+        title: 'Navigation Error',
+        description: 'Please complete all steps before submitting',
+        variant: 'destructive',
+      });
       return;
     }
     
@@ -112,6 +137,13 @@ export const useSignupForm = () => {
     
     try {
       console.log('Calling signUp with:', values.email, selectedRole);
+      
+      // Show loading toast
+      toast({
+        title: 'Creating Account',
+        description: 'Please wait while we set up your account...',
+      });
+      
       await signUp(values.email, values.password, selectedRole);
       
       toast({

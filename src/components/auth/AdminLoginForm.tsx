@@ -64,13 +64,13 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
         <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
           <Crown className="h-8 w-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 font-poppins">Admin Access</h2>
-        <p className="text-gray-600 font-poppins">Secure administrator login</p>
+        <h2 className="text-2xl font-bold text-foreground font-poppins">Admin Access</h2>
+        <p className="text-muted-foreground font-poppins">Secure administrator login</p>
       </div>
 
       <form onSubmit={handleAdminLogin} className="space-y-4">
         <div>
-          <label htmlFor="admin-email" className="block text-sm font-medium text-gray-700 mb-2 font-poppins">
+          <label htmlFor="admin-email" className="block text-sm font-medium text-foreground mb-2 font-poppins">
             Admin Email
           </label>
           <Input
@@ -79,14 +79,14 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@pakbazaarconnect.com"
-            className="w-full font-poppins"
+            className="w-full font-poppins bg-background"
             disabled={isLoading}
             required
           />
         </div>
 
         <div>
-          <label htmlFor="admin-password" className="block text-sm font-medium text-gray-700 mb-2 font-poppins">
+          <label htmlFor="admin-password" className="block text-sm font-medium text-foreground mb-2 font-poppins">
             Admin Password
           </label>
           <div className="relative">
@@ -96,7 +96,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter admin password"
-              className="w-full pr-10 font-poppins"
+              className="w-full pr-10 font-poppins bg-background"
               disabled={isLoading}
               required
             />
@@ -106,9 +106,9 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
               className="absolute inset-y-0 right-0 flex items-center pr-3"
             >
               {showPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-400" />
+                <EyeOff className="h-4 w-4 text-muted-foreground" />
               ) : (
-                <Eye className="h-4 w-4 text-gray-400" />
+                <Eye className="h-4 w-4 text-muted-foreground" />
               )}
             </button>
           </div>
@@ -126,14 +126,14 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
       <div className="text-center">
         <button
           onClick={onBackToRegular}
-          className="text-sm text-pakistani_green-600 hover:text-pakistani_green-700 font-poppins"
+          className="text-sm text-pakistani_green-600 dark:text-pakistani_green-400 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 font-poppins"
         >
           ← Back to Regular Login
         </button>
       </div>
 
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-        <p className="text-xs text-yellow-800 font-poppins text-center">
+      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+        <p className="text-xs text-yellow-800 dark:text-yellow-200 font-poppins text-center">
           <strong>Admin privileges:</strong> Full platform access, user management, and system administration
         </p>
       </div>

@@ -25,7 +25,6 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
     const checkEmail = async () => {
       if (debouncedEmail && debouncedEmail.includes('@')) {
         setEmailStatus('checking');
-        // Allow same email for different roles
         const exists = await checkEmailExists(debouncedEmail, selectedRole);
         setEmailStatus(exists ? 'taken' : 'available');
       } else {
@@ -39,8 +38,8 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
   return (
     <div className="space-y-4 animate-fadeIn">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 font-poppins">Account Information</h3>
-        <p className="text-gray-600 font-poppins text-sm">Create your {selectedRole} account credentials</p>
+        <h3 className="text-lg font-semibold text-foreground mb-2 font-poppins">Account Information</h3>
+        <p className="text-muted-foreground font-poppins text-sm">Create your {selectedRole} account credentials</p>
       </div>
 
       <FormField
@@ -48,8 +47,8 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
         name="email"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <FormLabel className="flex items-center text-foreground font-poppins">
+              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
               Email Address
             </FormLabel>
             <FormControl>
@@ -58,12 +57,12 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
                   type="email" 
                   placeholder="Enter your email address" 
                   disabled={isLoading} 
-                  className="font-poppins pr-10"
+                  className="font-poppins pr-10 bg-background"
                   {...field} 
                 />
                 {emailStatus === 'checking' && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pakistani_green-700"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pakistani_green-700 dark:border-pakistani_green-400"></div>
                   </div>
                 )}
                 {emailStatus === 'available' && (
@@ -75,12 +74,12 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
               </div>
             </FormControl>
             {emailStatus === 'taken' && (
-              <p className="text-sm text-red-600 font-poppins">
+              <p className="text-sm text-red-600 dark:text-red-400 font-poppins">
                 This email is already registered as a {selectedRole}. Please try logging in or use a different email.
               </p>
             )}
             {emailStatus === 'available' && (
-              <p className="text-sm text-green-600 font-poppins">
+              <p className="text-sm text-green-600 dark:text-green-400 font-poppins">
                 Email is available for {selectedRole} registration!
               </p>
             )}
@@ -94,8 +93,8 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
         name="password"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <FormLabel className="flex items-center text-foreground font-poppins">
+              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
               Password
             </FormLabel>
             <FormControl>
@@ -104,7 +103,7 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
                   type={showPassword ? "text" : "password"} 
                   placeholder="Create a strong password" 
                   disabled={isLoading} 
-                  className="font-poppins pr-10"
+                  className="font-poppins pr-10 bg-background"
                   {...field} 
                 />
                 <button
@@ -113,9 +112,9 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="h-4 w-4 text-muted-foreground" />
                   )}
                 </button>
               </div>
@@ -130,8 +129,8 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
         name="confirmPassword"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <FormLabel className="flex items-center text-foreground font-poppins">
+              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
               Confirm Password
             </FormLabel>
             <FormControl>
@@ -140,7 +139,7 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
                   type={showConfirmPassword ? "text" : "password"} 
                   placeholder="Confirm your password" 
                   disabled={isLoading} 
-                  className="font-poppins pr-10"
+                  className="font-poppins pr-10 bg-background"
                   {...field} 
                 />
                 <button
@@ -149,9 +148,9 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
                   className="absolute inset-y-0 right-0 flex items-center pr-3"
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="h-4 w-4 text-muted-foreground" />
                   )}
                 </button>
               </div>

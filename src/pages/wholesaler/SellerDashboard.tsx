@@ -21,15 +21,12 @@ const SellerDashboard: React.FC = () => {
       try {
         setIsLoading(true);
         
-        // Fetch commissions
         const commissionsData = await getSellerCommissions();
         setCommissions(commissionsData as Commission[]);
         
-        // Fetch orders
         const ordersData = await getOrdersForWholesaler();
         setOrders(ordersData);
         
-        // Process sales data for chart
         const salesByDate = ordersData.reduce((acc: any, order: any) => {
           const date = new Date(order.created_at).toLocaleDateString();
           if (!acc[date]) {
@@ -39,13 +36,11 @@ const SellerDashboard: React.FC = () => {
           return acc;
         }, {});
         
-        // Convert to array for chart
         const chartData = Object.keys(salesByDate).map(date => ({
           date,
           amount: salesByDate[date]
         }));
         
-        // Sort by date
         chartData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         
         setSalesData(chartData);
@@ -69,26 +64,26 @@ const SellerDashboard: React.FC = () => {
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Seller Dashboard</h1>
-            <p className="text-gray-600 mt-1">Monitor your sales performance and platform fees</p>
+            <h1 className="text-2xl font-bold text-foreground">Seller Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Monitor your sales performance and platform fees</p>
           </div>
         </div>
 
         {isLoading ? (
           <div className="flex items-center justify-center h-60">
-            <div className="animate-pulse text-pakistani_green-600">Loading dashboard...</div>
+            <div className="animate-pulse text-pakistani_green-600 dark:text-pakistani_green-400">Loading dashboard...</div>
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="shadow-sm">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-500">Total Orders</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Total Orders</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center">
-                    <div className="mr-2 rounded-full bg-pakistani_green-100 p-2">
-                      <BarChart3 className="h-4 w-4 text-pakistani_green-700" />
+                    <div className="mr-2 rounded-full bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-2">
+                      <BarChart3 className="h-4 w-4 text-pakistani_green-700 dark:text-pakistani_green-400" />
                     </div>
                     <div className="text-2xl font-bold">{orders.length}</div>
                   </div>
@@ -125,7 +120,7 @@ const SellerDashboard: React.FC = () => {
                     </ResponsiveContainer>
                   ) : (
                     <div className="flex items-center justify-center h-full">
-                      <p className="text-gray-500">No sales data available yet</p>
+                      <p className="text-muted-foreground">No sales data available yet</p>
                     </div>
                   )}
                 </div>

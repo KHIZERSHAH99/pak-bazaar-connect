@@ -90,7 +90,7 @@ const LoginForm: React.FC = () => {
     <Card className="border-none shadow-lg overflow-hidden">
       <CardContent className="pt-6">
         {error && (
-          <div className="mb-6 p-3 bg-red-50 rounded-lg flex items-center text-red-600 text-sm border border-red-100">
+          <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center text-red-600 dark:text-red-400 text-sm border border-red-100 dark:border-red-800">
             <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -98,8 +98,8 @@ const LoginForm: React.FC = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 flex items-center">
-              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <label htmlFor="email" className="block text-sm font-medium text-foreground flex items-center">
+              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
               Email Address
             </label>
             <Input
@@ -108,14 +108,14 @@ const LoginForm: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full p-3 bg-white border border-gray-300 rounded-md focus-visible:ring-pakistani_green-500"
+              className="w-full p-3 bg-background border border-input rounded-md focus-visible:ring-pakistani_green-500"
               disabled={isLoading}
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 flex items-center">
-              <Key className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <label htmlFor="password" className="block text-sm font-medium text-foreground flex items-center">
+              <Key className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
               Password
             </label>
             <Input
@@ -124,7 +124,7 @@ const LoginForm: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full p-3 bg-white border border-gray-300 rounded-md focus-visible:ring-pakistani_green-500"
+              className="w-full p-3 bg-background border border-input rounded-md focus-visible:ring-pakistani_green-500"
               disabled={isLoading}
             />
           </div>
@@ -141,17 +141,17 @@ const LoginForm: React.FC = () => {
         <div className="mt-4 text-center">
           <button
             onClick={() => setShowAdminLogin(true)}
-            className="inline-flex items-center text-xs text-gray-500 hover:text-pakistani_green-600 transition-colors"
+            className="inline-flex items-center text-xs text-muted-foreground hover:text-pakistani_green-600 dark:hover:text-pakistani_green-400 transition-colors"
           >
             <Shield className="h-3 w-3 mr-1" />
             Admin Access
           </button>
         </div>
       </CardContent>
-      <CardFooter className="border-t border-gray-100 bg-gray-50 flex justify-center p-4">
-        <p className="text-sm text-gray-600">
+      <CardFooter className="border-t border-border bg-muted/30 flex justify-center p-4">
+        <p className="text-sm text-muted-foreground">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-pakistani_green-700 hover:text-pakistani_green-800 font-medium">
+          <Link to="/signup" className="text-pakistani_green-700 dark:text-pakistani_green-400 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-300 font-medium">
             Sign Up Here
           </Link>
         </p>

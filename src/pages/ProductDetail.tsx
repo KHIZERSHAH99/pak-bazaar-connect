@@ -9,6 +9,9 @@ import { getProductById, DemoProduct } from '@/data/demoProducts';
 import { useToast } from '@/hooks/use-toast';
 import ProductPricingTable from '@/components/products/ProductPricingTable';
 import VariationPicker from '@/components/products/VariationPicker';
+import ProductImageGallery from '@/components/products/ProductImageGallery';
+import ProductSpecificationsTable from '@/components/products/ProductSpecificationsTable';
+import VerifiedBadge from '@/components/reviews/VerifiedBadge';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,63 +64,59 @@ const ProductDetail: React.FC = () => {
     });
   };
 
+  let productContent: React.ReactNode;
   if (loading) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="h-96 bg-gray-200 rounded"></div>
-              <div className="space-y-4">
-                <div className="h-8 bg-gray-200 rounded"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                <div className="h-20 bg-gray-200 rounded"></div>
-              </div>
+    productContent = (
+      <div className="container mx-auto px-4 py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="h-96 bg-gray-200 rounded"></div>
+            <div className="space-y-4">
+              <div className="h-8 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div className="h-20 bg-gray-200 rounded"></div>
             </div>
           </div>
         </div>
-      </Layout>
+      </div>
     );
-  }
-
-  if (!product) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center py-16">
-            <Package className="h-24 w-24 text-gray-400 mx-auto mb-6" />
-            <h1 className="text-2xl font-bold text-gray-800 mb-4 font-poppins">Product not found</h1>
-            <p className="text-gray-600 mb-8 font-poppins">
-              The product you're looking for doesn't exist or has been removed.
-            </p>
-            <Button
-              onClick={handleBackToProducts}
-              className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Products
-            </Button>
-          </div>
+  } else if (!product) {
+    productContent = (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-16">
+          <Package className="h-24 w-24 text-gray-400 mx-auto mb-6" />
+          <h1 className="text-2xl font-bold text-gray-800 mb-4 font-poppins">Product not found</h1>
+          <p className="text-gray-600 mb-8 font-poppins">
+            The product you're looking for doesn't exist or has been removed.
+          </p>
+          <Button
+            onClick={handleBackToProducts}
+            className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Products
+          </Button>
         </div>
-      </Layout>
+      </div>
     );
-  }
+  } else {
+    // Alibaba style: find final price based on selected variation and tier
+    const showPricingTiers = !!product.pricingTiers && product.pricingTiers.length > 0;
+    let displayPrice = product.price;
+    if (showPricingTiers) {
+      const tier = product.pricingTiers!.find(t =>
+        quantity >= t.minQty && (!t.maxQty || quantity <= t.maxQty)
+      );
+      if (tier) displayPrice = tier.price;
+    }
+    const galleryImages = [product.image]
+      // Add images from variations if available
+      .concat(
+        product.variations?.map(v => v.image).filter(Boolean) as string[] || []
+      );
 
-  // Alibaba style: find final price based on selected variation and tier
-  const showPricingTiers = !!product.pricingTiers && product.pricingTiers.length > 0;
-
-  let displayPrice = product.price;
-  if (showPricingTiers) {
-    // Find appropriate tier
-    const tier = product.pricingTiers!.find(t =>
-      quantity >= t.minQty && (!t.maxQty || quantity <= t.maxQty)
-    );
-    if (tier) displayPrice = tier.price;
-  }
-
-  return (
-    <Layout>
+    productContent = (
       <div className="container mx-auto px-4 py-8">
         <Button
           variant="outline"
@@ -129,33 +128,28 @@ const ProductDetail: React.FC = () => {
         </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          {/* Product Image */}
+          {/* Product Image Gallery */}
           <div className="space-y-4">
-            <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <ProductImageGallery images={galleryImages} alt={product.name} />
           </div>
 
           {/* Product Details */}
           <div className="space-y-6">
-            <div>
-              <Badge variant="secondary" className="mb-2 font-poppins">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge variant="secondary" className="font-poppins">
                 {product.category}
               </Badge>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 font-poppins">
-                {product.name}
-              </h1>
-              <div className="flex items-center gap-2 text-gray-600 mb-4">
-                <MapPin className="h-4 w-4" />
-                <span className="font-poppins">{product.location}</span>
-              </div>
+              {/* Show Verified Badge if approved wholesaler */}
+              <VerifiedBadge isVerified={true} size="sm" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 font-poppins">
+              {product.name}
+            </h1>
+            <div className="flex items-center gap-2 text-gray-600 mb-4">
+              <MapPin className="h-4 w-4" />
+              <span className="font-poppins">{product.location}</span>
             </div>
 
-            {/* Alibaba Style Pricing Tiers */}
             {showPricingTiers && (
               <ProductPricingTable tiers={product.pricingTiers!} />
             )}
@@ -169,22 +163,7 @@ const ProductDetail: React.FC = () => {
               )}
             </div>
 
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-poppins">Wholesaler:</span>
-                <span className="font-medium font-poppins">{product.wholesaler}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-poppins">Minimum Order:</span>
-                <span className="font-medium font-poppins">{product.minOrder} units</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-poppins">Stock Status:</span>
-                <Badge variant={product.inStock ? "default" : "destructive"} className="font-poppins">
-                  {product.inStock ? "In Stock" : "Out of Stock"}
-                </Badge>
-              </div>
-            </div>
+            <ProductSpecificationsTable product={product} />
 
             {/* Variation Picker */}
             {product.variations && product.variations.length > 0 && (
@@ -232,7 +211,6 @@ const ProductDetail: React.FC = () => {
             </div>
           </div>
         </div>
-
         {/* Additional Information */}
         <Card>
           <CardContent className="p-6">
@@ -262,6 +240,12 @@ const ProductDetail: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+    );
+  }
+
+  return (
+    <Layout>
+      {productContent}
     </Layout>
   );
 };

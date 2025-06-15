@@ -256,27 +256,8 @@
     @apply border-pakistani_green-200/50 dark:border-pakistani_green-700/50;
   }
 
-  // Override utility backgrounds for dark mode, especially .bg-white and overlays
-  .dark .bg-white,
-  .dark .bg-white\/80,
-  .dark .bg-white\/90,
-  .dark .bg-white\/50 {
-    background-color: #15401a !important; /* deep green */
-  }
-  .dark .bg-card,
   .dark .card {
-    background-color: #194d1e !important; /* a little lighter for cards */
-  }
-  .dark .bg-gray-50,
-  .dark .bg-gray-100 {
     background-color: #194d1e !important;
-  }
-
-  /* Overlays and modals (used in lightbox/zoom) */
-  .dark .bg-black\/80,
-  .dark .bg-black\/70,
-  .dark .bg-black {
-    background-color: #01270f !important; /* very dark green/black blend */
   }
   .dark .animated-background {
     background: linear-gradient(120deg, #15401a 0%, #238B45 100%);
@@ -293,14 +274,13 @@
   }
 }
 
-// Fix Zoom overlay badge (say, Zoom badge in product gallery)
-.dark .group:hover .bg-white\/80,
-.dark .bg-white\/80 {
-  background-color: #238B45 !important;
-  color: #ffffff !important;
+.zoom-badge {
+  @apply bg-white/80 text-gray-800;
+}
+.dark .zoom-badge {
+  @apply bg-pakistani_green-600 text-white;
 }
 
-// Ensure table backgrounds match design in dark mode
 @layer base {
   .dark table {
     background-color: #194d1e;

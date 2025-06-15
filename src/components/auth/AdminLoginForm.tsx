@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { signIn } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
@@ -61,13 +60,12 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 dark:from-yellow-800 dark:to-orange-700 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
           <Crown className="h-8 w-8 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-foreground font-poppins">Admin Access</h2>
         <p className="text-muted-foreground font-poppins">Secure administrator login</p>
       </div>
-
       <form onSubmit={handleAdminLogin} className="space-y-4">
         <div>
           <label htmlFor="admin-email" className="block text-sm font-medium text-foreground mb-2 font-poppins">
@@ -116,7 +114,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
 
         <Button
           type="submit"
-          className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-poppins"
+          className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 dark:from-yellow-900 dark:to-orange-900 text-white font-poppins"
           disabled={isLoading}
         >
           {isLoading ? 'Authenticating...' : 'Access Admin Panel'}
@@ -131,8 +129,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
           ← Back to Regular Login
         </button>
       </div>
-
-      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+      <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
         <p className="text-xs text-yellow-800 dark:text-yellow-200 font-poppins text-center">
           <strong>Admin privileges:</strong> Full platform access, user management, and system administration
         </p>

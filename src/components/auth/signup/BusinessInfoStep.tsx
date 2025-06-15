@@ -16,7 +16,7 @@ interface BusinessInfoStepProps {
 
 const BusinessInfoStep: React.FC<BusinessInfoStepProps> = ({ form, isLoading }) => {
   return (
-    <div className="space-y-4 animate-fadeIn">
+    <div className="space-y-4 animate-fadeIn bg-background dark:bg-background">
       <BasicBusinessFields form={form} isLoading={isLoading} />
       <TaxRegistrationFields form={form} isLoading={isLoading} />
       <AddressFields form={form} isLoading={isLoading} />

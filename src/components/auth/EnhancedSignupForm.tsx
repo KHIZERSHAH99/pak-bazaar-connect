@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Form } from '@/components/ui/form';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -87,10 +86,10 @@ const EnhancedSignupForm = () => {
         </Form>
       </CardContent>
       
-      <CardFooter className="border-t border-gray-100 bg-gray-50 flex justify-center p-4">
-        <p className="text-sm text-gray-600 font-poppins">
+      <CardFooter className="border-t border-border bg-muted/30 dark:bg-muted/50 flex justify-center p-4">
+        <p className="text-sm text-muted-foreground font-poppins">
           Already have an account?{' '}
-          <a href="/login" className="text-pakistani_green-600 hover:text-pakistani_green-700 font-medium">
+          <a href="/login" className="text-pakistani_green-600 dark:text-pakistani_green-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-100 font-medium">
             Login Here
           </a>
         </p>

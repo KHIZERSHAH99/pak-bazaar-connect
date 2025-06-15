@@ -18,16 +18,16 @@ const SignupHeader: React.FC<SignupHeaderProps> = ({
   getStepTitle 
 }) => {
   return (
-    <CardHeader className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-500 text-white text-center pb-6">
+    <CardHeader className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-500 dark:from-pakistani_green-900 dark:to-pakistani_green-950 text-white text-center pb-6">
       <div className="flex justify-center mb-4">
         <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm">
           <Briefcase className="h-8 w-8" />
         </div>
       </div>
-      <CardTitle className="text-2xl font-bold font-poppins">
+      <CardTitle className="text-2xl font-bold font-poppins text-white dark:text-pakistani_green-100">
         {selectedRole === 'seller' ? 'Seller Registration' : 'Business Registration'}
       </CardTitle>
-      <CardDescription className="text-green-50 font-poppins">
+      <CardDescription className="text-green-50 dark:text-pakistani_green-200 font-poppins">
         Step {currentStep} of {totalSteps}: {getStepTitle()}
       </CardDescription>
       

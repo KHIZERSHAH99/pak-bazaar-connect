@@ -11,11 +11,13 @@ interface RoleStepProps {
 
 const RoleStep: React.FC<RoleStepProps> = ({ selectedRole, onRoleSelect, isLoading }) => {
   return (
-    <RoleSelectionStep
-      selectedRole={selectedRole}
-      onRoleSelect={onRoleSelect}
-      isLoading={isLoading}
-    />
+    <div className="bg-background dark:bg-background rounded-xl shadow-sm p-0">
+      <RoleSelectionStep
+        selectedRole={selectedRole}
+        onRoleSelect={onRoleSelect}
+        isLoading={isLoading}
+      />
+    </div>
   );
 };
 

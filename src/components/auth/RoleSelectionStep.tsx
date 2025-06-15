@@ -21,7 +21,6 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
       title: 'Wholesaler',
       description: 'Sell products to retailers across Pakistan',
       icon: <Store className="h-8 w-8" />,
-      color: 'bg-blue-500',
       features: [
         'Create and manage shops',
         'List unlimited products',
@@ -34,7 +33,6 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
       title: 'Seller/Retailer',
       description: 'Purchase from wholesalers and grow your business',
       icon: <ShoppingBag className="h-8 w-8" />,
-      color: 'bg-purple-500',
       features: [
         'Browse wholesale catalogs',
         'Place bulk orders',
@@ -45,10 +43,10 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
   ];
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-6 animate-fadeIn bg-background rounded-md">
       <div className="text-center mb-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-2 font-poppins">Choose Your Business Role</h3>
-        <p className="text-gray-600 font-poppins">Select how you want to use Pak Bazaar Connect</p>
+        <h3 className="text-xl font-bold text-foreground mb-2 font-poppins">Choose Your Business Role</h3>
+        <p className="text-muted-foreground font-poppins">Select how you want to use Pak Bazaar Connect</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -57,28 +55,28 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
             key={role.id}
             className={`p-6 border-2 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-lg ${
               selectedRole === role.id
-                ? 'border-pakistani_green-500 bg-pakistani_green-50 shadow-md'
-                : 'border-gray-200 hover:border-pakistani_green-300 bg-white'
+                ? 'border-pakistani_green-500 bg-pakistani_green-50 dark:bg-pakistani_green-950/30 shadow-md'
+                : 'border-border hover:border-pakistani_green-300 bg-card dark:bg-card'
             }`}
             onClick={() => onRoleSelect(role.id)}
           >
             <div className="flex items-center mb-4">
               <div className={`p-3 rounded-full mr-4 ${
-                selectedRole === role.id ? 'bg-pakistani_green-100' : 'bg-gray-100'
+                selectedRole === role.id ? 'bg-pakistani_green-100 dark:bg-pakistani_green-950/50' : 'bg-muted'
               }`}>
-                <div className={selectedRole === role.id ? 'text-pakistani_green-600' : 'text-gray-600'}>
+                <div className={selectedRole === role.id ? 'text-pakistani_green-600 dark:text-pakistani_green-200' : 'text-muted-foreground'}>
                   {role.icon}
                 </div>
               </div>
               <div>
-                <h4 className="text-lg font-semibold font-poppins">{role.title}</h4>
-                <p className="text-sm text-gray-600 font-poppins">{role.description}</p>
+                <h4 className="text-lg font-semibold font-poppins text-foreground">{role.title}</h4>
+                <p className="text-sm text-muted-foreground font-poppins">{role.description}</p>
               </div>
             </div>
 
             <ul className="space-y-2">
               {role.features.map((feature, index) => (
-                <li key={index} className="flex items-center text-sm text-gray-700 font-poppins">
+                <li key={index} className="flex items-center text-sm text-foreground font-poppins">
                   <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
                   {feature}
                 </li>
@@ -86,8 +84,8 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
             </ul>
 
             {selectedRole === role.id && (
-              <div className="mt-4 p-3 bg-pakistani_green-100 rounded-lg">
-                <p className="text-sm font-medium text-pakistani_green-800 font-poppins">
+              <div className="mt-4 p-3 bg-pakistani_green-100 dark:bg-pakistani_green-950/40 rounded-lg">
+                <p className="text-sm font-medium text-pakistani_green-800 dark:text-pakistani_green-200 font-poppins">
                   ✓ Selected - Continue to {role.id === 'wholesaler' ? 'business verification' : 'basic information'}
                 </p>
               </div>
@@ -96,8 +94,8 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-pakistani_green-50 to-green-50 p-4 rounded-lg border border-pakistani_green-200">
-        <p className="text-sm text-pakistani_green-700 font-poppins text-center">
+      <div className="bg-gradient-to-r from-pakistani_green-50 to-green-50 dark:from-pakistani_green-950/40 dark:to-pakistani_green-900/50 p-4 rounded-lg border border-pakistani_green-200 dark:border-pakistani_green-800">
+        <p className="text-sm text-pakistani_green-700 dark:text-pakistani_green-200 font-poppins text-center">
           <strong>Note:</strong> {selectedRole === 'wholesaler' 
             ? 'Wholesalers need to provide business verification documents for security and trust.'
             : 'Sellers have a simplified registration process to get started quickly.'

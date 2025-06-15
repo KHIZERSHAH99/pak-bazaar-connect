@@ -32,6 +32,7 @@ import ShopDetails from "./pages/wholesaler/ShopDetails";
 import WholesalerProductsManagement from "./pages/wholesaler/Products";
 import Advertisements from "./pages/wholesaler/Advertisements";
 import SellerDashboard from "./pages/wholesaler/SellerDashboard";
+import WholesalerOrders from "./pages/wholesaler/WholesalerOrders";
 
 // Seller pages
 import BrowseShops from "./pages/seller/BrowseShops";
@@ -107,7 +108,7 @@ function App() {
                   <Route path="/dashboard/shops/:shopId" element={<ShopDetails />} />
                   <Route path="/dashboard/products" element={<WholesalerProductsManagement />} />
                   <Route path="/dashboard/ads" element={<Advertisements />} />
-                  <Route path="/dashboard/wholesaler-orders" element={<Dashboard />} /> {/* Assuming Dashboard is a placeholder */}
+                  <Route path="/dashboard/wholesaler-orders" element={<WholesalerOrders />} />
                   <Route path="/dashboard/seller-dashboard" element={<SellerDashboard />} />
 
                   {/* Seller pages */}

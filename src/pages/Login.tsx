@@ -14,9 +14,10 @@ const Login: React.FC = () => {
 
   React.useEffect(() => {
     if (user) {
-      window.location.href = '/dashboard';
+-      window.location.href = '/dashboard';
++      navigate('/dashboard', { replace: true });
     }
-  }, [user]);
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-green-50 dark:from-gray-950 dark:to-gray-900 flex flex-col">
@@ -72,4 +73,3 @@ const Login: React.FC = () => {
 };
 
 export default Login;
-

@@ -13,7 +13,8 @@ const Signup: React.FC = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+-      navigate('/dashboard');
++      navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
 
@@ -60,3 +61,4 @@ const Signup: React.FC = () => {
 };
 
 export default Signup;
+

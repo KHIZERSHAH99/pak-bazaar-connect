@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-pakistani_green-600 bg-background text-pakistani_green-600 hover:bg-pakistani_green-50 hover:text-pakistani_green-700",
+          "border border-pakistani_green-600 bg-background text-pakistani_green-600 hover:bg-pakistani_green-50 hover:text-pakistani_green-700 dark:border-pakistani_green-400 dark:text-pakistani_green-200 dark:hover:bg-pakistani_green-900/30 dark:hover:text-white",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",

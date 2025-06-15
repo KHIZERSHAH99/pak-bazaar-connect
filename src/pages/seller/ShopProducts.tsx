@@ -97,7 +97,7 @@ const ShopProducts: React.FC = () => {
     }
 
     // Ensure shop object has the correct type and check for owner_id
-    if (shop && 'owner_id' in shop && shop.owner_id === user.id) {
+    if (shop && typeof shop === "object" && "owner_id" in shop && shop.owner_id === user.id) {
       toast({
         title: "Cannot order from your own shop",
         description: "You cannot place an order in your own shop.",
@@ -119,12 +119,8 @@ const ShopProducts: React.FC = () => {
 
     setIsOrdering(true);
     try {
-      const orderData = {
-        shop_id: shopId,
-        total_amount: totalAmount,
-      };
-      // Fix: Pass a second argument (empty array) to comply with createOrder API
-      await createOrder(orderData, []);
+      // Update: Call createOrder(shopId, totalAmount)
+      await createOrder(shopId, totalAmount);
       toast({
         title: "Order placed",
         description: "Your order has been placed successfully.",

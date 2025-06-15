@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { validatePhoneNumber, sanitizeInput } from './validation';
 import { isShopOwner } from './authorization';

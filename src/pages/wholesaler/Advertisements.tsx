@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -45,6 +44,7 @@ const Advertisements: React.FC = () => {
   const handleCreateClick = () => setIsDialogOpen(true);
   const handleDialogClose = () => setIsDialogOpen(false);
   const handleAdCreated = () => fetchAds();
+  const handleAdApproved = () => fetchAds(); // For admin to trigger refresh
 
   return (
     <DashboardLayout>
@@ -102,6 +102,7 @@ const Advertisements: React.FC = () => {
                 key={ad.id} 
                 ad={ad} 
                 onEdit={handleCreateClick}
+                onAdApproved={handleAdApproved} // For admin approval
               />
             ))}
           </div>

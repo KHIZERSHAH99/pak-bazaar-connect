@@ -1,53 +1,84 @@
-import React from 'react';
-import DashboardLayout from '@/components/DashboardLayout';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import { Card } from '@/components/ui/card';
-import { MessageSquare } from 'lucide-react';
-import ChatHistory from '@/components/chat/ChatHistory';
-import ChatInput from '@/components/chat/ChatInput';
-import { useChatSupport } from '@/hooks/useChatSupport';
+
+import React, { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { saveChat, getChatHistory } from "@/lib/chat";
+import { MessageCircle } from "lucide-react";
 
 const ChatSupport: React.FC = () => {
-  const { chatHistory, loading, sending, sendMessage } = useChatSupport();
+  const [question, setQuestion] = useState("");
+  const [reply, setReply] = useState<string>("");
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSend = async () => {
+    if (!question.trim()) return;
+    setLoading(true);
+    try {
+      // Call OpenAI via Supabase Edge Function (see below for /functions/chatbot) 
+      const response = await fetch("/functions/v1/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: question }),
+      });
+      const data = await response.json();
+      setReply(data.reply || data.generatedText || "No reply.");
+      // Save to chat history
+      await saveChat(question, data.reply || data.generatedText);
+      setHistory(await getChatHistory());
+      setQuestion("");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    getChatHistory().then(setHistory);
+  }, []);
 
   return (
-    <DashboardLayout>
-      <div className="relative">
-        <div className="animated-background dark:!bg-pakistani_green-950/95 !bg-pakistani_green-50/90" />
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-pakistani_green-100 mb-6 relative z-10">AI Chat Support</h1>
-        <Card className="overflow-hidden h-[calc(100vh-12rem)] shadow-xl border-gray-100 relative z-10 bg-translucent-green backdrop-blur-lg">
-          <div className="bg-gradient-to-r from-pakistani_green-900/80 to-pakistani_green-800/80 text-white px-6 py-4 flex items-center">
-            <MessageSquare className="h-5 w-5 mr-2" />
-            <h2 className="font-semibold">AI Support Assistant</h2>
-            <div className="ml-auto flex space-x-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-              <span className="text-xs text-green-100">Online</span>
-            </div>
+    <div className="max-w-lg mx-auto py-10">
+      <Card className="p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <MessageCircle className="h-6 w-6 text-pakistani_green-700" />
+          <h1 className="text-lg font-poppins font-semibold">Chatbot Support</h1>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <Input
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Ask something (e.g., How to create an ad?)"
+              disabled={loading}
+              className="mb-2"
+            />
+            <Button onClick={handleSend} disabled={loading || !question.trim()}>
+              {loading ? "Asking..." : "Ask"}
+            </Button>
           </div>
-          <div className="h-[calc(100%-4rem)] flex flex-col">
-            <div className="flex-grow overflow-y-auto p-6 bg-black">
-              <ChatHistory 
-                chatHistory={chatHistory} 
-                loading={loading} 
-              />
-            </div>
-            <div className="border-t p-4 bg-black">
-              <ChatInput 
-                onSendMessage={sendMessage} 
-                isSending={sending} 
-              />
-            </div>
+          <div>
+            {history.length > 0 && (
+              <div className="mt-4">
+                <h2 className="font-poppins font-medium">Chat History</h2>
+                <ul className="space-y-2">
+                  {history.map((h, i) => (
+                    <li key={h.id || i} className="text-gray-800">
+                      <span className="font-semibold">You:</span>{" "}
+                      <span>{h.message}</span>
+                      <br />
+                      <span className="font-semibold">AI:</span>{" "}
+                      <span className="italic">{h.reply}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-        </Card>
-      </div>
-    </DashboardLayout>
+        </div>
+      </Card>
+    </div>
   );
 };
 
-const ChatSupportWithAuth = () => (
-  <ProtectedRoute>
-    <ChatSupport />
-  </ProtectedRoute>
-);
-
-export default ChatSupportWithAuth;
+export default ChatSupport;

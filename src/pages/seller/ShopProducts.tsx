@@ -1,172 +1,238 @@
-
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import DashboardLayout from '@/components/DashboardLayout';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getProductsByShop, Product, Shop, supabase } from '@/lib/supabase';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { createOrder, getProductsByShopPublic, getShopById } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Store, ShoppingCart, ArrowLeft } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
+import DashboardLayout from '@/components/DashboardLayout';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Separator } from "@/components/ui/separator"
+import { useAuth } from '@/contexts/AuthContext';
 
 const ShopProducts: React.FC = () => {
   const { shopId } = useParams<{ shopId: string }>();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [shop, setShop] = useState<Shop | null>(null);
+  const [products, setProducts] = useState<any[]>([]);
+  const [orderQuantities, setOrderQuantities] = useState<{ [key: string]: number }>({});
   const [loading, setLoading] = useState(true);
+  const [isOrdering, setIsOrdering] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const fetchShopDetails = async () => {
-    if (!shopId) return;
-    
-    try {
+  const { data: shop, isLoading: isShopLoading } = useQuery(
+    ['shop', shopId],
+    () => getShopById(shopId || ''),
+    { enabled: !!shopId }
+  );
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!shopId) return;
       setLoading(true);
-      
-      // Get shop details
-      const { data: shopData, error: shopError } = await supabase
-        .from('shops')
-        .select('*')
-        .eq('id', shopId)
-        .single();
-      
-      if (shopError) throw shopError;
-      setShop(shopData);
-      
-      // Get shop products
-      const productsData = await getProductsByShop(shopId);
-      setProducts(productsData);
-    } catch (error) {
-      console.error('Failed to fetch shop details:', error);
+      try {
+        const data = await getProductsByShopPublic(shopId);
+        setProducts(data);
+        // Initialize order quantities for each product
+        const initialQuantities: { [key: string]: number } = {};
+        data.forEach(product => {
+          initialQuantities[product.id] = 0;
+        });
+        setOrderQuantities(initialQuantities);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+        toast({
+          title: "Failed to load products",
+          description: "There was an error fetching the products for this shop.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [shopId, toast]);
+
+  const handleQuantityChange = (productId: string, quantity: number) => {
+    setOrderQuantities(prev => ({ ...prev, [productId]: quantity }));
+  };
+
+  const calculateTotalAmount = () => {
+    let total = 0;
+    products.forEach(product => {
+      total += (orderQuantities[product.id] || 0) * product.price;
+    });
+    return total;
+  };
+
+  const placeOrder = async () => {
+    if (!shopId) {
       toast({
-        title: 'Error',
-        description: 'Failed to load shop details',
-        variant: 'destructive',
+        title: "Shop ID missing",
+        description: "The shop ID is missing. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "You must be logged in to place an order.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Make sure before placing order that shop.owner_id !== current user id
+    if (shop?.owner_id === user.id) {
+      toast({
+        title: "Cannot order from your own shop",
+        description: "You cannot place an order in your own shop.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const totalAmount = calculateTotalAmount();
+
+    if (totalAmount <= 0) {
+      toast({
+        title: "Invalid order amount",
+        description: "The total order amount must be greater than zero.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsOrdering(true);
+    try {
+      const orderData = {
+        shop_id: shopId,
+        total_amount: totalAmount,
+      };
+      await createOrder(orderData);
+      toast({
+        title: "Order placed",
+        description: "Your order has been placed successfully.",
+        variant: "success"
+      });
+      // Reset quantities after successful order
+      const resetQuantities: { [key: string]: number } = {};
+      products.forEach(product => {
+        resetQuantities[product.id] = 0;
+      });
+      setOrderQuantities(resetQuantities);
+    } catch (error: any) {
+      toast({
+        title: "Failed to place order",
+        description: error.message || "There was an error placing your order.",
+        variant: "destructive"
       });
     } finally {
-      setLoading(false);
+      setIsOrdering(false);
     }
   };
 
-  useEffect(() => {
-    fetchShopDetails();
-  }, [shopId]);
-
-  const handleAddToCart = (productId: string) => {
-    // To be implemented in the future
-    toast({
-      title: 'Feature Coming Soon',
-      description: 'Shopping cart functionality will be available in the next update',
-    });
-  };
-
-  if (!shopId) {
-    return (
-      <DashboardLayout>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Invalid Shop</h1>
-          <p className="text-gray-600">Shop ID is missing. Please go back and select a shop.</p>
-          <Link to="/dashboard/browse-shops">
-            <Button className="mt-4">
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back to Shops
-            </Button>
-          </Link>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
   return (
     <DashboardLayout>
-      <div>
-        <div className="mb-6">
-          <Link to="/dashboard/browse-shops" className="inline-flex items-center text-gray-600 hover:text-primary mb-4">
-            <ArrowLeft className="h-4 w-4 mr-1" /> Back to Shops
-          </Link>
-          
-          {loading ? (
-            <h1 className="text-2xl font-bold text-gray-800">Loading Shop...</h1>
-          ) : shop ? (
-            <div className="flex items-center">
-              <div className="h-12 w-12 bg-pakistani-green-100 rounded-full flex items-center justify-center mr-4">
-                {shop.logo ? (
-                  <img 
-                    src={shop.logo} 
-                    alt={shop.name} 
-                    className="h-full w-full rounded-full object-cover"
-                  />
-                ) : (
-                  <Store className="h-6 w-6 text-primary" />
-                )}
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800">{shop.name}</h1>
-                <p className="text-gray-600">{shop.address}</p>
-              </div>
+      <div className="container mx-auto py-8">
+        <h1 className="text-2xl font-bold mb-4">Shop Products</h1>
+        {isShopLoading ? (
+          <p>Loading shop details...</p>
+        ) : shop ? (
+          <Card className="mb-6">
+            <div className="p-4">
+              <h2 className="text-lg font-semibold">{shop.name}</h2>
+              <p className="text-gray-600">{shop.address}</p>
+              {/* Display other shop details as needed */}
             </div>
-          ) : (
-            <h1 className="text-2xl font-bold text-gray-800">Shop Not Found</h1>
-          )}
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-          </div>
-        ) : products.length === 0 ? (
-          <Card className="p-8 text-center">
-            <div className="flex justify-center mb-4">
-              <Package className="h-16 w-16 text-gray-300" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-700 mb-2">No products available</h3>
-            <p className="text-gray-600">
-              This shop hasn't listed any products yet.
-            </p>
           </Card>
         ) : (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Available Products</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <Card key={product.id} className="overflow-hidden">
-                  <div className="h-48 bg-gray-100">
-                    {product.image ? (
-                      <img 
-                        src={product.image} 
-                        alt={product.name} 
-                        className="h-full w-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = "https://via.placeholder.com/300x200?text=Product";
-                        }}
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <Package className="h-12 w-12 text-gray-400" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                    
-                    {product.description && (
-                      <p className="text-gray-600 mb-4 line-clamp-2">{product.description}</p>
-                    )}
-                    
-                    <p className="text-lg font-bold text-primary mb-4">
-                      PKR {product.price.toLocaleString()}
-                    </p>
-
-                    <Button 
-                      onClick={() => handleAddToCart(product.id)}
-                      className="w-full bg-primary hover:bg-pakistani-green-800"
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" /> Add to Cart
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
+          <p>Shop not found.</p>
         )}
+        <Card>
+          {loading ? (
+            <p className="p-4">Loading products...</p>
+          ) : products.length > 0 ? (
+            <>
+              <Table>
+                <TableCaption>A list of products in the shop.</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Image</TableHead>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Quantity</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {products.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell className="font-medium">
+                        {product.image ? (
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-20 h-20 object-cover rounded"
+                          />
+                        ) : (
+                          <span>No Image</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium">{product.name}</TableCell>
+                      <TableCell>{product.price}</TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={orderQuantities[product.id] || 0}
+                          onChange={(e) =>
+                            handleQuantityChange(product.id, parseInt(e.target.value))
+                          }
+                          className="w-24"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <Separator />
+              <div className="p-4 flex items-center justify-between">
+                <div className="text-lg font-semibold">
+                  Total: Rs {calculateTotalAmount()}
+                </div>
+                <Button onClick={placeOrder} disabled={isOrdering}>
+                  {isOrdering ? (
+                    <>
+                      <ShoppingCart className="mr-2 h-4 w-4 animate-spin" />
+                      Placing Order...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      Place Order
+                    </>
+                  )}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <p className="p-4">No products found in this shop.</p>
+          )}
+        </Card>
       </div>
     </DashboardLayout>
   );

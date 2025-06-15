@@ -1,4 +1,3 @@
-
 // Re-export all the modules to maintain backward compatibility
 import { supabase as supabaseClient } from '@/integrations/supabase/client';
 import * as authModule from './auth';
@@ -102,3 +101,43 @@ export const {
   processPayment,
   getCommissionRates
 } = paymentModule;
+
+// Add these implementations at the bottom or appropriate location:
+
+import { supabase } from "@/integrations/supabase/client";
+
+// Fetch pending role requests for admin
+export async function getRoleRequests() {
+  const { data, error } = await supabase
+    .from("role_requests")
+    .select("*")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+// Approve a role request by ID, and update user's profile role
+export async function approveRoleRequest(requestId: string) {
+  // 1. Get the request to know user_id, requested_role
+  const { data: request, error: reqErr } = await supabase
+    .from("role_requests")
+    .select("user_id, requested_role")
+    .eq("id", requestId)
+    .maybeSingle();
+  if (reqErr || !request) throw reqErr || new Error("Role request not found");
+
+  // 2. Set status to 'approved' on the role request
+  const { error: updateErr } = await supabase
+    .from("role_requests")
+    .update({ status: "approved" })
+    .eq("id", requestId);
+  if (updateErr) throw updateErr;
+
+  // 3. Change role in profiles table
+  const { error: profileErr } = await supabase
+    .from("profiles")
+    .update({ role: request.requested_role })
+    .eq("id", request.user_id);
+  if (profileErr) throw profileErr;
+}

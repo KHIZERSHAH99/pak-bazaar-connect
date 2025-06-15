@@ -21,10 +21,9 @@ const AdminPanel: React.FC = () => {
     })();
   }, []);
 
-  const handleApprove = async (requestId: string, requestedRole: string, userId: string) => {
+  const handleApprove = async (requestId: string) => {
     await approveRoleRequest(requestId);
     setRequests((requests) => requests.filter((r) => r.id !== requestId));
-    // directly update user role to requestedRole using Supabase admin API if needed
   };
 
   return (
@@ -43,7 +42,7 @@ const AdminPanel: React.FC = () => {
                   <div className="font-poppins font-medium">{r.user_id}</div>
                   <span className="text-sm text-gray-600">Role: {r.requested_role}</span>
                 </div>
-                <Button size="sm" onClick={() => handleApprove(r.id, r.requested_role, r.user_id)}>
+                <Button size="sm" onClick={() => handleApprove(r.id)}>
                   Approve
                 </Button>
               </li>

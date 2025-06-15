@@ -23,12 +23,13 @@ const AdApprovals: React.FC = () => {
     fetchAds();
   }, []);
 
+  // Make sure we pass string values for status ("approved" or "rejected")
   const handleApprove = async (adId: string) => {
-    await approveAd(adId, 'approved');
+    await approveAd(adId, "approved");
     setAds((ads) => ads.filter((ad) => ad.id !== adId));
   };
   const handleReject = async (adId: string) => {
-    await approveAd(adId, 'rejected');
+    await approveAd(adId, "rejected");
     setAds((ads) => ads.filter((ad) => ad.id !== adId));
   };
 

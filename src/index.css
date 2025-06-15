@@ -47,13 +47,13 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: #15401a; /* dark deep green background */
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: #194d1e; /* slightly lighter for cards */
     --card-foreground: 210 40% 98%;
 
-    --popover: 224 14% 18%; /* improved dark popover for dropdowns */
+    --popover: #194d1e;
     --popover-foreground: 210 40% 98%;
 
     --primary: 142 76% 50%;
@@ -74,14 +74,14 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 142.5 71.8% 45.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: #01411C;
+    --sidebar-foreground: #e1f6e1;
+    --sidebar-primary: #194d1e;
+    --sidebar-primary-foreground: #d6ffe1;
+    --sidebar-accent: #217c2b;
+    --sidebar-accent-foreground: #e0ffe5;
+    --sidebar-border: #15542c;
+    --sidebar-ring: #54b95f;
   }
   
   /* RTL Layout Handling */
@@ -214,7 +214,7 @@
     background: linear-gradient(120deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
   }
   .dark .animated-background {
-    background: linear-gradient(120deg, #052c12 0%, #063516 100%);
+    background: linear-gradient(120deg, #15401a 0%, #238B45 100%);
   }
 
   .moving-dots {
@@ -254,6 +254,64 @@
   
   .border-translucent-green {
     @apply border-pakistani_green-200/50 dark:border-pakistani_green-700/50;
+  }
+
+  // Override utility backgrounds for dark mode, especially .bg-white and overlays
+  .dark .bg-white,
+  .dark .bg-white\/80,
+  .dark .bg-white\/90,
+  .dark .bg-white\/50 {
+    background-color: #15401a !important; /* deep green */
+  }
+  .dark .bg-card,
+  .dark .card {
+    background-color: #194d1e !important; /* a little lighter for cards */
+  }
+  .dark .bg-gray-50,
+  .dark .bg-gray-100 {
+    background-color: #194d1e !important;
+  }
+
+  /* Overlays and modals (used in lightbox/zoom) */
+  .dark .bg-black\/80,
+  .dark .bg-black\/70,
+  .dark .bg-black {
+    background-color: #01270f !important; /* very dark green/black blend */
+  }
+  .dark .animated-background {
+    background: linear-gradient(120deg, #15401a 0%, #238B45 100%);
+  }
+  .dark .border {
+    border-color: #327238 !important;
+  }
+  .dark .border-card {
+    border-color: #327238 !important;
+  }
+  .dark .rounded,
+  .dark .rounded-lg {
+    border-radius: 0.5rem;
+  }
+}
+
+// Fix Zoom overlay badge (say, Zoom badge in product gallery)
+.dark .group:hover .bg-white\/80,
+.dark .bg-white\/80 {
+  background-color: #238B45 !important;
+  color: #ffffff !important;
+}
+
+// Ensure table backgrounds match design in dark mode
+@layer base {
+  .dark table {
+    background-color: #194d1e;
+  }
+  .dark tr:nth-child(even) {
+    background-color: #238B4522;
+  }
+  .dark th,
+  .dark td {
+    border-color: #329a3e88;
+    color: #e1f6e1;
   }
 }
 

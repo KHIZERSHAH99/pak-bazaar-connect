@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,11 +24,11 @@ const AdApprovals: React.FC = () => {
 
   // Make sure we pass string values for status ("approved" or "rejected")
   const handleApprove = async (adId: string) => {
-    await approveAd(adId, "approved");
+    await approveAd(adId, true);
     setAds((ads) => ads.filter((ad) => ad.id !== adId));
   };
   const handleReject = async (adId: string) => {
-    await approveAd(adId, "rejected");
+    await approveAd(adId, false);
     setAds((ads) => ads.filter((ad) => ad.id !== adId));
   };
 

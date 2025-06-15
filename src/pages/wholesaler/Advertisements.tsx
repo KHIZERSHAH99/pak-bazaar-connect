@@ -102,7 +102,6 @@ const Advertisements: React.FC = () => {
                 key={ad.id} 
                 ad={ad} 
                 onEdit={handleCreateClick}
-                onAdApproved={handleAdApproved} // For admin approval
               />
             ))}
           </div>

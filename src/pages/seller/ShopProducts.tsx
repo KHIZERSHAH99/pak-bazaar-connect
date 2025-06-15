@@ -31,11 +31,12 @@ const ShopProducts: React.FC = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const { data: shop, isLoading: isShopLoading } = useQuery(
-    ['shop', shopId],
-    () => getShopById(shopId || ''),
-    { enabled: !!shopId }
-  );
+  // Correct useQuery usage and typing
+  const { data: shop, isLoading: isShopLoading } = useQuery({
+    queryKey: ['shop', shopId],
+    queryFn: () => getShopById(shopId ?? ''),
+    enabled: !!shopId,
+  });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -44,9 +45,8 @@ const ShopProducts: React.FC = () => {
       try {
         const data = await getProductsByShopPublic(shopId);
         setProducts(data);
-        // Initialize order quantities for each product
         const initialQuantities: { [key: string]: number } = {};
-        data.forEach(product => {
+        data.forEach((product: any) => {
           initialQuantities[product.id] = 0;
         });
         setOrderQuantities(initialQuantities);
@@ -71,7 +71,7 @@ const ShopProducts: React.FC = () => {
 
   const calculateTotalAmount = () => {
     let total = 0;
-    products.forEach(product => {
+    products.forEach((product: any) => {
       total += (orderQuantities[product.id] || 0) * product.price;
     });
     return total;
@@ -96,8 +96,8 @@ const ShopProducts: React.FC = () => {
       return;
     }
 
-    // Make sure before placing order that shop.owner_id !== current user id
-    if (shop?.owner_id === user.id) {
+    // Ensure shop object has the correct type and check for owner_id
+    if (shop && 'owner_id' in shop && shop.owner_id === user.id) {
       toast({
         title: "Cannot order from your own shop",
         description: "You cannot place an order in your own shop.",
@@ -131,7 +131,7 @@ const ShopProducts: React.FC = () => {
       });
       // Reset quantities after successful order
       const resetQuantities: { [key: string]: number } = {};
-      products.forEach(product => {
+      products.forEach((product: any) => {
         resetQuantities[product.id] = 0;
       });
       setOrderQuantities(resetQuantities);
@@ -152,12 +152,11 @@ const ShopProducts: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Shop Products</h1>
         {isShopLoading ? (
           <p>Loading shop details...</p>
-        ) : shop ? (
+        ) : shop && typeof shop === 'object' && shop !== null && 'name' in shop && 'address' in shop ? (
           <Card className="mb-6">
             <div className="p-4">
-              <h2 className="text-lg font-semibold">{shop.name}</h2>
-              <p className="text-gray-600">{shop.address}</p>
-              {/* Display other shop details as needed */}
+              <h2 className="text-lg font-semibold">{(shop as any).name}</h2>
+              <p className="text-gray-600">{(shop as any).address}</p>
             </div>
           </Card>
         ) : (
@@ -179,7 +178,7 @@ const ShopProducts: React.FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {products.map((product) => (
+                  {products.map((product: any) => (
                     <TableRow key={product.id}>
                       <TableCell className="font-medium">
                         {product.image ? (

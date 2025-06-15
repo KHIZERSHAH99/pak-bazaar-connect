@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+/* Import fonts and Urdu/RTL-specific styles */
+@import "./styles/urdu.css";
+@import "./styles/fonts.css";
+
+/* Remove Google Fonts import, Urdu font and RTL rules from here! */
 
 @tailwind base;
 @tailwind components;
@@ -84,66 +88,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   
-  /* RTL Layout Handling */
-  [dir="rtl"] {
-    text-align: right;
-  }
-  
-  [dir="rtl"] .flex {
-    flex-direction: row-reverse;
-  }
-  
-  [dir="rtl"] .flex-col {
-    flex-direction: column;
-  }
-  
-  [dir="rtl"] .grid {
-    direction: ltr;
-  }
-  
-  /* Ensure text remains readable in RTL */
-  [dir="rtl"] p,
-  [dir="rtl"] span,
-  [dir="rtl"] h1,
-  [dir="rtl"] h2,
-  [dir="rtl"] h3,
-  [dir="rtl"] h4,
-  [dir="rtl"] h5,
-  [dir="rtl"] h6,
-  [dir="rtl"] button,
-  [dir="rtl"] a,
-  [dir="rtl"] label {
-    direction: rtl;
-    unicode-bidi: embed;
-  }
-  
-  /* Fix specific layouts for RTL */
-  [dir="rtl"] .justify-between {
-    flex-direction: row-reverse;
-  }
-  
-  [dir="rtl"] .ml-2 {
-    margin-left: 0;
-    margin-right: 0.5rem;
-  }
-  
-  [dir="rtl"] .mr-2 {
-    margin-right: 0;
-    margin-left: 0.5rem;
-  }
-  
-  [dir="rtl"] .ml-4 {
-    margin-left: 0;
-    margin-right: 1rem;
-  }
-  
-  [dir="rtl"] .mr-4 {
-    margin-right: 0;
-    margin-left: 1rem;
-  }
-}
-
-@layer base {
+  /* OTHER BASE TAILWIND AND RESET STYLES */
   * {
     @apply border-border;
   }
@@ -325,21 +270,4 @@
   50% {
     transform: translateY(-10px);
   }
-}
-
-/* Add font fallback for Urdu */
-body, .urdu-layout, [lang="ur"] {
-  font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', 'Poppins', 'Arial', 'sans-serif';
-}
-
-.urdu-layout,
-[lang="ur"] {
-  font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', 'Poppins', 'Arial', 'sans-serif' !important;
-  font-weight: 400;
-  direction: rtl;
-}
-
-.urdu-layout .font-poppins,
-[lang="ur"] .font-poppins {
-  font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', 'Poppins', 'Arial', 'sans-serif' !important;
 }

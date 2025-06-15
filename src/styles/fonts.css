@@ -1,0 +1,16 @@
+
+/* Font-face imports and definitions for Poppins and Urdu font stacks */
+
+/* Google Fonts import for Poppins and Noto Nastaliq Urdu */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+
+/* Fallback font family definitions for Tailwind and base CSS */
+body, .font-poppins {
+  font-family: 'Poppins', Arial, 'sans-serif';
+}
+
+.font-urdu,
+.urdu-layout,
+[lang="ur"] {
+  font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', Arial, 'sans-serif' !important;
+}

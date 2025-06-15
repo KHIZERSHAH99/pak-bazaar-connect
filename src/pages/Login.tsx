@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,12 +11,12 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Redirect if already logged in
-  useEffect(() => {
+  // Redirect if already logged in (force reload for clean session)
+  React.useEffect(() => {
     if (user) {
-      navigate('/dashboard', { replace: true });
+      window.location.href = '/dashboard';
     }
-  }, [user, navigate]);
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-green-50 flex flex-col">

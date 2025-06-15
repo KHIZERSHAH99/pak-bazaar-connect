@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { signIn } from '@/lib/auth';
+import { signIn, cleanupAuthState } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -29,29 +29,34 @@ const LoginForm: React.FC = () => {
       setError('Please enter both email and password');
       return;
     }
-    
+    setIsLoading(true);
+
     try {
-      setIsLoading(true);
-      
+      // Clean up any old state before attempting sign in
+      cleanupAuthState();
+      try {
+        // Attempt global sign out (in case another user was logged in previously)
+        await import('@/integrations/supabase/client').then(({ supabase }) =>
+          supabase.auth.signOut({ scope: 'global' })
+        );
+      } catch (logoutErr) { /* continue even if fails */ }
+
       if (!navigator.onLine) {
         throw new Error('No internet connection. Please check your network and try again.');
       }
-      
       await signIn(email, password);
       await checkAuthStatus();
-      
+
       toast({
         title: 'Success',
         description: 'You have successfully logged in'
       });
-      
-      const from = location.state?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
+
+      // Always force hard reload for safe session initialization
+      window.location.href = '/dashboard';
     } catch (error: any) {
-      console.error('Login error:', error);
-      
       let errorMessage = 'Login failed. Please check your credentials and try again';
-      
+
       if (error.message) {
         if (error.message.includes('Invalid login credentials')) {
           errorMessage = 'Invalid email or password. Please try again.';
@@ -63,9 +68,9 @@ const LoginForm: React.FC = () => {
           errorMessage = error.message;
         }
       }
-      
+
       setError(errorMessage);
-      
+
       toast({
         title: 'Login failed',
         description: errorMessage,
@@ -110,6 +115,7 @@ const LoginForm: React.FC = () => {
               placeholder="Enter your email"
               className="w-full p-3 bg-background border border-input rounded-md focus-visible:ring-pakistani_green-500"
               disabled={isLoading}
+              autoComplete="email"
             />
           </div>
 
@@ -126,6 +132,7 @@ const LoginForm: React.FC = () => {
               placeholder="Enter your password"
               className="w-full p-3 bg-background border border-input rounded-md focus-visible:ring-pakistani_green-500"
               disabled={isLoading}
+              autoComplete="current-password"
             />
           </div>
 

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
@@ -8,13 +7,12 @@ import { enhancedSignIn, enhancedSignUp, enhancedSignOut, secureChangeRole } fro
 export type { UserRole } from '@/lib/types';
 
 // Clean up auth state to prevent "limbo" states
-const cleanupAuthState = () => {
+export const cleanupAuthState = () => {
   Object.keys(localStorage).forEach((key) => {
     if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
       localStorage.removeItem(key);
     }
   });
-  // Remove from sessionStorage if in use
   Object.keys(sessionStorage || {}).forEach((key) => {
     if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
       sessionStorage.removeItem(key);

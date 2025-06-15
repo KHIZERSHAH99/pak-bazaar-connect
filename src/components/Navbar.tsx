@@ -113,8 +113,7 @@ const Navbar: React.FC = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-56 bg-popover border-border shadow-lg rounded-md animate-fade-in"
-                  style={{ background: "rgba(255,255,255,0.97)" }}
+                  className="w-56 bg-popover text-popover-foreground border-border shadow-lg rounded-md animate-fade-in"
                 >
                   <DropdownMenuLabel className="font-poppins">My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />

@@ -14,8 +14,8 @@ const roleDisplay: Record<UserRole, string> = {
 };
 
 const roleColors: Record<UserRole, string> = {
-  admin: 'bg-red-500 text-white',
-  wholesaler: 'bg-pakistani_green-600 text-white',
+  admin: 'bg-red-600 text-white',
+  wholesaler: 'bg-pakistani_green-700 text-white',
   seller: 'bg-blue-600 text-white',
   pending: 'bg-gray-400 text-white'
 };
@@ -59,7 +59,7 @@ const RoleSwitcher: React.FC = () => {
 
   return (
     <div className="flex items-center gap-1 relative ml-2">
-      <Badge className={`capitalize px-2 py-1 text-xs font-poppins transition ${roleColors[profile.role as UserRole]} flex items-center gap-1 ring-1 ring-pakistani_green-200`}
+      <Badge className={`capitalize px-2 py-1 text-xs font-poppins shadow-sm transition ring-2 ring-pakistani_green-400 dark:ring-pakistani_green-700 ${roleColors[profile.role as UserRole]} flex items-center gap-1`}
         onClick={canSwitch ? handleSwitch : undefined}
         title={canSwitch ? `Switch to ${roleDisplay[nextRole[profile.role as UserRole]]}` : 'Role cannot be changed here'}
         style={canSwitch ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}

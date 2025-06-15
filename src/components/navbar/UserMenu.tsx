@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -33,7 +32,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground border-border">
+      <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground border border-border z-[120]">
         <DropdownMenuLabel className="font-poppins">My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>

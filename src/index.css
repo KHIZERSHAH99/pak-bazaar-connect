@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -54,7 +53,7 @@
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 224 14% 18%; /* improved dark popover for dropdowns */
     --popover-foreground: 210 40% 98%;
 
     --primary: 142 76% 50%;

@@ -100,14 +100,12 @@ const Navbar: React.FC = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="flex items-center gap-1.5 font-poppins focus:outline-none focus:ring-2 focus:ring-primary/70 px-2"
+                    className="flex items-center gap-2 font-poppins focus:outline-none focus:ring-2 focus:ring-primary/70 px-2 h-10"
                   >
                     <User className="h-4 w-4" />
                     <span className="font-medium max-w-20 truncate">{user.email?.split('@')[0]}</span>
-                    {/* RoleSwitcher for visually obvious role info */}
-                    <div className="inline-flex ml-1">
-                      <RoleSwitcher />
-                    </div>
+                    {/* Keep RoleSwitcher perfectly inline */}
+                    <RoleSwitcher />
                     <ChevronDown className="h-4 w-4 opacity-50" />
                   </Button>
                 </DropdownMenuTrigger>

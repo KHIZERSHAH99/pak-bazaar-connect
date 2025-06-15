@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { ArrowDown } from 'lucide-react';
@@ -58,8 +57,12 @@ const RoleSwitcher: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center gap-1 relative ml-2">
-      <Badge className={`capitalize px-2 py-1 text-xs font-poppins shadow-sm transition ring-2 ring-pakistani_green-400 dark:ring-pakistani_green-700 ${roleColors[profile.role as UserRole]} flex items-center gap-1`}
+    <span className="inline-flex items-center h-8 align-middle">
+      <Badge
+        className={`capitalize px-3 py-1 text-xs font-poppins shadow-sm transition ring-2 ring-pakistani_green-400 dark:ring-pakistani_green-700 
+        ${roleColors[profile.role as UserRole]} 
+        flex items-center gap-1 
+        h-8`}
         onClick={canSwitch ? handleSwitch : undefined}
         title={canSwitch ? `Switch to ${roleDisplay[nextRole[profile.role as UserRole]]}` : 'Role cannot be changed here'}
         style={canSwitch ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
@@ -71,14 +74,16 @@ const RoleSwitcher: React.FC = () => {
         {isSwitching ? (
           <span className="ml-1 animate-spin">&#9696;</span>
         ) : (
-          canSwitch && <span className="ml-1">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeWidth="2" d="M6 9l6 6 6-6" />
-            </svg>
-          </span>
+          canSwitch && (
+            <span className="ml-1">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeWidth="2" d="M6 9l6 6 6-6" />
+              </svg>
+            </span>
+          )
         )}
       </Badge>
-    </div>
+    </span>
   );
 };
 

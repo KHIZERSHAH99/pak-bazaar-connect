@@ -14,11 +14,12 @@ const ChatSupport: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="relative">
+        {/* Animated background remains */}
         <div className="animated-background dark:!bg-pakistani_green-950/95 !bg-pakistani_green-50/90" />
         <h1 className="text-2xl font-bold text-gray-800 dark:text-pakistani_green-100 mb-6 relative z-10">AI Chat Support</h1>
-        {/* Card with dark/green bg for dark mode */}
-        <Card className="overflow-hidden h-[calc(100vh-12rem)] shadow-xl border-gray-100 relative z-10 bg-white bg-opacity-95 dark:bg-pakistani_green-950 dark:bg-opacity-95 dark:text-white backdrop-blur-sm">
-          <div className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-800 text-white px-6 py-4 flex items-center">
+        {/* Card: translucent green with black inner for chat */}
+        <Card className="overflow-hidden h-[calc(100vh-12rem)] shadow-xl border-gray-100 relative z-10 bg-translucent-green dark:bg-translucent-green backdrop-blur-lg">
+          <div className="bg-gradient-to-r from-pakistani_green-900/80 to-pakistani_green-800/80 text-white px-6 py-4 flex items-center">
             <MessageSquare className="h-5 w-5 mr-2" />
             <h2 className="font-semibold">AI Support Assistant</h2>
             <div className="ml-auto flex space-x-2">
@@ -27,13 +28,13 @@ const ChatSupport: React.FC = () => {
             </div>
           </div>
           <div className="h-[calc(100%-4rem)] flex flex-col">
-            <div className="flex-grow overflow-y-auto p-6 bg-gradient-to-b from-gray-50 to-white dark:from-pakistani_green-900 dark:to-pakistani_green-950">
+            <div className="flex-grow overflow-y-auto p-6 chat-green-bg">
               <ChatHistory 
                 chatHistory={chatHistory} 
                 loading={loading} 
               />
             </div>
-            <div className="border-t p-4 bg-gray-50 dark:bg-pakistani_green-900/90">
+            <div className="border-t p-4 bg-black/70 dark:bg-black/85">
               <ChatInput 
                 onSendMessage={sendMessage} 
                 isSending={sending} 

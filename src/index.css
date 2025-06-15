@@ -241,7 +241,10 @@
   
   /* Translucent backgrounds */
   .bg-translucent-green {
-    @apply bg-pakistani_green-500/20 dark:bg-pakistani_green-600/30 backdrop-blur-sm;
+    @apply bg-pakistani_green-700/60 dark:bg-pakistani_green-950/60 backdrop-blur-lg;
+  }
+  .bg-translucent-black {
+    @apply bg-black/70 dark:bg-black/80 backdrop-blur-lg;
   }
   
   .border-translucent-green {

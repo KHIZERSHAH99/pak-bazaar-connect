@@ -102,9 +102,7 @@ export const {
   getCommissionRates
 } = paymentModule;
 
-// Add these implementations at the bottom or appropriate location:
-
-import { supabase } from "@/integrations/supabase/client";
+// --- BEGIN added or fixed custom functions below ---
 
 // Fetch pending role requests for admin
 export async function getRoleRequests() {

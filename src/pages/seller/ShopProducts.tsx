@@ -123,7 +123,8 @@ const ShopProducts: React.FC = () => {
         shop_id: shopId,
         total_amount: totalAmount,
       };
-      await createOrder(orderData);
+      // Fix: Pass a second argument (empty array) to comply with createOrder API
+      await createOrder(orderData, []);
       toast({
         title: "Order placed",
         description: "Your order has been placed successfully.",

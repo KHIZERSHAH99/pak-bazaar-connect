@@ -20,9 +20,9 @@ import { signOut } from '@/lib/auth';
 import RoleSwitcher from './navbar/RoleSwitcher';
 
 const Navbar: React.FC = () => {
-  const { user, profile } = useAuth(); // Remove logout from destructuring
+  const { user, profile } = useAuth();
   const { theme } = useTheme();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -52,14 +52,20 @@ const Navbar: React.FC = () => {
   const handleMobileMenuItemClick = () => setIsMenuOpen(false);
 
   return (
-    <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+    <nav
+      className={`bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border`}
+      dir={language === "ur" ? "rtl" : "ltr"}
+      lang={language}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center">
                 <img className="h-8 w-auto" src="/placeholder.svg" alt="Pak Bazaar Connect" />
-                <span className="ml-2 text-lg font-bold text-primary font-poppins">Pak Bazaar Connect</span>
+                <span className="ml-2 text-lg font-bold text-primary font-poppins">
+                  Pak Bazaar Connect
+                </span>
               </Link>
             </div>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
@@ -67,25 +73,25 @@ const Navbar: React.FC = () => {
                 to="/"
                 className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
               >
-                Home
+                {t("home")}
               </Link>
               <Link
                 to="/products"
                 className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
               >
-                Products
+                {t("products")}
               </Link>
               <Link
                 to="/sellers"
                 className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
               >
-                Suppliers
+                {t("suppliers")}
               </Link>
               <Link
                 to="/features"
                 className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
               >
-                Features
+                {t("features")}
               </Link>
             </div>
           </div>

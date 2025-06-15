@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'ur';
@@ -27,6 +26,8 @@ const translations: Translations = {
   'logout': { en: 'Logout', ur: 'لاگ آؤٹ' },
   'login': { en: 'Login', ur: 'لاگ ان' },
   'signup': { en: 'Sign Up', ur: 'سائن اپ' },
+  'suppliers': { en: 'Suppliers', ur: 'سپلائرز' },
+  'features': { en: 'Features', ur: 'خصوصیات' },
   
   // Search and actions
   'search': { en: 'Search', ur: 'تلاش' },
@@ -44,7 +45,14 @@ const translations: Translations = {
   'wholesale_price': { en: 'Wholesale Price', ur: 'ہول سیل قیمت' },
   'contact_seller': { en: 'Contact Seller', ur: 'بیچنے والے سے رابطہ' },
   'save_favorite': { en: 'Save to Favorites', ur: 'پسندیدہ میں محفوظ کریں' },
-  'compare_products': { en: 'Compare Products', ur: 'پروڈکٹس کا موازنہ' }
+  'compare_products': { en: 'Compare Products', ur: 'پروڈکٹس کا موازنہ' },
+  
+  // NEW: App-specific terms
+  'settings': { en: 'Settings', ur: 'ترتیبات' },
+  'previous': { en: 'Previous', ur: 'پچھلا' },
+  'continue': { en: 'Continue', ur: 'جاری رکھیں' },
+  'processing': { en: 'Processing...', ur: 'پراسس ہو رہا ہے...' },
+  'create_account': { en: 'Create Account', ur: 'اکاؤنٹ بنائیں' },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);

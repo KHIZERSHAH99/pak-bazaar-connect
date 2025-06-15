@@ -5,8 +5,6 @@ import { MessageSquare } from 'lucide-react';
 const ChatWelcomeMessage: React.FC = () => {
   return (
     <div className="rounded-lg p-6 mb-6 border border-pakistani_green-300 shadow-sm relative overflow-hidden bg-black">
-      <div className="absolute inset-0 opacity-60 z-0"></div>
-      {/* Remove moving dots bg for clarity on solid black */}
       <div className="relative z-10 flex items-start">
         <div className="bg-pakistani_green-800 dark:bg-pakistani_green-600 rounded-full p-3 mr-4 shadow-md">
           <MessageSquare className="h-6 w-6 text-pakistani_green-100 dark:text-white" />

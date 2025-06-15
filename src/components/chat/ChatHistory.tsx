@@ -35,7 +35,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ chatHistory, loading }) => {
     <div className="h-[calc(100%-2rem)] pr-4 bg-black rounded-xl">
       <ChatWelcomeMessage />
       {chatHistory.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-40 text-gray-300 animate-fadeIn">
+        <div className="flex flex-col items-center justify-center h-40 text-gray-300 animate-fadeIn bg-black rounded-xl">
           <MessageSquare className="h-16 w-16 mb-4 text-gray-400" />
           <p className="text-center">No messages yet. Ask anything about using the platform!</p>
           <div className="mt-4 flex space-x-2">

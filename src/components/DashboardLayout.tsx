@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import Navbar from './Navbar';
@@ -7,6 +6,7 @@ import DashboardSidebar from './dashboard/DashboardSidebar';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { LoadingScreen } from '@/contexts/AuthContext';
+import DashboardHeader from './dashboard/DashboardHeader';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -53,6 +53,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
         <main className="flex-grow p-4 md:p-6 bg-background">
           <div className="container mx-auto max-w-7xl">
+            {/* Added prominent dashboard header with role switcher and COD badge */}
+            <DashboardHeader />
             {children}
           </div>
         </main>

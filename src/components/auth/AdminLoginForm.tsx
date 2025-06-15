@@ -77,12 +77,11 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@pakbazaarconnect.com"
-            className="w-full font-poppins bg-background"
+            className="w-full font-poppins bg-background dark:bg-background"
             disabled={isLoading}
             required
           />
         </div>
-
         <div>
           <label htmlFor="admin-password" className="block text-sm font-medium text-foreground mb-2 font-poppins">
             Admin Password
@@ -94,7 +93,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter admin password"
-              className="w-full pr-10 font-poppins bg-background"
+              className="w-full pr-10 font-poppins bg-background dark:bg-background"
               disabled={isLoading}
               required
             />
@@ -111,7 +110,6 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
             </button>
           </div>
         </div>
-
         <Button
           type="submit"
           className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 dark:from-yellow-900 dark:to-orange-900 text-white font-poppins"
@@ -120,7 +118,6 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
           {isLoading ? 'Authenticating...' : 'Access Admin Panel'}
         </Button>
       </form>
-
       <div className="text-center">
         <button
           onClick={onBackToRegular}

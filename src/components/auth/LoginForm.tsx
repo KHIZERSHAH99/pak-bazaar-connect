@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { signIn, cleanupAuthState } from '@/lib/auth';
@@ -83,7 +82,7 @@ const LoginForm: React.FC = () => {
 
   if (showAdminLogin) {
     return (
-      <Card className="border-none shadow-lg overflow-hidden">
+      <Card className="border-none shadow-lg overflow-hidden bg-card dark:bg-card">
         <CardContent className="pt-6">
           <AdminLoginForm onBackToRegular={() => setShowAdminLogin(false)} />
         </CardContent>
@@ -92,10 +91,10 @@ const LoginForm: React.FC = () => {
   }
 
   return (
-    <Card className="border-none shadow-lg overflow-hidden">
+    <Card className="border-none shadow-lg overflow-hidden bg-card dark:bg-card">
       <CardContent className="pt-6">
         {error && (
-          <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center text-red-600 dark:text-red-400 text-sm border border-red-100 dark:border-red-800">
+          <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center text-red-600 dark:text-red-300 text-sm border border-red-100 dark:border-red-800">
             <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -104,7 +103,7 @@ const LoginForm: React.FC = () => {
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm font-medium text-foreground flex items-center">
-              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-300" />
               Email Address
             </label>
             <Input
@@ -113,15 +112,14 @@ const LoginForm: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full p-3 bg-background border border-input rounded-md focus-visible:ring-pakistani_green-500"
+              className="w-full p-3 bg-background dark:bg-background border border-input dark:border-input rounded-md focus-visible:ring-pakistani_green-500"
               disabled={isLoading}
               autoComplete="email"
             />
           </div>
-
           <div className="space-y-2">
             <label htmlFor="password" className="block text-sm font-medium text-foreground flex items-center">
-              <Key className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Key className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-300" />
               Password
             </label>
             <Input
@@ -130,35 +128,33 @@ const LoginForm: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full p-3 bg-background border border-input rounded-md focus-visible:ring-pakistani_green-500"
+              className="w-full p-3 bg-background dark:bg-background border border-input dark:border-input rounded-md focus-visible:ring-pakistani_green-500"
               disabled={isLoading}
               autoComplete="current-password"
             />
           </div>
-
           <Button
             type="submit"
-            className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-colors"
+            className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 dark:bg-pakistani_green-700 dark:hover:bg-pakistani_green-600 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-colors"
             disabled={isLoading}
           >
             {isLoading ? 'Logging In...' : 'Log In'}
           </Button>
         </form>
-
         <div className="mt-4 text-center">
           <button
             onClick={() => setShowAdminLogin(true)}
-            className="inline-flex items-center text-xs text-muted-foreground hover:text-pakistani_green-600 dark:hover:text-pakistani_green-400 transition-colors"
+            className="inline-flex items-center text-xs text-muted-foreground hover:text-pakistani_green-600 dark:hover:text-pakistani_green-300 transition-colors"
           >
             <Shield className="h-3 w-3 mr-1" />
             Admin Access
           </button>
         </div>
       </CardContent>
-      <CardFooter className="border-t border-border bg-muted/30 flex justify-center p-4">
+      <CardFooter className="border-t border-border bg-muted/30 dark:bg-muted/50 flex justify-center p-4">
         <p className="text-sm text-muted-foreground">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-pakistani_green-700 dark:text-pakistani_green-400 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-300 font-medium">
+          <Link to="/signup" className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 font-medium">
             Sign Up Here
           </Link>
         </p>

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,8 +13,7 @@ const Login: React.FC = () => {
 
   React.useEffect(() => {
     if (user) {
--      window.location.href = '/dashboard';
-+      navigate('/dashboard', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
 

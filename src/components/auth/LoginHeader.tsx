@@ -11,7 +11,7 @@ const LoginHeader: React.FC = () => {
           <LogIn className="h-8 w-8 text-white" />
         </div>
       </div>
-      <CardTitle className="text-2xl font-bold text-white dark:text-gray-50">Welcome Back</CardTitle>
+      <CardTitle className="text-2xl font-bold text-white dark:text-white">Welcome Back</CardTitle>
       <CardDescription className="text-green-50 dark:text-gray-300">Log in to your account</CardDescription>
     </CardHeader>
   );

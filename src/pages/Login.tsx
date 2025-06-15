@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,13 +25,13 @@ const Login: React.FC = () => {
       </div>
 
       {/* Header */}
-      <header className="bg-white dark:bg-gray-900 shadow-sm py-4 px-6">
+      <header className="bg-white dark:bg-gray-950 shadow-sm py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <Link to="/" className="flex items-center">
             <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
               <span className="text-white text-2xl font-bold">PBC</span>
             </div>
-            <span className="ml-2 text-xl font-bold text-pakistani_green-800 dark:text-gray-50 hidden md:inline">
+            <span className="ml-2 text-xl font-bold text-pakistani_green-800 dark:text-white hidden md:inline">
               Pak Bazaar Connect
             </span>
           </Link>
@@ -42,7 +41,7 @@ const Login: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 dark:text-pakistani_green-200 dark:border-pakistani_green-300 dark:hover:bg-gray-800"
+                className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 dark:text-pakistani_green-200 dark:border-pakistani_green-300 dark:hover:bg-gray-900"
               >
                 Sign Up
               </Button>

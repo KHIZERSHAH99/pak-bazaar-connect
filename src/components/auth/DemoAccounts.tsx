@@ -24,7 +24,7 @@ const demoAccounts = [
 
 const DemoAccounts: React.FC = () => (
   <div className="mt-8">
-    <div className="rounded-lg bg-muted/40 dark:bg-gray-900/70 p-4 border border-border dark:border-gray-800 text-gray-800 dark:text-gray-50">
+    <div className="rounded-lg bg-muted/40 dark:bg-gray-900/90 p-4 border border-border dark:border-gray-800 text-gray-800 dark:text-gray-100">
       <div className="mb-2 font-semibold text-sm text-foreground dark:text-gray-100">
         <span>Demo Accounts:</span>
       </div>

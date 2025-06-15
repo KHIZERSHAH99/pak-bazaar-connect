@@ -42,7 +42,7 @@ const QuickActions: React.FC = () => {
         {
           label: 'My Orders',
           icon: <ShoppingCart className="h-4 w-4" />,
-          href: '/dashboard/orders',
+          href: '/dashboard/seller-orders', // FIXED PATH
           variant: 'outline' as const
         },
         {

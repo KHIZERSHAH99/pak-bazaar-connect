@@ -213,19 +213,10 @@
     @apply absolute inset-0 z-0 overflow-hidden;
     background: linear-gradient(120deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
   }
-  
-  .animated-background::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, hsla(var(--background), 0.8) 0%, hsla(var(--background), 0) 60%);
-    animation: rotate 30s linear infinite;
-    z-index: -1;
+  .dark .animated-background {
+    background: linear-gradient(120deg, #052c12 0%, #063516 100%);
   }
-  
+
   .moving-dots {
     position: absolute;
     inset: 0;

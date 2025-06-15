@@ -1,9 +1,10 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginForm from '@/components/auth/LoginForm';
 import LoginHeader from '@/components/auth/LoginHeader';
-import DemoAccounts from '@/components/auth/DemoAccounts';
+// Removed: import DemoAccounts from '@/components/auth/DemoAccounts';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -56,8 +57,7 @@ const Login: React.FC = () => {
             <LoginHeader />
             <LoginForm />
           </Card>
-
-          <DemoAccounts />
+          {/* Removed <DemoAccounts /> */}
         </div>
       </div>
 
@@ -72,3 +72,4 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+

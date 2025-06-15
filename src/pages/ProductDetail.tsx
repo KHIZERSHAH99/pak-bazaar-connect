@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, MessageCircle, Star, MapPin, Package } from 'lucide-react';
@@ -8,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import Layout from '@/components/Layout';
 import { getProductById, DemoProduct } from '@/data/demoProducts';
 import { useToast } from '@/hooks/use-toast';
+import ProductPricingTable from '@/components/products/ProductPricingTable';
+import VariationPicker from '@/components/products/VariationPicker';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +16,7 @@ const ProductDetail: React.FC = () => {
   const { toast } = useToast();
   const [product, setProduct] = useState<DemoProduct | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedVariation, setSelectedVariation] = useState<any>(null);
 
   useEffect(() => {
     console.log('ProductDetail - Product ID from params:', id);
@@ -94,6 +96,19 @@ const ProductDetail: React.FC = () => {
     );
   }
 
+  // Alibaba style: find final price based on selected variation and tier
+  const [quantity, setQuantity] = useState(product.minOrder || 1);
+  const showPricingTiers = !!product.pricingTiers && product.pricingTiers.length > 0;
+
+  let displayPrice = product.price;
+  if (showPricingTiers) {
+    // Find appropriate tier
+    const tier = product.pricingTiers!.find(t =>
+      quantity >= t.minQty && (!t.maxQty || quantity <= t.maxQty)
+    );
+    if (tier) displayPrice = tier.price;
+  }
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -133,8 +148,18 @@ const ProductDetail: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-3xl font-bold text-pakistani_green-600 font-poppins">
-              Rs. {product.price.toLocaleString()}
+            {/* Alibaba Style Pricing Tiers */}
+            {showPricingTiers && (
+              <ProductPricingTable tiers={product.pricingTiers!} />
+            )}
+
+            <div className="text-2xl md:text-3xl font-bold text-pakistani_green-600 font-poppins flex items-center gap-2">
+              Rs. {displayPrice.toLocaleString()}
+              {product.sampleAvailable && product.samplePrice && (
+                <span className="ml-4 text-xs md:text-sm text-gray-500 bg-gray-50 border px-2 py-1 rounded-lg">
+                  Sample: Rs. {product.samplePrice.toLocaleString()}
+                </span>
+              )}
             </div>
 
             <div className="space-y-3">
@@ -152,6 +177,27 @@ const ProductDetail: React.FC = () => {
                   {product.inStock ? "In Stock" : "Out of Stock"}
                 </Badge>
               </div>
+            </div>
+
+            {/* Variation Picker */}
+            {product.variations && product.variations.length > 0 && (
+              <VariationPicker
+                variations={product.variations}
+                selected={selectedVariation}
+                onSelect={setSelectedVariation}
+              />
+            )}
+
+            {/* Quantity Selector */}
+            <div className="flex items-center gap-2 mb-4">
+              <span className="font-medium font-poppins">Quantity:</span>
+              <input
+                type="number"
+                min={product.minOrder || 1}
+                value={quantity}
+                onChange={e => setQuantity(Number(e.target.value))}
+                className="w-24 border px-2 py-1 rounded"
+              />
             </div>
 
             <div className="space-y-3">

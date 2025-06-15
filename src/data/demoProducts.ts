@@ -1,4 +1,3 @@
-
 export interface DemoProduct {
   id: string;
   shop_id: string;
@@ -13,6 +12,22 @@ export interface DemoProduct {
   minOrder: number;
   category: string;
   inStock: boolean;
+  pricingTiers?: ProductPricingTier[];
+  samplePrice?: number;
+  sampleAvailable?: boolean;
+  variations?: ProductVariation[];
+}
+
+export interface ProductPricingTier {
+  minQty: number;
+  maxQty?: number;
+  price: number;
+}
+
+export interface ProductVariation {
+  color?: string;
+  size?: string;
+  image?: string;
 }
 
 export const demoProducts: DemoProduct[] = [
@@ -20,7 +35,7 @@ export const demoProducts: DemoProduct[] = [
     id: '1',
     shop_id: 'shop-1',
     name: 'Premium Rice Basmati',
-    description: 'High-quality Basmati rice from Punjab, perfect for export and local markets',
+    description: 'High-quality Basmati rice from Punjab, perfect for export and local markets.',
     price: 8500,
     image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=300&fit=crop&auto=format',
     is_active: true,
@@ -29,7 +44,19 @@ export const demoProducts: DemoProduct[] = [
     location: 'Lahore, Punjab',
     minOrder: 50,
     category: 'Food & Agriculture',
-    inStock: true
+    inStock: true,
+    pricingTiers: [
+      { minQty: 50, maxQty: 99, price: 8500 },
+      { minQty: 100, maxQty: 499, price: 8350 },
+      { minQty: 500, price: 8200 }
+    ],
+    sampleAvailable: true,
+    samplePrice: 9000,
+    variations: [
+      { color: 'White', size: '5kg' },
+      { color: 'White', size: '10kg' },
+      { color: 'Brown', size: '5kg' }
+    ]
   },
   {
     id: '2',

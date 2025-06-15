@@ -18,6 +18,9 @@ const ProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedVariation, setSelectedVariation] = useState<any>(null);
 
+  // Move quantity state here (before any calculation logic)
+  const [quantity, setQuantity] = useState(1);
+
   useEffect(() => {
     console.log('ProductDetail - Product ID from params:', id);
     
@@ -32,6 +35,11 @@ const ProductDetail: React.FC = () => {
     console.log('Found product:', foundProduct);
     
     setProduct(foundProduct || null);
+
+    // Set minOrder as initial quantity if product found
+    if (foundProduct && foundProduct.minOrder) {
+      setQuantity(foundProduct.minOrder);
+    }
     setLoading(false);
   }, [id]);
 
@@ -97,7 +105,6 @@ const ProductDetail: React.FC = () => {
   }
 
   // Alibaba style: find final price based on selected variation and tier
-  const [quantity, setQuantity] = useState(product.minOrder || 1);
   const showPricingTiers = !!product.pricingTiers && product.pricingTiers.length > 0;
 
   let displayPrice = product.price;

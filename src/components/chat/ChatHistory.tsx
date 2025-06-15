@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import { MessageSquare } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -23,7 +24,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ chatHistory, loading }) => {
 
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center h-full bg-black/70 dark:bg-black/80 transition-all rounded-xl">
+      <div className="flex flex-col justify-center items-center h-full bg-black transition-all rounded-xl">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-pakistani-green-600 mb-4"></div>
         <p className="text-pakistani-green-100 animate-pulse">Loading your conversation...</p>
       </div>
@@ -31,9 +32,8 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ chatHistory, loading }) => {
   }
 
   return (
-    <div className="h-[calc(100%-2rem)] pr-4 bg-black/70 dark:bg-black/85 rounded-xl backdrop-blur-lg">
+    <div className="h-[calc(100%-2rem)] pr-4 bg-black rounded-xl">
       <ChatWelcomeMessage />
-      
       {chatHistory.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-40 text-gray-300 animate-fadeIn">
           <MessageSquare className="h-16 w-16 mb-4 text-gray-400" />
@@ -51,7 +51,6 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({ chatHistory, loading }) => {
           ))}
         </div>
       )}
-      
       <div ref={messagesEndRef} />
     </div>
   );

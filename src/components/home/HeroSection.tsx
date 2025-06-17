@@ -60,15 +60,15 @@ const HeroSection = () => {
               </>
             ) : (
               <>
-                <Link to="/signup">
+                <Link to="/login">
                   <Button size="lg" className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 font-poppins">
-                    Start Trading Now
+                    Login
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Link to="/products">
+                <Link to="/signup">
                   <Button variant="outline" size="lg" className="border-pakistani_green-600 text-pakistani_green-600 hover:bg-pakistani_green-50 dark:border-pakistani_green-400 dark:text-pakistani_green-400 dark:hover:bg-pakistani_green-950/50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 font-poppins">
-                    Browse Products
+                    Sign Up
                   </Button>
                 </Link>
               </>

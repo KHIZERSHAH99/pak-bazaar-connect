@@ -111,111 +111,129 @@ export const validatePostalCodeFormat = (postalCode: string): boolean => {
   return postalCodeRegex.test(postalCode.trim());
 };
 
-// Simplified phone uniqueness check with direct query execution
+// Simplified phone uniqueness check using basic Promise handling
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
   try {
     if (excludeUserId) {
-      const response = await supabase
+      // Check for phone excluding specific user
+      const query = supabase
         .from('profiles')
         .select('id')
         .eq('phone_number', phone)
         .neq('id', excludeUserId)
         .limit(1);
       
-      if (response.error) {
-        console.error('Error checking phone:', response.error);
+      const result = await query;
+      
+      if (result.error) {
+        console.error('Error checking phone:', result.error);
         return false;
       }
       
-      return Boolean(response.data && response.data.length > 0);
-    } else {
-      const response = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('phone_number', phone)
-        .limit(1);
-      
-      if (response.error) {
-        console.error('Error checking phone:', response.error);
-        return false;
-      }
-      
-      return Boolean(response.data && response.data.length > 0);
+      return Array.isArray(result.data) && result.data.length > 0;
     }
+    
+    // Check for phone without exclusion
+    const query = supabase
+      .from('profiles')
+      .select('id')
+      .eq('phone_number', phone)
+      .limit(1);
+    
+    const result = await query;
+    
+    if (result.error) {
+      console.error('Error checking phone:', result.error);
+      return false;
+    }
+    
+    return Array.isArray(result.data) && result.data.length > 0;
   } catch (error) {
     console.error('Phone check error:', error);
     return false;
   }
 };
 
-// Simplified NTN uniqueness check with direct query execution
+// Simplified NTN uniqueness check using basic Promise handling
 export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
   try {
     if (excludeUserId) {
-      const response = await supabase
+      // Check for NTN excluding specific user
+      const query = supabase
         .from('profiles')
         .select('id')
         .eq('ntn_number', ntn)
         .neq('id', excludeUserId)
         .limit(1);
       
-      if (response.error) {
-        console.error('Error checking NTN:', response.error);
+      const result = await query;
+      
+      if (result.error) {
+        console.error('Error checking NTN:', result.error);
         return false;
       }
       
-      return Boolean(response.data && response.data.length > 0);
-    } else {
-      const response = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('ntn_number', ntn)
-        .limit(1);
-      
-      if (response.error) {
-        console.error('Error checking NTN:', response.error);
-        return false;
-      }
-      
-      return Boolean(response.data && response.data.length > 0);
+      return Array.isArray(result.data) && result.data.length > 0;
     }
+    
+    // Check for NTN without exclusion
+    const query = supabase
+      .from('profiles')
+      .select('id')
+      .eq('ntn_number', ntn)
+      .limit(1);
+    
+    const result = await query;
+    
+    if (result.error) {
+      console.error('Error checking NTN:', result.error);
+      return false;
+    }
+    
+    return Array.isArray(result.data) && result.data.length > 0;
   } catch (error) {
     console.error('NTN check error:', error);
     return false;
   }
 };
 
-// Simplified STRN uniqueness check with direct query execution
+// Simplified STRN uniqueness check using basic Promise handling
 export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
   try {
     if (excludeUserId) {
-      const response = await supabase
+      // Check for STRN excluding specific user
+      const query = supabase
         .from('profiles')
         .select('id')
         .eq('strn_number', strn)
         .neq('id', excludeUserId)
         .limit(1);
       
-      if (response.error) {
-        console.error('Error checking STRN:', response.error);
+      const result = await query;
+      
+      if (result.error) {
+        console.error('Error checking STRN:', result.error);
         return false;
       }
       
-      return Boolean(response.data && response.data.length > 0);
-    } else {
-      const response = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('strn_number', strn)
-        .limit(1);
-      
-      if (response.error) {
-        console.error('Error checking STRN:', response.error);
-        return false;
-      }
-      
-      return Boolean(response.data && response.data.length > 0);
+      return Array.isArray(result.data) && result.data.length > 0;
     }
+    
+    // Check for STRN without exclusion
+    const query = supabase
+      .from('profiles')
+      .select('id')
+      .eq('strn_number', strn)
+      .limit(1);
+    
+    const result = await query;
+    
+    if (result.error) {
+      console.error('Error checking STRN:', result.error);
+      return false;
+    }
+    
+    return Array.isArray(result.data) && result.data.length > 0;
   } catch (error) {
     console.error('STRN check error:', error);
     return false;

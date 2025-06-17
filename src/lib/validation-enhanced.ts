@@ -31,16 +31,11 @@ export const checkPhoneExists = async (phone: string, excludeUserId?: string): P
   try {
     const cleanPhone = phone.replace(/[\s-]/g, '');
     
-    let query = supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('phone_number')
-      .eq('phone_number', cleanPhone);
-    
-    if (excludeUserId) {
-      query = query.neq('id', excludeUserId);
-    }
-
-    const { data, error } = await query.limit(1);
+      .eq('phone_number', cleanPhone)
+      .limit(1);
     
     if (error) {
       console.error('Error checking phone:', error);
@@ -94,16 +89,11 @@ export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promi
   try {
     if (!ntn || ntn.trim() === '') return false;
     
-    let query = supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('ntn_number')
-      .eq('ntn_number', ntn.trim());
-    
-    if (excludeUserId) {
-      query = query.neq('id', excludeUserId);
-    }
-
-    const { data, error } = await query.limit(1);
+      .eq('ntn_number', ntn.trim())
+      .limit(1);
     
     if (error) {
       console.error('Error checking NTN:', error);
@@ -124,16 +114,11 @@ export const checkSTRNExists = async (strn: string, excludeUserId?: string): Pro
     
     const cleanStrn = strn.replace(/[\s-]/g, '');
     
-    let query = supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('strn_number')
-      .eq('strn_number', cleanStrn);
-    
-    if (excludeUserId) {
-      query = query.neq('id', excludeUserId);
-    }
-
-    const { data, error } = await query.limit(1);
+      .eq('strn_number', cleanStrn)
+      .limit(1);
     
     if (error) {
       console.error('Error checking STRN:', error);

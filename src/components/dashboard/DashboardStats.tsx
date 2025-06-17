@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { TrendingUp, Package, Store, ShoppingCart } from 'lucide-react';
-import { supabase, getCurrentUser } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 interface StatsCardProps {
   title: string;
@@ -55,105 +55,111 @@ const DashboardStats: React.FC = () => {
 
     const fetchStats = async () => {
       if (!profile) return;
-      const user = await getCurrentUser();
-      if (!user) {
-        setStats(null);
-        setLoading(false);
-        return;
-      }
-
-      // Seller
-      if (profile.role === 'seller') {
-        // Orders placed and total spent
-        const { data: orders, error: ordersError } = await supabase
-          .from('orders')
-          .select('id,total_amount,shop_id')
-          .eq('buyer_id', user.id);
-
-        // Favorite shops (dummy, per requirements: show 0 if not implemented)
-        let favoriteCount = 0;
-        // If we add a favorites table, count actual rows
-
-        let orderCount = orders?.length || 0;
-        let totalSpent =
-          orders?.reduce(
-            (acc, curr) => acc + (typeof curr.total_amount === 'number'
-              ? curr.total_amount
-              : Number(curr.total_amount) || 0),
-            0
-          ) || 0;
-
-        setStats({
-          ordersPlaced: orderCount,
-          favoriteShops: favoriteCount,
-          spent: totalSpent,
-        });
-      }
-
-      // Wholesaler
-      if (profile.role === 'wholesaler') {
-        // Get owned shop IDs
-        const { data: shops, error: shopErr } = await supabase
-          .from('shops')
-          .select('id')
-          .eq('owner_id', user.id);
-
-        let activeShops = shops?.length || 0;
-        let shopIds = shops?.map((s) => s.id) || [];
-
-        // Total products across shops
-        let productCount = 0;
-        if (shopIds.length > 0) {
-          const { data: products } = await supabase
-            .from('products')
-            .select('id')
-            .in('shop_id', shopIds)
-            .eq('is_active', true);
-          productCount = products?.length || 0;
+      
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setStats(null);
+          setLoading(false);
+          return;
         }
 
-        // Orders for all their shops
-        let ordersToday = 0;
-        let today = new Date();
-        today.setHours(0,0,0,0);
-        if (shopIds.length > 0) {
+        // Seller
+        if (profile.role === 'seller') {
+          // Orders placed and total spent
           const { data: orders } = await supabase
             .from('orders')
-            .select('id, created_at')
-            .in('shop_id', shopIds);
+            .select('id,total_amount,shop_id')
+            .eq('buyer_id', user.id);
 
-          ordersToday =
-            orders?.filter(
-              (o) =>
-                o.created_at &&
-                new Date(o.created_at).setHours(0,0,0,0) === today.getTime()
-            ).length || 0;
-        }
+          // Favorite shops (dummy, per requirements: show 0 if not implemented)
+          let favoriteCount = 0;
+          // If we add a favorites table, count actual rows
 
-        // Dummy revenue, as real revenue needs more computation and demo only
-        let revenue = 0;
-        if (shopIds.length > 0) {
-          const { data: orders } = await supabase
-            .from('orders')
-            .select('total_amount')
-            .in('shop_id', shopIds);
-
-          revenue = orders?.reduce(
-            (acc, curr) =>
-              acc + (typeof curr.total_amount === 'number'
+          let orderCount = orders?.length || 0;
+          let totalSpent =
+            orders?.reduce(
+              (acc, curr) => acc + (typeof curr.total_amount === 'number'
                 ? curr.total_amount
                 : Number(curr.total_amount) || 0),
-            0
-          ) || 0;
+              0
+            ) || 0;
+
+          setStats({
+            ordersPlaced: orderCount,
+            favoriteShops: favoriteCount,
+            spent: totalSpent,
+          });
         }
 
-        setStats({
-          products: productCount,
-          activeShops,
-          ordersToday,
-          revenue,
-        });
+        // Wholesaler
+        if (profile.role === 'wholesaler') {
+          // Get owned shop IDs
+          const { data: shops } = await supabase
+            .from('shops')
+            .select('id')
+            .eq('owner_id', user.id);
+
+          let activeShops = shops?.length || 0;
+          let shopIds = shops?.map((s) => s.id) || [];
+
+          // Total products across shops
+          let productCount = 0;
+          if (shopIds.length > 0) {
+            const { data: products } = await supabase
+              .from('products')
+              .select('id')
+              .in('shop_id', shopIds)
+              .eq('is_active', true);
+            productCount = products?.length || 0;
+          }
+
+          // Orders for all their shops
+          let ordersToday = 0;
+          let today = new Date();
+          today.setHours(0,0,0,0);
+          if (shopIds.length > 0) {
+            const { data: orders } = await supabase
+              .from('orders')
+              .select('id, created_at')
+              .in('shop_id', shopIds);
+
+            ordersToday =
+              orders?.filter(
+                (o) =>
+                  o.created_at &&
+                  new Date(o.created_at).setHours(0,0,0,0) === today.getTime()
+              ).length || 0;
+          }
+
+          // Dummy revenue, as real revenue needs more computation and demo only
+          let revenue = 0;
+          if (shopIds.length > 0) {
+            const { data: orders } = await supabase
+              .from('orders')
+              .select('total_amount')
+              .in('shop_id', shopIds);
+
+            revenue = orders?.reduce(
+              (acc, curr) =>
+                acc + (typeof curr.total_amount === 'number'
+                  ? curr.total_amount
+                  : Number(curr.total_amount) || 0),
+              0
+            ) || 0;
+          }
+
+          setStats({
+            products: productCount,
+            activeShops,
+            ordersToday,
+            revenue,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
       }
+      
       setLoading(false);
     };
 

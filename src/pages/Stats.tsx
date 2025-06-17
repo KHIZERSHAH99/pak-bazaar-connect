@@ -72,19 +72,39 @@ const Stats: React.FC = () => {
 
   const fetchPlatformStats = async () => {
     try {
-      // Call the update function first
-      await supabase.rpc('update_platform_stats');
+      // Fetch all stats manually since platform_stats table doesn't exist in types
+      const [
+        { data: users },
+        { data: wholesalers }, 
+        { data: sellers },
+        { data: pendingRoles },
+        { data: ads },
+        { data: shops },
+        { data: products },
+        { data: orders }
+      ] = await Promise.all([
+        supabase.from('profiles').select('id'),
+        supabase.from('profiles').select('id').eq('role', 'wholesaler'),
+        supabase.from('profiles').select('id').eq('role', 'seller'),
+        supabase.from('role_requests').select('id').eq('status', 'pending'),
+        supabase.from('ads').select('id'),
+        supabase.from('shops').select('id'),
+        supabase.from('products').select('id'),
+        supabase.from('orders').select('id')
+      ]);
 
-      // Fetch the latest stats
-      const { data, error } = await supabase
-        .from('platform_stats')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+      const stats: PlatformStats = {
+        total_users: users?.length || 0,
+        total_wholesalers: wholesalers?.length || 0,
+        total_sellers: sellers?.length || 0,
+        total_pending_approvals: pendingRoles?.length || 0,
+        total_ads: ads?.length || 0,
+        total_shops: shops?.length || 0,
+        total_products: products?.length || 0,
+        total_orders: orders?.length || 0
+      };
 
-      if (error) throw error;
-      setPlatformStats(data);
+      setPlatformStats(stats);
     } catch (error) {
       console.error('Error fetching platform stats:', error);
     }

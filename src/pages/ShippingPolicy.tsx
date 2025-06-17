@@ -54,7 +54,11 @@ const ShippingPolicy: React.FC = () => {
           <section>
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contact Information</h2>
             <p className="text-gray-700">
-              If you have any questions or concerns regarding our Shipping & Delivery Policy, please contact us at shipping@pakbazaarconnect.com.
+              If you have any questions or concerns regarding our Shipping & Delivery Policy, please contact us at{' '}
+              <a href="mailto:khizercoding.com" className="text-pakistani_green-600 hover:text-pakistani_green-700">
+                khizercoding.com
+              </a>{' '}
+              or call us at +92 3149388513.
             </p>
           </section>
         </div>

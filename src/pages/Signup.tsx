@@ -1,9 +1,10 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import Layout from '@/components/Layout';
 import EnhancedSignupForm from '@/components/auth/EnhancedSignupForm';
 import { Flag } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -25,6 +26,28 @@ const Signup: React.FC = () => {
         </div>
         <p className="font-medium text-sm md:text-base font-poppins">Join Now! Free Ads for First 10 Wholesalers!</p>
       </div>
+
+      {/* Header */}
+      <header className="bg-white shadow-sm py-4 px-6">
+        <div className="container mx-auto flex justify-between items-center">
+          <Link to="/" className="flex items-center">
+            <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
+              <span className="text-white text-2xl font-bold">PBC</span>
+            </div>
+            <span className="ml-2 text-xl font-bold text-pakistani_green-800 hidden md:inline font-poppins">
+              Pak Bazaar Connect
+            </span>
+          </Link>
+          
+          <nav className="flex items-center space-x-2">
+            <Link to="/login">
+              <button className="border border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 px-4 py-2 rounded-md text-sm font-medium font-poppins transition-colors">
+                Login
+              </button>
+            </Link>
+          </nav>
+        </div>
+      </header>
 
       <div className="container mx-auto flex-grow py-8 md:py-12 px-4">
         <div className="text-center mb-8">
@@ -51,7 +74,7 @@ const Signup: React.FC = () => {
       {/* Footer */}
       <footer className="bg-pakistani_green-800 text-white py-4 px-6">
         <div className="container mx-auto text-center text-sm font-poppins">
-          <p>Build Successful, API Keys Secured</p>
+          <p>© 2024 Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.</p>
         </div>
       </footer>
     </div>

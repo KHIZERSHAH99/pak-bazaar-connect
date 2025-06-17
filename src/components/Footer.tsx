@@ -25,10 +25,16 @@ const Footer = () => {
             </p>
             <div className="mt-6 space-y-2">
               <p className="text-sm text-muted-foreground font-poppins">
-                <strong>Email:</strong> khizercoding.com
+                <strong>Email:</strong>{' '}
+                <a href="mailto:khizercoding.com" className="text-pakistani_green-600 hover:text-pakistani_green-700">
+                  khizercoding.com
+                </a>
               </p>
               <p className="text-sm text-muted-foreground font-poppins">
-                <strong>Phone:</strong> +92 3149388513
+                <strong>Phone:</strong>{' '}
+                <a href="tel:+923149388513" className="text-pakistani_green-600 hover:text-pakistani_green-700">
+                  +92 3149388513
+                </a>
               </p>
               <p className="text-sm text-muted-foreground font-poppins">
                 <strong>Address:</strong> Mardan, Pakistan
@@ -42,22 +48,22 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/products" className="text-sm text-muted-foreground hover:text-foreground font-poppins">
+                <Link to="/products" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
                   Browse Products
                 </Link>
               </li>
               <li>
-                <Link to="/sellers" className="text-sm text-muted-foreground hover:text-foreground font-poppins">
+                <Link to="/sellers" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
                   Find Suppliers
                 </Link>
               </li>
               <li>
-                <Link to="/features" className="text-sm text-muted-foreground hover:text-foreground font-poppins">
+                <Link to="/features" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
                   Features
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground font-poppins">
+                <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
                   Dashboard
                 </Link>
               </li>
@@ -70,22 +76,22 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/privacy-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins">
+                <Link to="/privacy-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms-of-service" className="text-sm text-muted-foreground hover:text-foreground font-poppins">
+                <Link to="/terms-of-service" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link to="/refund-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins">
+                <Link to="/refund-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
                   Refund Policy
                 </Link>
               </li>
               <li>
-                <Link to="/shipping-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins">
+                <Link to="/shipping-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
                   Shipping Policy
                 </Link>
               </li>

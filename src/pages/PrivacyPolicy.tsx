@@ -20,7 +20,7 @@ const PrivacyPolicy: React.FC = () => {
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
               <li>Personal information (name, email, phone number)</li>
               <li>Business information (company name, NTN, STRN, address)</li>
-              <li>Payment information (processed securely through Safepay)</li>
+              <li>Payment information (processed securely through JazzCash)</li>
               <li>Usage data and analytics</li>
             </ul>
           </section>
@@ -58,8 +58,10 @@ const PrivacyPolicy: React.FC = () => {
           <section>
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contact Us</h2>
             <p className="text-gray-700">
-              If you have any questions about this Privacy Policy, please contact us at 
-              privacy@pakbazaarconnect.com
+              If you have any questions about this Privacy Policy, please contact us at{' '}
+              <a href="mailto:khizercoding.com" className="text-pakistani_green-600 hover:text-pakistani_green-700">
+                khizercoding.com
+              </a>
             </p>
           </section>
         </div>

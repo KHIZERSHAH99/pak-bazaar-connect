@@ -43,7 +43,7 @@ const TermsOfService: React.FC = () => {
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Commission and Payments</h2>
             <p className="text-gray-700 mb-4">
               Our platform charges a 2.5% commission on successful transactions. Payments are 
-              processed securely through Safepay.
+              processed securely through JazzCash.
             </p>
           </section>
 
@@ -62,6 +62,17 @@ const TermsOfService: React.FC = () => {
             <p className="text-gray-700">
               Pak Bazaar Connect shall not be liable for any indirect, incidental, special, 
               consequential, or punitive damages resulting from your use of the platform.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contact Information</h2>
+            <p className="text-gray-700">
+              For any questions regarding these Terms of Service, please contact us at{' '}
+              <a href="mailto:khizercoding.com" className="text-pakistani_green-600 hover:text-pakistani_green-700">
+                khizercoding.com
+              </a>{' '}
+              or reach us at +92 3149388513.
             </p>
           </section>
         </div>

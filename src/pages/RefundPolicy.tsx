@@ -58,8 +58,11 @@ const RefundPolicy: React.FC = () => {
           <section>
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contact for Returns</h2>
             <p className="text-gray-700">
-              For return requests, contact us at returns@pakbazaarconnect.com with your 
-              order number and reason for return.
+              For return requests, contact us at{' '}
+              <a href="mailto:khizercoding.com" className="text-pakistani_green-600 hover:text-pakistani_green-700">
+                khizercoding.com
+              </a>{' '}
+              with your order number and reason for return.
             </p>
           </section>
         </div>

@@ -114,17 +114,24 @@ export const validatePostalCodeFormat = (postalCode: string): boolean => {
 // Simplified phone uniqueness check with explicit typing
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    const query = supabase
-      .from('profiles')
-      .select('phone_number')
-      .eq('phone_number', phone)
-      .limit(1);
-
+    let result;
+    
     if (excludeUserId) {
-      query.neq('id', excludeUserId);
+      result = await supabase
+        .from('profiles')
+        .select('phone_number')
+        .eq('phone_number', phone)
+        .neq('id', excludeUserId)
+        .limit(1);
+    } else {
+      result = await supabase
+        .from('profiles')
+        .select('phone_number')
+        .eq('phone_number', phone)
+        .limit(1);
     }
 
-    const { data, error } = await query;
+    const { data, error } = result;
     
     if (error) {
       console.error('Error checking phone:', error);
@@ -141,17 +148,24 @@ export const checkPhoneExists = async (phone: string, excludeUserId?: string): P
 // Simplified NTN uniqueness check with explicit typing
 export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    const query = supabase
-      .from('profiles')
-      .select('ntn_number')
-      .eq('ntn_number', ntn)
-      .limit(1);
-
+    let result;
+    
     if (excludeUserId) {
-      query.neq('id', excludeUserId);
+      result = await supabase
+        .from('profiles')
+        .select('ntn_number')
+        .eq('ntn_number', ntn)
+        .neq('id', excludeUserId)
+        .limit(1);
+    } else {
+      result = await supabase
+        .from('profiles')
+        .select('ntn_number')
+        .eq('ntn_number', ntn)
+        .limit(1);
     }
 
-    const { data, error } = await query;
+    const { data, error } = result;
     
     if (error) {
       console.error('Error checking NTN:', error);
@@ -168,17 +182,24 @@ export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promi
 // Simplified STRN uniqueness check with explicit typing
 export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    const query = supabase
-      .from('profiles')
-      .select('strn_number')
-      .eq('strn_number', strn)
-      .limit(1);
-
+    let result;
+    
     if (excludeUserId) {
-      query.neq('id', excludeUserId);
+      result = await supabase
+        .from('profiles')
+        .select('strn_number')
+        .eq('strn_number', strn)
+        .neq('id', excludeUserId)
+        .limit(1);
+    } else {
+      result = await supabase
+        .from('profiles')
+        .select('strn_number')
+        .eq('strn_number', strn)
+        .limit(1);
     }
 
-    const { data, error } = await query;
+    const { data, error } = result;
     
     if (error) {
       console.error('Error checking STRN:', error);

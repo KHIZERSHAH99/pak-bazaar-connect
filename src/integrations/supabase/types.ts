@@ -346,25 +346,58 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
+          business_name: string | null
+          business_type: string | null
+          city: string | null
+          contact_name: string | null
           created_at: string | null
           email: string
           id: string
+          industry: string | null
+          ntn_number: string | null
+          phone_number: string | null
+          postal_code: string | null
           role: string
+          strn_number: string | null
           updated_at: string | null
+          years_in_business: string | null
         }
         Insert: {
+          address?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          city?: string | null
+          contact_name?: string | null
           created_at?: string | null
           email: string
           id: string
+          industry?: string | null
+          ntn_number?: string | null
+          phone_number?: string | null
+          postal_code?: string | null
           role?: string
+          strn_number?: string | null
           updated_at?: string | null
+          years_in_business?: string | null
         }
         Update: {
+          address?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          city?: string | null
+          contact_name?: string | null
           created_at?: string | null
           email?: string
           id?: string
+          industry?: string | null
+          ntn_number?: string | null
+          phone_number?: string | null
+          postal_code?: string | null
           role?: string
+          strn_number?: string | null
           updated_at?: string | null
+          years_in_business?: string | null
         }
         Relationships: []
       }

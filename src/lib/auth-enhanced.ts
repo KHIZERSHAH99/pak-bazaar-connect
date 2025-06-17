@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
@@ -42,7 +43,7 @@ export const enhancedSignIn = async (email: string, password: string) => {
   }
 };
 
-export const enhancedSignUp = async (email: string, password: string, role: UserRole = 'wholesaler') => {
+export const enhancedSignUp = async (email: string, password: string, role: UserRole = 'wholesaler', formData?: any) => {
   try {
     // Rate limiting check
     if (!checkRateLimit(`signup:${email}`, 3, 3600000)) { // 3 attempts per hour
@@ -76,8 +77,38 @@ export const enhancedSignUp = async (email: string, password: string, role: User
       throw error;
     }
 
-    // Update the profile with the selected role immediately
-    if (data.user) {
+    // Update the profile with additional business information if provided
+    if (data.user && formData) {
+      const profileUpdate: any = {
+        role: role,
+        phone_number: formData.phoneNumber,
+        business_name: formData.businessName,
+        contact_name: formData.contactName,
+        business_type: formData.businessType,
+        address: formData.address,
+        city: formData.city,
+        postal_code: formData.postalCode
+      };
+
+      // Add optional fields if provided
+      if (formData.ntnNumber) profileUpdate.ntn_number = formData.ntnNumber;
+      if (formData.strnNumber) profileUpdate.strn_number = formData.strnNumber;
+      if (formData.industry) profileUpdate.industry = formData.industry;
+      if (formData.yearsInBusiness) profileUpdate.years_in_business = formData.yearsInBusiness;
+
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update(profileUpdate)
+        .eq('id', data.user.id);
+      
+      if (profileError) {
+        console.error('Error updating profile with business info:', profileError);
+        // Don't throw here, account creation was successful
+      } else {
+        console.log('Profile updated with business information');
+      }
+    } else if (data.user) {
+      // Just update the role if no additional data
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ role: role })

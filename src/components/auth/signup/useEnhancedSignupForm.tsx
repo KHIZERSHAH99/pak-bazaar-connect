@@ -1,8 +1,9 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { signUp } from '@/lib/auth';
+import { enhancedSignUp } from '@/lib/auth-enhanced';
 import { useToast } from '@/hooks/use-toast';
 import { formSchema, FormValues } from './signupSchema';
 import { UserRole } from '@/lib/types';
@@ -167,7 +168,7 @@ export const useEnhancedSignupForm = () => {
     setErrorMessage(null);
     
     try {
-      console.log('Calling signUp with:', values.email, selectedRole);
+      console.log('Calling enhancedSignUp with:', values.email, selectedRole);
       
       // Show loading toast
       toast({
@@ -175,7 +176,8 @@ export const useEnhancedSignupForm = () => {
         description: 'Please wait while we set up your account...',
       });
       
-      await signUp(values.email, values.password, selectedRole);
+      // Call enhanced signup with form data
+      await enhancedSignUp(values.email, values.password, selectedRole, values);
       
       toast({
         title: 'Account created successfully!',

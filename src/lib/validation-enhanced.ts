@@ -111,102 +111,111 @@ export const validatePostalCodeFormat = (postalCode: string): boolean => {
   return postalCodeRegex.test(postalCode.trim());
 };
 
-// Simplified phone uniqueness check with explicit typing
+// Simplified phone uniqueness check with direct query execution
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    let result;
-    
     if (excludeUserId) {
-      result = await supabase
+      const response = await supabase
         .from('profiles')
-        .select('phone_number')
+        .select('id')
         .eq('phone_number', phone)
         .neq('id', excludeUserId)
         .limit(1);
+      
+      if (response.error) {
+        console.error('Error checking phone:', response.error);
+        return false;
+      }
+      
+      return Boolean(response.data && response.data.length > 0);
     } else {
-      result = await supabase
+      const response = await supabase
         .from('profiles')
-        .select('phone_number')
+        .select('id')
         .eq('phone_number', phone)
         .limit(1);
+      
+      if (response.error) {
+        console.error('Error checking phone:', response.error);
+        return false;
+      }
+      
+      return Boolean(response.data && response.data.length > 0);
     }
-
-    const { data, error } = result;
-    
-    if (error) {
-      console.error('Error checking phone:', error);
-      return false;
-    }
-    
-    return Boolean(data && data.length > 0);
   } catch (error) {
     console.error('Phone check error:', error);
     return false;
   }
 };
 
-// Simplified NTN uniqueness check with explicit typing
+// Simplified NTN uniqueness check with direct query execution
 export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    let result;
-    
     if (excludeUserId) {
-      result = await supabase
+      const response = await supabase
         .from('profiles')
-        .select('ntn_number')
+        .select('id')
         .eq('ntn_number', ntn)
         .neq('id', excludeUserId)
         .limit(1);
+      
+      if (response.error) {
+        console.error('Error checking NTN:', response.error);
+        return false;
+      }
+      
+      return Boolean(response.data && response.data.length > 0);
     } else {
-      result = await supabase
+      const response = await supabase
         .from('profiles')
-        .select('ntn_number')
+        .select('id')
         .eq('ntn_number', ntn)
         .limit(1);
+      
+      if (response.error) {
+        console.error('Error checking NTN:', response.error);
+        return false;
+      }
+      
+      return Boolean(response.data && response.data.length > 0);
     }
-
-    const { data, error } = result;
-    
-    if (error) {
-      console.error('Error checking NTN:', error);
-      return false;
-    }
-    
-    return Boolean(data && data.length > 0);
   } catch (error) {
     console.error('NTN check error:', error);
     return false;
   }
 };
 
-// Simplified STRN uniqueness check with explicit typing
+// Simplified STRN uniqueness check with direct query execution
 export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    let result;
-    
     if (excludeUserId) {
-      result = await supabase
+      const response = await supabase
         .from('profiles')
-        .select('strn_number')
+        .select('id')
         .eq('strn_number', strn)
         .neq('id', excludeUserId)
         .limit(1);
+      
+      if (response.error) {
+        console.error('Error checking STRN:', response.error);
+        return false;
+      }
+      
+      return Boolean(response.data && response.data.length > 0);
     } else {
-      result = await supabase
+      const response = await supabase
         .from('profiles')
-        .select('strn_number')
+        .select('id')
         .eq('strn_number', strn)
         .limit(1);
+      
+      if (response.error) {
+        console.error('Error checking STRN:', response.error);
+        return false;
+      }
+      
+      return Boolean(response.data && response.data.length > 0);
     }
-
-    const { data, error } = result;
-    
-    if (error) {
-      console.error('Error checking STRN:', error);
-      return false;
-    }
-    
-    return Boolean(data && data.length > 0);
   } catch (error) {
     console.error('STRN check error:', error);
     return false;

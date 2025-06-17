@@ -1,4 +1,5 @@
 
+
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced email validation that checks for any existing user
@@ -111,113 +112,87 @@ export const validatePostalCodeFormat = (postalCode: string): boolean => {
   return postalCodeRegex.test(postalCode.trim());
 };
 
-// Simplified phone uniqueness check using raw SQL approach
+// Simplified phone uniqueness check
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    let query = 'SELECT id FROM profiles WHERE phone_number = $1';
-    const params = [phone];
+    if (!phone || phone.trim() === '') return false;
+    
+    let query = supabase
+      .from('profiles')
+      .select('id')
+      .eq('phone_number', phone);
     
     if (excludeUserId) {
-      query += ' AND id != $2';
-      params.push(excludeUserId);
+      query = query.neq('id', excludeUserId);
     }
     
-    query += ' LIMIT 1';
+    const result = await query.limit(1);
     
-    const { data, error } = await supabase.rpc('exec_sql', {
-      query,
-      params
-    });
-    
-    if (error) {
-      console.error('Error checking phone:', error);
-      // Fallback to basic query if RPC fails
-      const fallbackResult = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('phone_number', phone)
-        .limit(1);
-      
-      return Boolean(fallbackResult.data && fallbackResult.data.length > 0);
+    if (result.error) {
+      console.error('Error checking phone:', result.error);
+      return false;
     }
     
-    return Boolean(data && data.length > 0);
+    return Boolean(result.data && result.data.length > 0);
   } catch (error) {
     console.error('Phone check error:', error);
     return false;
   }
 };
 
-// Simplified NTN uniqueness check using raw SQL approach
+// Simplified NTN uniqueness check
 export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    let query = 'SELECT id FROM profiles WHERE ntn_number = $1';
-    const params = [ntn];
+    if (!ntn || ntn.trim() === '') return false;
+    
+    let query = supabase
+      .from('profiles')
+      .select('id')
+      .eq('ntn_number', ntn);
     
     if (excludeUserId) {
-      query += ' AND id != $2';
-      params.push(excludeUserId);
+      query = query.neq('id', excludeUserId);
     }
     
-    query += ' LIMIT 1';
+    const result = await query.limit(1);
     
-    const { data, error } = await supabase.rpc('exec_sql', {
-      query,
-      params
-    });
-    
-    if (error) {
-      console.error('Error checking NTN:', error);
-      // Fallback to basic query if RPC fails
-      const fallbackResult = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('ntn_number', ntn)
-        .limit(1);
-      
-      return Boolean(fallbackResult.data && fallbackResult.data.length > 0);
+    if (result.error) {
+      console.error('Error checking NTN:', result.error);
+      return false;
     }
     
-    return Boolean(data && data.length > 0);
+    return Boolean(result.data && result.data.length > 0);
   } catch (error) {
     console.error('NTN check error:', error);
     return false;
   }
 };
 
-// Simplified STRN uniqueness check using raw SQL approach
+// Simplified STRN uniqueness check
 export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    let query = 'SELECT id FROM profiles WHERE strn_number = $1';
-    const params = [strn];
+    if (!strn || strn.trim() === '') return false;
+    
+    let query = supabase
+      .from('profiles')
+      .select('id')
+      .eq('strn_number', strn);
     
     if (excludeUserId) {
-      query += ' AND id != $2';
-      params.push(excludeUserId);
+      query = query.neq('id', excludeUserId);
     }
     
-    query += ' LIMIT 1';
+    const result = await query.limit(1);
     
-    const { data, error } = await supabase.rpc('exec_sql', {
-      query,
-      params
-    });
-    
-    if (error) {
-      console.error('Error checking STRN:', error);
-      // Fallback to basic query if RPC fails
-      const fallbackResult = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('strn_number', strn)
-        .limit(1);
-      
-      return Boolean(fallbackResult.data && fallbackResult.data.length > 0);
+    if (result.error) {
+      console.error('Error checking STRN:', result.error);
+      return false;
     }
     
-    return Boolean(data && data.length > 0);
+    return Boolean(result.data && result.data.length > 0);
   } catch (error) {
     console.error('STRN check error:', error);
     return false;
   }
 };
+

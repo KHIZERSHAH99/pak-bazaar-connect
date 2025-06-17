@@ -39,7 +39,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
           onEmailBlocked?.(true);
           form.setError('email', {
             type: 'manual',
-            message: 'This email is already registered. Please use a different Gmail address.'
+            message: 'This email is already registered. Please use a different email address.'
           });
         } else {
           setEmailStatus('available');
@@ -53,7 +53,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
     };
 
     checkEmail();
-  }, [debouncedEmail, selectedRole, form, onEmailBlocked]);
+  }, [debouncedEmail, form, onEmailBlocked]);
 
   return (
     <div className="space-y-4 animate-fadeIn">
@@ -66,7 +66,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
         <Alert variant="destructive" className="mb-4">
           <X className="h-4 w-4" />
           <AlertDescription className="font-poppins">
-            This email is already registered. Please use a different Gmail address to continue.
+            This email is already registered. Please use a different email address to continue.
           </AlertDescription>
         </Alert>
       )}
@@ -78,13 +78,13 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
               <Mail className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
-              Email Address (Gmail Required)
+              Email Address
             </FormLabel>
             <FormControl>
               <div className="relative">
                 <Input 
                   type="email" 
-                  placeholder="Enter your Gmail address" 
+                  placeholder="Enter your email address" 
                   disabled={isLoading || emailStatus === 'blocked'} 
                   className={`font-poppins pr-10 bg-background ${
                     emailStatus === 'blocked' ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : 

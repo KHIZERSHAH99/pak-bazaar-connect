@@ -29,13 +29,11 @@ export const useAuth = () => useContext(AuthContext);
 
 // Helper function to clean up auth state to prevent "limbo" states
 const cleanupAuthState = () => {
-  // Remove all Supabase auth keys from localStorage
   Object.keys(localStorage).forEach((key) => {
     if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
       localStorage.removeItem(key);
     }
   });
-  // Remove from sessionStorage if in use
   Object.keys(sessionStorage || {}).forEach((key) => {
     if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
       sessionStorage.removeItem(key);
@@ -48,7 +46,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  // Add profile cache to prevent redundant fetches
   const [profileFetchTimestamp, setProfileFetchTimestamp] = useState<number>(0);
 
   const fetchUserProfile = useCallback(async (userId: string, forceRefresh = false): Promise<Profile | null> => {
@@ -56,7 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Cache profile data for 5 minutes to reduce redundant fetches
       const now = Date.now();
       if (!forceRefresh && profile && profileFetchTimestamp > 0 && now - profileFetchTimestamp < 300000) {
-        console.log('Using cached profile data');
         return profile;
       }
       
@@ -89,7 +85,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      // Get current session
       const { data: { session: currentSession }, error } = await supabase.auth.getSession();
       
       if (error) {
@@ -101,15 +96,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       if (currentSession) {
-        console.log('Found existing session:', currentSession.user.email);
         setSession(currentSession);
         setUser(currentSession.user);
         
-        // Get user profile with role information
+        // Only fetch profile if we don't have cached data
         const userProfile = await fetchUserProfile(currentSession.user.id);
         setProfile(userProfile);
       } else {
-        console.log('No session found');
         setUser(null);
         setSession(null);
         setProfile(null);
@@ -125,36 +118,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [fetchUserProfile]);
 
   useEffect(() => {
-    // First set up auth state change listener
+    let mounted = true;
+    
+    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
-        console.log('Auth state changed:', event, currentSession?.user?.email);
+        if (!mounted) return;
         
-        // Update state synchronously here
+        console.log('Auth state changed:', event);
+        
+        // Update state synchronously
         setSession(currentSession);
         setUser(currentSession?.user || null);
         
-        // Fetch user profile when auth state changes but optimize to avoid redundant fetches
-        if (currentSession?.user) {
+        // Handle profile fetch for authenticated users
+        if (currentSession?.user && event !== 'TOKEN_REFRESHED') {
           // Use setTimeout to prevent potential deadlocks
           setTimeout(() => {
-            fetchUserProfile(currentSession.user.id, event === 'SIGNED_IN');
-          }, 0);
-        } else {
+            if (mounted) {
+              fetchUserProfile(currentSession.user.id, event === 'SIGNED_IN');
+            }
+          }, 100);
+        } else if (!currentSession) {
           setProfile(null);
+          setProfileFetchTimestamp(0);
         }
         
         setLoading(false);
       }
     );
 
-    // Check for existing session
+    // Check for existing session only once
     checkAuthStatus();
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
-  }, [checkAuthStatus, fetchUserProfile]);
+  }, []); // Empty dependency array to run only once
 
   return (
     <AuthContext.Provider value={{ 
@@ -174,8 +175,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const LoadingScreen: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-screen p-4">
     <div className="w-16 h-16 border-4 border-pakistani_green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-    <h3 className="text-lg font-medium text-gray-800">Loading...</h3>
-    <p className="text-gray-500 text-sm mt-2">Please wait while we prepare your experience</p>
+    <h3 className="text-lg font-medium text-gray-800 font-poppins">Loading...</h3>
+    <p className="text-gray-500 text-sm mt-2 font-poppins">Please wait while we prepare your experience</p>
   </div>
 );
 

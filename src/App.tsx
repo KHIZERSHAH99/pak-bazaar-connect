@@ -20,6 +20,17 @@ import TermsOfService from "./pages/TermsOfService";
 import RefundPolicy from "./pages/RefundPolicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import NotFound from "./pages/NotFound";
+// Dashboard pages
+import DashboardShops from "./pages/dashboard/DashboardShops";
+import DashboardProducts from "./pages/dashboard/DashboardProducts";
+import DashboardAds from "./pages/dashboard/DashboardAds";
+import DashboardOrders from "./pages/dashboard/DashboardOrders";
+import DashboardChat from "./pages/dashboard/DashboardChat";
+import DashboardAdApprovals from "./pages/dashboard/DashboardAdApprovals";
+import DashboardBrowseShops from "./pages/dashboard/DashboardBrowseShops";
+import DashboardSellerOrders from "./pages/dashboard/DashboardSellerOrders";
+import DashboardWholesalerOrders from "./pages/dashboard/DashboardWholesalerOrders";
+import DashboardSellerDashboard from "./pages/dashboard/DashboardSellerDashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +60,20 @@ const App = () => (
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/stats" element={<Stats />} />
                   <Route path="/chat" element={<Chat />} />
+                  
+                  {/* Dashboard Routes */}
+                  <Route path="/dashboard/shops" element={<DashboardShops />} />
+                  <Route path="/dashboard/products" element={<DashboardProducts />} />
+                  <Route path="/dashboard/ads" element={<DashboardAds />} />
+                  <Route path="/dashboard/orders" element={<DashboardOrders />} />
+                  <Route path="/dashboard/chat" element={<DashboardChat />} />
+                  <Route path="/dashboard/ad-approvals" element={<DashboardAdApprovals />} />
+                  <Route path="/dashboard/browse-shops" element={<DashboardBrowseShops />} />
+                  <Route path="/dashboard/seller-orders" element={<DashboardSellerOrders />} />
+                  <Route path="/dashboard/wholesaler-orders" element={<DashboardWholesalerOrders />} />
+                  <Route path="/dashboard/seller-dashboard" element={<DashboardSellerDashboard />} />
+                  
+                  {/* Policy Pages */}
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/terms-of-service" element={<TermsOfService />} />
                   <Route path="/refund-policy" element={<RefundPolicy />} />

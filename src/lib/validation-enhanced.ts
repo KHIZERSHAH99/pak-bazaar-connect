@@ -8,10 +8,12 @@ export const checkEmailExistsGlobal = async (email: string): Promise<boolean> =>
       return false;
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+    
     const { data, error } = await supabase
       .from('profiles')
       .select('email')
-      .eq('email', email.toLowerCase().trim())
+      .eq('email', cleanEmail)
       .limit(1);
     
     if (error) {
@@ -19,7 +21,7 @@ export const checkEmailExistsGlobal = async (email: string): Promise<boolean> =>
       return false;
     }
     
-    return data && data.length > 0;
+    return Boolean(data && data.length > 0);
   } catch (error) {
     console.error('Email check error:', error);
     return false;
@@ -42,7 +44,7 @@ export const checkPhoneExists = async (phone: string, excludeUserId?: string): P
       return false;
     }
     
-    return data && data.length > 0;
+    return Boolean(data && data.length > 0);
   } catch (error) {
     console.error('Phone check error:', error);
     return false;
@@ -89,10 +91,12 @@ export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promi
   try {
     if (!ntn || ntn.trim() === '') return false;
     
+    const cleanNtn = ntn.trim();
+    
     const { data, error } = await supabase
       .from('profiles')
       .select('ntn_number')
-      .eq('ntn_number', ntn.trim())
+      .eq('ntn_number', cleanNtn)
       .limit(1);
     
     if (error) {
@@ -100,7 +104,7 @@ export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promi
       return false;
     }
     
-    return data && data.length > 0;
+    return Boolean(data && data.length > 0);
   } catch (error) {
     console.error('NTN check error:', error);
     return false;
@@ -125,7 +129,7 @@ export const checkSTRNExists = async (strn: string, excludeUserId?: string): Pro
       return false;
     }
     
-    return data && data.length > 0;
+    return Boolean(data && data.length > 0);
   } catch (error) {
     console.error('STRN check error:', error);
     return false;

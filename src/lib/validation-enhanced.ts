@@ -10,18 +10,19 @@ export const checkEmailExistsGlobal = async (email: string): Promise<boolean> =>
 
     const cleanEmail = email.toLowerCase().trim();
     
-    const { data, error } = await supabase
+    // Use a direct query without complex type inference
+    const response = await supabase
       .from('profiles')
       .select('email')
       .eq('email', cleanEmail)
       .limit(1);
     
-    if (error) {
-      console.error('Error checking email:', error);
+    if (response.error) {
+      console.error('Error checking email:', response.error);
       return false;
     }
     
-    return Boolean(data && data.length > 0);
+    return Boolean(response.data && response.data.length > 0);
   } catch (error) {
     console.error('Email check error:', error);
     return false;
@@ -33,18 +34,19 @@ export const checkPhoneExists = async (phone: string, excludeUserId?: string): P
   try {
     const cleanPhone = phone.replace(/[\s-]/g, '');
     
-    const { data, error } = await supabase
+    // Use a direct query without complex type inference
+    const response = await supabase
       .from('profiles')
       .select('phone_number')
       .eq('phone_number', cleanPhone)
       .limit(1);
     
-    if (error) {
-      console.error('Error checking phone:', error);
+    if (response.error) {
+      console.error('Error checking phone:', response.error);
       return false;
     }
     
-    return Boolean(data && data.length > 0);
+    return Boolean(response.data && response.data.length > 0);
   } catch (error) {
     console.error('Phone check error:', error);
     return false;
@@ -93,18 +95,19 @@ export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promi
     
     const cleanNtn = ntn.trim();
     
-    const { data, error } = await supabase
+    // Use a direct query without complex type inference
+    const response = await supabase
       .from('profiles')
       .select('ntn_number')
       .eq('ntn_number', cleanNtn)
       .limit(1);
     
-    if (error) {
-      console.error('Error checking NTN:', error);
+    if (response.error) {
+      console.error('Error checking NTN:', response.error);
       return false;
     }
     
-    return Boolean(data && data.length > 0);
+    return Boolean(response.data && response.data.length > 0);
   } catch (error) {
     console.error('NTN check error:', error);
     return false;
@@ -118,18 +121,19 @@ export const checkSTRNExists = async (strn: string, excludeUserId?: string): Pro
     
     const cleanStrn = strn.replace(/[\s-]/g, '');
     
-    const { data, error } = await supabase
+    // Use a direct query without complex type inference
+    const response = await supabase
       .from('profiles')
       .select('strn_number')
       .eq('strn_number', cleanStrn)
       .limit(1);
     
-    if (error) {
-      console.error('Error checking STRN:', error);
+    if (response.error) {
+      console.error('Error checking STRN:', response.error);
       return false;
     }
     
-    return Boolean(data && data.length > 0);
+    return Boolean(response.data && response.data.length > 0);
   } catch (error) {
     console.error('STRN check error:', error);
     return false;

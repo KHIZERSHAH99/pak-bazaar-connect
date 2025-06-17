@@ -10,19 +10,24 @@ export const checkEmailExistsGlobal = async (email: string): Promise<boolean> =>
 
     const cleanEmail = email.toLowerCase().trim();
     
-    // Use a direct query without complex type inference
-    const response = await supabase
+    // Use raw query to avoid type inference issues
+    const { data, error } = await supabase.rpc('get_user_role');
+    
+    // Fallback to direct table query with explicit typing
+    const result = await supabase
       .from('profiles')
       .select('email')
       .eq('email', cleanEmail)
       .limit(1);
     
-    if (response.error) {
-      console.error('Error checking email:', response.error);
+    if (result.error) {
+      console.error('Error checking email:', result.error);
       return false;
     }
     
-    return Boolean(response.data && response.data.length > 0);
+    // Explicit type check to avoid inference issues
+    const profiles = result.data as Array<{ email: string }> | null;
+    return Boolean(profiles && profiles.length > 0);
   } catch (error) {
     console.error('Email check error:', error);
     return false;
@@ -34,19 +39,21 @@ export const checkPhoneExists = async (phone: string, excludeUserId?: string): P
   try {
     const cleanPhone = phone.replace(/[\s-]/g, '');
     
-    // Use a direct query without complex type inference
-    const response = await supabase
+    // Use explicit typing to avoid inference issues
+    const result = await supabase
       .from('profiles')
       .select('phone_number')
       .eq('phone_number', cleanPhone)
       .limit(1);
     
-    if (response.error) {
-      console.error('Error checking phone:', response.error);
+    if (result.error) {
+      console.error('Error checking phone:', result.error);
       return false;
     }
     
-    return Boolean(response.data && response.data.length > 0);
+    // Explicit type check
+    const profiles = result.data as Array<{ phone_number: string }> | null;
+    return Boolean(profiles && profiles.length > 0);
   } catch (error) {
     console.error('Phone check error:', error);
     return false;
@@ -95,19 +102,21 @@ export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promi
     
     const cleanNtn = ntn.trim();
     
-    // Use a direct query without complex type inference
-    const response = await supabase
+    // Use explicit typing to avoid inference issues
+    const result = await supabase
       .from('profiles')
       .select('ntn_number')
       .eq('ntn_number', cleanNtn)
       .limit(1);
     
-    if (response.error) {
-      console.error('Error checking NTN:', response.error);
+    if (result.error) {
+      console.error('Error checking NTN:', result.error);
       return false;
     }
     
-    return Boolean(response.data && response.data.length > 0);
+    // Explicit type check
+    const profiles = result.data as Array<{ ntn_number: string }> | null;
+    return Boolean(profiles && profiles.length > 0);
   } catch (error) {
     console.error('NTN check error:', error);
     return false;
@@ -121,19 +130,21 @@ export const checkSTRNExists = async (strn: string, excludeUserId?: string): Pro
     
     const cleanStrn = strn.replace(/[\s-]/g, '');
     
-    // Use a direct query without complex type inference
-    const response = await supabase
+    // Use explicit typing to avoid inference issues
+    const result = await supabase
       .from('profiles')
       .select('strn_number')
       .eq('strn_number', cleanStrn)
       .limit(1);
     
-    if (response.error) {
-      console.error('Error checking STRN:', response.error);
+    if (result.error) {
+      console.error('Error checking STRN:', result.error);
       return false;
     }
     
-    return Boolean(response.data && response.data.length > 0);
+    // Explicit type check
+    const profiles = result.data as Array<{ strn_number: string }> | null;
+    return Boolean(profiles && profiles.length > 0);
   } catch (error) {
     console.error('STRN check error:', error);
     return false;

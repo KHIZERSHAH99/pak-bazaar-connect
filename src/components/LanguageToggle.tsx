@@ -16,10 +16,13 @@ const LanguageToggle: React.FC = () => {
       variant="ghost"
       size="sm"
       onClick={toggleLanguage}
-      className="flex items-center gap-2"
+      className="flex items-center gap-2 h-9 px-2"
+      aria-label={`Switch to ${language === 'en' ? 'Urdu' : 'English'}`}
     >
       <Languages className="h-4 w-4" />
-      {language === 'en' ? 'اردو' : 'EN'}
+      <span className="text-sm font-medium">
+        {language === 'en' ? 'اردو' : 'EN'}
+      </span>
     </Button>
   );
 };

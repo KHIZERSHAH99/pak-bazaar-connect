@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced email validation that checks for any existing user
@@ -26,6 +27,35 @@ export const checkEmailExistsGlobal = async (email: string): Promise<boolean> =>
     console.error('Email check error:', error);
     return false;
   }
+};
+
+// Enhanced email format validation
+export const validateEmailFormat = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+};
+
+// Enhanced password validation
+export const validatePasswordStrength = (password: string): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (password.length < 8) {
+    errors.push('Password must be at least 8 characters long');
+  }
+  
+  if (!/[A-Z]/.test(password)) {
+    errors.push('Password must contain at least one uppercase letter');
+  }
+  
+  if (!/[a-z]/.test(password)) {
+    errors.push('Password must contain at least one lowercase letter');
+  }
+  
+  if (!/\d/.test(password)) {
+    errors.push('Password must contain at least one number');
+  }
+  
+  return { isValid: errors.length === 0, errors };
 };
 
 // Enhanced NTN validation with Pakistani format
@@ -63,22 +93,84 @@ export const validateSTRNFormat = (strn: string): boolean => {
   return !invalidPatterns.some(pattern => cleanStrn.startsWith(pattern));
 };
 
+// Enhanced phone number validation for Pakistani format
+export const validatePhoneFormat = (phone: string): boolean => {
+  if (!phone || phone.trim() === '') return false;
+  
+  const phoneRegex = /^(\+92|0)?3\d{9}$/;
+  const cleanPhone = phone.replace(/[\s-]/g, '');
+  
+  return phoneRegex.test(cleanPhone);
+};
+
+// Enhanced postal code validation for Pakistan
+export const validatePostalCodeFormat = (postalCode: string): boolean => {
+  if (!postalCode || postalCode.trim() === '') return false;
+  
+  const postalCodeRegex = /^\d{5}$/;
+  return postalCodeRegex.test(postalCode.trim());
+};
+
 // Placeholder functions for phone, NTN, and STRN uniqueness checks
-// These would need proper database columns to work
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
-  // Since phone_number column doesn't exist in profiles table, return false
-  console.log('Phone uniqueness check not implemented - column does not exist');
-  return false;
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('phone_number')
+      .eq('phone_number', phone)
+      .neq('id', excludeUserId || '')
+      .limit(1);
+    
+    if (error) {
+      console.error('Error checking phone:', error);
+      return false;
+    }
+    
+    return Boolean(data && data.length > 0);
+  } catch (error) {
+    console.error('Phone check error:', error);
+    return false;
+  }
 };
 
 export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
-  // Since ntn_number column doesn't exist in profiles table, return false
-  console.log('NTN uniqueness check not implemented - column does not exist');
-  return false;
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('ntn_number')
+      .eq('ntn_number', ntn)
+      .neq('id', excludeUserId || '')
+      .limit(1);
+    
+    if (error) {
+      console.error('Error checking NTN:', error);
+      return false;
+    }
+    
+    return Boolean(data && data.length > 0);
+  } catch (error) {
+    console.error('NTN check error:', error);
+    return false;
+  }
 };
 
 export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
-  // Since strn_number column doesn't exist in profiles table, return false
-  console.log('STRN uniqueness check not implemented - column does not exist');
-  return false;
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('strn_number')
+      .eq('strn_number', strn)
+      .neq('id', excludeUserId || '')
+      .limit(1);
+    
+    if (error) {
+      console.error('Error checking STRN:', error);
+      return false;
+    }
+    
+    return Boolean(data && data.length > 0);
+  } catch (error) {
+    console.error('STRN check error:', error);
+    return false;
+  }
 };

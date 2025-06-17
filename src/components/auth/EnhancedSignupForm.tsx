@@ -1,15 +1,16 @@
+
 import React from 'react';
 import { Form } from '@/components/ui/form';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import AccountInfoStep from './signup/AccountInfoStep';
-import BusinessInfoStep from './signup/BusinessInfoStep';
+import EnhancedAccountInfoStep from './signup/EnhancedAccountInfoStep';
+import EnhancedBusinessInfoStep from './signup/EnhancedBusinessInfoStep';
 import SellerInfoStep from './SellerInfoStep';
 import SignupHeader from './signup/SignupHeader';
 import ErrorDisplay from './signup/ErrorDisplay';
 import NavigationButtons from './signup/NavigationButtons';
 import RoleStep from './signup/RoleStep';
 import CompletionStep from './signup/CompletionStep';
-import { useSignupForm } from './signup/useSignupForm';
+import { useEnhancedSignupForm } from './signup/useEnhancedSignupForm';
 
 const EnhancedSignupForm = () => {
   const {
@@ -19,12 +20,14 @@ const EnhancedSignupForm = () => {
     errorMessage,
     selectedRole,
     totalSteps,
+    isEmailBlocked,
     getStepTitle,
     nextStep,
     prevStep,
     handleRoleSelect,
+    handleEmailBlocked,
     onSubmit
-  } = useSignupForm();
+  } = useEnhancedSignupForm();
 
   // Prevent default form submission and let NavigationButtons handle it
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -33,7 +36,7 @@ const EnhancedSignupForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto border-none shadow-lg overflow-hidden">
+    <Card className="w-full max-w-2xl mx-auto border-none shadow-lg overflow-hidden bg-white dark:bg-gray-900">
       <SignupHeader 
         selectedRole={selectedRole}
         currentStep={currentStep}
@@ -55,10 +58,11 @@ const EnhancedSignupForm = () => {
             )}
             
             {currentStep === 2 && (
-              <AccountInfoStep 
+              <EnhancedAccountInfoStep 
                 form={form} 
                 isLoading={isLoading} 
                 selectedRole={selectedRole}
+                onEmailBlocked={handleEmailBlocked}
               />
             )}
             
@@ -67,7 +71,7 @@ const EnhancedSignupForm = () => {
             )}
 
             {currentStep === 3 && selectedRole === 'wholesaler' && (
-              <BusinessInfoStep form={form} isLoading={isLoading} />
+              <EnhancedBusinessInfoStep form={form} isLoading={isLoading} />
             )}
 
             {currentStep === 4 && selectedRole === 'wholesaler' && (
@@ -77,7 +81,7 @@ const EnhancedSignupForm = () => {
             <NavigationButtons
               currentStep={currentStep}
               totalSteps={totalSteps}
-              isLoading={isLoading}
+              isLoading={isLoading || isEmailBlocked}
               selectedRole={selectedRole}
               onPrevStep={prevStep}
               onNextStep={nextStep}

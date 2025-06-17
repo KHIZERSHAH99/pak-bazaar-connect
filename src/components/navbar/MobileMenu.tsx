@@ -1,117 +1,155 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, LayoutDashboard, User, LogOut } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import ThemeToggle from '@/components/ThemeToggle';
-import LanguageToggle from '@/components/LanguageToggle';
-import RoleSwitcher from './RoleSwitcher';
+import { Button } from '@/components/ui/button';
+import { LanguageToggle } from '@/components/ui/language-toggle';
+import EnhancedRoleSwitcher from './EnhancedRoleSwitcher';
+import { User } from '@supabase/supabase-js';
 
 interface MobileMenuProps {
   isOpen: boolean;
-  user: any;
-  onItemClick: () => void;
+  onClose: () => void;
+  user: User | null;
+  profile: any;
   onLogout: () => void;
-  getRoleBadge: () => React.ReactNode;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ 
   isOpen, 
+  onClose, 
   user, 
-  onItemClick, 
-  onLogout, 
-  getRoleBadge 
+  profile, 
+  onLogout 
 }) => {
-  const { t } = useLanguage();
-  
   if (!isOpen) return null;
 
+  const handleLinkClick = () => {
+    onClose();
+  };
+
+  const handleLogout = () => {
+    onLogout();
+    onClose();
+  };
+
   return (
-    <div className="md:hidden fixed left-0 right-0 top-16 bg-background/98 backdrop-blur-lg shadow-xl z-[120] border-t border-border animate-slideIn">
-      <div className="py-4 px-2 space-y-3 max-h-[calc(100vh-4rem)] overflow-y-auto">
-        <Link 
-          to="/" 
-          className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-muted text-foreground transition-all duration-200 font-poppins group"
-          onClick={onItemClick}
-        >
-          <Home className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-          <span className="font-medium">{t('home')}</span>
-        </Link>
-        
+    <div className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-lg">
+      <div className="px-4 py-4 space-y-4">
+        {/* Language Toggle */}
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">
+            Language
+          </span>
+          <LanguageToggle />
+        </div>
+
         {user ? (
-          <>
-            <Link 
-              to="/dashboard" 
-              className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-muted text-foreground transition-all duration-200 font-poppins group"
-              onClick={onItemClick}
-            >
-              <LayoutDashboard className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-              <span className="font-medium">{t('dashboard')}</span>
-            </Link>
-            
-            <Link 
-              to="/profile" 
-              className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-muted text-foreground transition-all duration-200 font-poppins group"
-              onClick={onItemClick}
-            >
-              <User className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{t('profile')}</span>
-                {getRoleBadge()}
+          <div className="space-y-4">
+            {/* Role Switcher */}
+            {profile && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">
+                  Current Role
+                </span>
+                <EnhancedRoleSwitcher />
               </div>
-            </Link>
-            
-            <div className="mt-1 mb-2 px-4">
-              <div className="py-2">
-                <span className="text-sm font-medium text-muted-foreground font-poppins mb-2 block">Role Management</span>
-                <RoleSwitcher />
-              </div>
+            )}
+
+            {/* User Email */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-poppins">
+                Signed in as: {user.email}
+              </p>
             </div>
-            
-            <div className="flex items-center justify-between py-3 px-4 border-t border-border">
-              <span className="font-medium text-foreground font-poppins">Settings</span>
-              <div className="flex items-center gap-2">
-                <LanguageToggle />
-                <ThemeToggle />
-              </div>
+
+            {/* Navigation Links */}
+            <div className="space-y-2">
+              <Link 
+                to="/dashboard" 
+                onClick={handleLinkClick}
+                className="block w-full"
+              >
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                >
+                  Dashboard
+                </Button>
+              </Link>
+
+              <Link 
+                to="/profile" 
+                onClick={handleLinkClick}
+                className="block w-full"
+              >
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-poppins"
+                >
+                  Profile
+                </Button>
+              </Link>
+
+              <Link 
+                to="/stats" 
+                onClick={handleLinkClick}
+                className="block w-full"
+              >
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-poppins"
+                >
+                  Statistics
+                </Button>
+              </Link>
+
+              <Link 
+                to="/chat" 
+                onClick={handleLinkClick}
+                className="block w-full"
+              >
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-poppins"
+                >
+                  Support Chat
+                </Button>
+              </Link>
             </div>
-            
-            <button
-              className="w-full text-left flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-destructive/10 text-destructive transition-all duration-200 font-poppins group"
-              onClick={() => {
-                onLogout();
-                onItemClick();
-              }}
-              aria-label="Logout"
-            >
-              <LogOut className="h-5 w-5 group-hover:scale-110 transition-transform" />
-              <span className="font-medium">{t('logout')}</span>
-            </button>
-          </>
+
+            {/* Logout Button */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="w-full border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-700 hover:text-white dark:border-pakistani_green-300 dark:text-pakistani_green-300 dark:hover:bg-pakistani_green-700 dark:hover:text-white font-poppins"
+              >
+                Logout
+              </Button>
+            </div>
+          </div>
         ) : (
-          <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between py-3 px-4 border-t border-border">
-              <span className="font-medium text-foreground font-poppins">Settings</span>
-              <div className="flex items-center gap-2">
-                <LanguageToggle />
-                <ThemeToggle />
-              </div>
-            </div>
-            
+          <div className="space-y-3">
             <Link 
               to="/login" 
-              className="block py-3 px-4 rounded-lg hover:bg-muted text-foreground transition-all duration-200 font-poppins text-center font-medium"
-              onClick={onItemClick}
+              onClick={handleLinkClick}
+              className="block w-full"
             >
-              {t('login')}
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+              >
+                Login
+              </Button>
             </Link>
-            
             <Link 
               to="/signup" 
-              className="block py-3 px-4 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 font-poppins text-center font-medium transition-all duration-200 shadow-sm"
-              onClick={onItemClick}
+              onClick={handleLinkClick}
+              className="block w-full"
             >
-              {t('signup')}
+              <Button className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins">
+                Sign Up
+              </Button>
             </Link>
           </div>
         )}

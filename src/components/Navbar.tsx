@@ -1,194 +1,147 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import ThemeToggle from '@/components/ThemeToggle';
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { User, ChevronDown, Menu, X } from 'lucide-react';
-import MobileMenu from './navbar/MobileMenu';
-import LanguageToggle from './LanguageToggle';
+import { Button } from '@/components/ui/button';
 import { signOut } from '@/lib/auth';
-import RoleSwitcher from './navbar/RoleSwitcher';
+import { useToast } from '@/hooks/use-toast';
+import { Flag, Menu, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { LanguageToggle } from '@/components/ui/language-toggle';
+import EnhancedRoleSwitcher from './navbar/EnhancedRoleSwitcher';
+import MobileMenu from './navbar/MobileMenu';
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
   const { user, profile } = useAuth();
-  const { theme } = useTheme();
-  const { t, language } = useLanguage();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await signOut();
-  };
-
-  const getRoleBadge = () => {
-    if (!profile?.role) return null;
-
-    let badgeColor = 'bg-gray-500';
-    if (profile.role === 'admin') {
-      badgeColor = 'bg-red-500';
-    } else if (profile.role === 'wholesaler') {
-      badgeColor = 'bg-green-500';
-    } else if (profile.role === 'seller') {
-      badgeColor = 'bg-blue-500';
+    try {
+      await signOut();
+      toast({
+        title: 'Logged out successfully',
+        description: 'You have been logged out of your account'
+      });
+      navigate('/');
+    } catch (error: any) {
+      console.error('Logout error:', error);
+      toast({
+        title: 'Logout failed',
+        description: error.message || 'Failed to log out. Please try again.',
+        variant: 'destructive'
+      });
     }
-
-    return (
-      <span className={`ml-1 px-2 py-0.5 rounded text-xs font-medium ${badgeColor} text-white`}>
-        {profile.role}
-      </span>
-    );
   };
-
-  const handleMobileMenuItemClick = () => setIsMenuOpen(false);
 
   return (
     <>
-      <nav
-        className={`bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border sticky top-0 z-50`}
-        dir={language === "ur" ? "rtl" : "ltr"}
-        lang={language}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link to="/" className="flex items-center">
-                  <div className="bg-pakistani_green-600 rounded-xl p-2 shadow-md">
-                    <span className="text-white text-lg font-bold">PBC</span>
-                  </div>
-                  <span className="ml-2 text-lg font-bold text-primary font-poppins">
-                    Pak Bazaar Connect
-                  </span>
-                </Link>
-              </div>
-              <div className="hidden md:ml-6 md:flex md:space-x-8">
-                <Link
-                  to="/"
-                  className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
-                >
-                  {t("home")}
-                </Link>
-                <Link
-                  to="/products"
-                  className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
-                >
-                  {t("products")}
-                </Link>
-                <Link
-                  to="/sellers"
-                  className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
-                >
-                  {t("suppliers")}
-                </Link>
-                <Link
-                  to="/features"
-                  className="border-transparent text-foreground hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium font-poppins"
-                >
-                  {t("features")}
-                </Link>
-              </div>
-            </div>
+      {/* Top Banner */}
+      <div className="bg-pakistani_green-700 text-white py-2 px-4 text-center relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center opacity-5">
+          <Flag className="w-40 h-40 text-white" />
+        </div>
+        <p className="font-medium text-sm md:text-base font-poppins relative z-10">
+          Join Now! Free Ads for First 10 Wholesalers!
+        </p>
+      </div>
 
-            <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-              <LanguageToggle />
-              <ThemeToggle />
+      {/* Main Navbar */}
+      <header className="bg-white dark:bg-gray-950 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+              <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
+                <span className="text-white text-xl font-bold">PBC</span>
+              </div>
+              <span className="text-xl font-bold text-pakistani_green-800 dark:text-white hidden sm:inline font-poppins">
+                Pak Bazaar Connect
+              </span>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-4">
+              {/* Theme and Language Controls */}
+              <div className="flex items-center space-x-2">
+                <ThemeToggle />
+                <LanguageToggle />
+              </div>
 
               {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center gap-2 font-poppins focus:outline-none focus:ring-2 focus:ring-primary/70 px-2 h-10"
-                    >
-                      <User className="h-4 w-4" />
-                      <span className="font-medium max-w-20 truncate">{user.email?.split('@')[0]}</span>
-                      <RoleSwitcher />
-                      <ChevronDown className="h-4 w-4 opacity-50" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-56 bg-popover text-popover-foreground border-border shadow-lg rounded-md animate-fade-in z-[100]"
-                  >
-                    <DropdownMenuLabel className="font-poppins">My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer flex items-center gap-2 font-poppins">
-                        <User className="h-4 w-4" />
-                        {t('profile')}
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/dashboard" className="cursor-pointer flex items-center gap-2 font-poppins">
-                        {t('dashboard')}
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={handleLogout}
-                      className="text-destructive cursor-pointer flex items-center gap-2 font-poppins"
-                    >
-                      {t('logout')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
                 <div className="flex items-center space-x-4">
-                  <Link
-                    to="/login"
-                    className="text-foreground hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium font-poppins"
-                  >
-                    {t('login')}
+                  {/* Role Switcher */}
+                  {profile && (
+                    <EnhancedRoleSwitcher />
+                  )}
+
+                  {/* Dashboard Link */}
+                  <Link to="/dashboard">
+                    <Button 
+                      variant="ghost" 
+                      className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                    >
+                      Dashboard
+                    </Button>
                   </Link>
-                  <Link
-                    to="/signup"
-                    className="bg-primary hover:bg-pakistani_green-700 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium font-poppins"
+
+                  {/* Logout Button */}
+                  <Button
+                    onClick={handleLogout}
+                    variant="outline"
+                    className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-700 hover:text-white dark:border-pakistani_green-300 dark:text-pakistani_green-300 dark:hover:bg-pakistani_green-700 dark:hover:text-white font-poppins transition-all duration-200"
                   >
-                    {t('signup')}
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <Link to="/login">
+                    <Button 
+                      variant="ghost" 
+                      className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins shadow-md transition-all duration-200">
+                      Sign Up
+                    </Button>
                   </Link>
                 </div>
               )}
             </div>
 
+            {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-2">
-              <LanguageToggle />
               <ThemeToggle />
-              <button
-                type="button"
-                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary transition-colors"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300"
               >
-                <span className="sr-only">{isMenuOpen ? "Close menu" : "Open menu"}</span>
-                {isMenuOpen ? (
+                {isMobileMenuOpen ? (
                   <X className="h-6 w-6" />
                 ) : (
                   <Menu className="h-6 w-6" />
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
-      </nav>
-      
-      <MobileMenu
-        isOpen={isMenuOpen}
-        user={user}
-        onItemClick={handleMobileMenuItemClick}
-        onLogout={handleLogout}
-        getRoleBadge={getRoleBadge}
-      />
+
+        {/* Mobile Menu */}
+        <MobileMenu 
+          isOpen={isMobileMenuOpen} 
+          onClose={() => setIsMobileMenuOpen(false)}
+          user={user}
+          profile={profile}
+          onLogout={handleLogout}
+        />
+      </header>
     </>
   );
 };

@@ -111,81 +111,36 @@ export const validatePostalCodeFormat = (postalCode: string): boolean => {
   return postalCodeRegex.test(postalCode.trim());
 };
 
-// Simplified phone uniqueness check
+// Placeholder phone uniqueness check (returns false since phone_number column doesn't exist in profiles)
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    if (!phone || phone.trim() === '') return false;
-    
-    if (excludeUserId) {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('phone_number', phone)
-        .neq('id', excludeUserId)
-        .limit(1);
-      return Boolean(data && data.length > 0);
-    } else {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('phone_number', phone)
-        .limit(1);
-      return Boolean(data && data.length > 0);
-    }
+    // Since phone_number column doesn't exist in profiles table, always return false
+    console.log('Phone uniqueness check - column does not exist in profiles table');
+    return false;
   } catch (error) {
     console.error('Phone check error:', error);
     return false;
   }
 };
 
-// Simplified NTN uniqueness check
+// Placeholder NTN uniqueness check (returns false since ntn_number column doesn't exist in profiles)
 export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    if (!ntn || ntn.trim() === '') return false;
-    
-    if (excludeUserId) {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('ntn_number', ntn)
-        .neq('id', excludeUserId)
-        .limit(1);
-      return Boolean(data && data.length > 0);
-    } else {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('ntn_number', ntn)
-        .limit(1);
-      return Boolean(data && data.length > 0);
-    }
+    // Since ntn_number column doesn't exist in profiles table, always return false
+    console.log('NTN uniqueness check - column does not exist in profiles table');
+    return false;
   } catch (error) {
     console.error('NTN check error:', error);
     return false;
   }
 };
 
-// Simplified STRN uniqueness check
+// Placeholder STRN uniqueness check (returns false since strn_number column doesn't exist in profiles)
 export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    if (!strn || strn.trim() === '') return false;
-    
-    if (excludeUserId) {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('strn_number', strn)
-        .neq('id', excludeUserId)
-        .limit(1);
-      return Boolean(data && data.length > 0);
-    } else {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('strn_number', strn)
-        .limit(1);
-      return Boolean(data && data.length > 0);
-    }
+    // Since strn_number column doesn't exist in profiles table, always return false
+    console.log('STRN uniqueness check - column does not exist in profiles table');
+    return false;
   } catch (error) {
     console.error('STRN check error:', error);
     return false;

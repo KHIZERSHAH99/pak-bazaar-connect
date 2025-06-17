@@ -111,15 +111,20 @@ export const validatePostalCodeFormat = (postalCode: string): boolean => {
   return postalCodeRegex.test(postalCode.trim());
 };
 
-// Placeholder functions for phone, NTN, and STRN uniqueness checks
+// Simplified phone uniqueness check with explicit typing
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    const { data, error } = await supabase
+    const query = supabase
       .from('profiles')
       .select('phone_number')
       .eq('phone_number', phone)
-      .neq('id', excludeUserId || '')
       .limit(1);
+
+    if (excludeUserId) {
+      query.neq('id', excludeUserId);
+    }
+
+    const { data, error } = await query;
     
     if (error) {
       console.error('Error checking phone:', error);
@@ -133,14 +138,20 @@ export const checkPhoneExists = async (phone: string, excludeUserId?: string): P
   }
 };
 
+// Simplified NTN uniqueness check with explicit typing
 export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    const { data, error } = await supabase
+    const query = supabase
       .from('profiles')
       .select('ntn_number')
       .eq('ntn_number', ntn)
-      .neq('id', excludeUserId || '')
       .limit(1);
+
+    if (excludeUserId) {
+      query.neq('id', excludeUserId);
+    }
+
+    const { data, error } = await query;
     
     if (error) {
       console.error('Error checking NTN:', error);
@@ -154,14 +165,20 @@ export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promi
   }
 };
 
+// Simplified STRN uniqueness check with explicit typing
 export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
   try {
-    const { data, error } = await supabase
+    const query = supabase
       .from('profiles')
       .select('strn_number')
       .eq('strn_number', strn)
-      .neq('id', excludeUserId || '')
       .limit(1);
+
+    if (excludeUserId) {
+      query.neq('id', excludeUserId);
+    }
+
+    const { data, error } = await query;
     
     if (error) {
       console.error('Error checking STRN:', error);

@@ -111,39 +111,25 @@ export const validatePostalCodeFormat = (postalCode: string): boolean => {
   return postalCodeRegex.test(postalCode.trim());
 };
 
-// Rewritten phone uniqueness check to avoid complex type inference
+// Simplified phone uniqueness check
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
   try {
     if (!phone || phone.trim() === '') return false;
     
     if (excludeUserId) {
-      // Query with exclusion
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('id')
         .eq('phone_number', phone)
         .neq('id', excludeUserId)
         .limit(1);
-      
-      if (error) {
-        console.error('Error checking phone:', error);
-        return false;
-      }
-      
       return Boolean(data && data.length > 0);
     } else {
-      // Query without exclusion
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('id')
         .eq('phone_number', phone)
         .limit(1);
-      
-      if (error) {
-        console.error('Error checking phone:', error);
-        return false;
-      }
-      
       return Boolean(data && data.length > 0);
     }
   } catch (error) {
@@ -152,39 +138,25 @@ export const checkPhoneExists = async (phone: string, excludeUserId?: string): P
   }
 };
 
-// Rewritten NTN uniqueness check to avoid complex type inference
+// Simplified NTN uniqueness check
 export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
   try {
     if (!ntn || ntn.trim() === '') return false;
     
     if (excludeUserId) {
-      // Query with exclusion
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('id')
         .eq('ntn_number', ntn)
         .neq('id', excludeUserId)
         .limit(1);
-      
-      if (error) {
-        console.error('Error checking NTN:', error);
-        return false;
-      }
-      
       return Boolean(data && data.length > 0);
     } else {
-      // Query without exclusion
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('id')
         .eq('ntn_number', ntn)
         .limit(1);
-      
-      if (error) {
-        console.error('Error checking NTN:', error);
-        return false;
-      }
-      
       return Boolean(data && data.length > 0);
     }
   } catch (error) {
@@ -193,39 +165,25 @@ export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promi
   }
 };
 
-// Rewritten STRN uniqueness check to avoid complex type inference
+// Simplified STRN uniqueness check
 export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
   try {
     if (!strn || strn.trim() === '') return false;
     
     if (excludeUserId) {
-      // Query with exclusion
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('id')
         .eq('strn_number', strn)
         .neq('id', excludeUserId)
         .limit(1);
-      
-      if (error) {
-        console.error('Error checking STRN:', error);
-        return false;
-      }
-      
       return Boolean(data && data.length > 0);
     } else {
-      // Query without exclusion
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('id')
         .eq('strn_number', strn)
         .limit(1);
-      
-      if (error) {
-        console.error('Error checking STRN:', error);
-        return false;
-      }
-      
       return Boolean(data && data.length > 0);
     }
   } catch (error) {

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,7 +12,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-4">
-              <img className="h-8 w-auto" src="/placeholder.svg" alt="Pak Bazaar Connect" />
+              <div className="bg-pakistani_green-600 rounded-xl p-2 shadow-md">
+                <span className="text-white text-lg font-bold">PBC</span>
+              </div>
               <span className="ml-3 text-xl font-bold text-foreground font-poppins">
                 Pak Bazaar Connect
               </span>
@@ -92,7 +95,7 @@ const Footer = () => {
 
         <div className="mt-8 pt-8 border-t border-border">
           <p className="text-center text-sm text-muted-foreground font-poppins">
-            © 2024 Pak Bazaar Connect. Build Successful, API Keys Secured.
+            © 2024 Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.
           </p>
         </div>
       </div>

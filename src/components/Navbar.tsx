@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -48,7 +49,6 @@ const Navbar: React.FC = () => {
     );
   };
 
-  // MobileMenu expected: isOpen, user, onItemClick, onLogout, getRoleBadge
   const handleMobileMenuItemClick = () => setIsMenuOpen(false);
 
   return (
@@ -62,7 +62,9 @@ const Navbar: React.FC = () => {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center">
-                <img className="h-8 w-auto" src="/placeholder.svg" alt="Pak Bazaar Connect" />
+                <div className="bg-pakistani_green-600 rounded-xl p-2 shadow-md">
+                  <span className="text-white text-lg font-bold">PBC</span>
+                </div>
                 <span className="ml-2 text-lg font-bold text-primary font-poppins">
                   Pak Bazaar Connect
                 </span>
@@ -110,7 +112,6 @@ const Navbar: React.FC = () => {
                   >
                     <User className="h-4 w-4" />
                     <span className="font-medium max-w-20 truncate">{user.email?.split('@')[0]}</span>
-                    {/* Keep RoleSwitcher perfectly inline */}
                     <RoleSwitcher />
                     <ChevronDown className="h-4 w-4 opacity-50" />
                   </Button>
@@ -149,15 +150,12 @@ const Navbar: React.FC = () => {
                 >
                   {t('login')}
                 </Link>
-                {/* Only show Sign Up when user is NOT logged in */}
-                {!user && (
-                  <Link
-                    to="/signup"
-                    className="bg-primary hover:bg-pakistani_green-700 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium font-poppins"
-                  >
-                    {t('signup')}
-                  </Link>
-                )}
+                <Link
+                  to="/signup"
+                  className="bg-primary hover:bg-pakistani_green-700 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium font-poppins"
+                >
+                  {t('signup')}
+                </Link>
               </div>
             )}
           </div>
@@ -172,7 +170,6 @@ const Navbar: React.FC = () => {
               onLogout={handleLogout}
               getRoleBadge={getRoleBadge}
             />
-            {/* Add Hamburger Button */}
             <button
               type="button"
               aria-label="Open menu"

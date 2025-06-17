@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'ur';
@@ -47,12 +48,15 @@ const translations: Translations = {
   'save_favorite': { en: 'Save to Favorites', ur: 'پسندیدہ میں محفوظ کریں' },
   'compare_products': { en: 'Compare Products', ur: 'پروڈکٹس کا موازنہ' },
   
-  // NEW: App-specific terms
+  // App-specific terms
   'settings': { en: 'Settings', ur: 'ترتیبات' },
   'previous': { en: 'Previous', ur: 'پچھلا' },
   'continue': { en: 'Continue', ur: 'جاری رکھیں' },
   'processing': { en: 'Processing...', ur: 'پراسس ہو رہا ہے...' },
   'create_account': { en: 'Create Account', ur: 'اکاؤنٹ بنائیں' },
+  'language': { en: 'Language', ur: 'زبان' },
+  'english': { en: 'English', ur: 'انگریزی' },
+  'urdu': { en: 'اردو', ur: 'اردو' },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);

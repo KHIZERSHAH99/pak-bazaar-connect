@@ -1,5 +1,7 @@
 
 import React from "react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -13,21 +15,44 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     super(props);
     this.state = { hasError: false, error: null };
   }
+  
   static getDerivedStateFromError(error: Error) {
     return { hasError: true, error };
   }
+  
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // log error if desired 
-    // console.log(error, errorInfo);
+    console.error('Error caught by boundary:', error, errorInfo);
   }
+  
+  handleRefresh = () => {
+    window.location.reload();
+  };
+  
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-red-50">
-          <div className="max-w-md mx-auto bg-white border border-red-200 rounded-lg p-8 shadow">
-            <h2 className="text-red-600 text-xl font-bold mb-4 font-poppins">Something went wrong</h2>
-            <p className="mb-4 text-sm text-red-700 font-poppins">An error occurred in the app. Please refresh, or contact support if the problem persists.</p>
-            <details className="text-xs text-red-300 truncate">{this.state.error?.toString()}</details>
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+          <div className="max-w-md mx-auto bg-card border border-destructive/20 rounded-lg p-8 shadow-lg text-center">
+            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <h2 className="text-destructive text-xl font-bold mb-4 font-poppins">
+              Something went wrong
+            </h2>
+            <p className="mb-6 text-sm text-muted-foreground font-poppins">
+              We apologize for the inconvenience. An unexpected error occurred.
+            </p>
+            <Button 
+              onClick={this.handleRefresh}
+              className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh Page
+            </Button>
+            <details className="mt-4 text-xs text-muted-foreground">
+              <summary className="cursor-pointer">Technical Details</summary>
+              <div className="mt-2 p-2 bg-muted rounded text-left break-all">
+                {this.state.error?.toString()}
+              </div>
+            </details>
           </div>
         </div>
       );

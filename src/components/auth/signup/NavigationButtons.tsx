@@ -22,14 +22,10 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
 }) => {
   const { toast } = useToast();
   
-  console.log('NavigationButtons render - currentStep:', currentStep, 'totalSteps:', totalSteps, 'isLoading:', isLoading);
-  
   const handleButtonClick = (e: React.MouseEvent) => {
-    console.log('Button clicked for step:', currentStep, 'isLoading:', isLoading);
     e.preventDefault();
     
     if (isLoading) {
-      console.log('Button disabled due to loading state');
       toast({
         title: 'Please wait',
         description: 'Processing your request...',
@@ -38,8 +34,6 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
       return;
     }
     
-    // Call onNextStep which will handle both navigation and submission
-    console.log('Calling onNextStep');
     onNextStep();
   };
 

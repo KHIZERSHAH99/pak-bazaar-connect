@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Shield } from 'lucide-react';
 
@@ -17,7 +18,7 @@ const HomeFooter: React.FC = () => {
         <div className="flex justify-center items-center space-x-2 md:space-x-4 text-xs md:text-sm">
           <span className="flex items-center font-poppins">
             <Shield className="h-4 w-4 mr-1" aria-hidden="true" />
-            Build Successful, API Keys Secured
+            Trusted marketplace with secure API infrastructure
           </span>
         </div>
       </div>

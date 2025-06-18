@@ -1,75 +1,92 @@
 
-import { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { LanguageProvider } from '@/contexts/LanguageContext';
-import { ThemeProvider } from '@/contexts/ThemeContext';
-import { Toaster } from '@/components/ui/toaster';
-import { LoadingScreen } from '@/contexts/AuthContext';
-import './App.css';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ThemeProvider } from "next-themes";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Stats from "./pages/Stats";
+import Chat from "./pages/Chat";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import RefundPolicy from "./pages/RefundPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import NotFound from "./pages/NotFound";
+// Dashboard pages
+import DashboardShops from "./pages/dashboard/DashboardShops";
+import DashboardProducts from "./pages/dashboard/DashboardProducts";
+import DashboardAds from "./pages/dashboard/DashboardAds";
+import DashboardOrders from "./pages/dashboard/DashboardOrders";
+import DashboardChat from "./pages/dashboard/DashboardChat";
+import DashboardAdApprovals from "./pages/dashboard/DashboardAdApprovals";
+import DashboardBrowseShops from "./pages/dashboard/DashboardBrowseShops";
+import DashboardSellerOrders from "./pages/dashboard/DashboardSellerOrders";
+import DashboardWholesalerOrders from "./pages/dashboard/DashboardWholesalerOrders";
+import DashboardSellerDashboard from "./pages/dashboard/DashboardSellerDashboard";
 
-// Lazy load components for better performance
-const Home = lazy(() => import('@/pages/Index'));
-const Login = lazy(() => import('@/pages/Login'));
-const Signup = lazy(() => import('@/pages/Signup'));
-const Profile = lazy(() => import('@/pages/Profile'));
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
-const AdminPanel = lazy(() => import('@/pages/admin/AdminPanel'));
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+    },
+  },
+});
 
-// Dashboard components
-const DashboardShops = lazy(() => import('@/pages/dashboard/DashboardShops'));
-const DashboardProducts = lazy(() => import('@/pages/dashboard/DashboardProducts'));
-const DashboardAds = lazy(() => import('@/pages/dashboard/DashboardAds'));
-const DashboardOrders = lazy(() => import('@/pages/dashboard/DashboardOrders'));
-const DashboardChat = lazy(() => import('@/pages/dashboard/DashboardChat'));
-const DashboardAdApprovals = lazy(() => import('@/pages/dashboard/DashboardAdApprovals'));
-const DashboardBrowseShops = lazy(() => import('@/pages/dashboard/DashboardBrowseShops'));
-const DashboardSellerOrders = lazy(() => import('@/pages/dashboard/DashboardSellerOrders'));
-const DashboardWholesalerOrders = lazy(() => import('@/pages/dashboard/DashboardWholesalerOrders'));
-const DashboardSellerDashboard = lazy(() => import('@/pages/dashboard/DashboardSellerDashboard'));
-
-function App() {
-  return (
-    <ThemeProvider>
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <LanguageProvider>
-        <AuthProvider>
-          <Router>
-            <div className="min-h-screen bg-background">
-              <Suspense fallback={<LoadingScreen />}>
+        <TooltipProvider>
+          <ErrorBoundary>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AuthProvider>
                 <Routes>
-                  <Route path="/" element={<Home />} />
+                  <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
-                  <Route path="/profile" element={<Profile />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/stats" element={<Stats />} />
+                  <Route path="/chat" element={<Chat />} />
                   
-                  {/* Admin Routes */}
-                  <Route path="/admin" element={<AdminPanel />} />
-                  <Route path="/dashboard/ad-approvals" element={<DashboardAdApprovals />} />
-                  
-                  {/* Wholesaler Routes */}
+                  {/* Dashboard Routes */}
                   <Route path="/dashboard/shops" element={<DashboardShops />} />
                   <Route path="/dashboard/products" element={<DashboardProducts />} />
                   <Route path="/dashboard/ads" element={<DashboardAds />} />
-                  <Route path="/dashboard/wholesaler-orders" element={<DashboardWholesalerOrders />} />
-                  
-                  {/* Seller Routes */}
+                  <Route path="/dashboard/orders" element={<DashboardOrders />} />
+                  <Route path="/dashboard/chat" element={<DashboardChat />} />
+                  <Route path="/dashboard/ad-approvals" element={<DashboardAdApprovals />} />
                   <Route path="/dashboard/browse-shops" element={<DashboardBrowseShops />} />
                   <Route path="/dashboard/seller-orders" element={<DashboardSellerOrders />} />
+                  <Route path="/dashboard/wholesaler-orders" element={<DashboardWholesalerOrders />} />
                   <Route path="/dashboard/seller-dashboard" element={<DashboardSellerDashboard />} />
                   
-                  {/* Common Routes */}
-                  <Route path="/dashboard/chat" element={<DashboardChat />} />
-                  <Route path="/dashboard/orders" element={<DashboardOrders />} />
+                  {/* Policy Pages */}
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="/refund-policy" element={<RefundPolicy />} />
+                  <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
-              </Suspense>
-              <Toaster />
-            </div>
-          </Router>
-        </AuthProvider>
+              </AuthProvider>
+            </BrowserRouter>
+          </ErrorBoundary>
+        </TooltipProvider>
       </LanguageProvider>
     </ThemeProvider>
-  );
-}
+  </QueryClientProvider>
+);
 
 export default App;

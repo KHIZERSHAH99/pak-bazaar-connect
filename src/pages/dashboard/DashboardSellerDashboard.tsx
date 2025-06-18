@@ -6,7 +6,7 @@ import SellerAnalytics from '@/components/dashboard/SellerAnalytics';
 
 const DashboardSellerDashboard: React.FC = () => {
   return (
-    <ProtectedRoute allowedRoles={['seller', 'wholesaler']}>
+    <ProtectedRoute allowedRoles={['wholesaler']}>
       <DashboardLayout>
         <SellerAnalytics />
       </DashboardLayout>

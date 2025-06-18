@@ -29,7 +29,7 @@ const nextRole: Record<UserRole, UserRole> = {
 };
 
 const EnhancedRoleSwitcher: React.FC = () => {
-  const { profile } = useAuth();
+  const { profile, checkAuthStatus } = useAuth();
   const [isSwitching, setIsSwitching] = useState(false);
   const { toast } = useToast();
 
@@ -45,18 +45,12 @@ const EnhancedRoleSwitcher: React.FC = () => {
     setIsSwitching(true);
     try {
       await changeRole(targetRole);
-      
+      await checkAuthStatus();
       toast({
         title: "Role Switched Successfully",
-        description: `You are now operating as a ${roleDisplay[targetRole]}. Page will reload to update your dashboard.`,
+        description: `You are now operating as a ${roleDisplay[targetRole]}.`,
         variant: "default"
       });
-      
-      // Force page reload after successful role change
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-      
     } catch(error: any) {
       console.error('Role switch error:', error);
       toast({
@@ -64,18 +58,21 @@ const EnhancedRoleSwitcher: React.FC = () => {
         description: error.message || "Something went wrong. Please try again.",
         variant: "destructive"
       });
+    } finally {
       setIsSwitching(false);
     }
   };
 
   return (
     <div className="flex items-center space-x-2">
+      {/* Current Role Badge */}
       <Badge 
         className={`px-3 py-1 text-xs font-medium font-poppins transition-all duration-200 ${roleColors[currentRole]}`}
       >
         {roleDisplay[currentRole]}
       </Badge>
 
+      {/* Switch Button */}
       {canSwitch && (
         <Button
           onClick={handleSwitch}

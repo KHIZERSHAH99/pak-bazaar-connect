@@ -50,52 +50,60 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+    <ThemeProvider 
+      attribute="class" 
+      defaultTheme="light" 
+      enableSystem
+      disableTransitionOnChange={false}
+      storageKey="theme"
+    >
       <LanguageProvider>
         <TooltipProvider>
           <ErrorBoundary>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AuthProvider>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/stats" element={<Stats />} />
-                  <Route path="/chat" element={<Chat />} />
-                  
-                  {/* Marketplace Pages */}
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/sellers" element={<Sellers />} />
-                  <Route path="/features" element={<Features />} />
-                  <Route path="/wholesaler-products" element={<WholesalerProducts />} />
-                  <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/seller/:id" element={<SellerProfile />} />
-                  
-                  {/* Dashboard Routes */}
-                  <Route path="/dashboard/shops" element={<DashboardShops />} />
-                  <Route path="/dashboard/products" element={<DashboardProducts />} />
-                  <Route path="/dashboard/ads" element={<DashboardAds />} />
-                  <Route path="/dashboard/orders" element={<DashboardOrders />} />
-                  <Route path="/dashboard/chat" element={<DashboardChat />} />
-                  <Route path="/dashboard/ad-approvals" element={<DashboardAdApprovals />} />
-                  <Route path="/dashboard/browse-shops" element={<DashboardBrowseShops />} />
-                  <Route path="/dashboard/seller-orders" element={<DashboardSellerOrders />} />
-                  <Route path="/dashboard/wholesaler-orders" element={<DashboardWholesalerOrders />} />
-                  <Route path="/dashboard/seller-dashboard" element={<DashboardSellerDashboard />} />
-                  
-                  {/* Policy Pages */}
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
-                  <Route path="/refund-policy" element={<RefundPolicy />} />
-                  <Route path="/shipping-policy" element={<ShippingPolicy />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </AuthProvider>
-            </BrowserRouter>
+            <div className="min-h-screen bg-background text-foreground transition-colors duration-200">
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AuthProvider>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/stats" element={<Stats />} />
+                    <Route path="/chat" element={<Chat />} />
+                    
+                    {/* Marketplace Pages */}
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/sellers" element={<Sellers />} />
+                    <Route path="/features" element={<Features />} />
+                    <Route path="/wholesaler-products" element={<WholesalerProducts />} />
+                    <Route path="/product/:id" element={<ProductDetail />} />
+                    <Route path="/seller/:id" element={<SellerProfile />} />
+                    
+                    {/* Dashboard Routes */}
+                    <Route path="/dashboard/shops" element={<DashboardShops />} />
+                    <Route path="/dashboard/products" element={<DashboardProducts />} />
+                    <Route path="/dashboard/ads" element={<DashboardAds />} />
+                    <Route path="/dashboard/orders" element={<DashboardOrders />} />
+                    <Route path="/dashboard/chat" element={<DashboardChat />} />
+                    <Route path="/dashboard/ad-approvals" element={<DashboardAdApprovals />} />
+                    <Route path="/dashboard/browse-shops" element={<DashboardBrowseShops />} />
+                    <Route path="/dashboard/seller-orders" element={<DashboardSellerOrders />} />
+                    <Route path="/dashboard/wholesaler-orders" element={<DashboardWholesalerOrders />} />
+                    <Route path="/dashboard/seller-dashboard" element={<DashboardSellerDashboard />} />
+                    
+                    {/* Policy Pages */}
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/terms-of-service" element={<TermsOfService />} />
+                    <Route path="/refund-policy" element={<RefundPolicy />} />
+                    <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </AuthProvider>
+              </BrowserRouter>
+            </div>
           </ErrorBoundary>
         </TooltipProvider>
       </LanguageProvider>

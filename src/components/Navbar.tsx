@@ -94,8 +94,8 @@ const Navbar = () => {
                 </Link>
               </div>
 
-              {/* Theme and Language Controls */}
-              <div className="flex items-center space-x-2">
+              {/* Always visible Theme and Language Controls */}
+              <div className="flex items-center space-x-2 border-l border-gray-200 dark:border-gray-700 pl-4">
                 <ThemeToggle />
                 <LanguageToggle />
               </div>
@@ -145,7 +145,7 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button - Always include theme toggle */}
             <div className="md:hidden flex items-center space-x-2">
               <ThemeToggle />
               <Button

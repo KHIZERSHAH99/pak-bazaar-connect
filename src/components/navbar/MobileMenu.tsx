@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { User, ShoppingBag, Users, Zap, Home, Settings } from 'lucide-react';
 import { LanguageToggle } from '@/components/ui/language-toggle';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import EnhancedRoleSwitcher from './EnhancedRoleSwitcher';
 
 interface MobileMenuProps {
@@ -74,10 +75,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           </Link>
         </div>
 
-        {/* Language Toggle */}
-        <div className="flex items-center justify-between py-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">Language</span>
-          <LanguageToggle />
+        {/* Theme and Language Controls */}
+        <div className="space-y-3 border-t border-gray-200 dark:border-gray-800 pt-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">Theme</span>
+            <ThemeToggle />
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">Language</span>
+            <LanguageToggle />
+          </div>
         </div>
 
         {/* User Section */}

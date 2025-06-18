@@ -3,17 +3,15 @@ import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { changeRole, UserRole } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 
-// Utility: readable role name
 const getDisplayName = (role: UserRole) =>
   role === "wholesaler"
-    ? "Wholeseller"
+    ? "Wholesaler"
     : role === "seller"
     ? "Seller"
     : role.charAt(0).toUpperCase() + role.slice(1);
 
-// Utility: role color
 const getRoleColor = (role: UserRole) =>
   role === "wholesaler"
     ? "bg-pakistani_green-700 text-white"
@@ -23,7 +21,6 @@ const getRoleColor = (role: UserRole) =>
     ? "bg-red-600 text-white"
     : "bg-gray-400 text-white";
 
-// Utility: next role
 const nextRole: Record<UserRole, UserRole> = {
   seller: "wholesaler",
   wholesaler: "seller",
@@ -32,7 +29,7 @@ const nextRole: Record<UserRole, UserRole> = {
 };
 
 const RoleSwitcherProminent: React.FC = () => {
-  const { profile, checkAuthStatus } = useAuth();
+  const { profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -45,32 +42,34 @@ const RoleSwitcherProminent: React.FC = () => {
     setLoading(true);
     try {
       await changeRole(targetRole);
-      await checkAuthStatus();
       toast({
         title: "Role Switched",
-        description: `You are now a ${getDisplayName(targetRole)}.`,
-        variant: "success",
+        description: `You are now a ${getDisplayName(targetRole)}. Page will reload to update your dashboard.`,
+        variant: "default",
       });
+      
+      // Force page reload after successful role change
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+      
     } catch (e) {
       toast({
         title: "Failed to switch role",
         description: "An error occurred. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="flex items-center gap-4 mb-2 py-2 bg-pakistani_green-50 dark:bg-pakistani_green-900/50 border border-pakistani_green-200 dark:border-pakistani_green-800 rounded-xl px-4 shadow-sm w-fit animate-fadeIn">
-      {/* Current Role */}
       <span
         className={`font-semibold px-3 py-1 rounded-md text-base font-poppins ${getRoleColor(profile.role as UserRole)}`}
       >
         {getDisplayName(profile.role as UserRole)}
       </span>
-      {/* Switcher */}
       {canSwitch && (
         <button
           className="flex items-center gap-2 px-3 py-1 rounded-md bg-white dark:bg-pakistani_green-700/70 text-pakistani_green-900 dark:text-white hover:bg-pakistani_green-100 dark:hover:bg-pakistani_green-600 transition shadow font-poppins border focus:ring-2 ring-pakistani_green-400"

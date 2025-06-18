@@ -4,15 +4,12 @@ import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 import { validateEmail, checkRateLimit, logSecurityEvent } from './security';
 
-// Enhanced authentication with security features
 export const enhancedSignIn = async (email: string, password: string) => {
   try {
-    // Rate limiting check
-    if (!checkRateLimit(`login:${email}`, 5, 300000)) { // 5 attempts per 5 minutes
+    if (!checkRateLimit(`login:${email}`, 5, 300000)) {
       throw new Error('Too many login attempts. Please try again later.');
     }
 
-    // Input validation
     if (!validateEmail(email)) {
       throw new Error('Invalid email format');
     }
@@ -45,12 +42,10 @@ export const enhancedSignIn = async (email: string, password: string) => {
 
 export const enhancedSignUp = async (email: string, password: string, role: UserRole = 'wholesaler', formData?: any) => {
   try {
-    // Rate limiting check
-    if (!checkRateLimit(`signup:${email}`, 3, 3600000)) { // 3 attempts per hour
+    if (!checkRateLimit(`signup:${email}`, 3, 3600000)) {
       throw new Error('Too many signup attempts. Please try again later.');
     }
 
-    // Input validation
     if (!validateEmail(email)) {
       throw new Error('Invalid email format');
     }
@@ -77,7 +72,6 @@ export const enhancedSignUp = async (email: string, password: string, role: User
       throw error;
     }
 
-    // Update the profile with additional business information if provided
     if (data.user && formData) {
       const profileUpdate: any = {
         role: role,
@@ -90,7 +84,6 @@ export const enhancedSignUp = async (email: string, password: string, role: User
         postal_code: formData.postalCode
       };
 
-      // Add optional fields if provided
       if (formData.ntnNumber) profileUpdate.ntn_number = formData.ntnNumber;
       if (formData.strnNumber) profileUpdate.strn_number = formData.strnNumber;
       if (formData.industry) profileUpdate.industry = formData.industry;
@@ -103,12 +96,10 @@ export const enhancedSignUp = async (email: string, password: string, role: User
       
       if (profileError) {
         console.error('Error updating profile with business info:', profileError);
-        // Don't throw here, account creation was successful
       } else {
         console.log('Profile updated with business information');
       }
     } else if (data.user) {
-      // Just update the role if no additional data
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ role: role })
@@ -128,22 +119,28 @@ export const enhancedSignUp = async (email: string, password: string, role: User
   }
 };
 
-// Secure role change with validation
 export const secureChangeRole = async (newRole: UserRole) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) throw new Error('User not authenticated');
 
-    // Validate role
     const validRoles: UserRole[] = ['admin', 'wholesaler', 'seller', 'pending'];
     if (!validRoles.includes(newRole)) {
       throw new Error('Invalid role specified');
     }
 
-    // Prevent admin role changes (should be handled separately)
+    // Prevent admin role changes except for khizerfight@gmail.com
     if (newRole === 'admin') {
-      throw new Error('Admin role cannot be assigned through role change');
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', user.id)
+        .single();
+      
+      if (!profile || profile.email !== 'khizerfight@gmail.com') {
+        throw new Error('Admin role can only be assigned to khizerfight@gmail.com');
+      }
     }
 
     const { data, error } = await supabase
@@ -174,7 +171,6 @@ export const secureChangeRole = async (newRole: UserRole) => {
   }
 };
 
-// Enhanced sign out with cleanup
 export const enhancedSignOut = async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -190,7 +186,6 @@ export const enhancedSignOut = async () => {
       throw error;
     }
     
-    // Force page reload for clean state
     window.location.href = '/';
     
     return true;

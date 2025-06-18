@@ -1,205 +1,69 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
-// Enhanced email validation that checks for any existing user
 export const checkEmailExistsGlobal = async (email: string): Promise<boolean> => {
   try {
-    if (!email || !email.includes('@')) {
-      return false;
-    }
-
-    const cleanEmail = email.toLowerCase().trim();
-    
-    // Simple query to check if email exists
     const { data, error } = await supabase
       .from('profiles')
       .select('email')
-      .eq('email', cleanEmail)
+      .eq('email', email.toLowerCase().trim())
       .limit(1);
     
     if (error) {
-      console.error('Error checking email:', error);
+      console.error('Error checking email existence:', error);
       return false;
     }
     
-    return Boolean(data && data.length > 0);
+    return data && data.length > 0;
   } catch (error) {
-    console.error('Email check error:', error);
+    console.error('Error in checkEmailExistsGlobal:', error);
     return false;
   }
 };
 
-// Enhanced email format validation
-export const validateEmailFormat = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email.trim());
-};
-
-// Enhanced password validation
-export const validatePasswordStrength = (password: string): { isValid: boolean; errors: string[] } => {
+export const validateBusinessData = (data: any): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
-  if (password.length < 8) {
-    errors.push('Password must be at least 8 characters long');
+  if (!data.businessName || data.businessName.trim().length < 2) {
+    errors.push('Business name must be at least 2 characters long');
   }
   
-  if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+  if (!data.contactName || data.contactName.trim().length < 2) {
+    errors.push('Contact name must be at least 2 characters long');
   }
   
-  if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+  if (!data.phoneNumber || data.phoneNumber.trim().length < 10) {
+    errors.push('Phone number must be at least 10 digits long');
   }
   
-  if (!/\d/.test(password)) {
-    errors.push('Password must contain at least one number');
+  if (!data.address || data.address.trim().length < 5) {
+    errors.push('Address must be at least 5 characters long');
   }
   
-  return { isValid: errors.length === 0, errors };
+  if (!data.city || data.city.trim().length < 2) {
+    errors.push('City must be provided');
+  }
+  
+  if (!data.postalCode || data.postalCode.trim().length < 4) {
+    errors.push('Postal code must be at least 4 characters long');
+  }
+  
+  // Validate NTN number format if provided
+  if (data.ntnNumber && !/^\d{7}-\d$/.test(data.ntnNumber)) {
+    errors.push('NTN number must be in format XXXXXXX-X');
+  }
+  
+  // Validate STRN number format if provided
+  if (data.strnNumber && !/^\d{2}-\d{2}-\d{4}-\d{3}-\d{2}$/.test(data.strnNumber)) {
+    errors.push('STRN number must be in format XX-XX-XXXX-XXX-XX');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 };
 
-// Enhanced NTN validation with Pakistani format
-export const validateNTNFormat = (ntn: string): boolean => {
-  if (!ntn || ntn.trim() === '') return true; // Optional field
-  
-  const ntnRegex = /^\d{7}-\d{1}$/;
-  const cleanNtn = ntn.trim();
-  
-  if (!ntnRegex.test(cleanNtn)) {
-    return false;
-  }
-  
-  // Check for invalid patterns
-  const digits = cleanNtn.replace('-', '');
-  const invalidPatterns = ['00000000', '12345678', '76543210', '11111111'];
-  
-  return !invalidPatterns.includes(digits);
-};
-
-// Enhanced STRN validation with Pakistani format
-export const validateSTRNFormat = (strn: string): boolean => {
-  if (!strn || strn.trim() === '') return true; // Optional field
-  
-  const strnRegex = /^\d{11,15}$/;
-  const cleanStrn = strn.replace(/[\s-]/g, '');
-  
-  if (!strnRegex.test(cleanStrn)) {
-    return false;
-  }
-  
-  // Check for invalid patterns
-  const invalidPatterns = ['11111111111', '12345678901', '00000000000', '99999999999'];
-  
-  return !invalidPatterns.some(pattern => cleanStrn.startsWith(pattern));
-};
-
-// Enhanced phone number validation for Pakistani format
-export const validatePhoneFormat = (phone: string): boolean => {
-  if (!phone || phone.trim() === '') return false;
-  
-  const phoneRegex = /^(\+92|0)?3\d{9}$/;
-  const cleanPhone = phone.replace(/[\s-]/g, '');
-  
-  return phoneRegex.test(cleanPhone);
-};
-
-// Enhanced postal code validation for Pakistan
-export const validatePostalCodeFormat = (postalCode: string): boolean => {
-  if (!postalCode || postalCode.trim() === '') return false;
-  
-  const postalCodeRegex = /^\d{5}$/;
-  return postalCodeRegex.test(postalCode.trim());
-};
-
-// Real phone uniqueness check (now works with actual database column)
-export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
-  try {
-    if (!phone || phone.trim() === '') return false;
-    
-    const cleanPhone = phone.replace(/[\s-]/g, '');
-    
-    let query = supabase
-      .from('profiles')
-      .select('id')
-      .eq('phone_number', cleanPhone)
-      .limit(1);
-    
-    if (excludeUserId) {
-      query = query.neq('id', excludeUserId);
-    }
-    
-    const { data, error } = await query;
-    
-    if (error) {
-      console.error('Phone check error:', error);
-      return false;
-    }
-    
-    return Boolean(data && data.length > 0);
-  } catch (error) {
-    console.error('Phone check error:', error);
-    return false;
-  }
-};
-
-// Real NTN uniqueness check (now works with actual database column)
-export const checkNTNExists = async (ntn: string, excludeUserId?: string): Promise<boolean> => {
-  try {
-    if (!ntn || ntn.trim() === '') return false;
-    
-    const cleanNtn = ntn.trim();
-    
-    let query = supabase
-      .from('profiles')
-      .select('id')
-      .eq('ntn_number', cleanNtn)
-      .limit(1);
-    
-    if (excludeUserId) {
-      query = query.neq('id', excludeUserId);
-    }
-    
-    const { data, error } = await query;
-    
-    if (error) {
-      console.error('NTN check error:', error);
-      return false;
-    }
-    
-    return Boolean(data && data.length > 0);
-  } catch (error) {
-    console.error('NTN check error:', error);
-    return false;
-  }
-};
-
-// Real STRN uniqueness check (now works with actual database column)
-export const checkSTRNExists = async (strn: string, excludeUserId?: string): Promise<boolean> => {
-  try {
-    if (!strn || strn.trim() === '') return false;
-    
-    const cleanStrn = strn.replace(/[\s-]/g, '');
-    
-    let query = supabase
-      .from('profiles')
-      .select('id')
-      .eq('strn_number', cleanStrn)
-      .limit(1);
-    
-    if (excludeUserId) {
-      query = query.neq('id', excludeUserId);
-    }
-    
-    const { data, error } = await query;
-    
-    if (error) {
-      console.error('STRN check error:', error);
-      return false;
-    }
-    
-    return Boolean(data && data.length > 0);
-  } catch (error) {
-    console.error('STRN check error:', error);
-    return false;
-  }
+export const sanitizeInput = (input: string): string => {
+  return input.trim().replace(/[<>\"']/g, '');
 };

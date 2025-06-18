@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { signIn } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
@@ -20,15 +21,15 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
   const { checkAuthStatus } = useAuth();
   const navigate = useNavigate();
 
-  const adminEmails = ['admin@test.com', 'admin@pakbazaarconnect.com'];
+  const adminEmail = 'khizerfight@gmail.com';
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!adminEmails.includes(email.toLowerCase())) {
+    if (email.toLowerCase() !== adminEmail) {
       toast({
         title: 'Access Denied',
-        description: 'This email is not authorized for admin access.',
+        description: 'Only khizerfight@gmail.com is authorized for admin access.',
         variant: 'destructive'
       });
       return;
@@ -76,7 +77,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@pakbazaarconnect.com"
+            placeholder="khizerfight@gmail.com"
             className="w-full font-poppins bg-background dark:bg-background"
             disabled={isLoading}
             required
@@ -128,7 +129,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
       </div>
       <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
         <p className="text-xs text-yellow-800 dark:text-yellow-200 font-poppins text-center">
-          <strong>Admin privileges:</strong> Full platform access, user management, and system administration
+          <strong>Restricted Access:</strong> Only khizerfight@gmail.com can access admin functions
         </p>
       </div>
     </div>

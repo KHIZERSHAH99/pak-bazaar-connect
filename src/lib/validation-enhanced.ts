@@ -21,6 +21,76 @@ export const checkEmailExistsGlobal = async (email: string): Promise<boolean> =>
   }
 };
 
+export const checkPhoneExists = async (phoneNumber: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('phone_number')
+      .eq('phone_number', phoneNumber.trim())
+      .limit(1);
+    
+    if (error) {
+      console.error('Error checking phone existence:', error);
+      return false;
+    }
+    
+    return data && data.length > 0;
+  } catch (error) {
+    console.error('Error in checkPhoneExists:', error);
+    return false;
+  }
+};
+
+export const checkNTNExists = async (ntnNumber: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('ntn_number')
+      .eq('ntn_number', ntnNumber.trim())
+      .limit(1);
+    
+    if (error) {
+      console.error('Error checking NTN existence:', error);
+      return false;
+    }
+    
+    return data && data.length > 0;
+  } catch (error) {
+    console.error('Error in checkNTNExists:', error);
+    return false;
+  }
+};
+
+export const checkSTRNExists = async (strnNumber: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('strn_number')
+      .eq('strn_number', strnNumber.trim())
+      .limit(1);
+    
+    if (error) {
+      console.error('Error checking STRN existence:', error);
+      return false;
+    }
+    
+    return data && data.length > 0;
+  } catch (error) {
+    console.error('Error in checkSTRNExists:', error);
+    return false;
+  }
+};
+
+export const validateNTNFormat = (ntnNumber: string): boolean => {
+  const ntnRegex = /^\d{7}-\d$/;
+  return ntnRegex.test(ntnNumber.trim());
+};
+
+export const validateSTRNFormat = (strnNumber: string): boolean => {
+  const strnRegex = /^\d{11,15}$/;
+  return strnRegex.test(strnNumber.trim().replace(/\D/g, ''));
+};
+
 export const validateBusinessData = (data: any): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
@@ -49,13 +119,13 @@ export const validateBusinessData = (data: any): { isValid: boolean; errors: str
   }
   
   // Validate NTN number format if provided
-  if (data.ntnNumber && !/^\d{7}-\d$/.test(data.ntnNumber)) {
+  if (data.ntnNumber && !validateNTNFormat(data.ntnNumber)) {
     errors.push('NTN number must be in format XXXXXXX-X');
   }
   
   // Validate STRN number format if provided
-  if (data.strnNumber && !/^\d{2}-\d{2}-\d{4}-\d{3}-\d{2}$/.test(data.strnNumber)) {
-    errors.push('STRN number must be in format XX-XX-XXXX-XXX-XX');
+  if (data.strnNumber && !validateSTRNFormat(data.strnNumber)) {
+    errors.push('STRN number must be 11-15 digits');
   }
   
   return {

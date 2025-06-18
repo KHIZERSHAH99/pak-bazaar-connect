@@ -9,7 +9,7 @@ import { LoadingScreen } from '@/contexts/AuthContext';
 import './App.css';
 
 // Lazy load components for better performance
-const Home = lazy(() => import('@/pages/Home'));
+const Home = lazy(() => import('@/pages/Index'));
 const Login = lazy(() => import('@/pages/Login'));
 const Signup = lazy(() => import('@/pages/Signup'));
 const Profile = lazy(() => import('@/pages/Profile'));
@@ -30,7 +30,7 @@ const DashboardSellerDashboard = lazy(() => import('@/pages/dashboard/DashboardS
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+    <ThemeProvider>
       <LanguageProvider>
         <AuthProvider>
           <Router>

@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { changeRole, UserRole } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 
 // Utility: readable role name
 const getDisplayName = (role: UserRole) =>
   role === "wholesaler"
-    ? "Wholeseller"
+    ? "Wholesaler"
     : role === "seller"
     ? "Seller"
     : role.charAt(0).toUpperCase() + role.slice(1);
@@ -32,7 +32,7 @@ const nextRole: Record<UserRole, UserRole> = {
 };
 
 const RoleSwitcherProminent: React.FC = () => {
-  const { profile, checkAuthStatus } = useAuth();
+  const { profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -45,19 +45,23 @@ const RoleSwitcherProminent: React.FC = () => {
     setLoading(true);
     try {
       await changeRole(targetRole);
-      await checkAuthStatus();
       toast({
         title: "Role Switched",
-        description: `You are now a ${getDisplayName(targetRole)}.`,
+        description: `Switching to ${getDisplayName(targetRole)}. Page will reload...`,
         variant: "success",
       });
+
+      // Force page reload after successful role switch
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
     } catch (e) {
       toast({
         title: "Failed to switch role",
         description: "An error occurred. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };

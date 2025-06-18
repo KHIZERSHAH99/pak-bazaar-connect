@@ -29,7 +29,7 @@ const nextRole: Record<UserRole, UserRole> = {
 };
 
 const EnhancedRoleSwitcher: React.FC = () => {
-  const { profile, checkAuthStatus } = useAuth();
+  const { profile } = useAuth();
   const [isSwitching, setIsSwitching] = useState(false);
   const { toast } = useToast();
 
@@ -45,12 +45,18 @@ const EnhancedRoleSwitcher: React.FC = () => {
     setIsSwitching(true);
     try {
       await changeRole(targetRole);
-      await checkAuthStatus();
+      
       toast({
         title: "Role Switched Successfully",
-        description: `You are now operating as a ${roleDisplay[targetRole]}.`,
+        description: `Switching to ${roleDisplay[targetRole]}. Page will reload...`,
         variant: "default"
       });
+
+      // Force page reload after successful role switch
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
     } catch(error: any) {
       console.error('Role switch error:', error);
       toast({
@@ -58,7 +64,6 @@ const EnhancedRoleSwitcher: React.FC = () => {
         description: error.message || "Something went wrong. Please try again.",
         variant: "destructive"
       });
-    } finally {
       setIsSwitching(false);
     }
   };

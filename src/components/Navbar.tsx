@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Flag, Menu, X } from 'lucide-react';
+import { Flag, Menu, X, ShoppingBag, Users, Zap } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { LanguageToggle } from '@/components/ui/language-toggle';
 import EnhancedRoleSwitcher from './navbar/EnhancedRoleSwitcher';
@@ -62,7 +62,38 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-6">
+              {/* Main Navigation Links */}
+              <div className="flex items-center space-x-1">
+                <Link to="/products">
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                  >
+                    <ShoppingBag className="w-4 h-4 mr-2" />
+                    Products
+                  </Button>
+                </Link>
+                <Link to="/sellers">
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Sellers
+                  </Button>
+                </Link>
+                <Link to="/features">
+                  <Button 
+                    variant="ghost" 
+                    className="text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                  >
+                    <Zap className="w-4 h-4 mr-2" />
+                    Features
+                  </Button>
+                </Link>
+              </div>
+
               {/* Theme and Language Controls */}
               <div className="flex items-center space-x-2">
                 <ThemeToggle />

@@ -15,6 +15,12 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Stats from "./pages/Stats";
 import Chat from "./pages/Chat";
+import Products from "./pages/Products";
+import Sellers from "./pages/Sellers";
+import Features from "./pages/Features";
+import WholesalerProducts from "./pages/WholesalerProducts";
+import ProductDetail from "./pages/ProductDetail";
+import SellerProfile from "./pages/SellerProfile";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import RefundPolicy from "./pages/RefundPolicy";
@@ -60,6 +66,14 @@ const App = () => (
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/stats" element={<Stats />} />
                   <Route path="/chat" element={<Chat />} />
+                  
+                  {/* Marketplace Pages */}
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/sellers" element={<Sellers />} />
+                  <Route path="/features" element={<Features />} />
+                  <Route path="/wholesaler-products" element={<WholesalerProducts />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/seller/:id" element={<SellerProfile />} />
                   
                   {/* Dashboard Routes */}
                   <Route path="/dashboard/shops" element={<DashboardShops />} />

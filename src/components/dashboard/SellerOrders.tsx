@@ -6,6 +6,8 @@ import { getSellerOrders, reusePreviousOrder } from '@/lib/orders-enhanced';
 import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 import EnhancedOrderDetails from '@/components/orders/EnhancedOrderDetails';
 import EnhancedOrderForm from '@/components/orders/EnhancedOrderForm';
+import OrderReuseDialog from '@/components/orders/OrderReuseDialog';
+import SecurityWarning from '@/components/orders/SecurityWarning';
 import OrderStats from '@/components/orders/OrderStats';
 import OrderFilters from '@/components/orders/OrderFilters';
 import OrderCard from '@/components/orders/OrderCard';
@@ -19,6 +21,7 @@ const SellerOrders: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showReorder, setShowReorder] = useState(false);
+  const [showReuseDialog, setShowReuseDialog] = useState(false);
   const [reorderData, setReorderData] = useState<any>(null);
   const { toast } = useToast();
 
@@ -75,21 +78,13 @@ const SellerOrders: React.FC = () => {
   };
 
   const handleReorder = async (order: Order) => {
-    try {
-      const previousOrderData = await reusePreviousOrder(order.id);
-      setReorderData({
-        ...previousOrderData,
-        shopId: order.shop_id,
-        shopName: order.shops?.name
-      });
-      setShowReorder(true);
-    } catch (error: any) {
-      toast({
-        title: "Failed to Prepare Reorder",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
+    setSelectedOrder(order);
+    setShowReuseDialog(true);
+  };
+
+  const handleReuseOrder = (orderData: any) => {
+    setReorderData(orderData);
+    setShowReorder(true);
   };
 
   const handleOrderUpdate = (updatedOrder: Order) => {
@@ -102,6 +97,7 @@ const SellerOrders: React.FC = () => {
   const handleReorderComplete = (orderId: string) => {
     setShowReorder(false);
     setReorderData(null);
+    setShowReuseDialog(false);
     toast({
       title: "Reorder Successful",
       description: "Your new order has been placed successfully",
@@ -129,6 +125,8 @@ const SellerOrders: React.FC = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 font-poppins">My Orders</h1>
       </div>
+
+      <SecurityWarning type="general" />
 
       <OrderStats counts={counts} />
 
@@ -163,13 +161,25 @@ const SellerOrders: React.FC = () => {
             <DialogTitle className="font-poppins">Order Details</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
-            <EnhancedOrderDetails
-              order={selectedOrder}
-              onOrderUpdate={handleOrderUpdate}
-            />
+            <div className="space-y-4">
+              <SecurityWarning type="verification" />
+              <EnhancedOrderDetails
+                order={selectedOrder}
+                onOrderUpdate={handleOrderUpdate}
+              />
+            </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {selectedOrder && (
+        <OrderReuseDialog
+          open={showReuseDialog}
+          onOpenChange={setShowReuseDialog}
+          previousOrder={selectedOrder}
+          onReuseOrder={handleReuseOrder}
+        />
+      )}
 
       <Dialog open={showReorder} onOpenChange={setShowReorder}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -177,13 +187,16 @@ const SellerOrders: React.FC = () => {
             <DialogTitle className="font-poppins">Reorder from {reorderData?.shopName}</DialogTitle>
           </DialogHeader>
           {reorderData && (
-            <EnhancedOrderForm
-              shopId={reorderData.shopId}
-              shopName={reorderData.shopName}
-              totalAmount={reorderData.total_amount}
-              onOrderCreated={handleReorderComplete}
-              onCancel={() => setShowReorder(false)}
-            />
+            <div className="space-y-4">
+              <SecurityWarning type="payment" />
+              <EnhancedOrderForm
+                shopId={reorderData.shopId}
+                shopName={reorderData.shopName}
+                totalAmount={reorderData.totalAmount}
+                onOrderCreated={handleReorderComplete}
+                onCancel={() => setShowReorder(false)}
+              />
+            </div>
           )}
         </DialogContent>
       </Dialog>

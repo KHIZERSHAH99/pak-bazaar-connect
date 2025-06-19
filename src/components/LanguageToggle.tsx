@@ -26,31 +26,31 @@ const LanguageToggle: React.FC = () => {
         <Button 
           variant="ghost" 
           size="sm" 
-          className="h-9 px-2 gap-1 hover:bg-green-50 dark:hover:bg-green-900/20"
+          className="h-9 px-3 gap-2 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 transition-all duration-200"
           aria-label={`Switch language - Currently ${currentLang.name}`}
         >
-          <Globe className="h-4 w-4" />
-          <span className="text-sm font-medium">
+          <Globe className="h-4 w-4 text-pakistani_green-600 dark:text-pakistani_green-400" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
             {currentLang.label}
           </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg min-w-[120px] z-50"
+        className="min-w-[140px]"
       >
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
             onClick={() => setLanguage(lang.code)}
-            className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 ${
-              language === lang.code ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : ''
+            className={`cursor-pointer flex items-center gap-3 ${
+              language === lang.code ? 'bg-pakistani_green-50 dark:bg-pakistani_green-900/20 text-pakistani_green-700 dark:text-pakistani_green-300' : ''
             }`}
           >
-            <span className="text-base">{lang.flag}</span>
-            <span className="font-poppins">{lang.name}</span>
+            <span className="text-lg">{lang.flag}</span>
+            <span className="font-poppins font-medium">{lang.name}</span>
             {language === lang.code && (
-              <span className="ml-auto text-green-600 dark:text-green-400">✓</span>
+              <span className="ml-auto text-pakistani_green-600 dark:text-pakistani_green-400 text-sm">✓</span>
             )}
           </DropdownMenuItem>
         ))}

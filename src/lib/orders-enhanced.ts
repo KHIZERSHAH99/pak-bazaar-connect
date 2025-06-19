@@ -272,7 +272,7 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
     }])
     .select(`
       *,
-      profiles(email, role)
+      profiles(id, email, role, business_name)
     `);
 
   if (error) {
@@ -289,7 +289,7 @@ export const getOrderMessages = async (orderId: string): Promise<OrderMessage[]>
     .from('order_messages')
     .select(`
       *,
-      profiles(email, role, business_name)
+      profiles(id, email, role, business_name)
     `)
     .eq('order_id', orderId)
     .order('created_at', { ascending: true });

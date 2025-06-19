@@ -22,7 +22,10 @@ export const getAllCommissionRecords = async (): Promise<CommissionRecord[]> => 
     return [];
   }
 
-  return data || [];
+  return (data || []).map(record => ({
+    ...record,
+    status: record.status as CommissionStatus
+  }));
 };
 
 // Get commission records for a specific wholesaler
@@ -44,7 +47,10 @@ export const getWholesalerCommissions = async (): Promise<CommissionRecord[]> =>
     return [];
   }
 
-  return data || [];
+  return (data || []).map(record => ({
+    ...record,
+    status: record.status as CommissionStatus
+  }));
 };
 
 // Mark commission as paid (admin only)

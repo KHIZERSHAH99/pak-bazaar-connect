@@ -718,6 +718,18 @@ export type Database = {
           paid_commission: number
         }[]
       }
+      log_audit_event: {
+        Args: {
+          p_user_id: string
+          p_event_type: string
+          p_table_name?: string
+          p_record_id?: string
+          p_old_values?: string
+          p_new_values?: string
+          p_user_agent?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

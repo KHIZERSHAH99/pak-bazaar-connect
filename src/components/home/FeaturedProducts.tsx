@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Star, MapPin, Package } from 'lucide-react';
+import OptimizedImage from '@/components/ui/image-optimizer';
+import LazyLoadWrapper from '@/components/ui/lazy-load-wrapper';
 
 const FeaturedProducts = () => {
   const featuredProducts = [
@@ -82,16 +84,18 @@ const FeaturedProducts = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <LazyLoadWrapper height="400px" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => (
             <Link key={product.id} to={`/product/${product.id}`}>
               <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-pakistani_green-200/50 dark:hover:shadow-pakistani_green-900/50">
                 {/* Product Image */}
                 <div className="relative overflow-hidden">
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
+                  <OptimizedImage
+                    src={product.image}
+                    alt={product.name}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    quality="medium"
+                    containerClassName="h-48"
                   />
                   <Badge className="absolute top-3 left-3 bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
                     {product.badge}
@@ -153,7 +157,7 @@ const FeaturedProducts = () => {
               </Card>
             </Link>
           ))}
-        </div>
+        </LazyLoadWrapper>
 
         {/* Call to Action */}
         <div className="text-center mt-12">

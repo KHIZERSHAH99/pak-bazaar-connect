@@ -4,17 +4,28 @@ import { useAuth } from '@/contexts/AuthContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import DashboardSidebar from './dashboard/DashboardSidebar';
+import SEOHead from '@/components/ui/seo-head';
+import PerformanceMonitor from '@/components/ui/performance-monitor';
+import { usePageAnalytics } from '@/hooks/usePageAnalytics';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { LoadingScreen } from '@/contexts/AuthContext';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
+  title?: string;
+  description?: string;
 }
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ 
+  children, 
+  title = 'Dashboard - Pak Bazaar Connect',
+  description = 'Manage your business operations on Pakistan\'s leading B2B marketplace platform.'
+}) => {
   const { loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  usePageAnalytics();
 
   if (loading) {
     return <LoadingScreen />;
@@ -26,6 +37,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEOHead title={title} description={description} />
       <Navbar />
       <div className="flex flex-grow relative">
         {/* Mobile sidebar toggle button - improved positioning */}
@@ -62,6 +74,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </main>
       </div>
       <Footer />
+      <PerformanceMonitor />
     </div>
   );
 };

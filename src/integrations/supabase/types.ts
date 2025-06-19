@@ -102,6 +102,57 @@ export type Database = {
         }
         Relationships: []
       }
+      commission_records: {
+        Row: {
+          commission_amount: number
+          commission_rate: number | null
+          created_at: string | null
+          id: string
+          order_id: string
+          paid_at: string | null
+          sale_amount: number
+          status: string | null
+          wholesaler_id: string
+        }
+        Insert: {
+          commission_amount: number
+          commission_rate?: number | null
+          created_at?: string | null
+          id?: string
+          order_id: string
+          paid_at?: string | null
+          sale_amount: number
+          status?: string | null
+          wholesaler_id: string
+        }
+        Update: {
+          commission_amount?: number
+          commission_rate?: number | null
+          created_at?: string | null
+          id?: string
+          order_id?: string
+          paid_at?: string | null
+          sale_amount?: number
+          status?: string | null
+          wholesaler_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_records_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_records_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commissions: {
         Row: {
           commission_amount: number
@@ -249,33 +300,141 @@ export type Database = {
           },
         ]
       }
-      orders: {
+      order_actions: {
         Row: {
-          buyer_id: string
-          commission_id: string | null
+          action: string
           created_at: string | null
           id: string
+          notes: string | null
+          order_id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_actions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_actions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          order_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          order_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          order_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          buyer_address: string | null
+          buyer_id: string
+          buyer_name: string | null
+          buyer_phone: string | null
+          commission_id: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          id: string
+          payment_method: string | null
+          payment_screenshot: string | null
+          rejected_at: string | null
+          screenshot_uploaded_at: string | null
           shop_id: string
           status: string
           total_amount: number
+          wholesaler_notes: string | null
         }
         Insert: {
+          buyer_address?: string | null
           buyer_id: string
+          buyer_name?: string | null
+          buyer_phone?: string | null
           commission_id?: string | null
+          confirmed_at?: string | null
           created_at?: string | null
           id?: string
+          payment_method?: string | null
+          payment_screenshot?: string | null
+          rejected_at?: string | null
+          screenshot_uploaded_at?: string | null
           shop_id: string
           status?: string
           total_amount: number
+          wholesaler_notes?: string | null
         }
         Update: {
+          buyer_address?: string | null
           buyer_id?: string
+          buyer_name?: string | null
+          buyer_phone?: string | null
           commission_id?: string | null
+          confirmed_at?: string | null
           created_at?: string | null
           id?: string
+          payment_method?: string | null
+          payment_screenshot?: string | null
+          rejected_at?: string | null
+          screenshot_uploaded_at?: string | null
           shop_id?: string
           status?: string
           total_amount?: number
+          wholesaler_notes?: string | null
         }
         Relationships: [
           {
@@ -283,6 +442,53 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_methods: {
+        Row: {
+          account_number: string | null
+          account_title: string | null
+          bank_name: string | null
+          created_at: string | null
+          easypaisa_number: string | null
+          id: string
+          is_active: boolean | null
+          jazzcash_number: string | null
+          updated_at: string | null
+          wholesaler_id: string
+        }
+        Insert: {
+          account_number?: string | null
+          account_title?: string | null
+          bank_name?: string | null
+          created_at?: string | null
+          easypaisa_number?: string | null
+          id?: string
+          is_active?: boolean | null
+          jazzcash_number?: string | null
+          updated_at?: string | null
+          wholesaler_id: string
+        }
+        Update: {
+          account_number?: string | null
+          account_title?: string | null
+          bank_name?: string | null
+          created_at?: string | null
+          easypaisa_number?: string | null
+          id?: string
+          is_active?: boolean | null
+          jazzcash_number?: string | null
+          updated_at?: string | null
+          wholesaler_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -350,17 +556,23 @@ export type Database = {
           business_name: string | null
           business_type: string | null
           city: string | null
+          cnic_image: string | null
           contact_name: string | null
           created_at: string | null
           email: string
           id: string
           industry: string | null
+          is_suspended: boolean | null
           ntn_number: string | null
           phone_number: string | null
           postal_code: string | null
           role: string
+          selfie_image: string | null
           strn_number: string | null
+          suspension_reason: string | null
           updated_at: string | null
+          verification_notes: string | null
+          verification_status: string | null
           years_in_business: string | null
         }
         Insert: {
@@ -368,17 +580,23 @@ export type Database = {
           business_name?: string | null
           business_type?: string | null
           city?: string | null
+          cnic_image?: string | null
           contact_name?: string | null
           created_at?: string | null
           email: string
           id: string
           industry?: string | null
+          is_suspended?: boolean | null
           ntn_number?: string | null
           phone_number?: string | null
           postal_code?: string | null
           role?: string
+          selfie_image?: string | null
           strn_number?: string | null
+          suspension_reason?: string | null
           updated_at?: string | null
+          verification_notes?: string | null
+          verification_status?: string | null
           years_in_business?: string | null
         }
         Update: {
@@ -386,17 +604,23 @@ export type Database = {
           business_name?: string | null
           business_type?: string | null
           city?: string | null
+          cnic_image?: string | null
           contact_name?: string | null
           created_at?: string | null
           email?: string
           id?: string
           industry?: string | null
+          is_suspended?: boolean | null
           ntn_number?: string | null
           phone_number?: string | null
           postal_code?: string | null
           role?: string
+          selfie_image?: string | null
           strn_number?: string | null
+          suspension_reason?: string | null
           updated_at?: string | null
+          verification_notes?: string | null
+          verification_status?: string | null
           years_in_business?: string | null
         }
         Relationships: []
@@ -477,9 +701,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_old_screenshots: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_wholesaler_monthly_sales: {
+        Args: { wholesaler_uuid: string; target_month?: string }
+        Returns: {
+          total_orders: number
+          total_sales: number
+          pending_commission: number
+          paid_commission: number
+        }[]
       }
     }
     Enums: {

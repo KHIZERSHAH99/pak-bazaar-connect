@@ -6,7 +6,25 @@ export interface Profile {
   id: string;
   email: string;
   role: UserRole;
+  phone_number?: string;
+  business_name?: string;
+  contact_name?: string;
+  business_type?: string;
+  ntn_number?: string;
+  strn_number?: string;
+  address?: string;
+  city?: string;
+  postal_code?: string;
+  industry?: string;
+  years_in_business?: string;
+  cnic_image?: string;
+  selfie_image?: string;
+  verification_status?: string;
+  verification_notes?: string;
+  is_suspended?: boolean;
+  suspension_reason?: string;
   created_at?: string;
+  updated_at?: string;
 }
 
 export interface Category {
@@ -110,8 +128,10 @@ export interface Review {
 }
 
 export type AdStatus = 'pending' | 'approved' | 'active' | 'rejected';
-export type OrderStatus = 'pending' | 'completed' | 'cancelled';
+export type OrderStatus = 'pending' | 'confirmed' | 'completed' | 'rejected' | 'cancelled';
 export type RoleRequestStatus = 'pending' | 'approved' | 'rejected';
+export type PaymentMethod = 'bank_transfer' | 'jazzcash' | 'easypaisa';
+export type CommissionStatus = 'pending' | 'paid';
 
 export interface Ad {
   id: string;
@@ -129,7 +149,73 @@ export interface Order {
   total_amount: number;
   status: OrderStatus;
   commission_id?: string;
+  payment_screenshot?: string;
+  payment_method?: PaymentMethod;
+  buyer_name?: string;
+  buyer_phone?: string;
+  buyer_address?: string;
+  screenshot_uploaded_at?: string;
+  confirmed_at?: string;
+  rejected_at?: string;
+  wholesaler_notes?: string;
   created_at?: string;
+  // Joined data
+  shops?: Shop;
+  profiles?: Profile;
+}
+
+export interface PaymentMethodInfo {
+  id: string;
+  wholesaler_id: string;
+  bank_name?: string;
+  account_number?: string;
+  account_title?: string;
+  jazzcash_number?: string;
+  easypaisa_number?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CommissionRecord {
+  id: string;
+  wholesaler_id: string;
+  order_id: string;
+  sale_amount: number;
+  commission_rate: number;
+  commission_amount: number;
+  status: CommissionStatus;
+  paid_at?: string;
+  created_at?: string;
+  // Joined data
+  orders?: Order;
+  profiles?: Profile;
+}
+
+export interface OrderAction {
+  id: string;
+  order_id: string;
+  user_id: string;
+  action: 'created' | 'confirmed' | 'rejected' | 'completed';
+  notes?: string;
+  created_at: string;
+}
+
+export interface OrderMessage {
+  id: string;
+  order_id: string;
+  sender_id: string;
+  message: string;
+  created_at: string;
+  // Joined data
+  profiles?: Profile;
+}
+
+export interface WholesalerMonthlySales {
+  total_orders: number;
+  total_sales: number;
+  pending_commission: number;
+  paid_commission: number;
 }
 
 export interface Commission {

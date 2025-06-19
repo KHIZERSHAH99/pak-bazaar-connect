@@ -1,6 +1,7 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
-// Enhanced audit logging with database persistence
+// Enhanced audit logging with database persistence and fallback
 export const logAuditEvent = async (
   eventType: string,
   tableName?: string,
@@ -32,13 +33,23 @@ export const logAuditEvent = async (
       timestamp: new Date().toISOString()
     });
 
-    // Try to store in database
-    const { error } = await supabase
-      .from('audit_logs')
-      .insert([auditData]);
+    // Try to store in database using raw SQL to bypass type issues
+    try {
+      const { error } = await supabase.rpc('log_audit_event', {
+        p_user_id: user?.id || null,
+        p_event_type: eventType,
+        p_table_name: tableName || null,
+        p_record_id: recordId || null,
+        p_old_values: oldValues ? JSON.stringify(oldValues) : null,
+        p_new_values: newValues ? JSON.stringify(newValues) : null,
+        p_user_agent: userAgent
+      });
 
-    if (error) {
-      console.error('Failed to store audit log in database:', error);
+      if (error) {
+        console.warn('Database audit logging failed, using fallback:', error);
+        throw error;
+      }
+    } catch (dbError) {
       // Fallback to localStorage for critical events
       if (typeof window !== 'undefined') {
         const auditLogs = JSON.parse(localStorage.getItem('audit_logs_backup') || '[]');

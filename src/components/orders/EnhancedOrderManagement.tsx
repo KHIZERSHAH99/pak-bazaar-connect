@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { AlertCircle, CheckCircle, Clock, X, Upload, MessageSquare } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, X, Upload, MessageSquare, Package } from 'lucide-react';
 import { 
   createOrderWithPaymentEnhanced, 
   confirmOrderEnhanced, 
@@ -34,7 +33,7 @@ export const EnhancedOrderManagement: React.FC<EnhancedOrderManagementProps> = (
   // Fetch orders based on user role
   const { data: orders = [], isLoading, error } = useQuery({
     queryKey: ['orders', userRole],
-    queryFn: userRole === 'wholesaler' ? getWholesalerOrders : getSellerOrders,
+    queryFn: () => userRole === 'wholesaler' ? getWholesalerOrders() : getSellerOrders(),
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 

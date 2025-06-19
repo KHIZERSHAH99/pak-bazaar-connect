@@ -33,14 +33,27 @@ export const EnhancedAdminDashboard: React.FC = () => {
         ordersResponse,
         commissionsResponse
       ] = await Promise.all([
-        supabase.from('role_requests').select('*, profiles(email, business_name)').eq('status', 'pending'),
+        // Fix: Fetch role_requests and profiles separately, then join in code
+        supabase.from('role_requests').select('*').eq('status', 'pending'),
         supabase.from('profiles').select('*').eq('verification_status', 'pending').eq('role', 'wholesaler'),
-        supabase.from('orders').select('*, shops(name), profiles(email)').order('created_at', { ascending: false }).limit(10),
+        supabase.from('orders').select('*, shops(name)').order('created_at', { ascending: false }).limit(10),
         supabase.from('commission_records').select('*').eq('status', 'pending').limit(10)
       ]);
 
+      // Get profiles for role requests separately
+      const profilesResponse = await supabase
+        .from('profiles')
+        .select('id, email, business_name')
+        .in('id', rolesResponse.data?.map(r => r.user_id) || []);
+
+      // Join the data manually
+      const roleRequestsWithProfiles = rolesResponse.data?.map(request => ({
+        ...request,
+        profile: profilesResponse.data?.find(p => p.id === request.user_id)
+      })) || [];
+
       return {
-        pendingRoles: rolesResponse.data || [],
+        pendingRoles: roleRequestsWithProfiles,
         pendingVerifications: verificationResponse.data || [],
         recentOrders: ordersResponse.data || [],
         pendingCommissions: commissionsResponse.data || []
@@ -286,9 +299,9 @@ export const EnhancedAdminDashboard: React.FC = () => {
                       <CardContent className="p-4">
                         <div className="flex justify-between items-start">
                           <div className="space-y-2">
-                            <h3 className="font-semibold">{request.profiles?.email}</h3>
+                            <h3 className="font-semibold">{request.profile?.email || 'Unknown'}</h3>
                             <p className="text-sm text-gray-600">
-                              Business: {request.profiles?.business_name || 'Not provided'}
+                              Business: {request.profile?.business_name || 'Not provided'}
                             </p>
                             <Badge variant="outline">
                               Requesting: {request.requested_role}
@@ -359,12 +372,13 @@ export const EnhancedAdminDashboard: React.FC = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                // Open documents in new tabs for review
+                                // Fix: Use the correct base URL format
+                                const baseUrl = 'https://sxzxyuxtqqflahzncfre.supabase.co';
                                 if (profile.cnic_image) {
-                                  window.open(`${supabase.supabaseUrl}/storage/v1/object/public/verification-documents/${profile.cnic_image}`, '_blank');
+                                  window.open(`${baseUrl}/storage/v1/object/public/verification-documents/${profile.cnic_image}`, '_blank');
                                 }
                                 if (profile.selfie_image) {
-                                  window.open(`${supabase.supabaseUrl}/storage/v1/object/public/verification-documents/${profile.selfie_image}`, '_blank');
+                                  window.open(`${baseUrl}/storage/v1/object/public/verification-documents/${profile.selfie_image}`, '_blank');
                                 }
                               }}
                             >
@@ -413,9 +427,6 @@ export const EnhancedAdminDashboard: React.FC = () => {
                             <h3 className="font-semibold">Order #{order.id.slice(0, 8)}</h3>
                             <p className="text-sm text-gray-600">
                               Shop: {order.shops?.name || 'Unknown'}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Buyer: {order.profiles?.email || 'Unknown'}
                             </p>
                             <p className="text-sm text-gray-600">
                               Amount: Rs. {order.total_amount?.toLocaleString()}

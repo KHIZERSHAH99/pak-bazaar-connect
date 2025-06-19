@@ -1,180 +1,167 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
-import { toast } from '@/hooks/use-toast';
-import { validateEmail, checkRateLimit, logSecurityEvent } from './security';
+import { rateLimiter, RATE_LIMITS, getClientIdentifier } from './security/rateLimit';
+import { validateAndSanitizeInput, validatePhoneNumber } from './security/validation';
+import { logSecurityEvent } from './security/audit';
 
-// Enhanced authentication with security features
+// Enhanced authentication with comprehensive security measures
 export const enhancedSignIn = async (email: string, password: string) => {
-  try {
-    // Rate limiting check
-    if (!checkRateLimit(`login:${email}`, 5, 300000)) { // 5 attempts per 5 minutes
-      throw new Error('Too many login attempts. Please try again later.');
-    }
+  // Rate limiting for login attempts
+  const clientId = getClientIdentifier();
+  const rateLimitResult = await rateLimiter.checkRateLimit(
+    `login_${clientId}_${email}`,
+    RATE_LIMITS.LOGIN.maxRequests,
+    RATE_LIMITS.LOGIN.windowMs
+  );
 
-    // Input validation
-    if (!validateEmail(email)) {
-      throw new Error('Invalid email format');
-    }
-
-    if (!email || !password) {
-      throw new Error('Email and password are required');
-    }
-
-    console.log('Signing in with:', email);
-    
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.toLowerCase().trim(),
-      password,
+  if (!rateLimitResult.allowed) {
+    await logSecurityEvent('login_rate_limit_exceeded', { 
+      email: email.toLowerCase(),
+      remaining_attempts: rateLimitResult.remaining,
+      reset_time: new Date(rateLimitResult.resetTime).toISOString()
     });
-    
+    throw new Error(`Too many login attempts. Try again in ${Math.ceil((rateLimitResult.resetTime - Date.now()) / 60000)} minutes.`);
+  }
+
+  // Input validation
+  if (!email || !password) {
+    throw new Error('Email and password are required');
+  }
+
+  const sanitizedEmail = validateAndSanitizeInput(email.toLowerCase(), 'text');
+  
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sanitizedEmail)) {
+    throw new Error('Invalid email format');
+  }
+
+  if (password.length < 6) {
+    throw new Error('Password must be at least 6 characters long');
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: sanitizedEmail,
+      password: password
+    });
+
     if (error) {
-      await logSecurityEvent('login_failed', { email, error: error.message });
-      console.error('Auth signin error:', error);
+      await logSecurityEvent('login_failed', { 
+        email: sanitizedEmail,
+        error: error.message,
+        attempts_remaining: rateLimitResult.remaining - 1
+      });
       throw error;
     }
 
-    await logSecurityEvent('login_success', { email });
-    console.log('Signin successful, user data:', data);
+    if (data.user) {
+      await logSecurityEvent('login_successful', { 
+        user_id: data.user.id,
+        email: sanitizedEmail
+      });
+    }
+
     return data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Enhanced sign in error:', error);
-    throw error;
+    throw new Error(error.message || 'Login failed. Please check your credentials.');
   }
 };
 
-export const enhancedSignUp = async (email: string, password: string, role: UserRole = 'wholesaler', formData?: any) => {
+export const enhancedSignUp = async (email: string, password: string, role: UserRole = 'pending', additionalData?: any) => {
+  // Rate limiting for signup attempts
+  const clientId = getClientIdentifier();
+  const rateLimitResult = await rateLimiter.checkRateLimit(
+    `signup_${clientId}`,
+    RATE_LIMITS.SIGNUP.maxRequests,
+    RATE_LIMITS.SIGNUP.windowMs
+  );
+
+  if (!rateLimitResult.allowed) {
+    await logSecurityEvent('signup_rate_limit_exceeded', { 
+      email: email.toLowerCase(),
+      remaining_attempts: rateLimitResult.remaining
+    });
+    throw new Error(`Too many signup attempts. Try again in ${Math.ceil((rateLimitResult.resetTime - Date.now()) / 60000)} minutes.`);
+  }
+
+  // Input validation
+  if (!email || !password) {
+    throw new Error('Email and password are required');
+  }
+
+  const sanitizedEmail = validateAndSanitizeInput(email.toLowerCase(), 'text');
+  
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sanitizedEmail)) {
+    throw new Error('Invalid email format');
+  }
+
+  if (password.length < 8) {
+    throw new Error('Password must be at least 8 characters long');
+  }
+
+  // Password strength validation
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumbers = /\d/.test(password);
+  
+  if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
+    throw new Error('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+  }
+
+  // Validate additional data if provided
+  let sanitizedAdditionalData: any = {};
+  if (additionalData) {
+    if (additionalData.business_name) {
+      sanitizedAdditionalData.business_name = validateAndSanitizeInput(additionalData.business_name, 'business');
+    }
+    if (additionalData.contact_name) {
+      sanitizedAdditionalData.contact_name = validateAndSanitizeInput(additionalData.contact_name, 'text');
+    }
+    if (additionalData.phone_number) {
+      if (!validatePhoneNumber(additionalData.phone_number)) {
+        throw new Error('Invalid Pakistani phone number format');
+      }
+      sanitizedAdditionalData.phone_number = additionalData.phone_number;
+    }
+  }
+
   try {
-    // Rate limiting check
-    if (!checkRateLimit(`signup:${email}`, 3, 3600000)) { // 3 attempts per hour
-      throw new Error('Too many signup attempts. Please try again later.');
-    }
-
-    // Input validation
-    if (!validateEmail(email)) {
-      throw new Error('Invalid email format');
-    }
-
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters long');
-    }
-
-    console.log('Signing up with email:', email, 'and role:', role);
-    
     const { data, error } = await supabase.auth.signUp({
-      email: email.toLowerCase().trim(),
-      password,
+      email: sanitizedEmail,
+      password: password,
       options: {
         data: {
-          role: role
+          role: role,
+          ...sanitizedAdditionalData
         }
       }
     });
-    
-    if (error) {
-      await logSecurityEvent('signup_failed', { email, error: error.message });
-      console.error('Auth signup error:', error);
-      throw error;
-    }
 
-    // Update the profile with additional business information if provided
-    if (data.user && formData) {
-      const profileUpdate: any = {
+    if (error) {
+      await logSecurityEvent('signup_failed', { 
+        email: sanitizedEmail,
         role: role,
-        phone_number: formData.phoneNumber,
-        business_name: formData.businessName,
-        contact_name: formData.contactName,
-        business_type: formData.businessType,
-        address: formData.address,
-        city: formData.city,
-        postal_code: formData.postalCode
-      };
-
-      // Add optional fields if provided
-      if (formData.ntnNumber) profileUpdate.ntn_number = formData.ntnNumber;
-      if (formData.strnNumber) profileUpdate.strn_number = formData.strnNumber;
-      if (formData.industry) profileUpdate.industry = formData.industry;
-      if (formData.yearsInBusiness) profileUpdate.years_in_business = formData.yearsInBusiness;
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update(profileUpdate)
-        .eq('id', data.user.id);
-      
-      if (profileError) {
-        console.error('Error updating profile with business info:', profileError);
-        // Don't throw here, account creation was successful
-      } else {
-        console.log('Profile updated with business information');
-      }
-    } else if (data.user) {
-      // Just update the role if no additional data
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ role: role })
-        .eq('id', data.user.id);
-      
-      if (profileError) {
-        console.error('Error updating profile role:', profileError);
-      }
-    }
-
-    await logSecurityEvent('signup_success', { email, role });
-    console.log('Signup successful, user data:', data);
-    return data;
-  } catch (error) {
-    console.error('Enhanced sign up error:', error);
-    throw error;
-  }
-};
-
-// Secure role change with validation
-export const secureChangeRole = async (newRole: UserRole) => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) throw new Error('User not authenticated');
-
-    // Validate role
-    const validRoles: UserRole[] = ['admin', 'wholesaler', 'seller', 'pending'];
-    if (!validRoles.includes(newRole)) {
-      throw new Error('Invalid role specified');
-    }
-
-    // Prevent admin role changes (should be handled separately)
-    if (newRole === 'admin') {
-      throw new Error('Admin role cannot be assigned through role change');
-    }
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({ role: newRole })
-      .eq('id', user.id)
-      .select();
-    
-    if (error) {
-      await logSecurityEvent('role_change_failed', { 
-        user_id: user.id, 
-        requested_role: newRole, 
-        error: error.message 
+        error: error.message
       });
-      console.error('Error changing role:', error);
       throw error;
     }
-    
-    await logSecurityEvent('role_change_success', { 
-      user_id: user.id, 
-      new_role: newRole 
-    });
-    
-    return data[0];
-  } catch (error) {
-    console.error('Secure role change error:', error);
-    throw error;
+
+    if (data.user) {
+      await logSecurityEvent('signup_successful', { 
+        user_id: data.user.id,
+        email: sanitizedEmail,
+        role: role
+      });
+    }
+
+    return data;
+  } catch (error: any) {
+    console.error('Enhanced sign up error:', error);
+    throw new Error(error.message || 'Signup failed. Please try again.');
   }
 };
 
-// Enhanced sign out with cleanup
 export const enhancedSignOut = async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -182,20 +169,109 @@ export const enhancedSignOut = async () => {
     if (user) {
       await logSecurityEvent('logout', { user_id: user.id });
     }
-    
-    const { error } = await supabase.auth.signOut({ scope: 'global' });
+
+    const { error } = await supabase.auth.signOut();
     
     if (error) {
-      console.error('Sign out error:', error);
       throw error;
     }
-    
-    // Force page reload for clean state
-    window.location.href = '/';
-    
-    return true;
-  } catch (error) {
+
+    // Clear any cached data
+    if (typeof window !== 'undefined') {
+      // Clear sensitive data from localStorage
+      const keysToRemove = Object.keys(localStorage).filter(key => 
+        key.includes('supabase') || key.includes('auth') || key.includes('user')
+      );
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+    }
+
+  } catch (error: any) {
     console.error('Enhanced sign out error:', error);
-    throw error;
+    throw new Error(error.message || 'Logout failed');
+  }
+};
+
+export const secureChangeRole = async (newRole: UserRole) => {
+  // Rate limiting
+  const clientId = getClientIdentifier();
+  const rateLimitResult = await rateLimiter.checkRateLimit(
+    `change_role_${clientId}`,
+    RATE_LIMITS.API_GENERAL.maxRequests,
+    RATE_LIMITS.API_GENERAL.windowMs
+  );
+
+  if (!rateLimitResult.allowed) {
+    throw new Error('Rate limit exceeded. Please try again later.');
+  }
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Authentication required');
+
+  // Validate role
+  const validRoles: UserRole[] = ['admin', 'wholesaler', 'seller', 'pending'];
+  if (!validRoles.includes(newRole)) {
+    throw new Error('Invalid role specified');
+  }
+
+  // Admin role is restricted
+  if (newRole === 'admin') {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('id', user.id)
+      .single();
+    
+    if (!profile || profile.email !== 'khizerfight@gmail.com') {
+      await logSecurityEvent('unauthorized_admin_attempt', { 
+        user_id: user.id,
+        attempted_role: newRole
+      });
+      throw new Error('Unauthorized: Admin role is restricted');
+    }
+  }
+
+  try {
+    // Create role request for approval (except for admin)
+    if (newRole !== 'admin') {
+      const { error: requestError } = await supabase
+        .from('role_requests')
+        .insert([{
+          user_id: user.id,
+          requested_role: newRole,
+          status: 'pending'
+        }]);
+
+      if (requestError) {
+        console.error('Role request error:', requestError);
+        throw new Error('Failed to submit role change request');
+      }
+
+      await logSecurityEvent('role_change_requested', { 
+        user_id: user.id,
+        requested_role: newRole
+      });
+
+      return { success: true, message: 'Role change request submitted for approval' };
+    } else {
+      // Direct role change for admin
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role: newRole })
+        .eq('id', user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      await logSecurityEvent('role_changed', { 
+        user_id: user.id,
+        new_role: newRole
+      });
+
+      return { success: true, message: 'Role changed successfully' };
+    }
+  } catch (error: any) {
+    console.error('Secure role change error:', error);
+    throw new Error(error.message || 'Role change failed');
   }
 };

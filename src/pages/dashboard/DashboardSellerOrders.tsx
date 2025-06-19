@@ -2,13 +2,13 @@
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import SellerOrders from '@/components/dashboard/SellerOrders';
+import { EnhancedOrderManagement } from '@/components/orders/EnhancedOrderManagement';
 
 const DashboardSellerOrders: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={['seller']}>
       <DashboardLayout>
-        <SellerOrders />
+        <EnhancedOrderManagement userRole="seller" />
       </DashboardLayout>
     </ProtectedRoute>
   );

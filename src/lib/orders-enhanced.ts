@@ -157,7 +157,7 @@ export const rejectOrder = async (orderId: string, notes?: string) => {
 };
 
 // Get orders for wholesaler with simplified return type
-export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
+export const getWholesalerOrders = async (showFullDetails: boolean = false): Promise<any[]> => {
   const user = await getCurrentUser();
   if (!user) return [];
 
@@ -174,9 +174,10 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
 
   const shopIds = shops.map(shop => shop.id);
 
-  // Select fields based on whether to show full details
-  const selectFields = showFullDetails 
-    ? `
+  // Use a simpler approach - always select the same fields and filter client-side if needed
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
       id,
       buyer_id,
       shop_id,
@@ -195,29 +196,7 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
       commission_id,
       shops(id, name, contact, address, postal_code, owner_id),
       profiles!orders_buyer_id_fkey(id, email, role, business_name)
-    `
-    : `
-      id,
-      buyer_id,
-      shop_id,
-      buyer_name,
-      buyer_phone,
-      total_amount,
-      status,
-      payment_method,
-      payment_screenshot,
-      screenshot_uploaded_at,
-      created_at,
-      confirmed_at,
-      rejected_at,
-      wholesaler_notes,
-      commission_id,
-      shops(id, name, postal_code, contact, address, owner_id)
-    `;
-
-  const { data, error } = await supabase
-    .from('orders')
-    .select(selectFields)
+    `)
     .in('shop_id', shopIds)
     .order('created_at', { ascending: false });
 
@@ -226,11 +205,11 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
     return [];
   }
 
-  return data || [];
+  return data ? data : [];
 };
 
 // Get seller orders with explicit type handling
-export const getSellerOrders = async () => {
+export const getSellerOrders = async (): Promise<any[]> => {
   const user = await getCurrentUser();
   if (!user) return [];
 

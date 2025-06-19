@@ -4,46 +4,42 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, AlertTriangle } from 'lucide-react';
 
 interface SecurityWarningProps {
-  type: 'payment' | 'verification' | 'general';
+  type: 'general' | 'verification' | 'payment';
 }
 
 const SecurityWarning: React.FC<SecurityWarningProps> = ({ type }) => {
-  const getWarningContent = () => {
+  const getContent = () => {
     switch (type) {
-      case 'payment':
-        return {
-          icon: <Shield className="h-4 w-4" />,
-          title: "Payment Security Notice",
-          message: "Only send payment after confirming the wholesaler's identity. Never share your banking details with unauthorized parties. Always keep screenshots of your transactions."
-        };
       case 'verification':
         return {
-          icon: <AlertTriangle className="h-4 w-4" />,
-          title: "Verification Required",
-          message: "This wholesaler's identity has been verified by our admin team. However, always exercise caution when making large transactions."
+          icon: Shield,
+          title: 'Verification Required',
+          message: 'Some order details are only visible after verification and confirmation.'
         };
-      case 'general':
+      case 'payment':
         return {
-          icon: <Shield className="h-4 w-4" />,
-          title: "Security Reminder",
-          message: "For your safety, only order from verified wholesalers and keep records of all transactions. Report any suspicious activity immediately."
+          icon: AlertTriangle,
+          title: 'Payment Security',
+          message: 'Always verify payment details before processing orders. Report suspicious activity.'
+        };
+      default:
+        return {
+          icon: Shield,
+          title: 'Security Notice',
+          message: 'All order activities are logged for security purposes.'
         };
     }
   };
 
-  const { icon, title, message } = getWarningContent();
+  const content = getContent();
+  const Icon = content.icon;
 
   return (
-    <Alert className="border-yellow-200 bg-yellow-50">
-      <div className="flex items-start gap-2">
-        <div className="text-yellow-600">{icon}</div>
-        <div>
-          <h4 className="font-semibold text-yellow-800 font-poppins">{title}</h4>
-          <AlertDescription className="text-yellow-700 font-poppins text-sm mt-1">
-            {message}
-          </AlertDescription>
-        </div>
-      </div>
+    <Alert>
+      <Icon className="h-4 w-4" />
+      <AlertDescription>
+        <strong>{content.title}:</strong> {content.message}
+      </AlertDescription>
     </Alert>
   );
 };

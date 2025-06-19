@@ -1,13 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Order } from '@/lib/types';
-import { useToast } from '@/hooks/use-toast';
-import { Edit3, Copy } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 
 interface OrderReuseDialogProps {
   open: boolean;
@@ -22,112 +18,49 @@ const OrderReuseDialog: React.FC<OrderReuseDialogProps> = ({
   previousOrder,
   onReuseOrder
 }) => {
-  const [editedData, setEditedData] = useState({
-    totalAmount: previousOrder.total_amount || 0,
-    buyerName: previousOrder.buyer_name || '',
-    buyerPhone: previousOrder.buyer_phone || '',
-    buyerAddress: previousOrder.buyer_address || ''
-  });
-  const { toast } = useToast();
-
   const handleReuse = () => {
-    if (!editedData.buyerName || !editedData.buyerPhone || !editedData.buyerAddress) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    onReuseOrder({
+    const orderData = {
       shopId: previousOrder.shop_id,
-      shopName: previousOrder.shops?.name,
-      ...editedData
-    });
-    onOpenChange(false);
+      totalAmount: previousOrder.total_amount,
+      paymentMethod: previousOrder.payment_method,
+      buyerName: previousOrder.buyer_name,
+      buyerPhone: previousOrder.buyer_phone,
+      buyerAddress: previousOrder.buyer_address
+    };
+    onReuseOrder(orderData);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-poppins">
-            <Edit3 className="h-5 w-5" />
-            Reuse Order Details
+          <DialogTitle className="flex items-center gap-2">
+            <RotateCcw className="h-5 w-5" />
+            Reuse Previous Order
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
-          <div className="bg-gray-50 p-3 rounded-lg">
-            <p className="text-sm text-gray-600 font-poppins">
-              Shop: <span className="font-medium">{previousOrder.shops?.name}</span>
-            </p>
-            <p className="text-sm text-gray-600 font-poppins">
-              Original Order: <span className="font-mono text-xs">{previousOrder.id.slice(0, 8)}...</span>
-            </p>
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-medium mb-2">Previous Order Details:</h4>
+            <div className="text-sm space-y-1">
+              <p><strong>Shop:</strong> {previousOrder.shops?.name}</p>
+              <p><strong>Amount:</strong> Rs. {previousOrder.total_amount?.toLocaleString()}</p>
+              <p><strong>Payment Method:</strong> {previousOrder.payment_method?.replace('_', ' ').toUpperCase()}</p>
+              <p><strong>Buyer:</strong> {previousOrder.buyer_name}</p>
+            </div>
           </div>
-
-          <div>
-            <Label htmlFor="totalAmount">Total Amount (PKR) *</Label>
-            <Input
-              id="totalAmount"
-              type="number"
-              value={editedData.totalAmount}
-              onChange={(e) => setEditedData({...editedData, totalAmount: Number(e.target.value)})}
-              min="1"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="buyerName">Full Name *</Label>
-            <Input
-              id="buyerName"
-              value={editedData.buyerName}
-              onChange={(e) => setEditedData({...editedData, buyerName: e.target.value})}
-              placeholder="Enter your full name"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="buyerPhone">Phone Number *</Label>
-            <Input
-              id="buyerPhone"
-              value={editedData.buyerPhone}
-              onChange={(e) => setEditedData({...editedData, buyerPhone: e.target.value})}
-              placeholder="03XX-XXXXXXX"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="buyerAddress">Delivery Address *</Label>
-            <Textarea
-              id="buyerAddress"
-              value={editedData.buyerAddress}
-              onChange={(e) => setEditedData({...editedData, buyerAddress: e.target.value})}
-              placeholder="Enter complete delivery address"
-              required
-              rows={3}
-            />
-          </div>
-
-          <div className="flex gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="flex-1"
-            >
+          
+          <p className="text-sm text-gray-600">
+            This will create a new order with the same details. You'll need to upload a new payment screenshot.
+          </p>
+          
+          <div className="flex gap-4">
+            <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
               Cancel
             </Button>
-            <Button
-              onClick={handleReuse}
-              className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700"
-            >
-              <Copy className="h-4 w-4 mr-2" />
-              Reuse Order
+            <Button onClick={handleReuse} className="flex-1">
+              Reuse Order Details
             </Button>
           </div>
         </div>

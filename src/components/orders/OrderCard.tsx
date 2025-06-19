@@ -3,15 +3,15 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, User, Phone, Store, Eye, Repeat } from 'lucide-react';
 import { Order } from '@/lib/types';
+import { Clock, CheckCircle, XCircle, Eye, RotateCcw } from 'lucide-react';
 
 interface OrderCardProps {
   order: Order;
   onViewOrder: (order: Order) => void;
   onReorder?: (order: Order) => void;
   showReorderButton?: boolean;
-  userRole?: 'wholesaler' | 'seller';
+  userRole: 'wholesaler' | 'seller';
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
@@ -19,98 +19,80 @@ const OrderCard: React.FC<OrderCardProps> = ({
   onViewOrder,
   onReorder,
   showReorderButton = false,
-  userRole = 'wholesaler'
+  userRole
 }) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+  const getStatusBadge = (status: string) => {
+    const variants = {
+      pending: { variant: 'secondary' as const, icon: Clock, text: 'Pending' },
+      confirmed: { variant: 'default' as const, icon: CheckCircle, text: 'Confirmed' },
+      rejected: { variant: 'destructive' as const, icon: XCircle, text: 'Rejected' },
+      completed: { variant: 'default' as const, icon: CheckCircle, text: 'Completed' },
+    };
+    
+    const config = variants[status as keyof typeof variants] || variants.pending;
+    const Icon = config.icon;
+    
+    return (
+      <Badge variant={config.variant} className="gap-1">
+        <Icon className="h-3 w-3" />
+        {config.text}
+      </Badge>
+    );
   };
 
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="font-semibold text-lg font-poppins">
-              Order #{order.id.slice(0, 8)}
-            </h3>
-            <p className="text-gray-600 font-poppins">
-              {userRole === 'wholesaler' ? order.shops?.name || 'Unknown Shop' : order.shops?.name}
-            </p>
-          </div>
-          <Badge className={getStatusColor(order.status)}>
-            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-          </Badge>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-          {userRole === 'wholesaler' ? (
-            <>
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-500" />
-                <div>
-                  <p className="font-medium font-poppins">{order.buyer_name || 'N/A'}</p>
-                  <p className="text-sm text-gray-600">Buyer</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-gray-500" />
-                <div>
-                  <p className="font-medium font-poppins">{order.buyer_phone || 'N/A'}</p>
-                  <p className="text-sm text-gray-600">Contact</p>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Store className="h-4 w-4 text-gray-500" />
-              <div>
-                <p className="font-medium font-poppins">{order.shops?.name}</p>
-                <p className="text-sm text-gray-600">Wholesaler</p>
-              </div>
+        <div className="flex justify-between items-start">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <h3 className="font-semibold">Order #{order.id.slice(0, 8)}</h3>
+              {getStatusBadge(order.status)}
             </div>
-          )}
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-gray-500" />
-            <div>
-              <p className="font-medium font-poppins">
-                {order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A'}
-              </p>
-              <p className="text-sm text-gray-600">Order Date</p>
+            
+            <div className="text-sm text-gray-600 space-y-1">
+              <p><strong>Amount:</strong> Rs. {order.total_amount?.toLocaleString()}</p>
+              <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
+              {order.shops && (
+                <p><strong>Shop:</strong> {order.shops.name}</p>
+              )}
+              {userRole === 'wholesaler' && order.buyer_name && (
+                <p><strong>Buyer:</strong> {order.buyer_name}</p>
+              )}
+              {order.payment_method && (
+                <p><strong>Payment:</strong> {order.payment_method.replace('_', ' ').toUpperCase()}</p>
+              )}
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-2xl font-bold text-pakistani_green-600 font-poppins">
-              PKR {order.total_amount.toLocaleString()}
-            </p>
-          </div>
-        </div>
 
-        <div className="flex justify-end gap-2">
-          {showReorderButton && onReorder && (order.status === 'completed' || order.status === 'confirmed') && (
+          <div className="flex gap-2">
             <Button
-              onClick={() => onReorder(order)}
               variant="outline"
-              className="flex items-center gap-2"
+              size="sm"
+              onClick={() => onViewOrder(order)}
             >
-              <Repeat className="h-4 w-4" />
-              Reorder
+              <Eye className="h-4 w-4 mr-1" />
+              View
             </Button>
-          )}
-          <Button
-            onClick={() => onViewOrder(order)}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <Eye className="h-4 w-4" />
-            View Details
-          </Button>
+
+            {showReorderButton && onReorder && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onReorder(order)}
+              >
+                <RotateCcw className="h-4 w-4 mr-1" />
+                Reorder
+              </Button>
+            )}
+          </div>
         </div>
+
+        {order.wholesaler_notes && (
+          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+            <p className="text-sm"><strong>Notes:</strong> {order.wholesaler_notes}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -1,70 +1,59 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, CreditCard, Smartphone, Building, Check } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { Upload, CreditCard, Smartphone, Building } from 'lucide-react';
 import { createOrderWithPaymentEnhanced } from '@/lib/orders/core-enhanced';
 import { PaymentMethod } from '@/lib/types';
-import { Badge } from '@/components/ui/badge';
 
 interface OrderFormEnhancedProps {
   shopId: string;
   shopName: string;
-  totalAmount: number;
-  onOrderCreated: (orderId: string) => void;
-  onCancel: () => void;
+  onOrderCreated?: (orderId: string) => void;
+  onClose?: () => void;
 }
 
 export const OrderFormEnhanced: React.FC<OrderFormEnhancedProps> = ({
   shopId,
   shopName,
-  totalAmount,
   onOrderCreated,
-  onCancel
+  onClose
 }) => {
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('bank_transfer');
-  const [screenshot, setScreenshot] = useState<File | null>(null);
-  const [buyerInfo, setBuyerInfo] = useState({
-    name: '',
-    phone: '',
-    address: ''
+  const [formData, setFormData] = useState({
+    totalAmount: '',
+    paymentMethod: 'bank_transfer' as PaymentMethod,
+    buyerName: '',
+    buyerPhone: '',
+    buyerAddress: '',
+    paymentScreenshot: null as File | null
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  // Mock payment methods - in real implementation, fetch from shop
-  const paymentMethods = {
-    bank_name: 'HBL Bank',
-    account_number: '1234567890',
-    account_title: 'Shop Owner Name',
-    jazzcash_number: '03001234567',
-    easypaisa_number: '03007654321'
-  };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 100 * 1024) { // 100KB limit
+      if (file.size > 102400) { // 100KB limit
         toast({
-          title: "File too large",
-          description: "Please upload an image smaller than 100KB",
+          title: "File Too Large",
+          description: "Payment screenshot must be less than 100KB",
           variant: "destructive"
         });
         return;
       }
-      setScreenshot(file);
+      setFormData(prev => ({ ...prev, paymentScreenshot: file }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!screenshot) {
+    if (!formData.paymentScreenshot) {
       toast({
         title: "Payment Screenshot Required",
         description: "Please upload a payment screenshot",
@@ -73,36 +62,31 @@ export const OrderFormEnhanced: React.FC<OrderFormEnhancedProps> = ({
       return;
     }
 
-    if (!buyerInfo.name || !buyerInfo.phone || !buyerInfo.address) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all buyer information fields",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     try {
-      const order = await createOrderWithPaymentEnhanced(shopId, totalAmount, {
-        method: selectedMethod,
-        screenshot,
-        buyerName: buyerInfo.name,
-        buyerPhone: buyerInfo.phone,
-        buyerAddress: buyerInfo.address
-      });
+      const order = await createOrderWithPaymentEnhanced(
+        shopId,
+        parseFloat(formData.totalAmount),
+        {
+          method: formData.paymentMethod,
+          screenshot: formData.paymentScreenshot,
+          buyerName: formData.buyerName,
+          buyerPhone: formData.buyerPhone,
+          buyerAddress: formData.buyerAddress
+        }
+      );
 
       toast({
         title: "Order Created Successfully",
-        description: `Your order has been submitted and is pending approval from ${shopName}`,
+        description: "Your order has been submitted for approval",
       });
 
-      onOrderCreated(order.id);
+      onOrderCreated?.(order.id);
+      onClose?.();
     } catch (error: any) {
-      console.error('Order creation error:', error);
       toast({
-        title: "Order Creation Failed",
-        description: error.message || "Failed to create order. Please try again.",
+        title: "Failed to Create Order",
+        description: error.message,
         variant: "destructive"
       });
     } finally {
@@ -112,165 +96,134 @@ export const OrderFormEnhanced: React.FC<OrderFormEnhancedProps> = ({
 
   const getPaymentIcon = (method: PaymentMethod) => {
     switch (method) {
-      case 'bank_transfer': return <Building className="h-4 w-4" />;
-      case 'jazzcash': return <Smartphone className="h-4 w-4" />;
-      case 'easypaisa': return <CreditCard className="h-4 w-4" />;
-    }
-  };
-
-  const getPaymentDetails = () => {
-    switch (selectedMethod) {
-      case 'bank_transfer':
-        return paymentMethods.bank_name && paymentMethods.account_number ? (
-          <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
-            <p className="font-medium">Bank Transfer Details:</p>
-            <p>Bank: {paymentMethods.bank_name}</p>
-            <p>Account: {paymentMethods.account_number}</p>
-            <p>Title: {paymentMethods.account_title}</p>
-          </div>
-        ) : null;
       case 'jazzcash':
-        return paymentMethods.jazzcash_number ? (
-          <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
-            <p className="font-medium">JazzCash Details:</p>
-            <p>Number: {paymentMethods.jazzcash_number}</p>
-          </div>
-        ) : null;
       case 'easypaisa':
-        return paymentMethods.easypaisa_number ? (
-          <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
-            <p className="font-medium">EasyPaisa Details:</p>
-            <p>Number: {paymentMethods.easypaisa_number}</p>
-          </div>
-        ) : null;
+        return <Smartphone className="h-4 w-4" />;
+      case 'bank_transfer':
+        return <Building className="h-4 w-4" />;
+      default:
+        return <CreditCard className="h-4 w-4" />;
     }
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card>
       <CardHeader>
-        <CardTitle className="font-poppins flex items-center gap-2">
-          Enhanced Order - {shopName}
-          <Badge variant="secondary">Secure</Badge>
-        </CardTitle>
-        <p className="text-lg font-semibold text-green-600">
-          Total Amount: PKR {totalAmount.toLocaleString()}
-        </p>
+        <CardTitle>Create Order - {shopName}</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Buyer Information */}
-          <div className="space-y-4">
-            <h3 className="font-semibold font-poppins">Buyer Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="buyerName">Full Name *</Label>
-                <Input
-                  id="buyerName"
-                  value={buyerInfo.name}
-                  onChange={(e) => setBuyerInfo({...buyerInfo, name: e.target.value})}
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="buyerPhone">Phone Number *</Label>
-                <Input
-                  id="buyerPhone"
-                  value={buyerInfo.phone}
-                  onChange={(e) => setBuyerInfo({...buyerInfo, phone: e.target.value})}
-                  placeholder="03XX-XXXXXXX"
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="buyerAddress">Delivery Address *</Label>
-              <Textarea
-                id="buyerAddress"
-                value={buyerInfo.address}
-                onChange={(e) => setBuyerInfo({...buyerInfo, address: e.target.value})}
-                placeholder="Enter complete delivery address"
-                required
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="totalAmount">Total Amount (PKR)</Label>
+            <Input
+              id="totalAmount"
+              type="number"
+              value={formData.totalAmount}
+              onChange={(e) => setFormData(prev => ({ ...prev, totalAmount: e.target.value }))}
+              placeholder="Enter total amount"
+              required
+              min="1"
+            />
           </div>
 
-          {/* Payment Method Selection */}
-          <div className="space-y-4">
-            <h3 className="font-semibold font-poppins">Payment Method</h3>
-            <Select value={selectedMethod} onValueChange={(value: PaymentMethod) => setSelectedMethod(value)}>
+          <div>
+            <Label htmlFor="paymentMethod">Payment Method</Label>
+            <Select value={formData.paymentMethod} onValueChange={(value: PaymentMethod) => 
+              setFormData(prev => ({ ...prev, paymentMethod: value }))
+            }>
               <SelectTrigger>
-                <SelectValue placeholder="Select payment method" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="bank_transfer">
                   <div className="flex items-center gap-2">
-                    {getPaymentIcon('bank_transfer')}
+                    <Building className="h-4 w-4" />
                     Bank Transfer
                   </div>
                 </SelectItem>
                 <SelectItem value="jazzcash">
                   <div className="flex items-center gap-2">
-                    {getPaymentIcon('jazzcash')}
+                    <Smartphone className="h-4 w-4" />
                     JazzCash
                   </div>
                 </SelectItem>
                 <SelectItem value="easypaisa">
                   <div className="flex items-center gap-2">
-                    {getPaymentIcon('easypaisa')}
+                    <Smartphone className="h-4 w-4" />
                     EasyPaisa
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
-
-            {getPaymentDetails()}
           </div>
 
-          {/* Payment Screenshot Upload */}
-          <div className="space-y-4">
-            <h3 className="font-semibold font-poppins">Payment Screenshot *</h3>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <Label htmlFor="screenshot" className="cursor-pointer">
-                <span className="text-green-600 hover:text-green-700">
-                  Click to upload payment screenshot
-                </span>
-                <p className="text-sm text-gray-500 mt-1">PNG, JPG up to 100KB</p>
-              </Label>
-              <Input
-                id="screenshot"
+          <div>
+            <Label htmlFor="buyerName">Your Name</Label>
+            <Input
+              id="buyerName"
+              value={formData.buyerName}
+              onChange={(e) => setFormData(prev => ({ ...prev, buyerName: e.target.value }))}
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="buyerPhone">Phone Number</Label>
+            <Input
+              id="buyerPhone"
+              value={formData.buyerPhone}
+              onChange={(e) => setFormData(prev => ({ ...prev, buyerPhone: e.target.value }))}
+              placeholder="03XXXXXXXXX"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="buyerAddress">Delivery Address</Label>
+            <Textarea
+              id="buyerAddress"
+              value={formData.buyerAddress}
+              onChange={(e) => setFormData(prev => ({ ...prev, buyerAddress: e.target.value }))}
+              placeholder="Enter complete delivery address"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="paymentScreenshot">Payment Screenshot</Label>
+            <div className="mt-1">
+              <input
+                id="paymentScreenshot"
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
                 className="hidden"
+                required
               />
-              {screenshot && (
-                <div className="mt-2 flex items-center justify-center gap-2 text-sm text-green-600">
-                  <Check className="h-4 w-4" />
-                  {screenshot.name} uploaded
+              <label
+                htmlFor="paymentScreenshot"
+                className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400"
+              >
+                <div className="text-center">
+                  <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">
+                    {formData.paymentScreenshot ? formData.paymentScreenshot.name : 'Click to upload payment screenshot'}
+                  </p>
+                  <p className="text-xs text-gray-500">Max 100KB</p>
                 </div>
-              )}
+              </label>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-4 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex-1 bg-green-600 hover:bg-green-700"
-            >
-              {isSubmitting ? 'Creating Order...' : 'Create Enhanced Order'}
+          <div className="flex gap-4">
+            {onClose && (
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+                Cancel
+              </Button>
+            )}
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting ? 'Creating Order...' : 'Create Order'}
             </Button>
           </div>
         </form>

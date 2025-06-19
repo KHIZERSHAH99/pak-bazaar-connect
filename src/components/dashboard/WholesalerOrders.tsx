@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Package, Search, Eye, Calendar, User, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getWholesalerOrders } from '@/lib/orders-enhanced';
-import { Order, OrderStatus } from '@/lib/types';
+import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 import EnhancedOrderDetails from '@/components/orders/EnhancedOrderDetails';
 
 const WholesalerOrders: React.FC = () => {
@@ -26,10 +26,11 @@ const WholesalerOrders: React.FC = () => {
     const fetchOrders = async () => {
       try {
         const orderData = await getWholesalerOrders(false);
-        // Cast status to OrderStatus type
+        // Cast status and payment_method to correct types
         const typedOrders = orderData.map(order => ({
           ...order,
-          status: order.status as OrderStatus
+          status: order.status as OrderStatus,
+          payment_method: order.payment_method as PaymentMethod
         }));
         setOrders(typedOrders);
         setFilteredOrders(typedOrders);
@@ -83,10 +84,11 @@ const WholesalerOrders: React.FC = () => {
       const fullOrders = await getWholesalerOrders(true);
       const fullOrder = fullOrders.find(o => o.id === order.id);
       if (fullOrder) {
-        // Cast status to OrderStatus type
+        // Cast status and payment_method to correct types
         const typedOrder = {
           ...fullOrder,
-          status: fullOrder.status as OrderStatus
+          status: fullOrder.status as OrderStatus,
+          payment_method: fullOrder.payment_method as PaymentMethod
         };
         setSelectedOrder(typedOrder);
         setShowDetails(true);

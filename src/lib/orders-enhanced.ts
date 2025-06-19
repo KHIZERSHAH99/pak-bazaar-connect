@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod, PaymentMethodInfo, OrderMessage, WholesalerMonthlySales } from '@/lib/types';
@@ -208,7 +207,7 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
     return [];
   }
 
-  return data;
+  return data || [];
 };
 
 // Get seller orders

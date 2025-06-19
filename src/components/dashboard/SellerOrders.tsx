@@ -29,11 +29,19 @@ const SellerOrders: React.FC = () => {
     const fetchOrders = async () => {
       try {
         const orderData = await getSellerOrders();
-        // Cast status and payment_method to correct types
-        const typedOrders = orderData.map(order => ({
+        // Cast and ensure proper typing
+        const typedOrders: Order[] = orderData.map((order: any) => ({
           ...order,
           status: order.status as OrderStatus,
-          payment_method: order.payment_method as PaymentMethod
+          payment_method: order.payment_method as PaymentMethod,
+          shops: order.shops ? {
+            id: order.shops.id,
+            name: order.shops.name,
+            contact: order.shops.contact || '',
+            address: order.shops.address || '',
+            postal_code: order.shops.postal_code || '',
+            owner_id: order.shops.owner_id
+          } : undefined
         }));
         setOrders(typedOrders);
         setFilteredOrders(typedOrders);

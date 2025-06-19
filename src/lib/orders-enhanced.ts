@@ -178,7 +178,7 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
   const selectFields = showFullDetails 
     ? `
       *,
-      shops(name, contact, address),
+      shops(id, name, contact, address, postal_code, owner_id),
       profiles!orders_buyer_id_fkey(id, email, role, business_name)
     `
     : `
@@ -193,7 +193,7 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
       created_at,
       confirmed_at,
       rejected_at,
-      shops(name)
+      shops(id, name, postal_code, contact, address, owner_id)
     `;
 
   const { data, error } = await supabase
@@ -219,7 +219,7 @@ export const getSellerOrders = async () => {
     .from('orders')
     .select(`
       *,
-      shops(name, contact, address, owner_id),
+      shops(id, name, contact, address, postal_code, owner_id),
       profiles!orders_buyer_id_fkey(email)
     `)
     .eq('buyer_id', user.id)
@@ -230,7 +230,7 @@ export const getSellerOrders = async () => {
     return [];
   }
 
-  return data;
+  return data || [];
 };
 
 // Get wholesaler monthly sales

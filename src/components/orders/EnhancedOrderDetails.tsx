@@ -71,12 +71,20 @@ const EnhancedOrderDetails: React.FC<EnhancedOrderDetailsProps> = ({
   const handleConfirmOrder = async () => {
     setIsSubmitting(true);
     try {
-      const updatedOrder = await confirmOrder(order.id, wholesalerNotes);
-      // Cast status and payment_method to correct types
-      const typedOrder = {
-        ...updatedOrder,
-        status: updatedOrder.status as OrderStatus,
-        payment_method: updatedOrder.payment_method as PaymentMethod
+      const updatedOrderData = await confirmOrder(order.id, wholesalerNotes);
+      // Cast and ensure proper typing
+      const typedOrder: Order = {
+        ...updatedOrderData,
+        status: updatedOrderData.status as OrderStatus,
+        payment_method: updatedOrderData.payment_method as PaymentMethod,
+        shops: updatedOrderData.shops ? {
+          id: updatedOrderData.shops.id || order.shops?.id || '',
+          name: updatedOrderData.shops.name || order.shops?.name || '',
+          contact: updatedOrderData.shops.contact || order.shops?.contact || '',
+          address: updatedOrderData.shops.address || order.shops?.address || '',
+          postal_code: updatedOrderData.shops.postal_code || order.shops?.postal_code || '',
+          owner_id: updatedOrderData.shops.owner_id || order.shops?.owner_id || ''
+        } : order.shops
       };
       onOrderUpdate(typedOrder);
       toast({
@@ -107,12 +115,20 @@ const EnhancedOrderDetails: React.FC<EnhancedOrderDetailsProps> = ({
 
     setIsSubmitting(true);
     try {
-      const updatedOrder = await rejectOrder(order.id, wholesalerNotes);
-      // Cast status and payment_method to correct types
-      const typedOrder = {
-        ...updatedOrder,
-        status: updatedOrder.status as OrderStatus,
-        payment_method: updatedOrder.payment_method as PaymentMethod
+      const updatedOrderData = await rejectOrder(order.id, wholesalerNotes);
+      // Cast and ensure proper typing
+      const typedOrder: Order = {
+        ...updatedOrderData,
+        status: updatedOrderData.status as OrderStatus,
+        payment_method: updatedOrderData.payment_method as PaymentMethod,
+        shops: updatedOrderData.shops ? {
+          id: updatedOrderData.shops.id || order.shops?.id || '',
+          name: updatedOrderData.shops.name || order.shops?.name || '',
+          contact: updatedOrderData.shops.contact || order.shops?.contact || '',
+          address: updatedOrderData.shops.address || order.shops?.address || '',
+          postal_code: updatedOrderData.shops.postal_code || order.shops?.postal_code || '',
+          owner_id: updatedOrderData.shops.owner_id || order.shops?.owner_id || ''
+        } : order.shops
       };
       onOrderUpdate(typedOrder);
       toast({

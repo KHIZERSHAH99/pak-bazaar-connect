@@ -26,11 +26,19 @@ const WholesalerOrders: React.FC = () => {
     const fetchOrders = async () => {
       try {
         const orderData = await getWholesalerOrders(false);
-        // Cast status and payment_method to correct types
-        const typedOrders = orderData.map(order => ({
+        // Cast and ensure proper typing
+        const typedOrders: Order[] = orderData.map((order: any) => ({
           ...order,
           status: order.status as OrderStatus,
-          payment_method: order.payment_method as PaymentMethod
+          payment_method: order.payment_method as PaymentMethod,
+          shops: order.shops ? {
+            id: order.shops.id,
+            name: order.shops.name,
+            contact: order.shops.contact || '',
+            address: order.shops.address || '',
+            postal_code: order.shops.postal_code || '',
+            owner_id: order.shops.owner_id
+          } : undefined
         }));
         setOrders(typedOrders);
         setFilteredOrders(typedOrders);
@@ -82,13 +90,21 @@ const WholesalerOrders: React.FC = () => {
     try {
       // Fetch full order details
       const fullOrders = await getWholesalerOrders(true);
-      const fullOrder = fullOrders.find(o => o.id === order.id);
-      if (fullOrder) {
-        // Cast status and payment_method to correct types
-        const typedOrder = {
-          ...fullOrder,
-          status: fullOrder.status as OrderStatus,
-          payment_method: fullOrder.payment_method as PaymentMethod
+      const fullOrderData = fullOrders.find((o: any) => o.id === order.id);
+      if (fullOrderData) {
+        // Cast and ensure proper typing
+        const typedOrder: Order = {
+          ...fullOrderData,
+          status: fullOrderData.status as OrderStatus,
+          payment_method: fullOrderData.payment_method as PaymentMethod,
+          shops: fullOrderData.shops ? {
+            id: fullOrderData.shops.id,
+            name: fullOrderData.shops.name,
+            contact: fullOrderData.shops.contact || '',
+            address: fullOrderData.shops.address || '',
+            postal_code: fullOrderData.shops.postal_code || '',
+            owner_id: fullOrderData.shops.owner_id
+          } : undefined
         };
         setSelectedOrder(typedOrder);
         setShowDetails(true);

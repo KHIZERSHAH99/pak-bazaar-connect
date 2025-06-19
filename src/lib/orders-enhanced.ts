@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod, PaymentMethodInfo, OrderMessage, WholesalerMonthlySales } from '@/lib/types';
@@ -280,7 +279,13 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
     throw error;
   }
 
-  return data[0];
+  return {
+    ...data[0],
+    profiles: data[0].profiles ? {
+      ...data[0].profiles,
+      role: data[0].profiles.role as any // Cast role to avoid type issues
+    } : undefined
+  };
 };
 
 // Get order messages
@@ -299,7 +304,13 @@ export const getOrderMessages = async (orderId: string): Promise<OrderMessage[]>
     return [];
   }
 
-  return data || [];
+  return (data || []).map(message => ({
+    ...message,
+    profiles: message.profiles ? {
+      ...message.profiles,
+      role: message.profiles.role as any // Cast role to avoid type issues
+    } : undefined
+  }));
 };
 
 // Reuse previous order

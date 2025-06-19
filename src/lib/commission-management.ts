@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { CommissionRecord, CommissionStatus } from '@/lib/types';
@@ -24,7 +23,9 @@ export const getAllCommissionRecords = async (): Promise<CommissionRecord[]> => 
 
   return (data || []).map(record => ({
     ...record,
-    status: record.status as CommissionStatus
+    status: record.status as CommissionStatus,
+    orders: record.orders as any, // Partial order data
+    profiles: record.profiles as any // Partial profile data
   }));
 };
 
@@ -49,7 +50,8 @@ export const getWholesalerCommissions = async (): Promise<CommissionRecord[]> =>
 
   return (data || []).map(record => ({
     ...record,
-    status: record.status as CommissionStatus
+    status: record.status as CommissionStatus,
+    orders: record.orders as any // Partial order data
   }));
 };
 

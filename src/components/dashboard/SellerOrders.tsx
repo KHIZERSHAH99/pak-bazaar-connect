@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ShoppingBag, Search, Eye, Calendar, Store, Repeat } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getSellerOrders, reusePreviousOrder } from '@/lib/orders-enhanced';
-import { Order } from '@/lib/types';
+import { Order, OrderStatus } from '@/lib/types';
 import EnhancedOrderDetails from '@/components/orders/EnhancedOrderDetails';
 import EnhancedOrderForm from '@/components/orders/EnhancedOrderForm';
 
@@ -29,8 +29,13 @@ const SellerOrders: React.FC = () => {
     const fetchOrders = async () => {
       try {
         const orderData = await getSellerOrders();
-        setOrders(orderData);
-        setFilteredOrders(orderData);
+        // Cast status to OrderStatus type
+        const typedOrders = orderData.map(order => ({
+          ...order,
+          status: order.status as OrderStatus
+        }));
+        setOrders(typedOrders);
+        setFilteredOrders(typedOrders);
       } catch (error: any) {
         console.error('Error fetching orders:', error);
         toast({

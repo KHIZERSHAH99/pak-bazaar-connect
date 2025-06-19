@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod, PaymentMethodInfo, OrderMessage, WholesalerMonthlySales } from '@/lib/types';
@@ -179,10 +180,12 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
     ? `
       *,
       shops(name, contact, address),
-      profiles!orders_buyer_id_fkey(email)
+      profiles!orders_buyer_id_fkey(id, email, role, business_name)
     `
     : `
       id,
+      buyer_name,
+      buyer_phone,
       total_amount,
       status,
       payment_method,

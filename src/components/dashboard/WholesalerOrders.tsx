@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Package, Search, Eye, Calendar, User, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getWholesalerOrders } from '@/lib/orders-enhanced';
-import { Order } from '@/lib/types';
+import { Order, OrderStatus } from '@/lib/types';
 import EnhancedOrderDetails from '@/components/orders/EnhancedOrderDetails';
 
 const WholesalerOrders: React.FC = () => {
@@ -25,9 +25,14 @@ const WholesalerOrders: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const orderData = await getWholesalerOrders(false); // Get basic data first
-        setOrders(orderData);
-        setFilteredOrders(orderData);
+        const orderData = await getWholesalerOrders(false);
+        // Cast status to OrderStatus type
+        const typedOrders = orderData.map(order => ({
+          ...order,
+          status: order.status as OrderStatus
+        }));
+        setOrders(typedOrders);
+        setFilteredOrders(typedOrders);
       } catch (error: any) {
         console.error('Error fetching orders:', error);
         toast({
@@ -78,7 +83,12 @@ const WholesalerOrders: React.FC = () => {
       const fullOrders = await getWholesalerOrders(true);
       const fullOrder = fullOrders.find(o => o.id === order.id);
       if (fullOrder) {
-        setSelectedOrder(fullOrder);
+        // Cast status to OrderStatus type
+        const typedOrder = {
+          ...fullOrder,
+          status: fullOrder.status as OrderStatus
+        };
+        setSelectedOrder(typedOrder);
         setShowDetails(true);
       }
     } catch (error: any) {

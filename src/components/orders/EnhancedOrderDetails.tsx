@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { confirmOrder, rejectOrder, getOrderMessages, sendOrderMessage } from '@/lib/orders-enhanced';
-import { Order, OrderMessage } from '@/lib/types';
+import { Order, OrderMessage, OrderStatus } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface EnhancedOrderDetailsProps {
@@ -72,7 +72,12 @@ const EnhancedOrderDetails: React.FC<EnhancedOrderDetailsProps> = ({
     setIsSubmitting(true);
     try {
       const updatedOrder = await confirmOrder(order.id, wholesalerNotes);
-      onOrderUpdate(updatedOrder);
+      // Cast status to OrderStatus type
+      const typedOrder = {
+        ...updatedOrder,
+        status: updatedOrder.status as OrderStatus
+      };
+      onOrderUpdate(typedOrder);
       toast({
         title: "Order Confirmed",
         description: "The order has been confirmed successfully",
@@ -102,7 +107,12 @@ const EnhancedOrderDetails: React.FC<EnhancedOrderDetailsProps> = ({
     setIsSubmitting(true);
     try {
       const updatedOrder = await rejectOrder(order.id, wholesalerNotes);
-      onOrderUpdate(updatedOrder);
+      // Cast status to OrderStatus type
+      const typedOrder = {
+        ...updatedOrder,
+        status: updatedOrder.status as OrderStatus
+      };
+      onOrderUpdate(typedOrder);
       toast({
         title: "Order Rejected",
         description: "The order has been rejected",

@@ -7,7 +7,10 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 const AdminDashboard: React.FC = () => (
   <div className="animate-fadeIn space-y-6">
-    <Breadcrumbs />
+    <Breadcrumbs items={[
+      { label: 'Dashboard', href: '/dashboard' },
+      { label: 'Admin' }
+    ]} />
     
     <div>
       <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 font-poppins">Admin Dashboard</h1>

@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod, PaymentMethodInfo, OrderMessage, WholesalerMonthlySales } from '@/lib/types';
@@ -156,8 +157,8 @@ export const rejectOrder = async (orderId: string, notes?: string) => {
   return order;
 };
 
-// Get orders for wholesaler with simple type handling
-export const getWholesalerOrders = async (showFullDetails: boolean = false): Promise<any[]> => {
+// Get orders for wholesaler with simplified return type
+export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
   const user = await getCurrentUser();
   if (!user) return [];
 
@@ -229,8 +230,8 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false): Pro
   return data || [];
 };
 
-// Get seller orders
-export const getSellerOrders = async (): Promise<any[]> => {
+// Get seller orders with simplified return type
+export const getSellerOrders = async () => {
   const user = await getCurrentUser();
   if (!user) return [];
 

@@ -36,35 +36,41 @@ const WholesalerOrders: React.FC = () => {
           return;
         }
         
+        // Safely process orders with proper validation
+        const validOrders = orderData.filter((order: any) => 
+          order && 
+          typeof order === 'object' && 
+          !order.error && 
+          order.id
+        );
+        
         // Cast and ensure proper typing for valid data
-        const typedOrders: Order[] = orderData
-          .filter((order: any) => order && typeof order === 'object' && !order.error)
-          .map((order: any) => ({
-            id: order.id || '',
-            buyer_id: order.buyer_id || '',
-            shop_id: order.shop_id || '',
-            total_amount: order.total_amount || 0,
-            status: (order.status || 'pending') as OrderStatus,
-            payment_method: (order.payment_method || 'bank_transfer') as PaymentMethod,
-            buyer_name: order.buyer_name || null,
-            buyer_phone: order.buyer_phone || null,
-            buyer_address: order.buyer_address || null,
-            payment_screenshot: order.payment_screenshot || null,
-            screenshot_uploaded_at: order.screenshot_uploaded_at || null,
-            created_at: order.created_at || null,
-            confirmed_at: order.confirmed_at || null,
-            rejected_at: order.rejected_at || null,
-            wholesaler_notes: order.wholesaler_notes || null,
-            commission_id: order.commission_id || null,
-            shops: order.shops ? {
-              id: order.shops.id || '',
-              name: order.shops.name || '',
-              contact: order.shops.contact || '',
-              address: order.shops.address || '',
-              postal_code: order.shops.postal_code || '',
-              owner_id: order.shops.owner_id || ''
-            } : undefined
-          }));
+        const typedOrders: Order[] = validOrders.map((order: any) => ({
+          id: order.id || '',
+          buyer_id: order.buyer_id || '',
+          shop_id: order.shop_id || '',
+          total_amount: Number(order.total_amount) || 0,
+          status: (order.status || 'pending') as OrderStatus,
+          payment_method: (order.payment_method || 'bank_transfer') as PaymentMethod,
+          buyer_name: order.buyer_name || null,
+          buyer_phone: order.buyer_phone || null,
+          buyer_address: order.buyer_address || null,
+          payment_screenshot: order.payment_screenshot || null,
+          screenshot_uploaded_at: order.screenshot_uploaded_at || null,
+          created_at: order.created_at || null,
+          confirmed_at: order.confirmed_at || null,
+          rejected_at: order.rejected_at || null,
+          wholesaler_notes: order.wholesaler_notes || null,
+          commission_id: order.commission_id || null,
+          shops: order.shops ? {
+            id: order.shops.id || '',
+            name: order.shops.name || '',
+            contact: order.shops.contact || '',
+            address: order.shops.address || '',
+            postal_code: order.shops.postal_code || '',
+            owner_id: order.shops.owner_id || ''
+          } : undefined
+        }));
         
         console.log('Processed orders:', typedOrders);
         setOrders(typedOrders);
@@ -124,9 +130,11 @@ const WholesalerOrders: React.FC = () => {
         throw new Error('Failed to fetch full order details');
       }
       
-      const fullOrderData = fullOrders
-        .filter((o: any) => o && typeof o === 'object' && !o.error)
-        .find((o: any) => o.id === order.id);
+      const validFullOrders = fullOrders.filter((o: any) => 
+        o && typeof o === 'object' && !o.error && o.id
+      );
+      
+      const fullOrderData = validFullOrders.find((o: any) => o.id === order.id);
         
       if (fullOrderData) {
         // Cast and ensure proper typing
@@ -134,7 +142,7 @@ const WholesalerOrders: React.FC = () => {
           id: fullOrderData.id || order.id,
           buyer_id: fullOrderData.buyer_id || order.buyer_id,
           shop_id: fullOrderData.shop_id || order.shop_id,
-          total_amount: fullOrderData.total_amount || order.total_amount,
+          total_amount: Number(fullOrderData.total_amount) || order.total_amount,
           status: (fullOrderData.status || 'pending') as OrderStatus,
           payment_method: (fullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
           buyer_name: fullOrderData.buyer_name || order.buyer_name,

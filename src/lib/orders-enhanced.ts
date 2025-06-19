@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod, PaymentMethodInfo, OrderMessage, WholesalerMonthlySales } from '@/lib/types';
@@ -230,7 +229,7 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
   return data || [];
 };
 
-// Get seller orders with simplified return type
+// Get seller orders with explicit type handling
 export const getSellerOrders = async () => {
   const user = await getCurrentUser();
   if (!user) return [];
@@ -238,7 +237,22 @@ export const getSellerOrders = async () => {
   const { data, error } = await supabase
     .from('orders')
     .select(`
-      *,
+      id,
+      buyer_id,
+      shop_id,
+      total_amount,
+      status,
+      payment_method,
+      buyer_name,
+      buyer_phone,
+      buyer_address,
+      payment_screenshot,
+      screenshot_uploaded_at,
+      created_at,
+      confirmed_at,
+      rejected_at,
+      wholesaler_notes,
+      commission_id,
       shops(id, name, contact, address, postal_code, owner_id),
       profiles!orders_buyer_id_fkey(email)
     `)
@@ -250,7 +264,8 @@ export const getSellerOrders = async () => {
     return [];
   }
 
-  return data || [];
+  // Return the data directly without complex type inference
+  return data ? data : [];
 };
 
 // Get wholesaler monthly sales

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,29 +25,45 @@ const WholesalerOrders: React.FC = () => {
     const fetchOrders = async () => {
       try {
         const orderData = await getWholesalerOrders(false);
-        // Cast and ensure proper typing
-        const typedOrders: Order[] = orderData.map((order: any) => ({
-          ...order,
-          status: order.status as OrderStatus,
-          payment_method: order.payment_method as PaymentMethod,
-          shops: order.shops ? {
-            id: order.shops.id,
-            name: order.shops.name,
-            contact: order.shops.contact || '',
-            address: order.shops.address || '',
-            postal_code: order.shops.postal_code || '',
-            owner_id: order.shops.owner_id
-          } : undefined
-        }));
+        console.log('Raw order data:', orderData);
+        
+        // Check if data is valid and not an error
+        if (!Array.isArray(orderData)) {
+          console.error('Invalid order data received:', orderData);
+          setOrders([]);
+          setFilteredOrders([]);
+          return;
+        }
+        
+        // Cast and ensure proper typing for valid data
+        const typedOrders: Order[] = orderData
+          .filter((order: any) => order && typeof order === 'object' && !order.error)
+          .map((order: any) => ({
+            ...order,
+            status: (order.status || 'pending') as OrderStatus,
+            payment_method: (order.payment_method || 'bank_transfer') as PaymentMethod,
+            shops: order.shops ? {
+              id: order.shops.id || '',
+              name: order.shops.name || '',
+              contact: order.shops.contact || '',
+              address: order.shops.address || '',
+              postal_code: order.shops.postal_code || '',
+              owner_id: order.shops.owner_id || ''
+            } : undefined
+          }));
+        
+        console.log('Processed orders:', typedOrders);
         setOrders(typedOrders);
         setFilteredOrders(typedOrders);
       } catch (error: any) {
         console.error('Error fetching orders:', error);
         toast({
           title: "Failed to Load Orders",
-          description: error.message,
+          description: error.message || 'An error occurred while loading orders',
           variant: "destructive"
         });
+        setOrders([]);
+        setFilteredOrders([]);
       } finally {
         setLoading(false);
       }
@@ -90,29 +105,40 @@ const WholesalerOrders: React.FC = () => {
     try {
       // Fetch full order details
       const fullOrders = await getWholesalerOrders(true);
-      const fullOrderData = fullOrders.find((o: any) => o.id === order.id);
+      
+      if (!Array.isArray(fullOrders)) {
+        throw new Error('Failed to fetch full order details');
+      }
+      
+      const fullOrderData = fullOrders
+        .filter((o: any) => o && typeof o === 'object' && !o.error)
+        .find((o: any) => o.id === order.id);
+        
       if (fullOrderData) {
         // Cast and ensure proper typing
         const typedOrder: Order = {
           ...fullOrderData,
-          status: fullOrderData.status as OrderStatus,
-          payment_method: fullOrderData.payment_method as PaymentMethod,
+          status: (fullOrderData.status || 'pending') as OrderStatus,
+          payment_method: (fullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
           shops: fullOrderData.shops ? {
-            id: fullOrderData.shops.id,
-            name: fullOrderData.shops.name,
+            id: fullOrderData.shops.id || '',
+            name: fullOrderData.shops.name || '',
             contact: fullOrderData.shops.contact || '',
             address: fullOrderData.shops.address || '',
             postal_code: fullOrderData.shops.postal_code || '',
-            owner_id: fullOrderData.shops.owner_id
+            owner_id: fullOrderData.shops.owner_id || ''
           } : undefined
         };
         setSelectedOrder(typedOrder);
         setShowDetails(true);
+      } else {
+        throw new Error('Order details not found');
       }
     } catch (error: any) {
+      console.error('Error loading order details:', error);
       toast({
         title: "Failed to Load Order Details",
-        description: error.message,
+        description: error.message || 'An error occurred while loading order details',
         variant: "destructive"
       });
     }
@@ -250,7 +276,7 @@ const WholesalerOrders: React.FC = () => {
                     <h3 className="font-semibold text-lg font-poppins">
                       Order #{order.id.slice(0, 8)}
                     </h3>
-                    <p className="text-gray-600 font-poppins">{order.shops?.name}</p>
+                    <p className="text-gray-600 font-poppins">{order.shops?.name || 'Unknown Shop'}</p>
                   </div>
                   <Badge className={getStatusColor(order.status)}>
                     {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
@@ -276,7 +302,7 @@ const WholesalerOrders: React.FC = () => {
                     <Calendar className="h-4 w-4 text-gray-500" />
                     <div>
                       <p className="font-medium font-poppins">
-                        {new Date(order.created_at!).toLocaleDateString()}
+                        {order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A'}
                       </p>
                       <p className="text-sm text-gray-600">Order Date</p>
                     </div>

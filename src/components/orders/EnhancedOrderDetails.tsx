@@ -74,17 +74,30 @@ const EnhancedOrderDetails: React.FC<EnhancedOrderDetailsProps> = ({
       const updatedOrderData = await confirmOrder(order.id, wholesalerNotes);
       // Cast and ensure proper typing
       const typedOrder: Order = {
-        ...updatedOrderData,
+        id: updatedOrderData.id || order.id,
+        buyer_id: updatedOrderData.buyer_id || order.buyer_id,
+        shop_id: updatedOrderData.shop_id || order.shop_id,
+        total_amount: updatedOrderData.total_amount || order.total_amount,
         status: updatedOrderData.status as OrderStatus,
-        payment_method: updatedOrderData.payment_method as PaymentMethod,
-        shops: updatedOrderData.shops ? {
-          id: updatedOrderData.shops.id || order.shops?.id || '',
-          name: updatedOrderData.shops.name || order.shops?.name || '',
-          contact: updatedOrderData.shops.contact || order.shops?.contact || '',
-          address: updatedOrderData.shops.address || order.shops?.address || '',
-          postal_code: updatedOrderData.shops.postal_code || order.shops?.postal_code || '',
-          owner_id: updatedOrderData.shops.owner_id || order.shops?.owner_id || ''
-        } : order.shops
+        payment_method: (updatedOrderData.payment_method || order.payment_method) as PaymentMethod,
+        buyer_name: updatedOrderData.buyer_name || order.buyer_name,
+        buyer_phone: updatedOrderData.buyer_phone || order.buyer_phone,
+        buyer_address: updatedOrderData.buyer_address || order.buyer_address,
+        payment_screenshot: updatedOrderData.payment_screenshot || order.payment_screenshot,
+        screenshot_uploaded_at: updatedOrderData.screenshot_uploaded_at || order.screenshot_uploaded_at,
+        created_at: updatedOrderData.created_at || order.created_at,
+        confirmed_at: updatedOrderData.confirmed_at || order.confirmed_at,
+        rejected_at: updatedOrderData.rejected_at || order.rejected_at,
+        wholesaler_notes: updatedOrderData.wholesaler_notes || order.wholesaler_notes,
+        commission_id: updatedOrderData.commission_id || order.commission_id,
+        shops: order.shops ? {
+          id: order.shops.id,
+          name: order.shops.name,
+          contact: order.shops.contact,
+          address: order.shops.address,
+          postal_code: order.shops.postal_code,
+          owner_id: order.shops.owner_id
+        } : undefined
       };
       onOrderUpdate(typedOrder);
       toast({
@@ -118,17 +131,30 @@ const EnhancedOrderDetails: React.FC<EnhancedOrderDetailsProps> = ({
       const updatedOrderData = await rejectOrder(order.id, wholesalerNotes);
       // Cast and ensure proper typing
       const typedOrder: Order = {
-        ...updatedOrderData,
+        id: updatedOrderData.id || order.id,
+        buyer_id: updatedOrderData.buyer_id || order.buyer_id,
+        shop_id: updatedOrderData.shop_id || order.shop_id,
+        total_amount: updatedOrderData.total_amount || order.total_amount,
         status: updatedOrderData.status as OrderStatus,
-        payment_method: updatedOrderData.payment_method as PaymentMethod,
-        shops: updatedOrderData.shops ? {
-          id: updatedOrderData.shops.id || order.shops?.id || '',
-          name: updatedOrderData.shops.name || order.shops?.name || '',
-          contact: updatedOrderData.shops.contact || order.shops?.contact || '',
-          address: updatedOrderData.shops.address || order.shops?.address || '',
-          postal_code: updatedOrderData.shops.postal_code || order.shops?.postal_code || '',
-          owner_id: updatedOrderData.shops.owner_id || order.shops?.owner_id || ''
-        } : order.shops
+        payment_method: (updatedOrderData.payment_method || order.payment_method) as PaymentMethod,
+        buyer_name: updatedOrderData.buyer_name || order.buyer_name,
+        buyer_phone: updatedOrderData.buyer_phone || order.buyer_phone,
+        buyer_address: updatedOrderData.buyer_address || order.buyer_address,
+        payment_screenshot: updatedOrderData.payment_screenshot || order.payment_screenshot,
+        screenshot_uploaded_at: updatedOrderData.screenshot_uploaded_at || order.screenshot_uploaded_at,
+        created_at: updatedOrderData.created_at || order.created_at,
+        confirmed_at: updatedOrderData.confirmed_at || order.confirmed_at,
+        rejected_at: updatedOrderData.rejected_at || order.rejected_at,
+        wholesaler_notes: updatedOrderData.wholesaler_notes || order.wholesaler_notes,
+        commission_id: updatedOrderData.commission_id || order.commission_id,
+        shops: order.shops ? {
+          id: order.shops.id,
+          name: order.shops.name,
+          contact: order.shops.contact,
+          address: order.shops.address,
+          postal_code: order.shops.postal_code,
+          owner_id: order.shops.owner_id
+        } : undefined
       };
       onOrderUpdate(typedOrder);
       toast({

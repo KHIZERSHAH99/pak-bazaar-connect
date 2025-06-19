@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,9 +40,22 @@ const WholesalerOrders: React.FC = () => {
         const typedOrders: Order[] = orderData
           .filter((order: any) => order && typeof order === 'object' && !order.error)
           .map((order: any) => ({
-            ...order,
+            id: order.id || '',
+            buyer_id: order.buyer_id || '',
+            shop_id: order.shop_id || '',
+            total_amount: order.total_amount || 0,
             status: (order.status || 'pending') as OrderStatus,
             payment_method: (order.payment_method || 'bank_transfer') as PaymentMethod,
+            buyer_name: order.buyer_name || null,
+            buyer_phone: order.buyer_phone || null,
+            buyer_address: order.buyer_address || null,
+            payment_screenshot: order.payment_screenshot || null,
+            screenshot_uploaded_at: order.screenshot_uploaded_at || null,
+            created_at: order.created_at || null,
+            confirmed_at: order.confirmed_at || null,
+            rejected_at: order.rejected_at || null,
+            wholesaler_notes: order.wholesaler_notes || null,
+            commission_id: order.commission_id || null,
             shops: order.shops ? {
               id: order.shops.id || '',
               name: order.shops.name || '',
@@ -117,17 +131,31 @@ const WholesalerOrders: React.FC = () => {
       if (fullOrderData) {
         // Cast and ensure proper typing
         const typedOrder: Order = {
-          ...fullOrderData,
+          id: fullOrderData.id || order.id,
+          buyer_id: fullOrderData.buyer_id || order.buyer_id,
+          shop_id: fullOrderData.shop_id || order.shop_id,
+          total_amount: fullOrderData.total_amount || order.total_amount,
           status: (fullOrderData.status || 'pending') as OrderStatus,
           payment_method: (fullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
+          buyer_name: fullOrderData.buyer_name || order.buyer_name,
+          buyer_phone: fullOrderData.buyer_phone || order.buyer_phone,
+          buyer_address: fullOrderData.buyer_address || order.buyer_address,
+          payment_screenshot: fullOrderData.payment_screenshot || order.payment_screenshot,
+          screenshot_uploaded_at: fullOrderData.screenshot_uploaded_at || order.screenshot_uploaded_at,
+          created_at: fullOrderData.created_at || order.created_at,
+          confirmed_at: fullOrderData.confirmed_at || order.confirmed_at,
+          rejected_at: fullOrderData.rejected_at || order.rejected_at,
+          wholesaler_notes: fullOrderData.wholesaler_notes || order.wholesaler_notes,
+          commission_id: fullOrderData.commission_id || order.commission_id,
           shops: fullOrderData.shops ? {
-            id: fullOrderData.shops.id || '',
-            name: fullOrderData.shops.name || '',
-            contact: fullOrderData.shops.contact || '',
-            address: fullOrderData.shops.address || '',
-            postal_code: fullOrderData.shops.postal_code || '',
-            owner_id: fullOrderData.shops.owner_id || ''
-          } : undefined
+            id: fullOrderData.shops.id || order.shops?.id || '',
+            name: fullOrderData.shops.name || order.shops?.name || '',
+            contact: fullOrderData.shops.contact || order.shops?.contact || '',
+            address: fullOrderData.shops.address || order.shops?.address || '',
+            postal_code: fullOrderData.shops.postal_code || order.shops?.postal_code || '',
+            owner_id: fullOrderData.shops.owner_id || order.shops?.owner_id || ''
+          } : order.shops,
+          profiles: fullOrderData.profiles || order.profiles
         };
         setSelectedOrder(typedOrder);
         setShowDetails(true);

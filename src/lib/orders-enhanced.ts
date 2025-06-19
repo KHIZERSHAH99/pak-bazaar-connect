@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod, PaymentMethodInfo, OrderMessage, WholesalerMonthlySales } from '@/lib/types';
@@ -157,8 +156,8 @@ export const rejectOrder = async (orderId: string, notes?: string) => {
   return order;
 };
 
-// Get orders for wholesaler with partial/full data based on status
-export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
+// Get orders for wholesaler with simple type handling
+export const getWholesalerOrders = async (showFullDetails: boolean = false): Promise<any[]> => {
   const user = await getCurrentUser();
   if (!user) return [];
 
@@ -231,7 +230,7 @@ export const getWholesalerOrders = async (showFullDetails: boolean = false) => {
 };
 
 // Get seller orders
-export const getSellerOrders = async () => {
+export const getSellerOrders = async (): Promise<any[]> => {
   const user = await getCurrentUser();
   if (!user) return [];
 
@@ -305,7 +304,7 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
     ...data[0],
     profiles: data[0].profiles ? {
       ...data[0].profiles,
-      role: data[0].profiles.role as any // Cast role to avoid type issues
+      role: data[0].profiles.role as any
     } : undefined
   };
 };
@@ -330,7 +329,7 @@ export const getOrderMessages = async (orderId: string): Promise<OrderMessage[]>
     ...message,
     profiles: message.profiles ? {
       ...message.profiles,
-      role: message.profiles.role as any // Cast role to avoid type issues
+      role: message.profiles.role as any
     } : undefined
   }));
 };

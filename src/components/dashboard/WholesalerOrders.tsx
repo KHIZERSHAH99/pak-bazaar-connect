@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,53 +27,37 @@ const WholesalerOrders: React.FC = () => {
         const orderData = await getWholesalerOrders(false);
         console.log('Raw order data:', orderData);
         
-        // Check if data is valid and not an error
-        if (!Array.isArray(orderData)) {
-          console.error('Invalid order data received:', orderData);
-          setOrders([]);
-          setFilteredOrders([]);
-          return;
-        }
-        
-        // Safely process orders with proper validation
-        const validOrders = orderData.filter((order: any) => 
-          order && 
-          typeof order === 'object' && 
-          !order.error && 
-          order.id
-        );
-        
-        // Cast and ensure proper typing for valid data
-        const typedOrders: Order[] = validOrders.map((order: any) => ({
-          id: order.id || '',
-          buyer_id: order.buyer_id || '',
-          shop_id: order.shop_id || '',
-          total_amount: Number(order.total_amount) || 0,
-          status: (order.status || 'pending') as OrderStatus,
-          payment_method: (order.payment_method || 'bank_transfer') as PaymentMethod,
-          buyer_name: order.buyer_name || null,
-          buyer_phone: order.buyer_phone || null,
-          buyer_address: order.buyer_address || null,
-          payment_screenshot: order.payment_screenshot || null,
-          screenshot_uploaded_at: order.screenshot_uploaded_at || null,
-          created_at: order.created_at || null,
-          confirmed_at: order.confirmed_at || null,
-          rejected_at: order.rejected_at || null,
-          wholesaler_notes: order.wholesaler_notes || null,
-          commission_id: order.commission_id || null,
-          shops: order.shops ? {
-            id: order.shops.id || '',
-            name: order.shops.name || '',
-            contact: order.shops.contact || '',
-            address: order.shops.address || '',
-            postal_code: order.shops.postal_code || '',
-            owner_id: order.shops.owner_id || ''
+        // Process the raw data into proper Order objects
+        const processedOrders: Order[] = orderData.map((item: any) => ({
+          id: item.id || '',
+          buyer_id: item.buyer_id || '',
+          shop_id: item.shop_id || '',
+          total_amount: Number(item.total_amount) || 0,
+          status: (item.status || 'pending') as OrderStatus,
+          payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
+          buyer_name: item.buyer_name || null,
+          buyer_phone: item.buyer_phone || null,
+          buyer_address: item.buyer_address || null,
+          payment_screenshot: item.payment_screenshot || null,
+          screenshot_uploaded_at: item.screenshot_uploaded_at || null,
+          created_at: item.created_at || null,
+          confirmed_at: item.confirmed_at || null,
+          rejected_at: item.rejected_at || null,
+          wholesaler_notes: item.wholesaler_notes || null,
+          commission_id: item.commission_id || null,
+          shops: item.shops ? {
+            id: item.shops.id || '',
+            name: item.shops.name || '',
+            contact: item.shops.contact || '',
+            address: item.shops.address || '',
+            postal_code: item.shops.postal_code || '',
+            owner_id: item.shops.owner_id || ''
           } : undefined
         }));
         
-        console.log('Processed orders:', typedOrders);
-        setOrders(typedOrders);
-        setFilteredOrders(typedOrders);
+        console.log('Processed orders:', processedOrders);
+        setOrders(processedOrders);
+        setFilteredOrders(processedOrders);
       } catch (error: any) {
         console.error('Error fetching orders:', error);
         toast({
@@ -125,19 +108,10 @@ const WholesalerOrders: React.FC = () => {
     try {
       // Fetch full order details
       const fullOrders = await getWholesalerOrders(true);
-      
-      if (!Array.isArray(fullOrders)) {
-        throw new Error('Failed to fetch full order details');
-      }
-      
-      const validFullOrders = fullOrders.filter((o: any) => 
-        o && typeof o === 'object' && !o.error && o.id
-      );
-      
-      const fullOrderData = validFullOrders.find((o: any) => o.id === order.id);
+      const fullOrderData = fullOrders.find((o: any) => o.id === order.id);
         
       if (fullOrderData) {
-        // Cast and ensure proper typing
+        // Process the full order data
         const typedOrder: Order = {
           id: fullOrderData.id || order.id,
           buyer_id: fullOrderData.buyer_id || order.buyer_id,

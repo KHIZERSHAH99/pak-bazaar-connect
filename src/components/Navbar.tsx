@@ -7,7 +7,7 @@ import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 import { Flag, Menu, X, ShoppingBag, Users, Zap } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { LanguageToggle } from '@/components/ui/language-toggle';
+import LanguageToggle from '@/components/LanguageToggle';
 import EnhancedRoleSwitcher from './navbar/EnhancedRoleSwitcher';
 import MobileMenu from './navbar/MobileMenu';
 
@@ -38,12 +38,12 @@ const Navbar = () => {
   return (
     <>
       {/* Top Banner */}
-      <div className="bg-green-700 text-white py-2 px-4 text-center relative overflow-hidden">
+      <div className="bg-pakistani_green-700 text-white py-2 px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center opacity-5">
           <Flag className="w-40 h-40 text-white" />
         </div>
         <p className="font-medium text-sm md:text-base font-poppins relative z-10">
-          Join Now! Free Ads for First 10 Wholesalers!
+          🎉 Join Now! Free Ads for First 10 Wholesalers! 🚀
         </p>
       </div>
 
@@ -53,10 +53,10 @@ const Navbar = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-              <div className="bg-green-700 rounded-xl p-2 shadow-md">
+              <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md hover:shadow-lg transition-shadow">
                 <span className="text-white text-xl font-bold">PBC</span>
               </div>
-              <span className="text-xl font-bold text-green-800 dark:text-white hidden sm:inline font-poppins">
+              <span className="text-xl font-bold text-pakistani_green-800 dark:text-white hidden sm:inline font-poppins">
                 Pak Bazaar Connect
               </span>
             </Link>
@@ -68,7 +68,7 @@ const Navbar = () => {
                 <Link to="/products">
                   <Button 
                     variant="ghost" 
-                    className="text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                    className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200"
                   >
                     <ShoppingBag className="w-4 h-4 mr-2" />
                     Products
@@ -77,7 +77,7 @@ const Navbar = () => {
                 <Link to="/sellers">
                   <Button 
                     variant="ghost" 
-                    className="text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                    className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200"
                   >
                     <Users className="w-4 h-4 mr-2" />
                     Sellers
@@ -86,7 +86,7 @@ const Navbar = () => {
                 <Link to="/features">
                   <Button 
                     variant="ghost" 
-                    className="text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                    className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200"
                   >
                     <Zap className="w-4 h-4 mr-2" />
                     Features
@@ -111,7 +111,7 @@ const Navbar = () => {
                   <Link to="/dashboard">
                     <Button 
                       variant="ghost" 
-                      className="text-green-700 dark:text-green-300 hover:text-green-800 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                      className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins font-medium"
                     >
                       Dashboard
                     </Button>
@@ -121,7 +121,7 @@ const Navbar = () => {
                   <Button
                     onClick={handleLogout}
                     variant="outline"
-                    className="border-green-700 text-green-700 hover:bg-green-700 hover:text-white dark:border-green-300 dark:text-green-300 dark:hover:bg-green-700 dark:hover:text-white font-poppins transition-all duration-200"
+                    className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-700 hover:text-white dark:border-pakistani_green-300 dark:text-pakistani_green-300 dark:hover:bg-pakistani_green-700 dark:hover:text-white font-poppins transition-all duration-200"
                   >
                     Logout
                   </Button>
@@ -131,13 +131,13 @@ const Navbar = () => {
                   <Link to="/login">
                     <Button 
                       variant="ghost" 
-                      className="text-green-700 dark:text-green-300 hover:text-green-800 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                      className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
                     >
                       Login
                     </Button>
                   </Link>
                   <Link to="/signup">
-                    <Button className="bg-green-700 hover:bg-green-800 text-white font-poppins shadow-md transition-all duration-200">
+                    <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins shadow-md transition-all duration-200 hover:shadow-lg">
                       Sign Up
                     </Button>
                   </Link>
@@ -145,14 +145,14 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button - Always include theme toggle */}
+            {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-2">
               <ThemeToggle />
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-gray-600 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300"
+                className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20"
                 aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
               >
                 {isMobileMenuOpen ? (

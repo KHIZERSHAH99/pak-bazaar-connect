@@ -27,15 +27,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      <div className="flex flex-grow">
-        {/* Mobile sidebar toggle button - positioned better for accessibility */}
+      <div className="flex flex-grow relative">
+        {/* Mobile sidebar toggle button - improved positioning */}
         <div className="md:hidden fixed bottom-6 right-6 z-30">
           <Button 
-            className="rounded-full w-14 h-14 flex items-center justify-center bg-primary hover:bg-primary/90 shadow-xl border-2 border-background"
+            className="rounded-full w-12 h-12 flex items-center justify-center bg-pakistani_green-700 hover:bg-pakistani_green-800 shadow-xl border-2 border-background transition-all duration-200 hover:scale-105"
             onClick={toggleSidebar}
             aria-label={sidebarOpen ? "Close menu" : "Open menu"}
           >
-            {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
 
@@ -44,18 +44,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           setSidebarOpen={setSidebarOpen}
         />
 
-        {/* Improved overlay with better backdrop blur */}
+        {/* Improved overlay */}
         {sidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black/40 z-10 md:hidden backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 z-10 md:hidden backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setSidebarOpen(false)} 
             aria-hidden="true"
           />
         )}
 
-        <main className="flex-grow p-4 md:p-6 bg-background">
+        <main className="flex-grow p-4 md:p-6 bg-background overflow-auto">
           <div className="container mx-auto max-w-7xl">
-            {children}
+            <div className="animate-fadeIn">
+              {children}
+            </div>
           </div>
         </main>
       </div>

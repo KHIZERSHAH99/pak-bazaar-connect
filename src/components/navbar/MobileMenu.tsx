@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { User, ShoppingBag, Users, Zap, Home, Settings } from 'lucide-react';
-import { LanguageToggle } from '@/components/ui/language-toggle';
+import LanguageToggle from '@/components/LanguageToggle';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import EnhancedRoleSwitcher from './EnhancedRoleSwitcher';
 
@@ -37,7 +37,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
             >
               <Home className="w-4 h-4 mr-3" />
               Home
@@ -47,7 +47,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/products" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
             >
               <ShoppingBag className="w-4 h-4 mr-3" />
               Products
@@ -57,7 +57,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/sellers" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
             >
               <Users className="w-4 h-4 mr-3" />
               Sellers
@@ -67,7 +67,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/features" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
             >
               <Zap className="w-4 h-4 mr-3" />
               Features
@@ -94,14 +94,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             {profile && (
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
-                  <div className="bg-green-100 dark:bg-green-900/50 p-2 rounded-full">
-                    <User className="w-5 h-5 text-green-700 dark:text-green-400" />
+                  <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-2 rounded-full">
+                    <User className="w-5 h-5 text-pakistani_green-700 dark:text-pakistani_green-400" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white font-poppins">
+                    <p className="font-medium text-gray-900 dark:text-white font-poppins text-sm">
                       {profile.email}
                     </p>
-                    <Badge variant="secondary" className="text-xs font-poppins">
+                    <Badge variant="secondary" className="text-xs font-poppins mt-1">
                       {profile.role}
                     </Badge>
                   </div>
@@ -115,7 +115,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             <Link to="/dashboard" onClick={handleLinkClick}>
               <Button 
                 variant="ghost" 
-                className="w-full justify-start text-green-700 dark:text-green-300 hover:text-green-800 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
               >
                 <Settings className="w-4 h-4 mr-3" />
                 Dashboard
@@ -129,7 +129,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 onClose();
               }}
               variant="outline"
-              className="w-full border-green-700 text-green-700 hover:bg-green-700 hover:text-white dark:border-green-300 dark:text-green-300 dark:hover:bg-green-700 dark:hover:text-white font-poppins"
+              className="w-full border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-700 hover:text-white dark:border-pakistani_green-300 dark:text-pakistani_green-300 dark:hover:bg-pakistani_green-700 dark:hover:text-white font-poppins"
             >
               Logout
             </Button>
@@ -139,13 +139,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             <Link to="/login" onClick={handleLinkClick}>
               <Button 
                 variant="ghost" 
-                className="w-full justify-start text-green-700 dark:text-green-300 hover:text-green-800 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/20 font-poppins"
+                className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
               >
                 Login
               </Button>
             </Link>
             <Link to="/signup" onClick={handleLinkClick}>
-              <Button className="w-full bg-green-700 hover:bg-green-800 text-white font-poppins">
+              <Button className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins">
                 Sign Up
               </Button>
             </Link>

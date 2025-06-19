@@ -4,48 +4,51 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, AlertTriangle, Eye, Activity } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 
 interface SecurityEvent {
   id: string;
   event_type: string;
   created_at: string;
-  new_values?: any;
+  details?: any;
 }
 
 export const SecurityMonitor: React.FC = () => {
   const [recentEvents, setRecentEvents] = useState<SecurityEvent[]>([]);
-
-  const { data: securityMetrics } = useQuery({
-    queryKey: ['security-metrics'],
-    queryFn: async () => {
-      const user = await getCurrentUser();
-      if (!user) return null;
-
-      // Get recent security events
-      const { data: events } = await supabase
-        .from('audit_logs')
-        .select('id, event_type, created_at, new_values')
-        .eq('user_id', user.id)
-        .in('event_type', ['login_failed', 'unauthorized_access', 'rate_limit_exceeded'])
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      return {
-        recentEvents: events || [],
-        totalSecurityEvents: events?.length || 0
-      };
-    },
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
+  const [totalEvents, setTotalEvents] = useState(0);
 
   useEffect(() => {
-    if (securityMetrics?.recentEvents) {
-      setRecentEvents(securityMetrics.recentEvents);
+    loadSecurityEvents();
+  }, []);
+
+  const loadSecurityEvents = async () => {
+    try {
+      const user = await getCurrentUser();
+      if (!user) return;
+
+      // Load security events from localStorage (fallback approach)
+      const storedLogs = localStorage.getItem('security_logs');
+      if (storedLogs) {
+        const logs = JSON.parse(storedLogs);
+        const securityEvents = logs
+          .filter((log: any) => 
+            ['login_failed', 'unauthorized_access', 'rate_limit_exceeded', 'security_violation'].includes(log.event_type)
+          )
+          .map((log: any) => ({
+            id: Math.random().toString(36),
+            event_type: log.event_type || 'unknown',
+            created_at: log.timestamp || new Date().toISOString(),
+            details: log.details
+          }))
+          .slice(0, 10);
+
+        setRecentEvents(securityEvents);
+        setTotalEvents(securityEvents.length);
+      }
+    } catch (error) {
+      console.error('Failed to load security events:', error);
     }
-  }, [securityMetrics]);
+  };
 
   const getEventBadge = (eventType: string) => {
     switch (eventType) {
@@ -55,13 +58,15 @@ export const SecurityMonitor: React.FC = () => {
         return <Badge variant="destructive">Unauthorized</Badge>;
       case 'rate_limit_exceeded':
         return <Badge variant="secondary">Rate Limited</Badge>;
+      case 'security_violation':
+        return <Badge variant="destructive">Security Violation</Badge>;
       default:
         return <Badge variant="outline">{eventType}</Badge>;
     }
   };
 
   const hasSecurityConcerns = recentEvents.some(event => 
-    ['login_failed', 'unauthorized_access'].includes(event.event_type)
+    ['login_failed', 'unauthorized_access', 'security_violation'].includes(event.event_type)
   );
 
   return (
@@ -85,7 +90,7 @@ export const SecurityMonitor: React.FC = () => {
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <Activity className="h-6 w-6 mx-auto mb-2 text-blue-600" />
-            <p className="font-semibold">{securityMetrics?.totalSecurityEvents || 0}</p>
+            <p className="font-semibold">{totalEvents}</p>
             <p className="text-sm text-gray-600">Security Events</p>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">

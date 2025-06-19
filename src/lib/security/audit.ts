@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 // Enhanced audit logging with detailed security tracking
@@ -6,30 +5,15 @@ export const logSecurityEvent = async (event: string, details: any = {}) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
-    // Enhanced event data
+    // Enhanced event data - for now we'll log to console since audit_logs table needs to be added to types
     const eventData = {
       user_id: user?.id || null,
-      action: event,
-      table_name: 'security_events',
-      record_id: null,
-      old_values: null,
-      new_values: {
-        event_type: event,
-        timestamp: new Date().toISOString(),
-        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
-        ip_address: null, // Will be populated by edge function if needed
-        details: details
-      }
+      event_type: event,
+      timestamp: new Date().toISOString(),
+      user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+      ip_address: null, // Will be populated by edge function if needed
+      details: details
     };
-
-    // Log to audit_logs table if it exists
-    const { error } = await supabase
-      .from('audit_logs')
-      .insert([eventData]);
-
-    if (error) {
-      console.warn('Failed to log to audit_logs table:', error);
-    }
 
     // Always log to console for immediate visibility
     console.log(`🔒 Security Event: ${event}`, {
@@ -37,6 +21,17 @@ export const logSecurityEvent = async (event: string, details: any = {}) => {
       timestamp: new Date().toISOString(),
       details
     });
+
+    // Store in localStorage as backup (for development/debugging)
+    if (typeof window !== 'undefined') {
+      const securityLogs = JSON.parse(localStorage.getItem('security_logs') || '[]');
+      securityLogs.push(eventData);
+      // Keep only last 100 entries
+      if (securityLogs.length > 100) {
+        securityLogs.splice(0, securityLogs.length - 100);
+      }
+      localStorage.setItem('security_logs', JSON.stringify(securityLogs));
+    }
 
   } catch (error) {
     console.error('Failed to log security event:', error);

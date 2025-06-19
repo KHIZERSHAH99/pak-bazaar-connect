@@ -1,6 +1,11 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { validateEmail } from './security';
+
+// Enhanced email validation
+export const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+};
 
 export const checkEmailExists = async (email: string, excludeRole?: string): Promise<boolean> => {
   try {

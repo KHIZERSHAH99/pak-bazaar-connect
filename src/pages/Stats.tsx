@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,6 +44,7 @@ interface WholesalerStats {
 
 const Stats: React.FC = () => {
   const { profile } = useAuth();
+  const { t } = useLanguage();
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [wholesalerStats, setWholesalerStats] = useState<WholesalerStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -191,20 +192,6 @@ const Stats: React.FC = () => {
         {description && (
           <p className="text-xs text-muted-foreground font-poppins">{description}</p>
         )}
-        {trend && (
-          <div className="flex items-center pt-1">
-            <TrendingUp className={`h-3 w-3 ${
-              trend === 'up' ? 'text-green-500' : 
-              trend === 'down' ? 'text-red-500' : 'text-gray-500'
-            }`} />
-            <span className={`text-xs ml-1 ${
-              trend === 'up' ? 'text-green-500' : 
-              trend === 'down' ? 'text-red-500' : 'text-gray-500'
-            }`}>
-              {trend === 'up' ? 'Growing' : trend === 'down' ? 'Declining' : 'Stable'}
-            </span>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
@@ -213,7 +200,7 @@ const Stats: React.FC = () => {
     return (
       <DashboardLayout>
         <div className="space-y-6">
-          <h1 className="text-2xl font-bold font-poppins">Statistics</h1>
+          <h1 className="text-2xl font-bold font-poppins">{t('statistics')}</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((i) => (
               <Card key={i}>
@@ -236,49 +223,45 @@ const Stats: React.FC = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold font-poppins">Statistics Dashboard</h1>
+          <h1 className="text-2xl font-bold font-poppins">{t('statistics_dashboard')}</h1>
           <Badge variant="outline" className="font-poppins">
-            {profile?.role === 'admin' ? 'Platform Overview' : 'Business Metrics'}
+            {profile?.role === 'admin' ? t('platform_overview') : t('business_metrics')}
           </Badge>
         </div>
 
         {profile?.role === 'admin' && platformStats && (
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="users">Users</TabsTrigger>
-              <TabsTrigger value="business">Business</TabsTrigger>
+              <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+              <TabsTrigger value="users">{t('users')}</TabsTrigger>
+              <TabsTrigger value="business">{t('business')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
-                  title="Total Users"
+                  title={t('total_users')}
                   value={platformStats.total_users}
                   icon={Users}
-                  description="Registered users"
-                  trend="up"
+                  description={t('registered_users')}
                 />
                 <StatCard
-                  title="Wholesalers"
+                  title={t('wholesaler')}
                   value={platformStats.total_wholesalers}
                   icon={Store}
-                  description="Active wholesalers"
-                  trend="up"
+                  description={t('active_wholesalers')}
                 />
                 <StatCard
-                  title="Sellers"
+                  title={t('sellers')}
                   value={platformStats.total_sellers}
                   icon={ShoppingCart}
-                  description="Active sellers"
-                  trend="up"
+                  description={t('active_sellers')}
                 />
                 <StatCard
-                  title="Pending Approvals"
+                  title={t('pending')}
                   value={platformStats.total_pending_approvals}
                   icon={Clock}
-                  description="Awaiting approval"
-                  trend="neutral"
+                  description={t('awaiting_approval')}
                 />
               </div>
             </TabsContent>
@@ -286,22 +269,22 @@ const Stats: React.FC = () => {
             <TabsContent value="users" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
-                  title="Total Platform Users"
+                  title={t('total_users')}
                   value={platformStats.total_users}
                   icon={Users}
-                  description="All registered users"
+                  description={t('all_registered_users')}
                 />
                 <StatCard
-                  title="Business Accounts"
+                  title={t('business_accounts')}
                   value={platformStats.total_wholesalers}
                   icon={Store}
-                  description="Wholesaler accounts"
+                  description={t('wholesaler_accounts')}
                 />
                 <StatCard
-                  title="Buyer Accounts"
+                  title={t('buyer_accounts')}
                   value={platformStats.total_sellers}
                   icon={ShoppingCart}
-                  description="Seller accounts"
+                  description={t('seller_accounts')}
                 />
               </div>
             </TabsContent>
@@ -309,28 +292,28 @@ const Stats: React.FC = () => {
             <TabsContent value="business" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
-                  title="Total Shops"
+                  title={t('shops')}
                   value={platformStats.total_shops}
                   icon={Store}
-                  description="Active shops"
+                  description={t('active_shops')}
                 />
                 <StatCard
-                  title="Total Products"
+                  title={t('total_products')}
                   value={platformStats.total_products}
                   icon={Package}
-                  description="Listed products"
+                  description={t('listed_products')}
                 />
                 <StatCard
-                  title="Total Ads"
+                  title={t('create_ads')}
                   value={platformStats.total_ads}
                   icon={TrendingUp}
-                  description="Created ads"
+                  description={t('created_ads')}
                 />
                 <StatCard
-                  title="Total Orders"
+                  title={t('orders')}
                   value={platformStats.total_orders}
                   icon={DollarSign}
-                  description="Processed orders"
+                  description={t('processed_orders')}
                 />
               </div>
             </TabsContent>
@@ -340,105 +323,59 @@ const Stats: React.FC = () => {
         {profile?.role === 'wholesaler' && wholesalerStats && (
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="products">Products</TabsTrigger>
-              <TabsTrigger value="marketing">Marketing</TabsTrigger>
+              <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+              <TabsTrigger value="products">{t('products')}</TabsTrigger>
+              <TabsTrigger value="marketing">{t('marketing')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
-                  title="My Shops"
+                  title={t('shops')}
                   value={wholesalerStats.shops_count}
                   icon={Store}
-                  description="Active shops"
+                  description={t('active_shops')}
                 />
                 <StatCard
-                  title="Total Products"
+                  title={t('total_products')}
                   value={wholesalerStats.products_count}
                   icon={Package}
-                  description="Listed products"
+                  description={t('listed_products')}
                 />
                 <StatCard
-                  title="Active Ads"
+                  title={t('create_ads')}
                   value={wholesalerStats.active_ads}
                   icon={TrendingUp}
-                  description="Running campaigns"
+                  description={t('running_campaigns')}
                 />
                 <StatCard
-                  title="Total Orders"
+                  title={t('orders')}
                   value={wholesalerStats.total_orders}
                   icon={ShoppingCart}
-                  description="Received orders"
+                  description={t('received_orders')}
                 />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="font-poppins">Business Status</CardTitle>
-                    <CardDescription className="font-poppins">
-                      Current verification and account status
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="font-poppins">Account Verification</span>
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          Pending
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-poppins">Business Profile</span>
-                        <Badge variant="default" className="flex items-center gap-1">
-                          <CheckCircle className="h-3 w-3" />
-                          Complete
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="font-poppins">Quick Actions</CardTitle>
-                    <CardDescription className="font-poppins">
-                      Recommended next steps
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="text-sm font-poppins">• Complete business verification</div>
-                      <div className="text-sm font-poppins">• Add more products to shops</div>
-                      <div className="text-sm font-poppins">• Create promotional ads</div>
-                      <div className="text-sm font-poppins">• Optimize product listings</div>
-                    </div>
-                  </CardContent>
-                </Card>
               </div>
             </TabsContent>
 
             <TabsContent value="products" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
-                  title="Active Products"
+                  title={t('total_products')}
                   value={wholesalerStats.active_products}
                   icon={CheckCircle}
-                  description="Live and approved"
+                  description={t('live_and_approved')}
                 />
                 <StatCard
-                  title="Pending Approval"
+                  title={t('pending')}
                   value={wholesalerStats.pending_products}
                   icon={Clock}
-                  description="Awaiting review"
+                  description={t('awaiting_review')}
                 />
                 <StatCard
-                  title="Total Listed"
+                  title={t('total_products')}
                   value={wholesalerStats.products_count}
                   icon={Package}
-                  description="All products"
+                  description={t('all_products')}
                 />
               </div>
             </TabsContent>
@@ -446,22 +383,22 @@ const Stats: React.FC = () => {
             <TabsContent value="marketing" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
-                  title="Active Ads"
+                  title={t('create_ads')}
                   value={wholesalerStats.active_ads}
                   icon={TrendingUp}
-                  description="Currently running"
+                  description={t('currently_running')}
                 />
                 <StatCard
-                  title="Pending Ads"
+                  title={t('pending')}
                   value={wholesalerStats.pending_ads}
                   icon={Clock}
-                  description="Awaiting approval"
+                  description={t('awaiting_approval')}
                 />
                 <StatCard
-                  title="Total Campaigns"
+                  title={t('create_ads')}
                   value={wholesalerStats.ads_count}
                   icon={AlertCircle}
-                  description="All time created"
+                  description={t('all_time_created')}
                 />
               </div>
             </TabsContent>
@@ -471,9 +408,11 @@ const Stats: React.FC = () => {
         {profile?.role === 'seller' && (
           <div className="text-center py-12">
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-xl font-semibold font-poppins mb-2">Seller Analytics Coming Soon</h2>
+            <h2 className="text-xl font-semibold font-poppins mb-2">
+              {t('analytics')} - {t('seller')}
+            </h2>
             <p className="text-muted-foreground font-poppins">
-              Track your orders, favorite suppliers, and purchase history.
+              {t('track_orders')}, {t('favorite_shops')}, {t('track_purchases')}
             </p>
           </div>
         )}

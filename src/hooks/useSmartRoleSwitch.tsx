@@ -2,6 +2,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { RoleSwitchResponse } from '@/types/role-switch';
@@ -16,6 +17,7 @@ interface UseSmartRoleSwitchReturn {
 export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
   const { profile, checkAuthStatus } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [isSwitching, setIsSwitching] = useState(false);
 
   // Check if user is registered for a specific role
@@ -36,7 +38,7 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     return false;
   }, [profile]);
 
-  // Check if user can switch to a specific role - fixed logic
+  // Check if user can switch to a specific role
   const canSwitchTo = useCallback((role: UserRole): boolean => {
     if (!profile) return false;
     if (profile.role === role) return false; // Can't switch to current role
@@ -66,8 +68,8 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     // Validate target role
     if (!['seller', 'wholesaler'].includes(targetRole)) {
       toast({
-        title: "Invalid Role",
-        description: "Invalid role specified for switching.",
+        title: t('cannot_switch_role'),
+        description: t('unauthorized_access'),
         variant: "destructive"
       });
       return;
@@ -75,18 +77,18 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
 
     // Check if user can switch to target role
     if (!canSwitchTo(targetRole)) {
-      let message = "Role switching is not available.";
+      let message = t('unauthorized_access');
       
       if (profile.role === 'pending') {
-        message = "Please wait for admin approval before switching roles.";
+        message = t('verification_pending');
       } else if (profile.role === targetRole) {
-        message = `You are already a ${targetRole}.`;
+        message = `${t('current')} ${t(targetRole)}`;
       } else {
-        message = "Role switching is only available between seller and wholesaler roles.";
+        message = t('unauthorized_access');
       }
       
       toast({
-        title: "Cannot Switch Role",
+        title: t('cannot_switch_role'),
         description: message,
         variant: "destructive"
       });
@@ -98,40 +100,53 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     try {
       // Show loading state
       toast({
-        title: "Switching Role",
-        description: `Switching to ${targetRole} role...`,
+        title: t('switching_role'),
+        description: `${t('switching_role')} ${t(targetRole)}...`,
         variant: "default"
       });
 
       console.log('🔄 Calling switch_business_role function');
 
-      // Call the database function for direct role switching
-      const { data, error } = await supabase.rpc('switch_business_role', {
+      // First check if the function exists
+      const { data: functionExists, error: checkError } = await supabase.rpc('switch_business_role', {
         target_role: targetRole
       });
 
-      console.log('🔄 Function response:', { data, error });
+      if (checkError) {
+        console.error('Function check error:', checkError);
+        
+        // If function doesn't exist, do direct profile update
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('User not authenticated');
 
-      if (error) {
-        console.error('Role switch error:', error);
-        throw error;
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ role: targetRole })
+          .eq('id', user.id);
+
+        if (updateError) {
+          console.error('Direct update error:', updateError);
+          throw updateError;
+        }
+
+        console.log('✅ Direct role update successful');
+      } else {
+        // Type cast the response data with proper conversion
+        const response = functionExists as unknown as RoleSwitchResponse;
+
+        if (!response?.success) {
+          throw new Error(response?.error || 'Role switch failed');
+        }
+        
+        console.log('✅ Function-based role switch successful');
       }
-
-      // Type cast the response data with proper conversion
-      const response = data as unknown as RoleSwitchResponse;
-
-      if (!response.success) {
-        throw new Error(response.error || 'Role switch failed');
-      }
-      
-      console.log('✅ Role switch successful');
       
       // Refresh auth status
       await checkAuthStatus();
       
       toast({
-        title: "Role Switched Successfully!",
-        description: `You are now a ${targetRole}. Welcome to your new role!`,
+        title: t('role_switched_successfully'),
+        description: `${t('current')} ${t(targetRole)}`,
         variant: "default"
       });
 
@@ -143,29 +158,29 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     } catch (error: any) {
       console.error('Role switch error:', error);
       
-      let errorMessage = "Failed to switch role. Please try again.";
+      let errorMessage = t('try_again');
       
       if (error.message) {
         if (error.message.includes('Already in target role')) {
-          errorMessage = `You are already a ${targetRole}.`;
+          errorMessage = `${t('current')} ${t(targetRole)}`;
         } else if (error.message.includes('not authenticated') || error.message.includes('unauthorized')) {
-          errorMessage = "You are not authorized to switch to this role.";
+          errorMessage = t('unauthorized_access');
         } else if (error.message.includes('network') || error.message.includes('fetch')) {
-          errorMessage = "Network error. Please check your connection and try again.";
+          errorMessage = t('network_error');
         } else {
           errorMessage = error.message;
         }
       }
       
       toast({
-        title: "Role Switch Failed",
+        title: t('role_switch_failed'),
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setIsSwitching(false);
     }
-  }, [profile, isSwitching, canSwitchTo, toast, checkAuthStatus]);
+  }, [profile, isSwitching, canSwitchTo, toast, checkAuthStatus, t]);
 
   return {
     switchRole,

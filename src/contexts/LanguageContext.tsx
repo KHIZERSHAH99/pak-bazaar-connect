@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'ur';
@@ -29,6 +30,8 @@ const translations: Translations = {
   'suppliers': { en: 'Suppliers', ur: 'سپلائرز' },
   'sellers': { en: 'Sellers', ur: 'فروش کنندگان' },
   'features': { en: 'Features', ur: 'خصوصیات' },
+  'analytics': { en: 'Analytics', ur: 'تجزیات' },
+  'statistics': { en: 'Statistics', ur: 'شماریات' },
   
   // Profile Page
   'my_profile': { en: 'My Profile', ur: 'میری پروفائل' },
@@ -43,28 +46,83 @@ const translations: Translations = {
   'permissions': { en: 'Permissions', ur: 'اجازات' },
   'enabled': { en: 'enabled', ur: 'فعال' },
   
-  // Profile Image Upload
-  'upload_photo': { en: 'Upload Photo', ur: 'تصویر اپ لوڈ کریں' },
-  'uploading': { en: 'Uploading...', ur: 'اپ لوڈ ہو رہا ہے...' },
-  'remove_photo': { en: 'Remove Photo', ur: 'تصویر ہٹائیں' },
-  'upload_photo_desc': { en: 'Upload a photo to personalize your profile. Max 2MB.', ur: 'اپنی پروفائل کو ذاتی بنانے کے لیے تصویر اپ لوڈ کریں۔ زیادہ سے زیادہ 2MB۔' },
-  'processing_image': { en: 'Processing image...', ur: 'تصویر پروسیس ہو رہی ہے...' },
-  'profile_image_updated': { en: 'Profile image updated', ur: 'پروفائل کی تصویر اپ ڈیٹ ہو گئی' },
-  'profile_image_updated_desc': { en: 'Your profile image has been successfully updated', ur: 'آپ کی پروفائل کی تصویر کامیابی سے اپ ڈیٹ ہو گئی ہے' },
-  'upload_failed': { en: 'Upload failed', ur: 'اپ لوڈ ناکام' },
-  'upload_failed_desc': { en: 'Failed to upload image. Please try again.', ur: 'تصویر اپ لوڈ کرنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔' },
-  'file_too_large': { en: 'File too large', ur: 'فائل بہت بڑی ہے' },
-  'file_too_large_desc': { en: 'Please select an image smaller than 2MB', ur: 'براہ کرم 2MB سے چھوٹی تصویر منتخب کریں' },
-  'invalid_file_type': { en: 'Invalid file type', ur: 'غلط فائل کی قسم' },
-  'invalid_file_type_desc': { en: 'Please select an image file', ur: 'براہ کرم ایک تصویری فائل منتخب کریں' },
-  'remove_profile_image': { en: 'Remove Profile Image', ur: 'پروفائل کی تصویر ہٹائیں' },
-  'remove_image_confirm': { en: 'Are you sure you want to remove your profile image? This action cannot be undone.', ur: 'کیا آپ واقعی اپنی پروفائل کی تصویر ہٹانا چاہتے ہیں؟ یہ عمل واپس نہیں ہو سکتا۔' },
-  'remove_image': { en: 'Remove Image', ur: 'تصویر ہٹائیں' },
-  'keep_image': { en: 'Keep Image', ur: 'تصویر رکھیں' },
-  'profile_image_removed': { en: 'Profile image removed', ur: 'پروفائل کی تصویر ہٹا دی گئی' },
-  'profile_image_removed_desc': { en: 'Your profile image has been removed successfully', ur: 'آپ کی پروفائل کی تصویر کامیابی سے ہٹا دی گئی ہے' },
-  'remove_failed': { en: 'Remove failed', ur: 'ہٹانے میں ناکامی' },
-  'remove_failed_desc': { en: 'Failed to remove image. Please try again.', ur: 'تصویر ہٹانے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔' },
+  // Analytics & Stats
+  'analytics_dashboard': { en: 'Analytics Dashboard', ur: 'تجزیاتی ڈیش بورڈ' },
+  'statistics_dashboard': { en: 'Statistics Dashboard', ur: 'شماریاتی ڈیش بورڈ' },
+  'total_views': { en: 'Total Views', ur: 'کل ویوز' },
+  'messages': { en: 'Messages', ur: 'پیغامات' },
+  'revenue': { en: 'Revenue', ur: 'آمدن' },
+  'total_users': { en: 'Total Users', ur: 'کل صارفین' },
+  'total_products': { en: 'Total Products', ur: 'کل پروڈکٹس' },
+  'active_shops': { en: 'Active Shops', ur: 'فعال دکانیں' },
+  'orders_today': { en: 'Orders Today', ur: 'آج کے آرڈرز' },
+  'orders_placed': { en: 'Orders Placed', ur: 'دیے گئے آرڈرز' },
+  'favorite_shops': { en: 'Favorite Shops', ur: 'پسندیدہ دکانیں' },
+  'spent': { en: 'Spent', ur: 'خرچ' },
+  'overview': { en: 'Overview', ur: 'جائزہ' },
+  'users': { en: 'Users', ur: 'صارفین' },
+  'business': { en: 'Business', ur: 'کاروبار' },
+  'marketing': { en: 'Marketing', ur: 'مارکیٹنگ' },
+  'platform_overview': { en: 'Platform Overview', ur: 'پلیٹفارم کا جائزہ' },
+  'business_metrics': { en: 'Business Metrics', ur: 'کاروباری میٹرکس' },
+  'registered_users': { en: 'Registered users', ur: 'رجسٹرڈ صارفین' },
+  'active_wholesalers': { en: 'Active wholesalers', ur: 'فعال ہول سیلرز' },
+  'active_sellers': { en: 'Active sellers', ur: 'فعال سیلرز' },
+  'awaiting_approval': { en: 'Awaiting approval', ur: 'منظوری کا انتظار' },
+  'all_registered_users': { en: 'All registered users', ur: 'تمام رجسٹرڈ صارفین' },
+  'business_accounts': { en: 'Business accounts', ur: 'کاروباری اکاؤنٹس' },
+  'wholesaler_accounts': { en: 'Wholesaler accounts', ur: 'ہول سیلر اکاؤنٹس' },
+  'buyer_accounts': { en: 'Buyer accounts', ur: 'خریدار اکاؤنٹس' },
+  'seller_accounts': { en: 'Seller accounts', ur: 'سیلر اکاؤنٹس' },
+  'listed_products': { en: 'Listed products', ur: 'لسٹ شدہ پروڈکٹس' },
+  'created_ads': { en: 'Created ads', ur: 'بنائے گئے اشتہارات' },
+  'processed_orders': { en: 'Processed orders', ur: 'پروسیس شدہ آرڈرز' },
+  'running_campaigns': { en: 'Running campaigns', ur: 'چلتی مہمات' },
+  'received_orders': { en: 'Received orders', ur: 'موصولہ آرڈرز' },
+  'live_and_approved': { en: 'Live and approved', ur: 'لائیو اور منظور شدہ' },
+  'awaiting_review': { en: 'Awaiting review', ur: 'جائزے کا انتظار' },
+  'all_products': { en: 'All products', ur: 'تمام پروڈکٹس' },
+  'currently_running': { en: 'Currently running', ur: 'فی الوقت چل رہے' },
+  'all_time_created': { en: 'All time created', ur: 'تمام وقت بنائے گئے' },
+  
+  // Role Management
+  'role_management': { en: 'Role Management', ur: 'کردار کا انتظام' },
+  'choose_role': { en: 'Choose your role to access platform features', ur: 'پلیٹفارم کی خصوصیات تک رسائی کے لیے اپنا کردار منتخب کریں' },
+  'role_change_notice': { en: 'Role Change Notice', ur: 'کردار تبدیلی کا اطلاع' },
+  'role_change_desc': { en: 'Role changes update your account permissions immediately. To maintain security, switching to a Wholesaler role requires proper business verification.', ur: 'کردار کی تبدیلی آپ کے اکاؤنٹ کی اجازات کو فوری طور پر اپڈیٹ کر دیتی ہے۔ سیکیورٹی برقرار رکھنے کے لیے، ہول سیلر کردار میں تبدیلی کے لیے مناسب کاروباری تصدیق ضروری ہے۔' },
+  'becoming_wholesaler': { en: 'Becoming a Wholesaler', ur: 'ہول سیلر بننا' },
+  'becoming_wholesaler_desc': { en: "To become a wholesaler, you'll need to complete a separate signup process with business verification. This ensures all wholesalers on our platform are legitimate businesses.", ur: 'ہول سیلر بننے کے لیے، آپ کو کاروباری تصدیق کے ساتھ الگ سائن اپ کا عمل مکمل کرنا ہوگا۔ یہ اس بات کو یقینی بناتا ہے کہ ہمارے پلیٹفارم پر تمام ہول سیلرز جائز کاروبار ہیں۔' },
+  'wholesaler': { en: 'Wholesaler', ur: 'ہول سیلر' },
+  'seller': { en: 'Seller', ur: 'فروش کنندہ' },
+  'admin': { en: 'Admin', ur: 'ایڈمن' },
+  'sell_to_retailers': { en: 'Sell products to retailers', ur: 'خوردہ فروشوں کو پروڈکٹس فروخت کریں' },
+  'purchase_from_wholesalers': { en: 'Purchase from wholesalers', ur: 'ہول سیلرز سے خریداری کریں' },
+  'current': { en: 'Current', ur: 'موجودہ' },
+  'switch_to': { en: 'Switch to', ur: 'تبدیل کریں' },
+  'sign_up_as': { en: 'Sign up as', ur: 'کے طور پر سائن اپ کریں' },
+  'registration_required': { en: 'Registration required for this role', ur: 'اس کردار کے لیے رجسٹریشن ضروری ہے' },
+  'role_switched_successfully': { en: 'Role Switched Successfully!', ur: 'کردار کامیابی سے تبدیل ہو گیا!' },
+  'switching_role': { en: 'Switching Role', ur: 'کردار تبدیل کر رہے ہیں' },
+  'cannot_switch_role': { en: 'Cannot Switch Role', ur: 'کردار تبدیل نہیں کر سکتے' },
+  'role_switch_failed': { en: 'Role Switch Failed', ur: 'کردار تبدیل کرنے میں ناکامی' },
+  
+  // Common actions and status
+  'confirm': { en: 'Confirm', ur: 'تصدیق کریں' },
+  'cancel': { en: 'Cancel', ur: 'منسوخ' },
+  'save': { en: 'Save', ur: 'محفوظ کریں' },
+  'edit': { en: 'Edit', ur: 'ترمیم' },
+  'delete': { en: 'Delete', ur: 'ڈیلیٹ' },
+  'view': { en: 'View', ur: 'دیکھیں' },
+  'processing': { en: 'Processing...', ur: 'پروسیسنگ...' },
+  'loading': { en: 'Loading...', ur: 'لوڈ ہو رہا ہے...' },
+  'settings': { en: 'Settings', ur: 'سیٹنگز' },
+  'previous': { en: 'Previous', ur: 'پچھلا' },
+  'continue': { en: 'Continue', ur: 'جاری رکھیں' },
+  'next': { en: 'Next', ur: 'اگلا' },
+  'submit': { en: 'Submit', ur: 'جمع کریں' },
+  'loading_component': { en: 'Loading component...', ur: 'کمپوننٹ لوڈ ہو رہا ہے...' },
+  'options': { en: 'Options', ur: 'اختیارات' },
+  'of': { en: 'of', ur: 'میں سے' },
   
   // Verification Status
   'verified': { en: 'Verified', ur: 'تصدیق شدہ' },
@@ -77,22 +135,6 @@ const translations: Translations = {
   'complete_profile': { en: 'Complete your profile to start the verification process.', ur: 'تصدیقی عمل شروع کرنے کے لیے اپنی پروفائل مکمل کریں۔' },
   'note': { en: 'Note', ur: 'نوٹ' },
   
-  // Role Management
-  'role_management': { en: 'Role Management', ur: 'کردار کا انتظام' },
-  'choose_role': { en: 'Choose your role to access platform features', ur: 'پلیٹفارم کی خصوصیات تک رسائی کے لیے اپنا کردار منتخب کریں' },
-  'role_change_notice': { en: 'Role Change Notice', ur: 'کردار تبدیلی کا اطلاع' },
-  'role_change_desc': { en: 'Role changes update your account permissions immediately. To maintain security, switching to a Wholesaler role requires proper business verification.', ur: 'کردار کی تبدیلی آپ کے اکاؤنٹ کی اجازات کو فوری طور پر اپڈیٹ کر دیتی ہے۔ سیکیورٹی برقرار رکھنے کے لیے، ہول سیلر کردار میں تبدیلی کے لیے مناسب کاروباری تصدیق ضروری ہے۔' },
-  'becoming_wholesaler': { en: 'Becoming a Wholesaler', ur: 'ہول سیلر بننا' },
-  'becoming_wholesaler_desc': { en: "To become a wholesaler, you'll need to complete a separate signup process with business verification. This ensures all wholesalers on our platform are legitimate businesses.", ur: 'ہول سیلر بننے کے لیے، آپ کو کاروباری تصدیق کے ساتھ الگ سائن اپ کا عمل مکمل کرنا ہوگا۔ یہ اس بات کو یقینی بناتا ہے کہ ہمارے پلیٹفارم پر تمام ہول سیلرز جائز کاروبار ہیں۔' },
-  'wholesaler': { en: 'Wholesaler', ur: 'ہول سیلر' },
-  'seller': { en: 'Seller', ur: 'فروش کنندہ' },
-  'sell_to_retailers': { en: 'Sell products to retailers', ur: 'خوردہ فروشوں کو پروڈکٹس فروخت کریں' },
-  'purchase_from_wholesalers': { en: 'Purchase from wholesalers', ur: 'ہول سیلرز سے خریداری کریں' },
-  'current': { en: 'Current', ur: 'موجودہ' },
-  'switch_to': { en: 'Switch to', ur: 'تبدیل کریں' },
-  'sign_up_as': { en: 'Sign up as', ur: 'کے طور پر سائن اپ کریں' },
-  'registration_required': { en: 'Registration required for this role', ur: 'اس کردار کے لیے رجسٹریشن ضروری ہے' },
-  
   // Role Features
   'create_manage_shops': { en: 'Create and manage shops', ur: 'دکانیں بنائیں اور ان کا انتظام کریں' },
   'list_products': { en: 'List products for sale', ur: 'فروخت کے لیے پروڈکٹس کی فہرست بنائیں' },
@@ -102,13 +144,6 @@ const translations: Translations = {
   'place_bulk_orders': { en: 'Place bulk orders', ur: 'بلک آرڈرز دیں' },
   'track_orders': { en: 'Track order status', ur: 'آرڈر کی صورتحال کا پتہ لگائیں' },
   'manage_inventory': { en: 'Manage inventory purchases', ur: 'انوینٹری کی خریداری کا انتظام کریں' },
-  
-  // Role Permissions Categories
-  'basic': { en: 'Basic', ur: 'بنیادی' },
-  'admin': { en: 'Admin', ur: 'ایڈمن' },
-  'business': { en: 'Business', ur: 'کاروبار' },
-  'marketing': { en: 'Marketing', ur: 'مارکیٹنگ' },
-  'communication': { en: 'Communication', ur: 'رابطہ' },
   
   // Permission Items
   'view_products': { en: 'View Products', ur: 'پروڈکٹس دیکھیں' },
@@ -125,65 +160,24 @@ const translations: Translations = {
   'track_purchases': { en: 'Track Purchases', ur: 'خریداری کا پتہ لگائیں' },
   'message_wholesalers': { en: 'Message Wholesalers', ur: 'ہول سیلرز کو پیغام' },
   
-  // Search and actions
-  'search': { en: 'Search', ur: 'تلاش کریں' },
-  'add_to_cart': { en: 'Add to Cart', ur: 'کارٹ میں شامل کریں' },
-  'price': { en: 'Price', ur: 'قیمت' },
-  'category': { en: 'Category', ur: 'کیٹگری' },
-  'location': { en: 'Location', ur: 'مقام' },
-  'rating': { en: 'Rating', ur: 'ریٹنگ' },
-  
-  // Business terms
-  'message_seller': { en: 'Message Seller', ur: 'فروش کنندہ کو پیغام' },
-  'request_quote': { en: 'Request Quote', ur: 'قیمت کی درخواست' },
-  'minimum_order': { en: 'Minimum Order', ur: 'کم سے کم آرڈر' },
-  'wholesale_price': { en: 'Wholesale Price', ur: 'ہول سیل قیمت' },
-  'contact_seller': { en: 'Contact Seller', ur: 'فروش کنندہ سے رابطہ' },
-  'save_favorite': { en: 'Save to Favorites', ur: 'پسندیدہ میں محفوظ کریں' },
-  'compare_products': { en: 'Compare Products', ur: 'پروڈکٹس کا موازنہ' },
-  
-  // Common actions
-  'confirm': { en: 'Confirm', ur: 'تصدیق کریں' },
-  'cancel': { en: 'Cancel', ur: 'منسوخ' },
-  'save': { en: 'Save', ur: 'محفوظ کریں' },
-  'edit': { en: 'Edit', ur: 'ترمیم' },
-  'delete': { en: 'Delete', ur: 'ڈیلیٹ' },
-  'view': { en: 'View', ur: 'دیکھیں' },
-  'processing': { en: 'Processing...', ur: 'پروسیسنگ...' },
-  'loading': { en: 'Loading...', ur: 'لوڈ ہو رہا ہے...' },
-  'settings': { en: 'Settings', ur: 'سیٹنگز' },
-  'previous': { en: 'Previous', ur: 'پچھلا' },
-  'continue': { en: 'Continue', ur: 'جاری رکھیں' },
-  'next': { en: 'Next', ur: 'اگلا' },
-  'submit': { en: 'Submit', ur: 'جمع کریں' },
-  'loading_component': { en: 'Loading component...', ur: 'کمپوننٹ لوڈ ہو رہا ہے...' },
-  'options': { en: 'Options', ur: 'اختیارات' },
-  
-  // Account related
-  'create_account': { en: 'Create Account', ur: 'اکاؤنٹ بنائیں' },
-  'my_account': { en: 'My Account', ur: 'میرا اکاؤنٹ' },
-  'account_settings': { en: 'Account Settings', ur: 'اکاؤنٹ سیٹنگز' },
+  // Role Permissions Categories
+  'basic': { en: 'Basic', ur: 'بنیادی' },
+  'communication': { en: 'Communication', ur: 'رابطہ' },
   
   // Language related
   'language': { en: 'Language', ur: 'زبان' },
   'english': { en: 'English', ur: 'انگریزی' },
   'urdu': { en: 'اردو', ur: 'اردو' },
   
-  // Theme related
-  'theme': { en: 'Theme', ur: 'تھیم' },
-  'light_mode': { en: 'Light Mode', ur: 'لائٹ موڈ' },
-  'dark_mode': { en: 'Dark Mode', ur: 'ڈارک موڈ' },
-  
-  // Business specific - removed duplicate 'buyer' and 'business' keys
-  'buyer': { en: 'Buyer', ur: 'خریدار' },
-  'marketplace': { en: 'Marketplace', ur: 'بازار' },
-  
   // Profile not found
   'profile_not_found': { en: 'Profile Not Found', ur: 'پروفائل نہیں ملی' },
   'profile_not_found_desc': { en: 'Unable to load your profile information at this time.', ur: 'اس وقت آپ کی پروفائل کی معلومات لوڈ نہیں ہو سکیں۔' },
   
-  // Missing translations
-  'of': { en: 'of', ur: 'میں سے' },
+  // Error messages
+  'error_occurred': { en: 'An error occurred', ur: 'ایک خرابی پیش آئی' },
+  'try_again': { en: 'Please try again', ur: 'براہ کرم دوبارہ کوشش کریں' },
+  'network_error': { en: 'Network error. Please check your connection.', ur: 'نیٹ ورک کی خرابی۔ اپنا کنکشن چیک کریں۔' },
+  'unauthorized_access': { en: 'You are not authorized to perform this action.', ur: 'آپ کو یہ کارروائی کرنے کی اجازت نہیں ہے۔' }
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -222,7 +216,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string): string => {
-    return translations[key]?.[language] || key;
+    const translation = translations[key]?.[language];
+    if (!translation) {
+      console.warn(`Missing translation for key: ${key}`);
+      return key; // Return key as fallback
+    }
+    return translation;
   };
 
   return (

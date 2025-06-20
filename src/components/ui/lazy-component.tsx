@@ -8,10 +8,10 @@ interface LazyComponentProps {
   className?: string;
 }
 
-export const createLazyComponent = <T extends React.ComponentType<any>>(
+export function createLazyComponent<T extends React.ComponentType<any>>(
   importFunction: () => Promise<{ default: T }>,
   fallbackComponent?: React.ComponentType
-) => {
+) {
   const LazyComponent = lazy(importFunction);
   
   return React.forwardRef<any, React.ComponentProps<T> & LazyComponentProps>((props, ref) => {
@@ -29,17 +29,17 @@ export const createLazyComponent = <T extends React.ComponentType<any>>(
 
     return (
       <Suspense fallback={defaultFallback}>
-        <LazyComponent ref={ref} {...componentProps} />
+        <LazyComponent {...(componentProps as any)} />
       </Suspense>
     );
   });
-};
+}
 
 // Performance monitoring for lazy components
-export const withPerformanceMonitoring = <T extends React.ComponentType<any>>(
+export function withPerformanceMonitoring<T extends React.ComponentType<any>>(
   Component: T,
   componentName: string
-) => {
+) {
   return React.forwardRef<any, React.ComponentProps<T>>((props, ref) => {
     React.useEffect(() => {
       const startTime = performance.now();
@@ -54,6 +54,6 @@ export const withPerformanceMonitoring = <T extends React.ComponentType<any>>(
       };
     });
 
-    return <Component ref={ref} {...props} />;
+    return <Component {...(props as any)} />;
   });
-};
+}

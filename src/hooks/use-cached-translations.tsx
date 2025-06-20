@@ -29,9 +29,9 @@ export const useCachedTranslations = ({
     }
 
     // Create new translation function
-    const translationFunction = (key: string, options?: any) => {
+    const translationFunction = (key: string) => {
       const translationKey = namespace ? `${namespace}.${key}` : key;
-      return t(translationKey, options);
+      return t(translationKey);
     };
 
     // Preload common translations

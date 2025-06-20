@@ -10,7 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { AlertTriangle, Info, Trash2, UserX } from 'lucide-react';
+import { AlertTriangle, Info, Trash2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ConfirmationDialogProps {
   open: boolean;

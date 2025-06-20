@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { signOut as authSignOut } from '@/lib/auth';
 import type { Database } from '@/integrations/supabase/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -12,6 +13,7 @@ interface AuthState {
   profile: Profile | null;
   session: Session | null;
   loading: boolean;
+  signOut: () => Promise<void>;
   checkAuthStatus: () => Promise<void>;
   refreshProfile: () => Promise<Profile | null>;
 }
@@ -21,6 +23,7 @@ const AuthContext = createContext<AuthState>({
   profile: null,
   session: null,
   loading: true,
+  signOut: async () => {},
   checkAuthStatus: async () => {},
   refreshProfile: async () => null,
 });
@@ -80,6 +83,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return null;
     return fetchUserProfile(user.id, true);
   }, [user, fetchUserProfile]);
+
+  const signOut = useCallback(async () => {
+    try {
+      await authSignOut();
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      setProfileFetchTimestamp(0);
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
+  }, []);
 
   const checkAuthStatus = useCallback(async () => {
     try {
@@ -163,6 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       profile, 
       session, 
       loading, 
+      signOut,
       checkAuthStatus,
       refreshProfile
     }}>

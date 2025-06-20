@@ -42,11 +42,32 @@ const QuickActions: React.FC = () => {
         {
           label: 'My Orders',
           icon: <ShoppingCart className="h-4 w-4" />,
-          href: '/dashboard/seller-orders', // FIXED PATH
+          href: '/dashboard/seller-orders',
           variant: 'outline' as const
         },
         {
           label: 'Support',
+          icon: <MessageSquare className="h-4 w-4" />,
+          href: '/dashboard/chat',
+          variant: 'outline' as const
+        }
+      ];
+    } else if (profile?.role === 'admin') {
+      return [
+        {
+          label: 'Admin Panel',
+          icon: <BarChart3 className="h-4 w-4" />,
+          href: '/admin',
+          variant: 'default' as const
+        },
+        {
+          label: 'Ad Approvals',
+          icon: <MessageSquare className="h-4 w-4" />,
+          href: '/dashboard/ad-approvals',
+          variant: 'outline' as const
+        },
+        {
+          label: 'Support Chat',
           icon: <MessageSquare className="h-4 w-4" />,
           href: '/dashboard/chat',
           variant: 'outline' as const

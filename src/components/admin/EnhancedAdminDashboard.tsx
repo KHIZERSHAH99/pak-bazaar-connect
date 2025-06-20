@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { SecurityMonitor } from '@/components/security/SecurityMonitor';
 import { EnhancedCommissionTracker } from '@/components/commission/EnhancedCommissionTracker';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import { Link } from 'react-router-dom';
 
 export const EnhancedAdminDashboard: React.FC = () => {
   const { data: stats, isLoading } = useQuery({
@@ -119,24 +120,24 @@ export const EnhancedAdminDashboard: React.FC = () => {
             <CardDescription>Platform management tools</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline" asChild>
-              <a href="/dashboard/ad-approvals">
+            <Link to="/dashboard/ad-approvals">
+              <Button className="w-full justify-start" variant="outline">
                 <FileText className="h-4 w-4 mr-2" />
                 Review Advertisements
-              </a>
-            </Button>
-            <Button className="w-full justify-start" variant="outline" asChild>
-              <a href="/admin">
+              </Button>
+            </Link>
+            <Link to="/admin">
+              <Button className="w-full justify-start" variant="outline">
                 <Shield className="h-4 w-4 mr-2" />
                 Full Admin Panel
-              </a>
-            </Button>
-            <Button className="w-full justify-start" variant="outline" asChild>
-              <a href="/dashboard/chat">
+              </Button>
+            </Link>
+            <Link to="/dashboard/chat">
+              <Button className="w-full justify-start" variant="outline">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Support Chat
-              </a>
-            </Button>
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 

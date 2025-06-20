@@ -1,10 +1,13 @@
 
-/* Urdu and RTL specific styles extracted from index.css */
+/* Urdu and RTL specific styles */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+
 [dir="rtl"] {
   text-align: right;
 }
 
-[dir="rtl"] .flex {
+[dir="rtl"] .flex:not(.flex-col) {
   flex-direction: row-reverse;
 }
 
@@ -72,4 +75,25 @@ body, .urdu-layout, [lang="ur"] {
 .urdu-layout .font-poppins,
 [lang="ur"] .font-poppins {
   font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', 'Poppins', 'Arial', 'sans-serif' !important;
+}
+
+/* Dropdown menu RTL fixes */
+[dir="rtl"] .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+/* Button icon spacing fixes for RTL */
+[dir="rtl"] .gap-2 {
+  gap: 0.5rem;
+}
+
+[dir="rtl"] button .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+[dir="rtl"] button .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
 }

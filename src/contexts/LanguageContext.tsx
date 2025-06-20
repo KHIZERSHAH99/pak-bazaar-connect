@@ -93,16 +93,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguage] = useState<Language>('en');
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language;
+    const savedLanguage = localStorage.getItem('pak-bazaar-language') as Language;
     if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ur')) {
       setLanguage(savedLanguage);
+      applyLanguageSettings(savedLanguage);
     }
   }, []);
 
-  const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang);
-    localStorage.setItem('language', lang);
-    
+  const applyLanguageSettings = (lang: Language) => {
     // Update document direction for RTL support
     document.documentElement.dir = lang === 'ur' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
@@ -110,9 +108,18 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Add CSS class for Urdu to handle specific styling
     if (lang === 'ur') {
       document.documentElement.classList.add('urdu-layout');
+      document.body.classList.add('urdu-layout');
     } else {
       document.documentElement.classList.remove('urdu-layout');
+      document.body.classList.remove('urdu-layout');
     }
+  };
+
+  const handleSetLanguage = (lang: Language) => {
+    console.log('Setting language to:', lang);
+    setLanguage(lang);
+    localStorage.setItem('pak-bazaar-language', lang);
+    applyLanguageSettings(lang);
   };
 
   const t = (key: string): string => {

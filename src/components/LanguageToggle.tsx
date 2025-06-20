@@ -20,6 +20,11 @@ const LanguageToggle: React.FC = () => {
 
   const currentLang = languages.find(lang => lang.code === language) || languages[0];
 
+  const handleLanguageChange = (langCode: 'en' | 'ur') => {
+    console.log('Changing language to:', langCode);
+    setLanguage(langCode);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,7 +47,7 @@ const LanguageToggle: React.FC = () => {
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => setLanguage(lang.code)}
+            onClick={() => handleLanguageChange(lang.code)}
             className={`cursor-pointer flex items-center gap-3 ${
               language === lang.code ? 'bg-pakistani_green-50 dark:bg-pakistani_green-900/20 text-pakistani_green-700 dark:text-pakistani_green-300' : ''
             }`}

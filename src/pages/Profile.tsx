@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +16,7 @@ import RolePermissions from '@/components/profile/RolePermissions';
 
 const Profile: React.FC = () => {
   const { profile, checkAuthStatus, loading } = useAuth();
+  const { t } = useLanguage();
 
   const getRoleBadgeVariant = (role: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (role) {
@@ -72,8 +74,12 @@ const Profile: React.FC = () => {
       <Layout>
         <div className="container mx-auto px-4 py-8 md:py-12">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 font-poppins">Profile Not Found</h1>
-            <p className="text-gray-600 mb-6 font-poppins">Unable to load your profile information at this time.</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 font-poppins">
+              {t('profile_not_found')}
+            </h1>
+            <p className="text-gray-600 mb-6 font-poppins">
+              {t('profile_not_found_desc')}
+            </p>
           </div>
         </div>
       </Layout>
@@ -87,14 +93,16 @@ const Profile: React.FC = () => {
           {/* Header */}
           <div className="mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 font-poppins">My Profile</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 font-poppins">
+                {t('my_profile')}
+              </h1>
               <Badge variant={getRoleBadgeVariant(profile.role)} className="flex items-center gap-1 capitalize text-xs py-1 w-fit font-poppins">
                 {getRoleIcon(profile.role)}
-                {profile.role}
+                {t(profile.role)}
               </Badge>
             </div>
             <p className="text-gray-600 font-poppins text-sm md:text-base">
-              Manage your account information, business details, and preferences
+              {t('manage_account')}
             </p>
           </div>
 

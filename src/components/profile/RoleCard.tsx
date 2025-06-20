@@ -7,6 +7,7 @@ import { CheckCircle, ArrowRight, ExternalLink, UserPlus } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useSmartRoleSwitch } from '@/hooks/useSmartRoleSwitch';
 import { useToast } from '@/hooks/use-toast';
 
@@ -33,6 +34,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
 }) => {
   const isCurrentRole = currentRole === targetRole;
   const { profile } = useAuth();
+  const { t } = useLanguage();
   const { switchRole, isRegisteredForRole, isSwitching, canSwitchTo } = useSmartRoleSwitch();
   const { toast } = useToast();
 
@@ -49,10 +51,10 @@ const RoleCard: React.FC<RoleCardProps> = ({
   };
 
   const getButtonText = () => {
-    if (isSwitching) return "Processing...";
-    if (!profile) return `Switch to ${title}`;
-    if (!isRegistered) return `Sign up as ${title}`;
-    return `Switch to ${title}`;
+    if (isSwitching) return t('processing');
+    if (!profile) return `${t('switch_to')} ${title}`;
+    if (!isRegistered) return `${t('sign_up_as')} ${title}`;
+    return `${t('switch_to')} ${title}`;
   };
 
   const getButtonIcon = () => {
@@ -83,7 +85,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
           {isCurrentRole && (
             <Badge variant="default" className="flex items-center gap-1 font-poppins bg-pakistani_green-100 text-pakistani_green-800">
               <CheckCircle className="h-3 w-3" />
-              Current
+              {t('current')}
             </Badge>
           )}
         </div>
@@ -110,7 +112,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
         {/* Registration Status Indicator */}
         {!isCurrentRole && profile && !isRegistered && canSwitch && (
           <p className="text-xs text-amber-600 mt-2 font-poppins text-center">
-            Registration required for this role
+            {t('registration_required')}
           </p>
         )}
       </div>

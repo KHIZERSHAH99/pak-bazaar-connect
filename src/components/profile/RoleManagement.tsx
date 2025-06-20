@@ -3,6 +3,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Store, ShoppingBag, AlertTriangle, Info } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
+import { useLanguage } from '@/contexts/LanguageContext';
 import RoleCard from './RoleCard';
 
 interface RoleManagementProps {
@@ -17,12 +18,17 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
   onRoleChange
 }) => {
   const isSellerRole = currentRole === 'seller';
+  const { t } = useLanguage();
 
   return (
     <Card className="overflow-hidden border-none shadow-md">
       <div className="bg-pakistani_green-500/20 dark:bg-pakistani_green-600/30 backdrop-blur-sm p-4 md:p-6 border-b border-pakistani_green-200/50 dark:border-pakistani_green-700/50">
-        <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins text-pakistani_green-800 dark:text-pakistani_green-100">Role Management</h2>
-        <p className="text-pakistani_green-700 dark:text-pakistani_green-200 text-sm font-poppins">Choose your role to access platform features</p>
+        <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins text-pakistani_green-800 dark:text-pakistani_green-100">
+          {t('role_management')}
+        </h2>
+        <p className="text-pakistani_green-700 dark:text-pakistani_green-200 text-sm font-poppins">
+          {t('choose_role')}
+        </p>
       </div>
       
       <div className="p-4 md:p-6">
@@ -31,11 +37,10 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
             <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-sm text-amber-800 dark:text-amber-200 font-poppins font-medium mb-1">
-                Role Change Notice
+                {t('role_change_notice')}
               </p>
               <p className="text-sm text-amber-700 dark:text-amber-300 font-poppins">
-                Role changes update your account permissions immediately. To maintain security, 
-                switching to a Wholesaler role requires proper business verification.
+                {t('role_change_desc')}
               </p>
             </div>
           </div>
@@ -47,11 +52,10 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
               <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-sm text-blue-800 dark:text-blue-200 font-poppins font-medium mb-1">
-                  Becoming a Wholesaler
+                  {t('becoming_wholesaler')}
                 </p>
                 <p className="text-sm text-blue-700 dark:text-blue-300 font-poppins">
-                  To become a wholesaler, you'll need to complete a separate signup process with business verification. 
-                  This ensures all wholesalers on our platform are legitimate businesses.
+                  {t('becoming_wholesaler_desc')}
                 </p>
               </div>
             </div>
@@ -60,14 +64,14 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <RoleCard
-            title="Wholesaler"
-            description="Sell products to retailers"
+            title={t('wholesaler')}
+            description={t('sell_to_retailers')}
             icon={<Store className="h-6 w-6" />}
             features={[
-              'Create and manage shops',
-              'List products for sale',
-              'Create promotional ads',
-              'Fulfill retailer orders'
+              t('create_manage_shops'),
+              t('list_products'),
+              t('create_ads'),
+              t('fulfill_orders')
             ]}
             targetRole="wholesaler"
             currentRole={currentRole}
@@ -76,14 +80,14 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
           />
           
           <RoleCard
-            title="Seller"
-            description="Purchase from wholesalers"
+            title={t('seller')}
+            description={t('purchase_from_wholesalers')}
             icon={<ShoppingBag className="h-6 w-6" />}
             features={[
-              'Browse wholesale catalogs',
-              'Place bulk orders',
-              'Track order status',
-              'Manage inventory purchases'
+              t('browse_catalogs'),
+              t('place_bulk_orders'),
+              t('track_orders'),
+              t('manage_inventory')
             ]}
             targetRole="seller"
             currentRole={currentRole}

@@ -3,12 +3,15 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Clock, XCircle, AlertTriangle } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface VerificationStatusProps {
   profile: any;
 }
 
 const VerificationStatus: React.FC<VerificationStatusProps> = ({ profile }) => {
+  const { t } = useLanguage();
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'verified':
@@ -25,26 +28,26 @@ const VerificationStatus: React.FC<VerificationStatusProps> = ({ profile }) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'verified':
-        return <Badge variant="default" className="bg-green-100 text-green-800 font-poppins">Verified</Badge>;
+        return <Badge variant="default" className="bg-green-100 text-green-800 font-poppins">{t('verified')}</Badge>;
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 font-poppins">Pending</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 font-poppins">{t('pending')}</Badge>;
       case 'rejected':
-        return <Badge variant="destructive" className="font-poppins">Rejected</Badge>;
+        return <Badge variant="destructive" className="font-poppins">{t('rejected')}</Badge>;
       default:
-        return <Badge variant="outline" className="font-poppins">Unverified</Badge>;
+        return <Badge variant="outline" className="font-poppins">{t('unverified')}</Badge>;
     }
   };
 
   const getStatusMessage = (status: string) => {
     switch (status) {
       case 'verified':
-        return 'Your account has been verified and approved for trading.';
+        return t('account_verified');
       case 'pending':
-        return 'Your verification is under review. This may take 1-3 business days.';
+        return t('verification_pending');
       case 'rejected':
-        return 'Your verification was rejected. Please contact support for details.';
+        return t('verification_rejected');
       default:
-        return 'Complete your profile to start the verification process.';
+        return t('complete_profile');
     }
   };
 
@@ -56,7 +59,7 @@ const VerificationStatus: React.FC<VerificationStatusProps> = ({ profile }) => {
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <h3 className="font-medium font-poppins">Verification Status</h3>
+            <h3 className="font-medium font-poppins">{t('verification_status')}</h3>
             {getStatusBadge(profile.verification_status)}
           </div>
           <p className="text-sm text-gray-600 font-poppins">
@@ -65,7 +68,7 @@ const VerificationStatus: React.FC<VerificationStatusProps> = ({ profile }) => {
           {profile.verification_notes && (
             <div className="mt-3 p-3 bg-gray-50 rounded-md">
               <p className="text-sm text-gray-700 font-poppins">
-                <strong>Note:</strong> {profile.verification_notes}
+                <strong>{t('note')}:</strong> {profile.verification_notes}
               </p>
             </div>
           )}

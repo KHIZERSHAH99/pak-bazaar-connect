@@ -14,8 +14,8 @@ const LanguageToggle: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
 
   const languages = [
-    { code: 'en' as const, name: 'English', flag: '🇺🇸', label: 'EN' },
-    { code: 'ur' as const, name: 'اردو', flag: '🇵🇰', label: 'اردو' },
+    { code: 'en' as const, name: t('english'), flag: '🇺🇸', label: 'EN' },
+    { code: 'ur' as const, name: t('urdu'), flag: '🇵🇰', label: 'اردو' },
   ];
 
   const currentLang = languages.find(lang => lang.code === language) || languages[0];
@@ -42,7 +42,7 @@ const LanguageToggle: React.FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="min-w-[140px]"
+        className="min-w-[140px] bg-white dark:bg-gray-800 z-50"
       >
         {languages.map((lang) => (
           <DropdownMenuItem

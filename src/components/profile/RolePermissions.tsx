@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Shield, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface RolePermissionsProps {
   role: string;
@@ -12,45 +13,46 @@ interface RolePermissionsProps {
 const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   const getPermissions = (userRole: string) => {
     const basePermissions = [
-      { name: 'View Products', allowed: true, category: 'Basic' },
-      { name: 'Browse Shops', allowed: true, category: 'Basic' },
-      { name: 'Contact Support', allowed: true, category: 'Basic' }
+      { name: t('view_products'), allowed: true, category: t('basic') },
+      { name: t('browse_shops'), allowed: true, category: t('basic') },
+      { name: t('contact_support'), allowed: true, category: t('basic') }
     ];
 
     switch (userRole) {
       case 'admin':
         return [
           ...basePermissions,
-          { name: 'Manage Users', allowed: true, category: 'Admin' },
-          { name: 'Approve Ads', allowed: true, category: 'Admin' },
-          { name: 'View Analytics', allowed: true, category: 'Admin' },
-          { name: 'System Settings', allowed: true, category: 'Admin' }
+          { name: t('manage_users'), allowed: true, category: t('admin') },
+          { name: t('approve_ads'), allowed: true, category: t('admin') },
+          { name: t('view_analytics'), allowed: true, category: t('admin') },
+          { name: t('system_settings'), allowed: true, category: t('admin') }
         ];
       case 'wholesaler':
         return [
           ...basePermissions,
-          { name: 'Create Shops', allowed: true, category: 'Business' },
-          { name: 'Add Products', allowed: true, category: 'Business' },
-          { name: 'Create Ads', allowed: true, category: 'Marketing' },
-          { name: 'Manage Orders', allowed: true, category: 'Business' }
+          { name: t('create_shops'), allowed: true, category: t('business') },
+          { name: t('add_products'), allowed: true, category: t('business') },
+          { name: t('create_ads'), allowed: true, category: t('marketing') },
+          { name: t('manage_orders'), allowed: true, category: t('business') }
         ];
       case 'seller':
         return [
           ...basePermissions,
-          { name: 'Place Orders', allowed: true, category: 'Business' },
-          { name: 'Track Purchases', allowed: true, category: 'Business' },
-          { name: 'Message Wholesalers', allowed: true, category: 'Communication' },
-          { name: 'Create Shops', allowed: false, category: 'Business' }
+          { name: t('place_orders'), allowed: true, category: t('business') },
+          { name: t('track_purchases'), allowed: true, category: t('business') },
+          { name: t('message_wholesalers'), allowed: true, category: t('communication') },
+          { name: t('create_shops'), allowed: false, category: t('business') }
         ];
       default:
         return [
           ...basePermissions,
-          { name: 'Create Shops', allowed: false, category: 'Business' },
-          { name: 'Place Orders', allowed: false, category: 'Business' },
-          { name: 'Create Ads', allowed: false, category: 'Marketing' }
+          { name: t('create_shops'), allowed: false, category: t('business') },
+          { name: t('place_orders'), allowed: false, category: t('business') },
+          { name: t('create_ads'), allowed: false, category: t('marketing') }
         ];
     }
   };
@@ -74,9 +76,9 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-pakistani_green-600" />
             <div>
-              <h3 className="font-medium font-poppins text-sm">Permissions</h3>
+              <h3 className="font-medium font-poppins text-sm">{t('permissions')}</h3>
               <p className="text-xs text-gray-500">
-                {allowedCount} of {totalCount} enabled
+                {allowedCount} {t('of')} {totalCount} {t('enabled')}
               </p>
             </div>
           </div>
@@ -98,7 +100,7 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-pakistani_green-600" />
-          <h3 className="font-medium font-poppins">Role Permissions</h3>
+          <h3 className="font-medium font-poppins">{t('role_permissions')}</h3>
         </div>
         {isMobile && (
           <Button

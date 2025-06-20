@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera, Upload, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import ConfirmationDialog from '@/components/ui/confirmation-dialog';
 import EnhancedLoadingSpinner from '@/components/ui/enhanced-loading-spinner';
@@ -18,6 +20,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -26,8 +29,8 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
       toast({
-        title: "File too large",
-        description: "Please select an image smaller than 2MB",
+        title: t('file_too_large'),
+        description: t('file_too_large_desc'),
         variant: "destructive"
       });
       return;
@@ -36,8 +39,8 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
-        title: "Invalid file type",
-        description: "Please select an image file",
+        title: t('invalid_file_type'),
+        description: t('invalid_file_type_desc'),
         variant: "destructive"
       });
       return;
@@ -82,16 +85,16 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
       }
 
       toast({
-        title: "Profile image updated",
-        description: "Your profile image has been successfully updated"
+        title: t('profile_image_updated'),
+        description: t('profile_image_updated_desc')
       });
 
       onImageUpdate();
     } catch (error: any) {
       console.error('Image upload error:', error);
       toast({
-        title: "Upload failed",
-        description: error.message || "Failed to upload image. Please try again.",
+        title: t('upload_failed'),
+        description: error.message || t('upload_failed_desc'),
         variant: "destructive"
       });
       setImagePreview(null);
@@ -121,8 +124,8 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
       if (error) throw error;
 
       toast({
-        title: "Profile image removed",
-        description: "Your profile image has been removed successfully",
+        title: t('profile_image_removed'),
+        description: t('profile_image_removed_desc'),
         variant: "default"
       });
 
@@ -132,8 +135,8 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     } catch (error: any) {
       console.error('Remove image error:', error);
       toast({
-        title: "Remove failed",
-        description: error.message || "Failed to remove image. Please try again.",
+        title: t('remove_failed'),
+        description: error.message || t('remove_failed_desc'),
         variant: "destructive"
       });
     } finally {
@@ -148,7 +151,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
           <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
             <EnhancedLoadingSpinner 
               size="lg" 
-              text="Processing image..." 
+              text={t('processing_image')} 
               variant="spinner"
             />
           </div>
@@ -191,7 +194,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
               >
                 <span className="flex items-center gap-2 cursor-pointer">
                   <Upload className="h-4 w-4" />
-                  {uploading ? 'Uploading...' : 'Upload Photo'}
+                  {uploading ? t('uploading') : t('upload_photo')}
                 </span>
               </Button>
             </label>
@@ -206,23 +209,23 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
               className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-poppins"
             >
               <X className="h-4 w-4 mr-2" />
-              Remove Photo
+              {t('remove_photo')}
             </Button>
           )}
         </div>
 
         <p className="text-xs text-gray-500 mt-3 font-poppins">
-          Upload a photo to personalize your profile. Max 2MB.
+          {t('upload_photo_desc')}
         </p>
       </Card>
 
       <ConfirmationDialog
         open={showRemoveDialog}
         onOpenChange={setShowRemoveDialog}
-        title="Remove Profile Image"
-        description="Are you sure you want to remove your profile image? This action cannot be undone."
-        confirmText="Remove Image"
-        cancelText="Keep Image"
+        title={t('remove_profile_image')}
+        description={t('remove_image_confirm')}
+        confirmText={t('remove_image')}
+        cancelText={t('keep_image')}
         variant="destructive"
         onConfirm={handleRemoveConfirm}
         loading={uploading}

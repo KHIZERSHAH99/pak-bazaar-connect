@@ -19,6 +19,8 @@ import TermsOfService from '@/pages/TermsOfService';
 import RefundPolicy from '@/pages/RefundPolicy';
 import ShippingPolicy from '@/pages/ShippingPolicy';
 import NotFound from '@/pages/NotFound';
+
+// Admin pages
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 
 // Dashboard pages
@@ -37,9 +39,12 @@ import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
+      {/* Public Routes */}
       <Route path="/" element={<Index />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      
+      {/* Protected Routes */}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/stats" element={<Stats />} />
@@ -56,7 +61,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/product/:id" element={<ProductDetail />} />
       <Route path="/seller/:id" element={<SellerProfile />} />
       
-      {/* Dashboard Routes */}
+      {/* Dashboard Sub-Routes */}
       <Route path="/dashboard/shops" element={<DashboardShops />} />
       <Route path="/dashboard/products" element={<DashboardProducts />} />
       <Route path="/dashboard/ads" element={<DashboardAds />} />
@@ -74,6 +79,8 @@ const AppRoutes: React.FC = () => {
       <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route path="/refund-policy" element={<RefundPolicy />} />
       <Route path="/shipping-policy" element={<ShippingPolicy />} />
+      
+      {/*  Fallback */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

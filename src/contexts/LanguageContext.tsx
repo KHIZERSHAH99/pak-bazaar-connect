@@ -174,10 +174,8 @@ const translations: Translations = {
   'light_mode': { en: 'Light Mode', ur: 'لائٹ موڈ' },
   'dark_mode': { en: 'Dark Mode', ur: 'ڈارک موڈ' },
   
-  // Business specific
+  // Business specific - removed duplicate 'buyer' and 'business' keys
   'buyer': { en: 'Buyer', ur: 'خریدار' },
-  'admin': { en: 'Admin', ur: 'ایڈمن' },
-  'business': { en: 'Business', ur: 'کاروبار' },
   'marketplace': { en: 'Marketplace', ur: 'بازار' },
   
   // Profile not found

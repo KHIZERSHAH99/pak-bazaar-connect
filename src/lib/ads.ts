@@ -74,16 +74,18 @@ export const getPendingAds = async () => {
   return data as Ad[];
 };
 
-export const approveAd = async (adId: string) => {
+export const approveAd = async (adId: string, isApproved: boolean = true) => {
+  const status = isApproved ? 'approved' : 'rejected';
+  
   const { data, error } = await supabase
     .from('ads')
-    .update({ status: 'approved' })
+    .update({ status })
     .eq('id', adId)
     .select()
     .single();
   
   if (error) {
-    console.error('Error approving ad:', error);
+    console.error('Error updating ad status:', error);
     throw error;
   }
   

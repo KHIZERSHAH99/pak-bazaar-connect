@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -6,7 +7,7 @@ import { getAdsByWholesaler, Ad } from '@/lib/supabase';
 import { getProductsByWholesaler } from '@/lib/products';
 import { Plus, Package } from 'lucide-react';
 import AdCard from './ads/AdCard';
-import CreateAdDialog from './ads/CreateAdDialog';
+import CreateAdDialog from '@/components/ads/CreateAdDialog';
 import EmptyState from './ads/EmptyState';
 
 const Advertisements: React.FC = () => {

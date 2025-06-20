@@ -2,15 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { createAd } from '@/lib/ads';
 import { getProductsByWholesaler } from '@/lib/products';
 import { uploadImage } from '@/lib/supabase';
-import { Loader2, Info } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+import ProductSelector from './create/ProductSelector';
+import AdCreativeFields from './create/AdCreativeFields';
+import BudgetControls from './create/BudgetControls';
+import InfoBox from './create/InfoBox';
 
 interface Product {
   id: string;
@@ -91,16 +91,7 @@ const EnhancedCreateAdDialog: React.FC<EnhancedCreateAdDialogProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageChange = (file: File | null) => {
     if (!file) return;
 
     if (file.size > 100 * 1024) {
@@ -199,8 +190,6 @@ const EnhancedCreateAdDialog: React.FC<EnhancedCreateAdDialogProps> = ({
     }
   };
 
-  const selectedProductData = products.find(p => p.id === selectedProduct);
-
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -209,154 +198,35 @@ const EnhancedCreateAdDialog: React.FC<EnhancedCreateAdDialogProps> = ({
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Product Selection */}
-          <div>
-            <Label htmlFor="product">Select Product to Promote *</Label>
-            <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose a product from your shop" />
-              </SelectTrigger>
-              <SelectContent>
-                {products.map((product) => (
-                  <SelectItem key={product.id} value={product.id}>
-                    <div className="flex items-center gap-2">
-                      {product.image && (
-                        <img src={product.image} alt={product.name} className="w-8 h-8 object-cover rounded" />
-                      )}
-                      <div>
-                        <div className="font-medium">{product.name}</div>
-                        <div className="text-sm text-gray-500">PKR {product.price}</div>
-                      </div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.product && <p className="text-sm text-destructive mt-1">{errors.product}</p>}
-          </div>
-
-          {/* Selected Product Preview */}
-          {selectedProductData && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Selected Product</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center gap-4">
-                {selectedProductData.image && (
-                  <img 
-                    src={selectedProductData.image} 
-                    alt={selectedProductData.name}
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                )}
-                <div>
-                  <h3 className="font-medium">{selectedProductData.name}</h3>
-                  <p className="text-sm text-gray-600">PKR {selectedProductData.price}</p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <ProductSelector
+            products={products}
+            selectedProduct={selectedProduct}
+            onProductChange={setSelectedProduct}
+            error={errors.product}
+          />
           
-          {/* Ad Creative */}
-          <div>
-            <Label htmlFor="headline">Advertisement Headline *</Label>
-            <Input
-              id="headline"
-              name="headline"
-              value={formData.headline}
-              onChange={handleInputChange}
-              placeholder="Write a catchy headline to attract customers"
-              disabled={isSubmitting}
-            />
-            {errors.headline && <p className="text-sm text-destructive mt-1">{errors.headline}</p>}
-          </div>
-          
-          <div>
-            <Label htmlFor="image">Advertisement Image * (max 100KB)</Label>
-            <Input
-              id="image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              disabled={isSubmitting}
-              className="mt-1"
-            />
-            {errors.image && <p className="text-sm text-destructive mt-1">{errors.image}</p>}
-            {imagePreview && (
-              <div className="mt-2">
-                <img 
-                  src={imagePreview} 
-                  alt="Ad Preview" 
-                  className="h-32 w-auto object-contain rounded-md border"
-                />
-              </div>
-            )}
-          </div>
+          <AdCreativeFields
+            headline={formData.headline}
+            onHeadlineChange={(value) => setFormData(prev => ({ ...prev, headline: value }))}
+            imageFile={imageFile}
+            onImageChange={handleImageChange}
+            imagePreview={imagePreview}
+            errors={errors}
+            isSubmitting={isSubmitting}
+          />
 
-          {/* Budget Controls */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="budget_cap">Total Budget Cap (PKR) *</Label>
-              <Input
-                id="budget_cap"
-                name="budget_cap"
-                type="number"
-                min="100"
-                value={formData.budget_cap}
-                onChange={handleInputChange}
-                placeholder="e.g. 1000"
-                disabled={isSubmitting}
-              />
-              {errors.budget_cap && <p className="text-sm text-destructive mt-1">{errors.budget_cap}</p>}
-            </div>
-            
-            <div>
-              <Label htmlFor="daily_budget_limit">Daily Budget Limit (PKR)</Label>
-              <Input
-                id="daily_budget_limit"
-                name="daily_budget_limit"
-                type="number"
-                min="50"
-                value={formData.daily_budget_limit}
-                onChange={handleInputChange}
-                placeholder="Optional"
-                disabled={isSubmitting}
-              />
-              {errors.daily_budget_limit && <p className="text-sm text-destructive mt-1">{errors.daily_budget_limit}</p>}
-            </div>
-          </div>
+          <BudgetControls
+            budgetCap={formData.budget_cap}
+            dailyBudgetLimit={formData.daily_budget_limit}
+            campaignDays={formData.campaign_days}
+            onBudgetCapChange={(value) => setFormData(prev => ({ ...prev, budget_cap: value }))}
+            onDailyBudgetLimitChange={(value) => setFormData(prev => ({ ...prev, daily_budget_limit: value }))}
+            onCampaignDaysChange={(value) => setFormData(prev => ({ ...prev, campaign_days: value }))}
+            errors={errors}
+            isSubmitting={isSubmitting}
+          />
 
-          {/* Campaign Duration */}
-          <div>
-            <Label htmlFor="campaign_days">Campaign Duration</Label>
-            <Select value={formData.campaign_days} onValueChange={(value) => setFormData(prev => ({ ...prev, campaign_days: value }))}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">7 Days</SelectItem>
-                <SelectItem value="14">14 Days</SelectItem>
-                <SelectItem value="30">30 Days</SelectItem>
-                <SelectItem value="60">60 Days</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Info Box */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-start gap-2">
-              <Info className="h-5 w-5 text-blue-600 mt-0.5" />
-              <div className="text-sm text-blue-800">
-                <p className="font-medium mb-1">How Cost Per Order (CPO) Works:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>You only pay when customers place orders through your ad</li>
-                  <li>Campaign stops automatically when budget or time limit is reached</li>
-                  <li>You'll receive notifications when campaigns end</li>
-                  <li>Track performance in real-time through your dashboard</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <InfoBox />
           
           <DialogFooter>
             <Button

@@ -36,24 +36,25 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     return false;
   }, [profile]);
 
-  // Check if user can switch to a specific role
+  // Check if user can switch to a specific role - simplified logic
   const canSwitchTo = useCallback((role: UserRole): boolean => {
     if (!profile) return false;
     if (profile.role === role) return false; // Can't switch to current role
     
-    // Admin can't switch roles through normal flow (they have permanent access)
-    if (profile.role === 'admin') return false;
+    // Allow switching between seller and wholesaler roles
+    if (profile.role === 'seller' && role === 'wholesaler') return true;
+    if (profile.role === 'wholesaler' && role === 'seller') return true;
     
-    // Pending users can't switch until their role is approved
-    if (profile.role === 'pending') return false;
+    // Admin can switch to any role for testing purposes
+    if (profile.role === 'admin' && (role === 'seller' || role === 'wholesaler')) return true;
     
-    // Allow switching between seller and wholesaler
-    return (profile.role === 'seller' && role === 'wholesaler') ||
-           (profile.role === 'wholesaler' && role === 'seller');
+    return false;
   }, [profile]);
 
   const switchRole = useCallback(async (targetRole: UserRole) => {
     if (!profile || isSwitching) return;
+
+    console.log('🔄 Role switch attempt:', { currentRole: profile.role, targetRole });
 
     // Validate target role
     if (!['seller', 'wholesaler'].includes(targetRole)) {
@@ -67,14 +68,14 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
 
     // Check if user can switch to target role
     if (!canSwitchTo(targetRole)) {
-      let message = "Role switching is not available for your current account type.";
+      let message = "Role switching is not available.";
       
-      if (profile.role === 'admin') {
-        message = "Admin accounts have access to all features without role switching.";
-      } else if (profile.role === 'pending') {
+      if (profile.role === 'pending') {
         message = "Please wait for admin approval before switching roles.";
       } else if (profile.role === targetRole) {
         message = `You are already a ${targetRole}.`;
+      } else if (profile.role !== 'seller' && profile.role !== 'wholesaler' && profile.role !== 'admin') {
+        message = "Role switching is only available for sellers and wholesalers.";
       }
       
       toast({
@@ -95,10 +96,14 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
         variant: "default"
       });
 
-      // Call the new database function for direct role switching
+      console.log('🔄 Calling switch_business_role function');
+
+      // Call the database function for direct role switching
       const { data, error } = await supabase.rpc('switch_business_role', {
         target_role: targetRole
       });
+
+      console.log('🔄 Function response:', { data, error });
 
       if (error) {
         console.error('Role switch error:', error);
@@ -111,6 +116,8 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
       if (!response.success) {
         throw new Error(response.error || 'Role switch failed');
       }
+      
+      console.log('✅ Role switch successful');
       
       // Refresh auth status
       await checkAuthStatus();

@@ -2,7 +2,8 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { secureChangeRole, UserRole } from '@/lib/auth-enhanced';
+import { secureChangeRole } from '@/lib/auth-enhanced';
+import { UserRole } from '@/lib/types';
 
 interface UseSmartRoleSwitchReturn {
   switchRole: (targetRole: UserRole) => Promise<void>;

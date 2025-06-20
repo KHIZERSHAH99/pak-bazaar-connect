@@ -4,6 +4,23 @@ import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 import { logAuditEvent } from '@/lib/security/audit-enhanced';
 
+// Export UserRole for use in other components
+export type { UserRole } from '@/lib/types';
+
+// Clean up auth state to prevent "limbo" states
+export const cleanupAuthState = () => {
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+  Object.keys(sessionStorage || {}).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+};
+
 // Enhanced authentication with comprehensive security logging
 export const enhancedSignIn = async (email: string, password: string) => {
   try {

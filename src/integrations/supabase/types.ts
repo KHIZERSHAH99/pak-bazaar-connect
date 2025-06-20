@@ -568,6 +568,7 @@ export type Database = {
           ntn_number: string | null
           phone_number: string | null
           postal_code: string | null
+          profile_image: string | null
           role: string
           role_switch_count: number | null
           selfie_image: string | null
@@ -595,6 +596,7 @@ export type Database = {
           ntn_number?: string | null
           phone_number?: string | null
           postal_code?: string | null
+          profile_image?: string | null
           role?: string
           role_switch_count?: number | null
           selfie_image?: string | null
@@ -622,6 +624,7 @@ export type Database = {
           ntn_number?: string | null
           phone_number?: string | null
           postal_code?: string | null
+          profile_image?: string | null
           role?: string
           role_switch_count?: number | null
           selfie_image?: string | null

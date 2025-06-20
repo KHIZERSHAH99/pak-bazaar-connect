@@ -50,10 +50,15 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
       const fileName = `${profile.id}-${Date.now()}.${fileExt}`;
       const filePath = `profiles/${fileName}`;
 
+      // Create bucket if it doesn't exist (this will fail silently if it exists)
+      await supabase.storage.from('profile-images').list('', { limit: 1 }).catch(() => {});
+
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('profile-images')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          upsert: true
+        });
 
       if (uploadError) {
         throw uploadError;
@@ -96,6 +101,16 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
   const removeImage = async () => {
     setUploading(true);
     try {
+      // Remove from storage if exists
+      if (profile.profile_image) {
+        const fileName = profile.profile_image.split('/').pop();
+        if (fileName) {
+          await supabase.storage
+            .from('profile-images')
+            .remove([`profiles/${fileName}`]);
+        }
+      }
+
       const { error } = await supabase
         .from('profiles')
         .update({ profile_image: null })

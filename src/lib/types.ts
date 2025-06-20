@@ -19,6 +19,7 @@ export interface Profile {
   years_in_business?: string;
   cnic_image?: string;
   selfie_image?: string;
+  profile_image?: string;
   verification_status?: string;
   verification_notes?: string;
   is_suspended?: boolean;

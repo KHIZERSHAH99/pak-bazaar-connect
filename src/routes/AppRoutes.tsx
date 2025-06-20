@@ -19,6 +19,9 @@ import TermsOfService from '@/pages/TermsOfService';
 import RefundPolicy from '@/pages/RefundPolicy';
 import ShippingPolicy from '@/pages/ShippingPolicy';
 import NotFound from '@/pages/NotFound';
+import Messages from '@/pages/Messages';
+import Analytics from '@/pages/Analytics';
+import Favorites from '@/pages/Favorites';
 
 // Admin pages
 import AdminDashboard from '@/pages/admin/AdminDashboard';
@@ -49,6 +52,9 @@ const AppRoutes: React.FC = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/stats" element={<Stats />} />
       <Route path="/chat" element={<Chat />} />
+      <Route path="/messages" element={<Messages />} />
+      <Route path="/analytics" element={<Analytics />} />
+      <Route path="/favorites" element={<Favorites />} />
       
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminDashboard />} />

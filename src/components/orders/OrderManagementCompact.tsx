@@ -98,6 +98,7 @@ const OrderManagementCompact: React.FC<OrderManagementCompactProps> = ({ userRol
             onSearchChange={setSearchTerm}
             statusFilter={statusFilter}
             onStatusChange={setStatusFilter}
+            searchPlaceholder="Search orders by ID, buyer, or shop..."
           />
           
           <div className="mt-4 space-y-3">

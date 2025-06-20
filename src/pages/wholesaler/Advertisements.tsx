@@ -1,21 +1,26 @@
 
-
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Button } from '@/components/ui/button';
-import { getAdsByWholesaler, Ad } from '@/lib/supabase';
+import { getAdsByWholesaler, pauseAd, resumeAd, Ad } from '@/lib/ads';
 import { getProductsByWholesaler } from '@/lib/products';
-import { Plus, Package } from 'lucide-react';
-import AdCard from './ads/AdCard';
-import CreateAdDialog from '@/components/ads/CreateAdDialog';
+import { Plus, Package, BarChart3 } from 'lucide-react';
+import EnhancedAdCard from '@/components/ads/EnhancedAdCard';
+import EnhancedCreateAdDialog from '@/components/ads/EnhancedCreateAdDialog';
+import AdAnalyticsDashboard from '@/components/ads/AdAnalyticsDashboard';
 import EmptyState from './ads/EmptyState';
+import { useToast } from '@/hooks/use-toast';
 
 const Advertisements: React.FC = () => {
   const [ads, setAds] = useState<Ad[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [analyticsAd, setAnalyticsAd] = useState<Ad | null>(null);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+  
+  const { toast } = useToast();
 
   const fetchAds = async () => {
     try {
@@ -24,6 +29,11 @@ const Advertisements: React.FC = () => {
       setAds(data);
     } catch (error) {
       console.error('Failed to fetch advertisements:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load advertisements',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -46,21 +56,102 @@ const Advertisements: React.FC = () => {
   const handleCreateClick = () => setIsDialogOpen(true);
   const handleDialogClose = () => setIsDialogOpen(false);
   const handleAdCreated = () => fetchAds();
-  const handleAdApproved = () => fetchAds(); // For admin to trigger refresh
+
+  const handlePauseAd = async (adId: string) => {
+    try {
+      await pauseAd(adId);
+      toast({
+        title: 'Success',
+        description: 'Advertisement paused successfully',
+      });
+      fetchAds();
+    } catch (error) {
+      console.error('Failed to pause ad:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to pause advertisement',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleResumeAd = async (adId: string) => {
+    try {
+      await resumeAd(adId);
+      toast({
+        title: 'Success',
+        description: 'Advertisement resumed successfully',
+      });
+      fetchAds();
+    } catch (error) {
+      console.error('Failed to resume ad:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to resume advertisement',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleViewAnalytics = (adId: string) => {
+    const ad = ads.find(a => a.id === adId);
+    if (ad) {
+      setAnalyticsAd(ad);
+      setIsAnalyticsOpen(true);
+    }
+  };
+
+  const getActiveAdsCount = () => ads.filter(ad => ad.status === 'active' && !ad.is_auto_stopped).length;
+  const getTotalSpend = () => ads.reduce((sum, ad) => sum + ad.current_spend, 0);
+  const getTotalOrders = () => ads.reduce((sum, ad) => sum + ad.total_orders, 0);
 
   return (
     <DashboardLayout>
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">My Advertisements</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Advertisement Campaigns</h1>
+            <p className="text-gray-600 mt-1">Manage your Cost Per Order (CPO) campaigns</p>
+          </div>
           <Button 
             onClick={handleCreateClick}
             className="bg-primary hover:bg-pakistani-green-800"
             disabled={products.length === 0}
           >
-            <Plus className="w-4 h-4 mr-2" /> Create Ad
+            <Plus className="w-4 h-4 mr-2" /> Create Campaign
           </Button>
         </div>
+
+        {/* Summary Stats */}
+        {ads.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <BarChart3 className="h-5 w-5 text-blue-600" />
+                <span className="font-medium text-blue-800">Active Campaigns</span>
+              </div>
+              <div className="text-2xl font-bold text-blue-600">{getActiveAdsCount()}</div>
+            </div>
+            
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Package className="h-5 w-5 text-green-600" />
+                <span className="font-medium text-green-800">Total Orders</span>
+              </div>
+              <div className="text-2xl font-bold text-green-600">{getTotalOrders()}</div>
+            </div>
+            
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <BarChart3 className="h-5 w-5 text-purple-600" />
+                <span className="font-medium text-purple-800">Total Spend</span>
+              </div>
+              <div className="text-2xl font-bold text-purple-600">
+                PKR {getTotalSpend().toLocaleString()}
+              </div>
+            </div>
+          </div>
+        )}
         
         {products.length === 0 && (
           <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
@@ -84,9 +175,14 @@ const Advertisements: React.FC = () => {
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-sm text-yellow-700">
-                Advertisements require admin approval before they appear on the platform.
-              </p>
+              <h3 className="text-sm font-medium text-yellow-800">
+                Cost Per Order (CPO) Campaign
+              </h3>
+              <div className="mt-2 text-sm text-yellow-700">
+                <p>• You only pay when customers place orders through your ads</p>
+                <p>• Campaigns stop automatically when budget or time limit is reached</p>
+                <p>• Track real-time performance and adjust budgets as needed</p>
+              </div>
             </div>
           </div>
         </div>
@@ -100,20 +196,28 @@ const Advertisements: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ads.map((ad) => (
-              <AdCard 
+              <EnhancedAdCard 
                 key={ad.id} 
-                ad={ad} 
-                onEdit={handleCreateClick}
+                ad={ad}
+                onPause={handlePauseAd}
+                onResume={handleResumeAd}
+                onViewAnalytics={handleViewAnalytics}
               />
             ))}
           </div>
         )}
       </div>
 
-      <CreateAdDialog
+      <EnhancedCreateAdDialog
         isOpen={isDialogOpen}
         onClose={handleDialogClose}
         onAdCreated={handleAdCreated}
+      />
+
+      <AdAnalyticsDashboard
+        isOpen={isAnalyticsOpen}
+        onClose={() => setIsAnalyticsOpen(false)}
+        ad={analyticsAd}
       />
     </DashboardLayout>
   );
@@ -126,4 +230,3 @@ const AdvertisementsWithAuth = () => (
 );
 
 export default AdvertisementsWithAuth;
-

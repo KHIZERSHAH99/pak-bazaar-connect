@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -70,6 +69,16 @@ export const getSellerAnalytics = async (timeframe: string = '7d'): Promise<Anal
       console.error('Error fetching products:', productsError);
     }
 
+    // Get messages from order_messages for these shops
+    const { data: messages, error: messagesError } = await supabase
+      .from('order_messages')
+      .select('id, created_at')
+      .in('order_id', (orders || []).map(order => order.id));
+
+    if (messagesError) {
+      console.error('Error fetching messages:', messagesError);
+    }
+
     // Calculate real metrics
     const realOrders = orders || [];
     const totalOrders = realOrders.length;
@@ -95,13 +104,9 @@ export const getSellerAnalytics = async (timeframe: string = '7d'): Promise<Anal
       };
     });
 
-    // For messages, we'll need to implement a proper chat/messaging system
-    // For now, using a basic calculation based on orders (assuming some interaction)
-    const estimatedMessages = Math.floor(totalOrders * 1.5); // Rough estimate
-
     return {
       views: (products?.length || 0) * 10, // Multiply by estimated view factor
-      messages: estimatedMessages,
+      messages: messages?.length || 0, // Real message count
       orders: totalOrders,
       revenue: totalRevenue,
       dailyStats
@@ -133,28 +138,23 @@ export const trackProductView = async (productId: string): Promise<void> => {
   try {
     const user = await getCurrentUser();
     
-    // Store view in database if we have a product_views table
-    // For now, we'll create the view tracking in localStorage and plan for DB implementation
-    const { error } = await supabase
-      .from('product_views')
-      .insert([{
-        product_id: productId,
-        user_id: user?.id,
-        viewed_at: new Date().toISOString()
-      }]);
-
-    if (error) {
-      console.log('Product views table not yet implemented, using localStorage');
-      
-      // Fallback to localStorage
-      const views = JSON.parse(localStorage.getItem('product_views') || '[]');
-      views.push({
-        product_id: productId,
-        user_id: user?.id,
-        viewed_at: new Date().toISOString()
-      });
-      localStorage.setItem('product_views', JSON.stringify(views));
+    // Since we don't have a product_views table, we'll use localStorage for now
+    // and plan to implement proper view tracking later
+    const views = JSON.parse(localStorage.getItem('product_views') || '[]');
+    views.push({
+      product_id: productId,
+      user_id: user?.id,
+      viewed_at: new Date().toISOString()
+    });
+    
+    // Keep only last 1000 views to prevent localStorage bloat
+    if (views.length > 1000) {
+      views.splice(0, views.length - 1000);
     }
+    
+    localStorage.setItem('product_views', JSON.stringify(views));
+    
+    console.log('Product view tracked locally for product:', productId);
   } catch (error) {
     console.error('Error tracking product view:', error);
   }

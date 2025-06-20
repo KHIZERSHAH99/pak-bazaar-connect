@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera, Upload, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import ConfirmationDialog from '@/components/ui/confirmation-dialog';
+import EnhancedLoadingSpinner from '@/components/ui/enhanced-loading-spinner';
 
 interface ProfileImageUploadProps {
   profile: any;
@@ -15,6 +16,7 @@ interface ProfileImageUploadProps {
 const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImageUpdate }) => {
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const { toast } = useToast();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +100,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     }
   };
 
-  const removeImage = async () => {
+  const handleRemoveConfirm = async () => {
     setUploading(true);
     try {
       // Remove from storage if exists
@@ -120,10 +122,12 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
 
       toast({
         title: "Profile image removed",
-        description: "Your profile image has been removed"
+        description: "Your profile image has been removed successfully",
+        variant: "default"
       });
 
       setImagePreview(null);
+      setShowRemoveDialog(false);
       onImageUpdate();
     } catch (error: any) {
       console.error('Remove image error:', error);
@@ -138,67 +142,92 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
   };
 
   return (
-    <Card className="p-6 text-center">
-      <div className="mb-4">
-        <div className="relative inline-block">
-          <Avatar className="h-24 w-24 border-4 border-pakistani_green-200">
-            <AvatarImage 
-              src={imagePreview || profile.profile_image} 
-              alt="Profile" 
+    <>
+      <Card className="p-6 text-center relative overflow-hidden">
+        {uploading && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
+            <EnhancedLoadingSpinner 
+              size="lg" 
+              text="Processing image..." 
+              variant="spinner"
             />
-            <AvatarFallback className="bg-pakistani_green-100 text-pakistani_green-700 text-2xl font-bold">
-              {profile.email?.substring(0, 2).toUpperCase() || "U"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="absolute -bottom-2 -right-2 bg-pakistani_green-600 rounded-full p-2">
-            <Camera className="h-4 w-4 text-white" />
+          </div>
+        )}
+        
+        <div className="mb-4">
+          <div className="relative inline-block">
+            <Avatar className="h-24 w-24 border-4 border-pakistani_green-200 transition-all duration-200 hover:border-pakistani_green-300">
+              <AvatarImage 
+                src={imagePreview || profile.profile_image} 
+                alt="Profile" 
+                className="object-cover"
+              />
+              <AvatarFallback className="bg-pakistani_green-100 text-pakistani_green-700 text-2xl font-bold">
+                {profile.email?.substring(0, 2).toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute -bottom-2 -right-2 bg-pakistani_green-600 rounded-full p-2 shadow-lg">
+              <Camera className="h-4 w-4 text-white" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="space-y-3">
-        <div>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-            id="profile-image-upload"
-            disabled={uploading}
-          />
-          <label htmlFor="profile-image-upload">
-            <Button 
-              variant="outline" 
-              className="w-full font-poppins"
+        <div className="space-y-3">
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+              id="profile-image-upload"
               disabled={uploading}
-              asChild
+            />
+            <label htmlFor="profile-image-upload">
+              <Button 
+                variant="outline" 
+                className="w-full font-poppins hover:bg-pakistani_green-50 border-pakistani_green-200"
+                disabled={uploading}
+                asChild
+              >
+                <span className="flex items-center gap-2 cursor-pointer">
+                  <Upload className="h-4 w-4" />
+                  {uploading ? 'Uploading...' : 'Upload Photo'}
+                </span>
+              </Button>
+            </label>
+          </div>
+
+          {(profile.profile_image || imagePreview) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowRemoveDialog(true)}
+              disabled={uploading}
+              className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-poppins"
             >
-              <span className="flex items-center gap-2 cursor-pointer">
-                <Upload className="h-4 w-4" />
-                {uploading ? 'Uploading...' : 'Upload Photo'}
-              </span>
+              <X className="h-4 w-4 mr-2" />
+              Remove Photo
             </Button>
-          </label>
+          )}
         </div>
 
-        {(profile.profile_image || imagePreview) && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={removeImage}
-            disabled={uploading}
-            className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-poppins"
-          >
-            <X className="h-4 w-4 mr-2" />
-            Remove Photo
-          </Button>
-        )}
-      </div>
+        <p className="text-xs text-gray-500 mt-3 font-poppins">
+          Upload a photo to personalize your profile. Max 2MB.
+        </p>
+      </Card>
 
-      <p className="text-xs text-gray-500 mt-3 font-poppins">
-        Upload a photo to personalize your profile. Max 2MB.
-      </p>
-    </Card>
+      <ConfirmationDialog
+        open={showRemoveDialog}
+        onOpenChange={setShowRemoveDialog}
+        title="Remove Profile Image"
+        description="Are you sure you want to remove your profile image? This action cannot be undone."
+        confirmText="Remove Image"
+        cancelText="Keep Image"
+        variant="destructive"
+        onConfirm={handleRemoveConfirm}
+        loading={uploading}
+      />
+    </>
   );
 };
 

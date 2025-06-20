@@ -1,13 +1,13 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, ArrowRight, ExternalLink } from 'lucide-react';
+import { CheckCircle, ArrowRight, ExternalLink, UserPlus } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { changeRole } from '@/lib/auth';
+import { useSmartRoleSwitch } from '@/hooks/useSmartRoleSwitch';
 import { useToast } from '@/hooks/use-toast';
 
 interface RoleCardProps {
@@ -21,7 +21,6 @@ interface RoleCardProps {
   onRoleChange: (role: UserRole) => void;
 }
 
-// RoleCard lets sellers request upgrade to wholesaler even if logged in
 const RoleCard: React.FC<RoleCardProps> = ({
   title,
   description,
@@ -33,24 +32,33 @@ const RoleCard: React.FC<RoleCardProps> = ({
   onRoleChange
 }) => {
   const isCurrentRole = currentRole === targetRole;
-  const isSellerToWholesaler = currentRole === 'seller' && targetRole === 'wholesaler';
-
-  const { profile, checkAuthStatus } = useAuth();
+  const { profile } = useAuth();
+  const { switchRole, isRegisteredForRole, isSwitching, canSwitchTo } = useSmartRoleSwitch();
   const { toast } = useToast();
-  const [switching, setSwitching] = useState(false);
 
-  // Seller can upgrade directly from here
-  const handleSellerToWholesaler = async () => {
-    try {
-      setSwitching(true);
-      await changeRole('wholesaler');
-      await checkAuthStatus();
-      toast({ title: "Role change requested!", description: "Your request to become a wholesaler is submitted for admin approval." });
-    } catch (e) {
-      toast({ title: "Upgrade failed", description: "Could not request upgrade. Please try again or contact support.", variant: "destructive" });
-    } finally {
-      setSwitching(false);
+  const canSwitch = canSwitchTo(targetRole);
+  const isRegistered = isRegisteredForRole(targetRole);
+
+  const handleAction = async () => {
+    if (profile && canSwitch) {
+      await switchRole(targetRole);
+    } else {
+      // Fallback to original onRoleChange for non-authenticated users
+      onRoleChange(targetRole);
     }
+  };
+
+  const getButtonText = () => {
+    if (isSwitching) return "Processing...";
+    if (!profile) return `Switch to ${title}`;
+    if (!isRegistered) return `Sign up as ${title}`;
+    return `Switch to ${title}`;
+  };
+
+  const getButtonIcon = () => {
+    if (isSwitching) return null;
+    if (!profile || !isRegistered) return <UserPlus className="ml-2 h-4 w-4" />;
+    return <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />;
   };
 
   return (
@@ -86,42 +94,24 @@ const RoleCard: React.FC<RoleCardProps> = ({
           ))}
         </ul>
         
-        {/* Enable wholesaler upgrade for sellers */}
         {!isCurrentRole && (
-          <>
-            {/* If the current user is 'seller' and this card is 'wholesaler', allow upgrade */}
-            {isSellerToWholesaler && profile?.role === 'seller' ? (
-              <Button 
-                variant="outline"
-                className="w-full group font-poppins"
-                onClick={handleSellerToWholesaler}
-                disabled={switching}
-                title="Request to become a wholesaler"
-              >
-                {switching ? (
-                  <>
-                    Requesting...
-                  </>
-                ) : (
-                  <>
-                    Apply as Wholesaler
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </>
-                )}
-              </Button>
-            ) : (
-              // Fallback for all others (including logged-out)
-              <Button 
-                variant="outline" 
-                className="w-full group font-poppins"
-                onClick={() => onRoleChange(targetRole)}
-                disabled={isRequesting}
-              >
-                Switch to {title}
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            )}
-          </>
+          <Button 
+            variant="outline"
+            className="w-full group font-poppins"
+            onClick={handleAction}
+            disabled={isSwitching || isRequesting}
+            title={getButtonText()}
+          >
+            {getButtonText()}
+            {getButtonIcon()}
+          </Button>
+        )}
+
+        {/* Registration Status Indicator */}
+        {!isCurrentRole && profile && !isRegistered && canSwitch && (
+          <p className="text-xs text-amber-600 mt-2 font-poppins text-center">
+            Registration required for this role
+          </p>
         )}
       </div>
     </Card>
@@ -129,4 +119,3 @@ const RoleCard: React.FC<RoleCardProps> = ({
 };
 
 export default RoleCard;
-

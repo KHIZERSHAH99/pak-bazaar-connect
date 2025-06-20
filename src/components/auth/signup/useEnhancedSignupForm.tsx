@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,6 +18,7 @@ export const useEnhancedSignupForm = () => {
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -49,43 +49,25 @@ export const useEnhancedSignupForm = () => {
     }
   };
 
-  const nextStep = async () => {
-    console.log('NextStep called, current step:', currentStep, 'selected role:', selectedRole);
-    
-    // Block progression if email is blocked
-    if (currentStep === 2 && isEmailBlocked) {
-      toast({
-        title: 'Email Already Registered',
-        description: 'Please use a different Gmail address to continue.',
-        variant: 'destructive',
-      });
-      setErrorMessage('Cannot proceed with an already registered email address.');
-      return;
-    }
-    
-    // Define required fields for each step based on role
+  const validateCurrentStep = async () => {
     const stepFields = {
       1: [],
       2: ['email', 'password', 'confirmPassword'],
       3: selectedRole === 'seller' 
         ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber']
-        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber'],
+        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber', 'ntnNumber', 'industry'],
       4: []
     };
     
     const currentFields = stepFields[currentStep as keyof typeof stepFields];
-    console.log('Validating fields for step', currentStep, ':', currentFields);
     
     if (currentFields.length > 0) {
       const isValid = await form.trigger(currentFields as any);
-      console.log('Validation result:', isValid);
       
       if (!isValid) {
         const errors = form.formState.errors;
-        console.log('Validation errors:', errors);
-        
-        // Show validation error toast
         const errorFields = Object.keys(errors);
+        
         toast({
           title: 'Validation Error',
           description: `Please fix the following fields: ${errorFields.join(', ')}`,
@@ -93,14 +75,35 @@ export const useEnhancedSignupForm = () => {
         });
         
         setErrorMessage(`Please complete all required fields: ${errorFields.join(', ')}`);
-        return;
+        return false;
       }
     }
+    
+    return true;
+  };
+
+  const nextStep = async () => {
+    console.log('NextStep called, current step:', currentStep, 'selected role:', selectedRole);
+    
+    // Block progression if email is blocked
+    if (currentStep === 2 && isEmailBlocked) {
+      toast({
+        title: 'Email Already Registered',
+        description: 'Please use a different email address to continue.',
+        variant: 'destructive',
+      });
+      setErrorMessage('Cannot proceed with an already registered email address.');
+      return;
+    }
+    
+    // Validate current step
+    const isValid = await validateCurrentStep();
+    if (!isValid) return;
     
     // If we're on the final step, proceed to submission
     if (currentStep === totalSteps) {
       console.log('On final step, triggering form submission');
-      form.handleSubmit(onSubmit)();
+      await onSubmit(form.getValues());
       return;
     }
     
@@ -133,8 +136,8 @@ export const useEnhancedSignupForm = () => {
   const handleEmailBlocked = (blocked: boolean) => {
     setIsEmailBlocked(blocked);
     if (blocked) {
-      setErrorMessage('This email is already registered. Please use a different Gmail address.');
-    } else {
+      setErrorMessage('This email is already registered. Please use a different email address.');
+    } else if (errorMessage && errorMessage.includes('email')) {
       setErrorMessage(null);
     }
   };
@@ -143,7 +146,7 @@ export const useEnhancedSignupForm = () => {
     console.log('Form submission started for role:', selectedRole);
     console.log('Form values:', values);
     
-    // Final check for email blocking
+    // Final validation checks
     if (isEmailBlocked) {
       toast({
         title: 'Registration Blocked',
@@ -153,12 +156,24 @@ export const useEnhancedSignupForm = () => {
       return;
     }
     
-    // Validate we're on the final step
     if (currentStep !== totalSteps) {
       console.log('Not on final step, current:', currentStep, 'total:', totalSteps);
       toast({
         title: 'Navigation Error',
         description: 'Please complete all steps before submitting',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    // Final form validation
+    const isFormValid = await form.trigger();
+    if (!isFormValid) {
+      const errors = form.formState.errors;
+      const errorFields = Object.keys(errors);
+      toast({
+        title: 'Form Validation Failed',
+        description: `Please fix: ${errorFields.join(', ')}`,
         variant: 'destructive',
       });
       return;
@@ -180,7 +195,7 @@ export const useEnhancedSignupForm = () => {
       await enhancedSignUp(values.email, values.password, selectedRole, values);
       
       toast({
-        title: 'Account created successfully!',
+        title: 'Account Created Successfully!',
         description: `Your ${selectedRole} account is ready to use. ${
           selectedRole === 'seller' 
             ? 'You can start browsing products immediately!' 
@@ -190,15 +205,26 @@ export const useEnhancedSignupForm = () => {
       });
       
       console.log('Registration successful, navigating to dashboard');
-      navigate('/dashboard');
+      
+      // Force navigation with page reload for clean state
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1500);
+      
     } catch (error: any) {
       console.error('Signup error:', error);
       
       let errorMsg = 'Failed to create account. Please try again.';
       
       if (error.message) {
-        if (error.message.includes('User already registered')) {
+        if (error.message.includes('User already registered') || error.message.includes('already exists')) {
           errorMsg = `This email is already registered. Please try logging in or use a different email.`;
+        } else if (error.message.includes('Invalid email')) {
+          errorMsg = 'Please enter a valid email address.';
+        } else if (error.message.includes('Password')) {
+          errorMsg = 'Password does not meet requirements. Please choose a stronger password.';
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorMsg = 'Network error. Please check your connection and try again.';
         } else {
           errorMsg = error.message;
         }
@@ -207,10 +233,16 @@ export const useEnhancedSignupForm = () => {
       setErrorMessage(errorMsg);
       
       toast({
-        title: 'Registration failed',
+        title: 'Registration Failed',
         description: errorMsg,
         variant: 'destructive',
       });
+      
+      // If it's an email error, go back to step 2
+      if (errorMsg.includes('email') && currentStep > 2) {
+        setCurrentStep(2);
+      }
+      
     } finally {
       setIsLoading(false);
     }

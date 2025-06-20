@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 import { logAuditEvent } from '@/lib/security/audit-enhanced';
+import { RoleSwitchResponse } from '@/types/role-switch';
 
 // Export UserRole for use in other components
 export type { UserRole } from '@/lib/types';
@@ -142,7 +143,11 @@ export const secureChangeRole = async (newRole: UserRole) => {
       });
 
       if (error) throw error;
-      if (!data.success) throw new Error(data.error);
+      
+      // Type cast the response data
+      const response = data as RoleSwitchResponse;
+      
+      if (!response.success) throw new Error(response.error);
 
       toast({
         title: "Role Changed Successfully",

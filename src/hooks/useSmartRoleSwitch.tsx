@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
+import { RoleSwitchResponse } from '@/types/role-switch';
 
 interface UseSmartRoleSwitchReturn {
   switchRole: (targetRole: UserRole) => Promise<void>;
@@ -104,8 +105,11 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
         throw error;
       }
 
-      if (!data.success) {
-        throw new Error(data.error || 'Role switch failed');
+      // Type cast the response data
+      const response = data as RoleSwitchResponse;
+
+      if (!response.success) {
+        throw new Error(response.error || 'Role switch failed');
       }
       
       // Refresh auth status

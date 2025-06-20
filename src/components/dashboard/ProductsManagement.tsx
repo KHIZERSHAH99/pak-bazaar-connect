@@ -1,15 +1,26 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Package, Plus } from 'lucide-react';
+import CreateProductDialog from '@/components/products/CreateProductDialog';
 
 const ProductsManagement: React.FC = () => {
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
+  const handleProductCreated = () => {
+    // Refresh products list if needed
+    console.log('Product created successfully');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 font-poppins">Products</h1>
-        <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins">
+        <Button 
+          className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
+          onClick={() => setIsCreateDialogOpen(true)}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add Product
         </Button>
@@ -33,6 +44,12 @@ const ProductsManagement: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      <CreateProductDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        onProductCreated={handleProductCreated}
+      />
     </div>
   );
 };

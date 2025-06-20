@@ -7,6 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { UserCog, Store, ShoppingBag } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import AccountInfo from '@/components/profile/AccountInfo';
+import ProfileImageUpload from '@/components/profile/ProfileImageUpload';
+import ProfileEditor from '@/components/profile/ProfileEditor';
+import BusinessDetails from '@/components/profile/BusinessDetails';
+import VerificationStatus from '@/components/profile/VerificationStatus';
+import RolePermissions from '@/components/profile/RolePermissions';
 
 const Profile: React.FC = () => {
   const { profile, checkAuthStatus, loading } = useAuth();
@@ -46,11 +51,15 @@ const Profile: React.FC = () => {
               <Skeleton className="h-8 md:h-10 w-48 mb-2" />
               <Skeleton className="h-5 md:h-6 w-80 md:w-96" />
             </div>
-            <div className="mb-8">
-              <Skeleton className="h-32 md:h-40 w-full" />
-            </div>
-            <div className="mt-8">
-              <Skeleton className="h-40 md:h-48 w-full" />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-1">
+                <Skeleton className="h-64 w-full" />
+              </div>
+              <div className="lg:col-span-2 space-y-6">
+                <Skeleton className="h-40 w-full" />
+                <Skeleton className="h-32 w-full" />
+                <Skeleton className="h-48 w-full" />
+              </div>
             </div>
           </div>
         </div>
@@ -74,7 +83,8 @@ const Profile: React.FC = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
           <div className="mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 font-poppins">My Profile</h1>
@@ -84,13 +94,42 @@ const Profile: React.FC = () => {
               </Badge>
             </div>
             <p className="text-gray-600 font-poppins text-sm md:text-base">
-              Manage your account information and role settings
+              Manage your account information, business details, and preferences
             </p>
           </div>
-          <AccountInfo
-            email={profile.email}
-            createdAt={profile.created_at}
-          />
+
+          {/* Profile Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Profile Image & Quick Info */}
+            <div className="lg:col-span-1 space-y-6">
+              <ProfileImageUpload 
+                profile={profile}
+                onImageUpdate={checkAuthStatus}
+              />
+              <VerificationStatus profile={profile} />
+              <RolePermissions role={profile.role} />
+            </div>
+
+            {/* Right Column - Main Profile Information */}
+            <div className="lg:col-span-2 space-y-6">
+              <AccountInfo
+                email={profile.email}
+                createdAt={profile.created_at}
+              />
+              
+              <ProfileEditor 
+                profile={profile}
+                onProfileUpdate={checkAuthStatus}
+              />
+
+              {(profile.role === 'wholesaler' || profile.role === 'seller') && (
+                <BusinessDetails 
+                  profile={profile}
+                  onUpdate={checkAuthStatus}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

@@ -105,8 +105,8 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
         throw error;
       }
 
-      // Type cast the response data
-      const response = data as RoleSwitchResponse;
+      // Type cast the response data with proper conversion
+      const response = data as unknown as RoleSwitchResponse;
 
       if (!response.success) {
         throw new Error(response.error || 'Role switch failed');

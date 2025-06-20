@@ -144,8 +144,8 @@ export const secureChangeRole = async (newRole: UserRole) => {
 
       if (error) throw error;
       
-      // Type cast the response data
-      const response = data as RoleSwitchResponse;
+      // Type cast the response data with proper conversion
+      const response = data as unknown as RoleSwitchResponse;
       
       if (!response.success) throw new Error(response.error);
 

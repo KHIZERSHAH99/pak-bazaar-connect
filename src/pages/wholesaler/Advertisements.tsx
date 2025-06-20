@@ -1,4 +1,5 @@
 
+
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -112,7 +113,6 @@ const Advertisements: React.FC = () => {
       <CreateAdDialog
         isOpen={isDialogOpen}
         onClose={handleDialogClose}
-        products={products}
         onAdCreated={handleAdCreated}
       />
     </DashboardLayout>
@@ -126,3 +126,4 @@ const AdvertisementsWithAuth = () => (
 );
 
 export default AdvertisementsWithAuth;
+

@@ -44,6 +44,27 @@ export interface AdAnalytics {
   spend: number;
 }
 
+// Helper function to transform database row to Ad interface
+const transformAd = (dbAd: any): Ad => ({
+  id: dbAd.id,
+  wholesaler_id: dbAd.wholesaler_id,
+  headline: dbAd.headline,
+  image: dbAd.image,
+  status: dbAd.status,
+  created_at: dbAd.created_at,
+  product_id: dbAd.product_id || undefined,
+  ad_type: dbAd.ad_type || 'cpo',
+  budget_cap: dbAd.budget_cap || 0,
+  daily_budget_limit: dbAd.daily_budget_limit || 0,
+  campaign_start_date: dbAd.campaign_start_date || undefined,
+  campaign_end_date: dbAd.campaign_end_date || undefined,
+  current_spend: dbAd.current_spend || 0,
+  total_orders: dbAd.total_orders || 0,
+  is_auto_stopped: dbAd.is_auto_stopped || false,
+  tracking_token: dbAd.tracking_token || undefined,
+  products: dbAd.products || undefined
+});
+
 export const createAd = async (adData: {
   product_id: string;
   headline: string;
@@ -73,7 +94,7 @@ export const createAd = async (adData: {
     throw error;
   }
   
-  return data as Ad;
+  return transformAd(data);
 };
 
 export const getAdsByWholesaler = async () => {
@@ -91,15 +112,7 @@ export const getAdsByWholesaler = async () => {
     return [];
   }
   
-  // Transform data to match Ad interface with defaults
-  return (data || []).map(ad => ({
-    ...ad,
-    ad_type: ad.ad_type || 'cpo',
-    budget_cap: ad.budget_cap || 0,
-    current_spend: ad.current_spend || 0,
-    total_orders: ad.total_orders || 0,
-    is_auto_stopped: ad.is_auto_stopped || false
-  })) as Ad[];
+  return (data || []).map(transformAd);
 };
 
 export const getActiveAds = async (limit = 10) => {
@@ -115,15 +128,7 @@ export const getActiveAds = async (limit = 10) => {
     return [];
   }
   
-  // Transform data to match Ad interface with defaults
-  return (data || []).map(ad => ({
-    ...ad,
-    ad_type: ad.ad_type || 'cpo',
-    budget_cap: ad.budget_cap || 0,
-    current_spend: ad.current_spend || 0,
-    total_orders: ad.total_orders || 0,
-    is_auto_stopped: ad.is_auto_stopped || false
-  })) as Ad[];
+  return (data || []).map(transformAd);
 };
 
 export const getPendingAds = async () => {
@@ -138,15 +143,7 @@ export const getPendingAds = async () => {
     return [];
   }
   
-  // Transform data to match Ad interface with defaults
-  return (data || []).map(ad => ({
-    ...ad,
-    ad_type: ad.ad_type || 'cpo',
-    budget_cap: ad.budget_cap || 0,
-    current_spend: ad.current_spend || 0,
-    total_orders: ad.total_orders || 0,
-    is_auto_stopped: ad.is_auto_stopped || false
-  })) as Ad[];
+  return (data || []).map(transformAd);
 };
 
 export const approveAd = async (adId: string, isApproved: boolean = true) => {
@@ -164,24 +161,17 @@ export const approveAd = async (adId: string, isApproved: boolean = true) => {
     throw error;
   }
   
-  return {
-    ...data,
-    ad_type: data.ad_type || 'cpo',
-    budget_cap: data.budget_cap || 0,
-    current_spend: data.current_spend || 0,
-    total_orders: data.total_orders || 0,
-    is_auto_stopped: data.is_auto_stopped || false
-  } as Ad;
+  return transformAd(data);
 };
 
 export const getAdAnalytics = async (adId: string) => {
-  // For now, return empty array since table might not exist yet
+  // For now, return empty array since analytics table might not exist yet
   console.log('Analytics requested for ad:', adId);
   return [] as AdAnalytics[];
 };
 
 export const trackAdOrder = async (trackingToken: string, orderId: string, costCharged: number) => {
-  // For now, just log the tracking attempt
+  // For now, just log the tracking attempt since ad_orders table might not exist yet
   console.log('Ad order tracking:', { trackingToken, orderId, costCharged });
   return { success: true };
 };
@@ -199,14 +189,7 @@ export const pauseAd = async (adId: string) => {
     throw error;
   }
   
-  return {
-    ...data,
-    ad_type: data.ad_type || 'cpo',
-    budget_cap: data.budget_cap || 0,
-    current_spend: data.current_spend || 0,
-    total_orders: data.total_orders || 0,
-    is_auto_stopped: data.is_auto_stopped || false
-  } as Ad;
+  return transformAd(data);
 };
 
 export const resumeAd = async (adId: string) => {
@@ -222,12 +205,5 @@ export const resumeAd = async (adId: string) => {
     throw error;
   }
   
-  return {
-    ...data,
-    ad_type: data.ad_type || 'cpo',
-    budget_cap: data.budget_cap || 0,
-    current_spend: data.current_spend || 0,
-    total_orders: data.total_orders || 0,
-    is_auto_stopped: data.is_auto_stopped || false
-  } as Ad;
+  return transformAd(data);
 };

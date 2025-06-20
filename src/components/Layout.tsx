@@ -1,10 +1,9 @@
 
 import React from 'react';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import SEOHead from '@/components/ui/seo-head';
-import PerformanceMonitor from '@/components/ui/performance-monitor';
-import { usePageAnalytics } from '@/hooks/usePageAnalytics';
+import { Helmet } from 'react-helmet';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,26 +14,39 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ 
   children, 
-  title,
-  description,
+  title, 
+  description, 
   keywords 
 }) => {
-  usePageAnalytics();
+  const defaultTitle = 'Pak Bazaar Connect - Pakistan\'s Leading B2B Marketplace';
+  const defaultDescription = 'Connect wholesalers and retailers across Pakistan. Discover quality products, build lasting business relationships, and grow your business with trusted suppliers.';
+  const defaultKeywords = 'pakistan, b2b, marketplace, wholesale, retail, suppliers, products, karachi, lahore, islamabad';
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
-      <SEOHead 
-        title={title}
-        description={description}
-        keywords={keywords}
-      />
-      <Navbar />
-      <main className="flex-grow">
-        {children}
-      </main>
-      <Footer />
-      <PerformanceMonitor />
-    </div>
+    <ErrorBoundary>
+      <div className="min-h-screen flex flex-col bg-background text-foreground">
+        <Helmet>
+          <title>{title || defaultTitle}</title>
+          <meta name="description" content={description || defaultDescription} />
+          <meta name="keywords" content={keywords || defaultKeywords} />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta property="og:title" content={title || defaultTitle} />
+          <meta property="og:description" content={description || defaultDescription} />
+          <meta property="og:type" content="website" />
+          <link rel="canonical" href={window.location.href} />
+        </Helmet>
+        
+        <Navbar />
+        
+        <main className="flex-1 w-full">
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </main>
+        
+        <Footer />
+      </div>
+    </ErrorBoundary>
   );
 };
 

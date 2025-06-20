@@ -7,7 +7,7 @@
   text-align: right;
 }
 
-[dir="rtl"] .flex:not(.flex-col):not(.flex-col-reverse) {
+[dir="rtl"] .flex:not(.flex-col) {
   flex-direction: row-reverse;
 }
 
@@ -30,9 +30,7 @@
 [dir="rtl"] h6,
 [dir="rtl"] button,
 [dir="rtl"] a,
-[dir="rtl"] label,
-[dir="rtl"] input,
-[dir="rtl"] textarea {
+[dir="rtl"] label {
   direction: rtl;
   unicode-bidi: embed;
 }
@@ -42,15 +40,6 @@
   flex-direction: row-reverse;
 }
 
-[dir="rtl"] .justify-start {
-  justify-content: flex-end;
-}
-
-[dir="rtl"] .justify-end {
-  justify-content: flex-start;
-}
-
-/* Margin and padding fixes for RTL */
 [dir="rtl"] .ml-2 {
   margin-left: 0;
   margin-right: 0.5rem;
@@ -71,26 +60,6 @@
   margin-left: 1rem;
 }
 
-[dir="rtl"] .pl-2 {
-  padding-left: 0;
-  padding-right: 0.5rem;
-}
-
-[dir="rtl"] .pr-2 {
-  padding-right: 0;
-  padding-left: 0.5rem;
-}
-
-[dir="rtl"] .pl-4 {
-  padding-left: 0;
-  padding-right: 1rem;
-}
-
-[dir="rtl"] .pr-4 {
-  padding-right: 0;
-  padding-left: 1rem;
-}
-
 /* Add font fallback for Urdu */
 body, .urdu-layout, [lang="ur"] {
   font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', 'Poppins', 'Arial', 'sans-serif';
@@ -109,8 +78,7 @@ body, .urdu-layout, [lang="ur"] {
 }
 
 /* Dropdown menu RTL fixes */
-[dir="rtl"] .dropdown-menu,
-[dir="rtl"] [role="menu"] {
+[dir="rtl"] .dropdown-menu {
   right: 0;
   left: auto;
 }
@@ -128,87 +96,4 @@ body, .urdu-layout, [lang="ur"] {
 [dir="rtl"] button .ml-2 {
   margin-left: 0;
   margin-right: 0.5rem;
-}
-
-/* Chat interface RTL fixes */
-[dir="rtl"] .chat-message-left {
-  justify-content: flex-end;
-}
-
-[dir="rtl"] .chat-message-right {
-  justify-content: flex-start;
-}
-
-/* Form input RTL fixes */
-[dir="rtl"] input[type="text"],
-[dir="rtl"] input[type="email"],
-[dir="rtl"] input[type="password"],
-[dir="rtl"] textarea,
-[dir="rtl"] select {
-  text-align: right;
-}
-
-/* Navigation RTL fixes */
-[dir="rtl"] .breadcrumb {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .breadcrumb-separator {
-  transform: rotate(180deg);
-}
-
-/* Enhanced button styling for RTL */
-[dir="rtl"] .btn-with-icon {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .btn-with-icon .icon {
-  margin-left: 0.5rem;
-  margin-right: 0;
-}
-
-/* Card layout fixes for RTL */
-[dir="rtl"] .card-header {
-  text-align: right;
-}
-
-[dir="rtl"] .card-content {
-  text-align: right;
-}
-
-/* Ensure proper text alignment in RTL mode */
-[dir="rtl"] .text-left {
-  text-align: right;
-}
-
-[dir="rtl"] .text-right {
-  text-align: left;
-}
-
-/* Fix sidebar positioning in RTL */
-[dir="rtl"] .sidebar {
-  right: 0;
-  left: auto;
-}
-
-/* Toast positioning fixes for RTL */
-[dir="rtl"] .toast-container {
-  right: auto;
-  left: 1rem;
-}
-
-/* Responsive RTL fixes */
-@media (max-width: 768px) {
-  [dir="rtl"] .mobile-menu {
-    right: 0;
-    left: auto;
-  }
-  
-  [dir="rtl"] .mobile-drawer {
-    transform: translateX(100%);
-  }
-  
-  [dir="rtl"] .mobile-drawer.open {
-    transform: translateX(0);
-  }
 }

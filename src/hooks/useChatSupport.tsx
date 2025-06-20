@@ -46,16 +46,12 @@ export const useChatSupport = () => {
       const { data: { user } } = await supabase.auth.getUser();
       const userId = user?.id;
       
-      if (!userId) {
-        throw new Error('User not authenticated');
-      }
-      
       console.log("Calling chatbot edge function...");
       
       // Add the message to the UI immediately for better UX
-      const tempMessage: ChatMessage = {
+      const tempMessage = {
         id: `temp-${Date.now()}`,
-        user_id: userId,
+        user_id: userId || '',
         message,
         reply: '',
         created_at: new Date().toISOString()
@@ -66,23 +62,19 @@ export const useChatSupport = () => {
       // Call OpenAI API through our Edge Function
       const response = await supabase.functions.invoke('chatbot', {
         body: { message },
-        headers: { 'x-user-id': userId },
+        headers: userId ? { 'x-user-id': userId } : undefined,
       });
       
       console.log("Response received:", response);
       
-      if (response.error) {
-        throw new Error(response.error.message || 'Failed to get response from chatbot');
+      if (!response.data) {
+        throw new Error('Failed to get response from chatbot');
       }
       
-      const botReply = response.data?.reply || "I'm sorry, I couldn't process your request at the moment. Please try again.";
+      const botReply = response.data.reply || "I'm sorry, I couldn't process your request at the moment.";
       
       // Save chat to database
-      try {
-        await saveChat(message, botReply);
-      } catch (dbError) {
-        console.warn('Failed to save chat to database, but continuing with response:', dbError);
-      }
+      await saveChat(message, botReply);
       
       // Update chat history with the actual response
       setChatHistory(prev => 
@@ -90,7 +82,7 @@ export const useChatSupport = () => {
           msg.id === tempMessage.id 
             ? {
                 id: Date.now().toString(),
-                user_id: userId,
+                user_id: userId || '',
                 message,
                 reply: botReply,
                 created_at: new Date().toISOString()

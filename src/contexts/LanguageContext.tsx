@@ -49,10 +49,6 @@ const translations: Translations = {
   'save_favorite': { en: 'Save to Favorites', ur: 'پسندیدہ میں محفوظ کریں' },
   'compare_products': { en: 'Compare Products', ur: 'پروڈکٹس کا موازنہ' },
   
-  // Chat and Support
-  'support_chat': { en: 'Support Chat', ur: 'سپورٹ چیٹ' },
-  'chat_description': { en: 'Get instant help with our AI-powered support assistant', ur: 'ہمارے AI سپورٹ اسسٹنٹ سے فوری مدد حاصل کریں' },
-  
   // Common actions
   'settings': { en: 'Settings', ur: 'سیٹنگز' },
   'previous': { en: 'Previous', ur: 'پچھلا' },
@@ -99,18 +95,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const savedLanguage = localStorage.getItem('pak-bazaar-language') as Language;
     if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ur')) {
-      console.log('Loading saved language:', savedLanguage);
       setLanguage(savedLanguage);
       applyLanguageSettings(savedLanguage);
     }
   }, []);
 
   const applyLanguageSettings = (lang: Language) => {
-    console.log('Applying language settings for:', lang);
-    
     // Update document direction for RTL support
-    const newDir = lang === 'ur' ? 'rtl' : 'ltr';
-    document.documentElement.dir = newDir;
+    document.documentElement.dir = lang === 'ur' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
     
     // Add CSS class for Urdu to handle specific styling
@@ -121,31 +113,17 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       document.documentElement.classList.remove('urdu-layout');
       document.body.classList.remove('urdu-layout');
     }
-    
-    console.log('Applied language settings - dir:', newDir, 'lang:', lang);
   };
 
-  const handleSetLanguage = async (lang: Language) => {
+  const handleSetLanguage = (lang: Language) => {
     console.log('Setting language to:', lang);
-    
-    try {
-      setLanguage(lang);
-      localStorage.setItem('pak-bazaar-language', lang);
-      applyLanguageSettings(lang);
-      
-      console.log('Language successfully changed to:', lang);
-    } catch (error) {
-      console.error('Error setting language:', error);
-    }
+    setLanguage(lang);
+    localStorage.setItem('pak-bazaar-language', lang);
+    applyLanguageSettings(lang);
   };
 
   const t = (key: string): string => {
-    const translation = translations[key]?.[language];
-    if (!translation) {
-      console.warn(`Translation missing for key: ${key} in language: ${language}`);
-      return key;
-    }
-    return translation;
+    return translations[key]?.[language] || key;
   };
 
   return (

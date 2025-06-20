@@ -36,17 +36,24 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     return false;
   }, [profile]);
 
-  // Check if user can switch to a specific role - simplified logic
+  // Check if user can switch to a specific role - fixed logic
   const canSwitchTo = useCallback((role: UserRole): boolean => {
     if (!profile) return false;
     if (profile.role === role) return false; // Can't switch to current role
     
-    // Allow switching between seller and wholesaler roles
-    if (profile.role === 'seller' && role === 'wholesaler') return true;
-    if (profile.role === 'wholesaler' && role === 'seller') return true;
+    // Only allow switching for business roles (seller/wholesaler)
+    if (!['seller', 'wholesaler'].includes(role)) return false;
     
-    // Admin can switch to any role for testing purposes
-    if (profile.role === 'admin' && (role === 'seller' || role === 'wholesaler')) return true;
+    // Allow switching between seller and wholesaler
+    if ((profile.role === 'seller' || profile.role === 'wholesaler') && 
+        (role === 'seller' || role === 'wholesaler')) {
+      return true;
+    }
+    
+    // Admin can switch to any business role for testing purposes
+    if (profile.role === 'admin' && (role === 'seller' || role === 'wholesaler')) {
+      return true;
+    }
     
     return false;
   }, [profile]);
@@ -74,8 +81,8 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
         message = "Please wait for admin approval before switching roles.";
       } else if (profile.role === targetRole) {
         message = `You are already a ${targetRole}.`;
-      } else if (profile.role !== 'seller' && profile.role !== 'wholesaler' && profile.role !== 'admin') {
-        message = "Role switching is only available for sellers and wholesalers.";
+      } else {
+        message = "Role switching is only available between seller and wholesaler roles.";
       }
       
       toast({

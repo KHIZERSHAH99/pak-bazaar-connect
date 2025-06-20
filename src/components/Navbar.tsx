@@ -6,9 +6,7 @@ import { Button } from '@/components/ui/button';
 import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 import { Flag, Menu, X, ShoppingBag, Users, Zap } from 'lucide-react';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import LanguageToggle from '@/components/LanguageToggle';
-import EnhancedRoleSwitcher from './navbar/EnhancedRoleSwitcher';
+import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 
 const Navbar = () => {
@@ -33,6 +31,23 @@ const Navbar = () => {
         variant: 'destructive'
       });
     }
+  };
+
+  const getRoleBadge = () => {
+    if (!profile?.role) return null;
+    
+    const roleColors = {
+      admin: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
+      wholesaler: 'bg-pakistani_green-100 text-pakistani_green-800 dark:bg-pakistani_green-900/20 dark:text-pakistani_green-300',
+      seller: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
+      pending: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300'
+    };
+
+    return (
+      <span className={`px-2 py-0.5 text-xs font-medium rounded-full font-poppins ${roleColors[profile.role as keyof typeof roleColors] || roleColors.pending}`}>
+        {profile.role}
+      </span>
+    );
   };
 
   return (
@@ -94,38 +109,13 @@ const Navbar = () => {
                 </Link>
               </div>
 
-              {/* Always visible Theme and Language Controls */}
-              <div className="flex items-center space-x-2 border-l border-gray-200 dark:border-gray-700 pl-4">
-                <ThemeToggle />
-                <LanguageToggle />
-              </div>
-
               {user ? (
-                <div className="flex items-center space-x-4">
-                  {/* Role Switcher */}
-                  {profile && (
-                    <EnhancedRoleSwitcher />
-                  )}
-
-                  {/* Dashboard Link */}
-                  <Link to="/dashboard">
-                    <Button 
-                      variant="ghost" 
-                      className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins font-medium"
-                    >
-                      Dashboard
-                    </Button>
-                  </Link>
-
-                  {/* Logout Button */}
-                  <Button
-                    onClick={handleLogout}
-                    variant="outline"
-                    className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-700 hover:text-white dark:border-pakistani_green-300 dark:text-pakistani_green-300 dark:hover:bg-pakistani_green-700 dark:hover:text-white font-poppins transition-all duration-200"
-                  >
-                    Logout
-                  </Button>
-                </div>
+                <UserMenu
+                  email={profile?.email || user.email}
+                  role={profile?.role}
+                  onLogout={handleLogout}
+                  getRoleBadge={getRoleBadge}
+                />
               ) : (
                 <div className="flex items-center space-x-3">
                   <Link to="/login">
@@ -146,8 +136,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center space-x-2">
-              <ThemeToggle />
+            <div className="md:hidden">
               <Button
                 variant="ghost"
                 size="icon"

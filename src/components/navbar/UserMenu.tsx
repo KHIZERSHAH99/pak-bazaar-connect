@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,8 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LayoutDashboard, LogOut, ChevronDown, Heart, MessageSquare, BarChart } from 'lucide-react';
+import { User, LayoutDashboard, LogOut, ChevronDown, Heart, MessageSquare, BarChart, Sun, Moon, Globe } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTheme } from 'next-themes';
+import { useSmartRoleSwitch } from '@/hooks/useSmartRoleSwitch';
 
 interface UserMenuProps {
   email?: string;
@@ -20,55 +23,129 @@ interface UserMenuProps {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge }) => {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
+  const { switchRole, canSwitchTo, isSwitching } = useSmartRoleSwitch();
+  
+  const handleThemeToggle = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const handleLanguageToggle = () => {
+    setLanguage(language === 'en' ? 'ur' : 'en');
+  };
+
+  const handleRoleSwitch = async () => {
+    const targetRole = role === 'seller' ? 'wholesaler' : 'seller';
+    if (canSwitchTo(targetRole as any)) {
+      await switchRole(targetRole as any);
+    }
+  };
+
+  const canSwitch = role === 'seller' || role === 'wholesaler';
+  const targetRole = role === 'seller' ? 'wholesaler' : 'seller';
   
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="flex items-center gap-1.5 font-poppins">
+        <Button variant="ghost" size="sm" className="flex items-center gap-2 font-poppins hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20">
           <User className="h-4 w-4" />
           <span className="font-medium max-w-20 truncate text-foreground">{email?.split('@')[0]}</span>
           {getRoleBadge()}
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground border border-border z-[120]">
-        <DropdownMenuLabel className="font-poppins">My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+      <DropdownMenuContent align="end" className="w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg z-[200]">
+        <DropdownMenuLabel className="font-poppins text-gray-900 dark:text-gray-100">
+          <div className="flex flex-col space-y-1">
+            <span className="font-medium">{email}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500 dark:text-gray-400">Role:</span>
+              {getRoleBadge()}
+            </div>
+          </div>
+        </DropdownMenuLabel>
+        
+        <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+        
+        {/* Profile & Dashboard */}
         <DropdownMenuItem asChild>
-          <Link to="/profile" className="cursor-pointer flex items-center gap-2 font-poppins text-foreground">
+          <Link to="/profile" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
             <User className="h-4 w-4" />
             {t('profile')}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/dashboard" className="cursor-pointer flex items-center gap-2 font-poppins text-foreground">
+          <Link to="/dashboard" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
             <LayoutDashboard className="h-4 w-4" />
             {t('dashboard')}
           </Link>
         </DropdownMenuItem>
+
+        {/* Additional Features */}
         <DropdownMenuItem asChild>
-          <Link to="/favorites" className="cursor-pointer flex items-center gap-2 font-poppins text-foreground">
+          <Link to="/favorites" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
             <Heart className="h-4 w-4" />
             Favorites
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/messages" className="cursor-pointer flex items-center gap-2 font-poppins text-foreground">
+          <Link to="/messages" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
             <MessageSquare className="h-4 w-4" />
             Messages
           </Link>
         </DropdownMenuItem>
         {role === 'wholesaler' && (
           <DropdownMenuItem asChild>
-            <Link to="/analytics" className="cursor-pointer flex items-center gap-2 font-poppins text-foreground">
+            <Link to="/analytics" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
               <BarChart className="h-4 w-4" />
               Analytics
             </Link>
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onLogout} className="text-destructive cursor-pointer flex items-center gap-2 font-poppins">
+
+        <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+
+        {/* Role Switcher */}
+        {canSwitch && (
+          <>
+            <DropdownMenuItem 
+              onClick={handleRoleSwitch}
+              disabled={isSwitching}
+              className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300"
+            >
+              <User className="h-4 w-4" />
+              {isSwitching ? 'Switching...' : `Switch to ${targetRole}`}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+          </>
+        )}
+
+        {/* Theme Toggle */}
+        <DropdownMenuItem 
+          onClick={handleThemeToggle}
+          className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300"
+        >
+          {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+        </DropdownMenuItem>
+
+        {/* Language Toggle */}
+        <DropdownMenuItem 
+          onClick={handleLanguageToggle}
+          className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300"
+        >
+          <Globe className="h-4 w-4" />
+          {language === 'en' ? 'اردو' : 'English'}
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
+        
+        {/* Logout */}
+        <DropdownMenuItem 
+          onClick={onLogout} 
+          className="text-red-600 dark:text-red-400 cursor-pointer flex items-center gap-3 font-poppins hover:bg-red-50 dark:hover:bg-red-900/20"
+        >
           <LogOut className="h-4 w-4" />
           {t('logout')}
         </DropdownMenuItem>

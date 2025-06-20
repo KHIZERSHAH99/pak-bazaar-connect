@@ -58,3 +58,34 @@ export const getActiveAds = async (limit = 10) => {
   
   return data as Ad[];
 };
+
+export const getPendingAds = async () => {
+  const { data, error } = await supabase
+    .from('ads')
+    .select('*')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching pending ads:', error);
+    return [];
+  }
+  
+  return data as Ad[];
+};
+
+export const approveAd = async (adId: string) => {
+  const { data, error } = await supabase
+    .from('ads')
+    .update({ status: 'approved' })
+    .eq('id', adId)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error approving ad:', error);
+    throw error;
+  }
+  
+  return data as Ad;
+};

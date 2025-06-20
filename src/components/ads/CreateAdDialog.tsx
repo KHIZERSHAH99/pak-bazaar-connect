@@ -108,7 +108,7 @@ const CreateAdDialog: React.FC<CreateAdDialogProps> = ({
           wholesaler_id: user.id,
           headline: formData.headline.trim(),
           image: imageUrl,
-          status: 'pending'
+          status: 'pending' as const
         }])
         .select()
         .single();

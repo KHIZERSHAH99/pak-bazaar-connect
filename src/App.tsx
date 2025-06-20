@@ -25,34 +25,36 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider 
-      attribute="class" 
-      defaultTheme="light" 
-      enableSystem
-      disableTransitionOnChange={false}
-      storageKey="pak-bazaar-theme"
-    >
-      <LanguageProvider>
-        <TooltipProvider>
-          <ErrorBoundary>
-            <AuthErrorBoundary>
-              <div className="min-h-screen bg-background text-foreground transition-colors duration-200 font-poppins">
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <AuthProvider>
-                    <AppRoutes />
-                  </AuthProvider>
-                </BrowserRouter>
-              </div>
-            </AuthErrorBoundary>
-          </ErrorBoundary>
-        </TooltipProvider>
-      </LanguageProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider 
+        attribute="class" 
+        defaultTheme="light" 
+        enableSystem
+        disableTransitionOnChange={false}
+        storageKey="pak-bazaar-theme"
+      >
+        <LanguageProvider>
+          <TooltipProvider>
+            <ErrorBoundary>
+              <AuthErrorBoundary>
+                <div className="min-h-screen bg-background text-foreground transition-colors duration-200 font-poppins">
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <AuthProvider>
+                      <AppRoutes />
+                    </AuthProvider>
+                  </BrowserRouter>
+                </div>
+              </AuthErrorBoundary>
+            </ErrorBoundary>
+          </TooltipProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

@@ -555,6 +555,7 @@ export type Database = {
           address: string | null
           business_name: string | null
           business_type: string | null
+          can_switch_roles: boolean | null
           city: string | null
           cnic_image: string | null
           contact_name: string | null
@@ -563,10 +564,12 @@ export type Database = {
           id: string
           industry: string | null
           is_suspended: boolean | null
+          last_role_switch: string | null
           ntn_number: string | null
           phone_number: string | null
           postal_code: string | null
           role: string
+          role_switch_count: number | null
           selfie_image: string | null
           strn_number: string | null
           suspension_reason: string | null
@@ -579,6 +582,7 @@ export type Database = {
           address?: string | null
           business_name?: string | null
           business_type?: string | null
+          can_switch_roles?: boolean | null
           city?: string | null
           cnic_image?: string | null
           contact_name?: string | null
@@ -587,10 +591,12 @@ export type Database = {
           id: string
           industry?: string | null
           is_suspended?: boolean | null
+          last_role_switch?: string | null
           ntn_number?: string | null
           phone_number?: string | null
           postal_code?: string | null
           role?: string
+          role_switch_count?: number | null
           selfie_image?: string | null
           strn_number?: string | null
           suspension_reason?: string | null
@@ -603,6 +609,7 @@ export type Database = {
           address?: string | null
           business_name?: string | null
           business_type?: string | null
+          can_switch_roles?: boolean | null
           city?: string | null
           cnic_image?: string | null
           contact_name?: string | null
@@ -611,10 +618,12 @@ export type Database = {
           id?: string
           industry?: string | null
           is_suspended?: boolean | null
+          last_role_switch?: string | null
           ntn_number?: string | null
           phone_number?: string | null
           postal_code?: string | null
           role?: string
+          role_switch_count?: number | null
           selfie_image?: string | null
           strn_number?: string | null
           suspension_reason?: string | null
@@ -645,6 +654,42 @@ export type Database = {
           id?: string
           requested_role?: string
           status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      role_switch_history: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          from_role: string
+          id: string
+          notes: string | null
+          requires_approval: boolean | null
+          switched_at: string | null
+          to_role: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          from_role: string
+          id?: string
+          notes?: string | null
+          requires_approval?: boolean | null
+          switched_at?: string | null
+          to_role: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          from_role?: string
+          id?: string
+          notes?: string | null
+          requires_approval?: boolean | null
+          switched_at?: string | null
+          to_role?: string
           user_id?: string
         }
         Relationships: []
@@ -729,6 +774,10 @@ export type Database = {
           p_user_agent?: string
         }
         Returns: undefined
+      }
+      switch_business_role: {
+        Args: { target_role: string }
+        Returns: Json
       }
     }
     Enums: {

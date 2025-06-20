@@ -2,7 +2,7 @@
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSmartRoleSwitch } from "@/hooks/useSmartRoleSwitch";
-import { UserRole } from "@/lib/auth";
+import { UserRole } from "@/lib/types";
 import { ArrowRight, UserPlus, RefreshCw, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 

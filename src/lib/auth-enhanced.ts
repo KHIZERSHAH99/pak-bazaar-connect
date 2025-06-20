@@ -128,13 +128,31 @@ export const enhancedSignOut = async () => {
   }
 };
 
+// Updated role change function - now creates admin approval requests for sensitive role changes
 export const secureChangeRole = async (newRole: UserRole) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) throw new Error('User not authenticated');
 
-    // Log role change request
+    // For direct business role switching (seller <-> wholesaler), use the database function
+    if (newRole === 'seller' || newRole === 'wholesaler') {
+      const { data, error } = await supabase.rpc('switch_business_role', {
+        target_role: newRole
+      });
+
+      if (error) throw error;
+      if (!data.success) throw new Error(data.error);
+
+      toast({
+        title: "Role Changed Successfully",
+        description: `You are now a ${newRole}!`,
+      });
+
+      return { success: true };
+    }
+
+    // For admin role changes, create a role request (requires approval)
     await logAuditEvent('role_change_requested', 'role_requests', null, null, { 
       old_role: 'pending',
       requested_role: newRole 

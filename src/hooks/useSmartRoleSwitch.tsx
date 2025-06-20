@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { secureChangeRole } from '@/lib/auth-enhanced';
+import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 
 interface UseSmartRoleSwitchReturn {
@@ -27,8 +27,7 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     // Admin can access any role
     if (profile.role === 'admin') return true;
     
-    // For this implementation, assume users can switch between seller and wholesaler
-    // In a real implementation, you'd check against a registration/verification table
+    // For seller and wholesaler, they can switch between each other
     if (role === 'seller' || role === 'wholesaler') {
       return profile.role === 'seller' || profile.role === 'wholesaler' || profile.role === 'admin';
     }
@@ -47,7 +46,7 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     // Pending users can't switch until their role is approved
     if (profile.role === 'pending') return false;
     
-    // Only allow switching between seller and wholesaler
+    // Allow switching between seller and wholesaler
     return (profile.role === 'seller' && role === 'wholesaler') ||
            (profile.role === 'wholesaler' && role === 'seller');
   }, [profile]);
@@ -88,21 +87,6 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     setIsSwitching(true);
 
     try {
-      // Check if user needs to register for target role
-      if (!isRegisteredForRole(targetRole)) {
-        toast({
-          title: "Registration Required",
-          description: `You need to complete ${targetRole} registration. Redirecting...`,
-          variant: "default"
-        });
-        
-        // Redirect to signup with role pre-selected
-        setTimeout(() => {
-          window.location.href = `/signup?role=${targetRole}`;
-        }, 2000);
-        return;
-      }
-
       // Show loading state
       toast({
         title: "Switching Role",
@@ -110,22 +94,33 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
         variant: "default"
       });
 
-      // Perform role switch - this creates a role request for admin approval
-      await secureChangeRole(targetRole);
+      // Call the new database function for direct role switching
+      const { data, error } = await supabase.rpc('switch_business_role', {
+        target_role: targetRole
+      });
+
+      if (error) {
+        console.error('Role switch error:', error);
+        throw error;
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || 'Role switch failed');
+      }
       
       // Refresh auth status
       await checkAuthStatus();
       
       toast({
-        title: "Role Switch Requested",
-        description: `Your request to switch to ${targetRole} has been submitted for admin approval.`,
+        title: "Role Switched Successfully!",
+        description: `You are now a ${targetRole}. Welcome to your new role!`,
         variant: "default"
       });
 
       // Refresh the page after a short delay to show updated state
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 1500);
 
     } catch (error: any) {
       console.error('Role switch error:', error);
@@ -133,9 +128,9 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
       let errorMessage = "Failed to switch role. Please try again.";
       
       if (error.message) {
-        if (error.message.includes('pending')) {
-          errorMessage = "Your role change request is pending admin approval.";
-        } else if (error.message.includes('not authorized') || error.message.includes('unauthorized')) {
+        if (error.message.includes('Already in target role')) {
+          errorMessage = `You are already a ${targetRole}.`;
+        } else if (error.message.includes('not authenticated') || error.message.includes('unauthorized')) {
           errorMessage = "You are not authorized to switch to this role.";
         } else if (error.message.includes('network') || error.message.includes('fetch')) {
           errorMessage = "Network error. Please check your connection and try again.";
@@ -152,7 +147,7 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     } finally {
       setIsSwitching(false);
     }
-  }, [profile, isSwitching, canSwitchTo, isRegisteredForRole, toast, checkAuthStatus]);
+  }, [profile, isSwitching, canSwitchTo, toast, checkAuthStatus]);
 
   return {
     switchRole,

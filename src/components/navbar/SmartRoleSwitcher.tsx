@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { RefreshCw, UserPlus, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSmartRoleSwitch } from '@/hooks/useSmartRoleSwitch';
-import { UserRole } from '@/lib/auth';
+import { UserRole } from '@/lib/types';
 
 const roleDisplay: Record<UserRole, string> = {
   admin: 'Admin',

@@ -227,30 +227,17 @@ export const enhancedSignOut = async () => {
   }
 };
 
-// Updated role change function - uses fallback approach
+// Updated role change function - uses the existing switch_business_role function
 export const secureChangeRole = async (newRole: UserRole) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) throw new Error('User not authenticated');
 
-    // Try the new secure function first, fallback to old one
-    let data, error;
-    
-    try {
-      const result = await supabase.rpc('secure_switch_business_role', {
-        target_role: newRole
-      });
-      data = result.data;
-      error = result.error;
-    } catch (fallbackError) {
-      console.log('New function not available, trying fallback');
-      const result = await supabase.rpc('switch_business_role', {
-        target_role: newRole
-      });
-      data = result.data;
-      error = result.error;
-    }
+    // Use the existing switch_business_role function
+    const { data, error } = await supabase.rpc('switch_business_role', {
+      target_role: newRole
+    });
 
     if (error) throw error;
     

@@ -23,8 +23,10 @@ export const useSmartRoleSwitchEnhanced = (): UseSmartRoleSwitchReturn => {
     if (profile.role === role) return true;
     if (profile.role === 'admin') return true;
     
-    if (role === 'seller' || role === 'wholesaler') {
-      return profile.role === 'seller' || profile.role === 'wholesaler' || profile.role === 'admin';
+    // Allow switching between seller and wholesaler roles
+    if ((role === 'seller' || role === 'wholesaler') && 
+        (profile.role === 'seller' || profile.role === 'wholesaler')) {
+      return true;
     }
     
     return false;

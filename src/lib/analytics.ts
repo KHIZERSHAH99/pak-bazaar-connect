@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -76,7 +77,9 @@ export const getSellerAnalytics = async (timeframe: string = '7d'): Promise<Anal
         totalViews = 0;
       }
     } else {
-      totalViews = analyticsData?.total_views || 0;
+      // Fix: Access the first element of the array returned by the RPC function
+      const firstResult = analyticsData?.[0];
+      totalViews = firstResult?.total_views || 0;
     }
 
     // Get real orders data

@@ -47,6 +47,38 @@ export const getSellerAnalytics = async (timeframe: string = '7d'): Promise<Anal
 
     const shopIds = shops.map(shop => shop.id);
 
+    // Get real product views using the new analytics function
+    const { data: analyticsData, error: analyticsError } = await supabase
+      .rpc('get_product_analytics', {
+        p_shop_ids: shopIds,
+        p_start_date: startDateString
+      });
+
+    let totalViews = 0;
+    if (analyticsError) {
+      console.error('Error fetching analytics:', analyticsError);
+      // Fallback to localStorage if database function fails
+      try {
+        const storedViews = JSON.parse(localStorage.getItem('product_views') || '[]');
+        const { data: products } = await supabase
+          .from('products')
+          .select('id')
+          .in('shop_id', shopIds)
+          .eq('is_active', true);
+        
+        const productIds = products?.map(p => p.id) || [];
+        totalViews = storedViews.filter((view: any) => 
+          productIds.includes(view.product_id) && 
+          new Date(view.viewed_at) >= startDate
+        ).length;
+      } catch (error) {
+        console.log('Could not parse stored views, using estimated views');
+        totalViews = 0;
+      }
+    } else {
+      totalViews = analyticsData?.total_views || 0;
+    }
+
     // Get real orders data
     const { data: orders, error: ordersError } = await supabase
       .from('orders')
@@ -56,36 +88,6 @@ export const getSellerAnalytics = async (timeframe: string = '7d'): Promise<Anal
 
     if (ordersError) {
       console.error('Error fetching orders:', ordersError);
-    }
-
-    // Get products for this wholesaler
-    const { data: products, error: productsError } = await supabase
-      .from('products')
-      .select('id')
-      .in('shop_id', shopIds)
-      .eq('is_active', true);
-
-    if (productsError) {
-      console.error('Error fetching products:', productsError);
-    }
-
-    // For now, use estimated views until we implement proper product tracking
-    // This avoids the TypeScript error while maintaining functionality
-    let totalViews = 0;
-    
-    if (products?.length) {
-      // Use localStorage stored views as fallback
-      try {
-        const storedViews = JSON.parse(localStorage.getItem('product_views') || '[]');
-        const productIds = products.map(p => p.id);
-        totalViews = storedViews.filter((view: any) => 
-          productIds.includes(view.product_id) && 
-          new Date(view.viewed_at) >= startDate
-        ).length;
-      } catch (error) {
-        console.log('Could not parse stored views, using estimated views');
-        totalViews = products.length * 15; // Fallback estimate
-      }
     }
 
     // Get messages from order_messages for these shops
@@ -163,23 +165,31 @@ export const trackProductView = async (productId: string): Promise<void> => {
   try {
     const user = await getCurrentUser();
     
-    // Use a simple tracking approach until product_views table is properly set up
-    console.log('Product view tracked for product:', productId, 'by user:', user?.id);
-    
-    // Store in localStorage as fallback for now
-    const views = JSON.parse(localStorage.getItem('product_views') || '[]');
-    views.push({
-      product_id: productId,
-      user_id: user?.id,
-      viewed_at: new Date().toISOString()
+    // Use the new database function to track product views
+    const { error } = await supabase.rpc('track_product_view', {
+      p_product_id: productId,
+      p_session_id: crypto.randomUUID(),
+      p_user_agent: navigator.userAgent,
+      p_referrer: document.referrer
     });
-    
-    // Keep only last 1000 views to prevent localStorage bloat
-    if (views.length > 1000) {
-      views.splice(0, views.length - 1000);
+
+    if (error) {
+      console.error('Error tracking product view:', error);
+      // Fallback to localStorage if database tracking fails
+      const views = JSON.parse(localStorage.getItem('product_views') || '[]');
+      views.push({
+        product_id: productId,
+        user_id: user?.id,
+        viewed_at: new Date().toISOString()
+      });
+      
+      // Keep only last 1000 views to prevent localStorage bloat
+      if (views.length > 1000) {
+        views.splice(0, views.length - 1000);
+      }
+      
+      localStorage.setItem('product_views', JSON.stringify(views));
     }
-    
-    localStorage.setItem('product_views', JSON.stringify(views));
   } catch (error) {
     console.error('Error tracking product view:', error);
   }

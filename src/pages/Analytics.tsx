@@ -5,7 +5,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import SellerAnalytics from '@/components/analytics/SellerAnalytics';
-import { BarChart, AlertCircle } from 'lucide-react';
+import { BarChart, AlertCircle, TrendingUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const Analytics: React.FC = () => {
@@ -42,10 +42,15 @@ const Analytics: React.FC = () => {
       <ProtectedRoute>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center gap-3 mb-8">
-            <BarChart className="h-8 w-8 text-purple-500" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-poppins">
-              {t('analytics_dashboard')}
-            </h1>
+            <TrendingUp className="h-8 w-8 text-green-600" />
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-poppins">
+                {t('analytics_dashboard')}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                Real-time analytics with comprehensive insights
+              </p>
+            </div>
           </div>
           
           <SellerAnalytics />

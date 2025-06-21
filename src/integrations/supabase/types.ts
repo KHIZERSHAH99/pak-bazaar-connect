@@ -381,6 +381,41 @@ export type Database = {
           },
         ]
       }
+      order_tracking: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          order_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          status: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_tracking_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           buyer_address: string | null
@@ -492,6 +527,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      product_views: {
+        Row: {
+          id: string
+          ip_address: unknown | null
+          product_id: string
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          ip_address?: unknown | null
+          product_id: string
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          ip_address?: unknown | null
+          product_id?: string
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          viewed_at?: string
+        }
+        Relationships: []
       }
       products: {
         Row: {
@@ -749,9 +817,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_order_tracking: {
+        Args: { p_order_id: string; p_status: string; p_notes?: string }
+        Returns: string
+      }
       delete_old_screenshots: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_product_analytics: {
+        Args: { p_shop_ids: string[]; p_start_date?: string }
+        Returns: {
+          total_views: number
+          unique_viewers: number
+          views_by_day: Json
+        }[]
       }
       get_user_role: {
         Args: Record<PropertyKey, never>
@@ -781,6 +861,15 @@ export type Database = {
       switch_business_role: {
         Args: { target_role: string }
         Returns: Json
+      }
+      track_product_view: {
+        Args: {
+          p_product_id: string
+          p_session_id?: string
+          p_user_agent?: string
+          p_referrer?: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

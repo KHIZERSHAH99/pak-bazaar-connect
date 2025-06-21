@@ -46,11 +46,11 @@ export class QueryOptimizer {
         Object.entries(config.filters).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             if (Array.isArray(value)) {
-              query = (query as any).in(key, value);
+              query = query.in(key, value);
             } else if (typeof value === 'string' && value.includes('%')) {
-              query = (query as any).like(key, value);
+              query = query.like(key, value);
             } else {
-              query = (query as any).eq(key, value);
+              query = query.eq(key, value);
             }
           }
         });
@@ -58,17 +58,17 @@ export class QueryOptimizer {
 
       // Apply ordering
       if (config.orderBy) {
-        query = (query as any).order(config.orderBy.column, { ascending: config.orderBy.ascending ?? true });
+        query = query.order(config.orderBy.column, { ascending: config.orderBy.ascending ?? true });
       }
 
       // Apply limit
       if (config.limit) {
-        query = (query as any).limit(config.limit);
+        query = query.limit(config.limit);
       }
 
       // Apply offset/range
       if (config.offset && config.limit) {
-        query = (query as any).range(config.offset, config.offset + config.limit - 1);
+        query = query.range(config.offset, config.offset + config.limit - 1);
       }
 
       const { data, error } = await query;

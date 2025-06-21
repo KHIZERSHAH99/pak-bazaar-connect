@@ -48,8 +48,8 @@ const OrderMessagingSystem: React.FC<OrderMessagingSystemProps> = ({
 
     setIsSending(true);
     try {
-      const message = await sendOrderMessage(orderId, newMessage);
-      setMessages(prev => [...prev, message]);
+      const messageData = await sendOrderMessage(orderId, newMessage);
+      setMessages(prev => [...prev, messageData]);
       setNewMessage('');
       toast({
         title: "Message Sent",

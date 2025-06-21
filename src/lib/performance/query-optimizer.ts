@@ -34,25 +34,25 @@ export class QueryOptimizer {
     }
 
     try {
-      // Build query step by step with proper typing
-      let queryBuilder = supabase.from(config.table as any);
+      // Build query step by step - use any to handle complex Supabase types
+      let query: any = supabase.from(config.table as any);
 
       if (config.select) {
-        queryBuilder = queryBuilder.select(config.select);
+        query = query.select(config.select);
       } else {
-        queryBuilder = queryBuilder.select('*');
+        query = query.select('*');
       }
 
-      // Apply filters - use type assertion since Supabase types are complex
+      // Apply filters
       if (config.filters) {
         Object.entries(config.filters).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             if (Array.isArray(value)) {
-              queryBuilder = (queryBuilder as any).in(key, value);
+              query = query.in(key, value);
             } else if (typeof value === 'string' && value.includes('%')) {
-              queryBuilder = (queryBuilder as any).like(key, value);
+              query = query.like(key, value);
             } else {
-              queryBuilder = (queryBuilder as any).eq(key, value);
+              query = query.eq(key, value);
             }
           }
         });
@@ -60,20 +60,20 @@ export class QueryOptimizer {
 
       // Apply ordering
       if (config.orderBy) {
-        queryBuilder = (queryBuilder as any).order(config.orderBy.column, { ascending: config.orderBy.ascending ?? true });
+        query = query.order(config.orderBy.column, { ascending: config.orderBy.ascending ?? true });
       }
 
       // Apply limit
       if (config.limit) {
-        queryBuilder = (queryBuilder as any).limit(config.limit);
+        query = query.limit(config.limit);
       }
 
       // Apply offset/range
       if (config.offset && config.limit) {
-        queryBuilder = (queryBuilder as any).range(config.offset, config.offset + config.limit - 1);
+        query = query.range(config.offset, config.offset + config.limit - 1);
       }
 
-      const { data, error } = await queryBuilder;
+      const { data, error } = await query;
 
       if (error) throw error;
 

@@ -63,7 +63,7 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
   const switchRole = useCallback(async (targetRole: UserRole) => {
     if (!profile || isSwitching) return;
 
-    console.log('🔄 Role switch attempt:', { currentRole: profile.role, targetRole });
+    console.log('🔄 Secure role switch attempt:', { currentRole: profile.role, targetRole });
 
     // Validate target role
     if (!['seller', 'wholesaler'].includes(targetRole)) {
@@ -105,41 +105,26 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
         variant: "default"
       });
 
-      console.log('🔄 Calling switch_business_role function');
+      console.log('🔄 Calling secure_switch_business_role function');
 
-      // First check if the function exists
-      const { data: functionExists, error: checkError } = await supabase.rpc('switch_business_role', {
+      // Use the new secure role switching function
+      const { data: functionResult, error: functionError } = await supabase.rpc('secure_switch_business_role', {
         target_role: targetRole
       });
 
-      if (checkError) {
-        console.error('Function check error:', checkError);
-        
-        // If function doesn't exist, do direct profile update
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('User not authenticated');
-
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ role: targetRole })
-          .eq('id', user.id);
-
-        if (updateError) {
-          console.error('Direct update error:', updateError);
-          throw updateError;
-        }
-
-        console.log('✅ Direct role update successful');
-      } else {
-        // Type cast the response data with proper conversion
-        const response = functionExists as unknown as RoleSwitchResponse;
-
-        if (!response?.success) {
-          throw new Error(response?.error || 'Role switch failed');
-        }
-        
-        console.log('✅ Function-based role switch successful');
+      if (functionError) {
+        console.error('Secure role switch error:', functionError);
+        throw functionError;
       }
+
+      // Type cast the response data
+      const response = functionResult as unknown as RoleSwitchResponse;
+
+      if (!response?.success) {
+        throw new Error(response?.error || 'Role switch failed');
+      }
+      
+      console.log('✅ Secure role switch successful');
       
       // Refresh auth status
       await checkAuthStatus();
@@ -156,7 +141,7 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
       }, 1500);
 
     } catch (error: any) {
-      console.error('Role switch error:', error);
+      console.error('Secure role switch error:', error);
       
       let errorMessage = t('try_again');
       
@@ -167,6 +152,10 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
           errorMessage = t('unauthorized_access');
         } else if (error.message.includes('network') || error.message.includes('fetch')) {
           errorMessage = t('network_error');
+        } else if (error.message.includes('Maximum role switches')) {
+          errorMessage = 'Maximum role switches per day exceeded. Please try again tomorrow.';
+        } else if (error.message.includes('Cannot switch to seller while you have an active shop')) {
+          errorMessage = 'Cannot switch to seller while you have an active shop. Please contact support if needed.';
         } else {
           errorMessage = error.message;
         }

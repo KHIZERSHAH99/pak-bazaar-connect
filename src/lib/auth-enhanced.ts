@@ -22,13 +22,50 @@ export const cleanupAuthState = () => {
   });
 };
 
-// Enhanced authentication with comprehensive security logging
+// Helper function to check rate limits
+const checkRateLimit = async (identifier: string, attemptType: string) => {
+  try {
+    const { data, error } = await supabase.rpc('check_rate_limit', {
+      p_identifier: identifier,
+      p_attempt_type: attemptType,
+      p_max_attempts: attemptType === 'login' ? 5 : 3,
+      p_window_minutes: 15
+    });
+
+    if (error) {
+      console.error('Rate limit check error:', error);
+      return { allowed: true }; // Allow on error to not block legitimate users
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Rate limit check failed:', error);
+    return { allowed: true }; // Allow on error
+  }
+};
+
+// Enhanced authentication with comprehensive security logging and rate limiting
 export const enhancedSignIn = async (email: string, password: string) => {
   try {
-    console.log('🔐 Starting enhanced sign in process');
+    console.log('🔐 Starting enhanced sign in process with rate limiting');
+    
+    const cleanEmail = email.toLowerCase().trim();
+    
+    // Check rate limit before attempting login
+    const rateLimitResult = await checkRateLimit(cleanEmail, 'login');
+    
+    if (!rateLimitResult.allowed) {
+      const errorMessage = rateLimitResult.message || 'Too many login attempts. Please try again later.';
+      toast({
+        title: "Login Temporarily Blocked",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      throw new Error(errorMessage);
+    }
     
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.toLowerCase().trim(),
+      email: cleanEmail,
       password
     });
 
@@ -37,8 +74,22 @@ export const enhancedSignIn = async (email: string, password: string) => {
       
       // Log failed login attempt
       await logAuditEvent('login_failed', null, null, null, { 
-        email: email.toLowerCase().trim(), 
+        email: cleanEmail, 
         error: error.message 
+      });
+      
+      // Show user-friendly error messages
+      let userMessage = 'Invalid email or password. Please try again.';
+      if (error.message.includes('Email not confirmed')) {
+        userMessage = 'Please check your email and confirm your account before signing in.';
+      } else if (error.message.includes('Invalid login credentials')) {
+        userMessage = 'Invalid email or password. Please check your credentials.';
+      }
+      
+      toast({
+        title: "Sign In Failed",
+        description: userMessage,
+        variant: "destructive"
       });
       
       throw error;
@@ -46,7 +97,7 @@ export const enhancedSignIn = async (email: string, password: string) => {
 
     // Log successful login
     await logAuditEvent('login_success', 'profiles', data.user?.id, null, { 
-      email: email.toLowerCase().trim() 
+      email: cleanEmail 
     });
 
     console.log('✅ Enhanced sign in successful');
@@ -64,12 +115,28 @@ export const enhancedSignUp = async (
   businessData?: any
 ) => {
   try {
-    console.log('🔐 Starting enhanced sign up process', { email, role });
+    console.log('🔐 Starting enhanced sign up process with rate limiting', { email, role });
+    
+    const cleanEmail = email.toLowerCase().trim();
+    
+    // Check rate limit before attempting signup
+    const rateLimitResult = await checkRateLimit(cleanEmail, 'signup');
+    
+    if (!rateLimitResult.allowed) {
+      const errorMessage = rateLimitResult.message || 'Too many signup attempts. Please try again later.';
+      toast({
+        title: "Signup Temporarily Blocked",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      throw new Error(errorMessage);
+    }
     
     const { data, error } = await supabase.auth.signUp({
-      email: email.toLowerCase().trim(),
+      email: cleanEmail,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
           role: role,
           ...businessData
@@ -82,9 +149,25 @@ export const enhancedSignUp = async (
       
       // Log failed signup attempt
       await logAuditEvent('signup_failed', null, null, null, { 
-        email: email.toLowerCase().trim(), 
+        email: cleanEmail, 
         role,
         error: error.message 
+      });
+      
+      // Show user-friendly error messages
+      let userMessage = 'Failed to create account. Please try again.';
+      if (error.message.includes('User already registered')) {
+        userMessage = 'An account with this email already exists. Please sign in instead.';
+      } else if (error.message.includes('Password should be at least')) {
+        userMessage = 'Password is too weak. Please use at least 6 characters.';
+      } else if (error.message.includes('Invalid email')) {
+        userMessage = 'Please enter a valid email address.';
+      }
+      
+      toast({
+        title: "Sign Up Failed",
+        description: userMessage,
+        variant: "destructive"
       });
       
       throw error;
@@ -92,8 +175,15 @@ export const enhancedSignUp = async (
 
     // Log successful signup
     await logAuditEvent('signup_success', 'profiles', data.user?.id, null, { 
-      email: email.toLowerCase().trim(),
+      email: cleanEmail,
       role 
+    });
+
+    // Show success message
+    toast({
+      title: "Account Created Successfully",
+      description: "Please check your email to verify your account.",
+      variant: "default"
     });
 
     console.log('✅ Enhanced sign up successful');
@@ -129,60 +219,31 @@ export const enhancedSignOut = async () => {
   }
 };
 
-// Updated role change function - now creates admin approval requests for sensitive role changes
+// Updated role change function - now uses the secure function
 export const secureChangeRole = async (newRole: UserRole) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) throw new Error('User not authenticated');
 
-    // For direct business role switching (seller <-> wholesaler), use the database function
-    if (newRole === 'seller' || newRole === 'wholesaler') {
-      const { data, error } = await supabase.rpc('switch_business_role', {
-        target_role: newRole
-      });
-
-      if (error) throw error;
-      
-      // Type cast the response data with proper conversion
-      const response = data as unknown as RoleSwitchResponse;
-      
-      if (!response.success) throw new Error(response.error);
-
-      toast({
-        title: "Role Changed Successfully",
-        description: `You are now a ${newRole}!`,
-      });
-
-      return { success: true };
-    }
-
-    // For admin role changes, create a role request (requires approval)
-    await logAuditEvent('role_change_requested', 'role_requests', null, null, { 
-      old_role: 'pending',
-      requested_role: newRole 
+    // Use the new secure role switching function
+    const { data, error } = await supabase.rpc('secure_switch_business_role', {
+      target_role: newRole
     });
 
-    const { data, error } = await supabase
-      .from('role_requests')
-      .insert([{
-        user_id: user.id,
-        requested_role: newRole,
-        status: 'pending'
-      }])
-      .select();
-
-    if (error) {
-      console.error('Role change request error:', error);
-      throw error;
-    }
+    if (error) throw error;
+    
+    // Type cast the response data
+    const response = data as unknown as RoleSwitchResponse;
+    
+    if (!response.success) throw new Error(response.error);
 
     toast({
-      title: "Role Change Requested",
-      description: "Your request has been submitted for admin approval.",
+      title: "Role Changed Successfully",
+      description: `You are now a ${newRole}!`,
     });
 
-    return data[0];
+    return { success: true };
   } catch (error) {
     console.error('Secure role change error:', error);
     throw error;

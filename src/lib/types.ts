@@ -1,5 +1,3 @@
-
-
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
 export type OrderStatus = 'pending' | 'confirmed' | 'rejected' | 'completed';
 export type PaymentMethod = 'bank_transfer' | 'jazzcash' | 'easypaisa' | 'cod';
@@ -45,6 +43,8 @@ export interface Shop {
   city_id?: string;
   commission_rate?: number;
   created_at: string;
+  company_profiles?: CompanyProfile;
+  cities?: City;
 }
 
 export interface Product {
@@ -113,6 +113,7 @@ export interface CommissionRecord {
   status?: CommissionStatus;
   paid_at?: string;
   created_at: string;
+  profiles?: Profile;
 }
 
 export interface ChatMessage {
@@ -174,6 +175,7 @@ export interface OrderMessage {
   sender_id: string;
   message: string;
   created_at: string;
+  profiles?: Profile;
 }
 
 export interface PaymentMethodInfo {
@@ -195,6 +197,8 @@ export interface WholesalerMonthlySales {
   total_sales: number;
   total_orders: number;
   commission_earned: number;
+  pending_commission: number;
+  paid_commission: number;
 }
 
 // Type guards for runtime validation
@@ -269,4 +273,3 @@ export const validateOrder = (data: any): Order | null => {
     profiles: data.profiles
   };
 };
-

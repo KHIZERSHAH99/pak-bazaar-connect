@@ -67,7 +67,8 @@ const WholesalerOrdersEnhanced: React.FC = () => {
               contact: item.shops.contact || '',
               address: item.shops.address || '',
               postal_code: item.shops.postal_code || '',
-              owner_id: item.shops.owner_id || ''
+              owner_id: item.shops.owner_id || '',
+              created_at: item.shops.created_at || new Date().toISOString()
             } : undefined,
             profiles: item.profiles
           };
@@ -122,7 +123,8 @@ const WholesalerOrdersEnhanced: React.FC = () => {
             contact: fullOrderData.shops.contact || order.shops?.contact || '',
             address: fullOrderData.shops.address || order.shops?.address || '',
             postal_code: fullOrderData.shops.postal_code || order.shops?.postal_code || '',
-            owner_id: fullOrderData.shops.owner_id || order.shops?.owner_id || ''
+            owner_id: fullOrderData.shops.owner_id || order.shops?.owner_id || '',
+            created_at: fullOrderData.shops.created_at || order.shops?.created_at || new Date().toISOString()
           } : order.shops,
           profiles: fullOrderData.profiles || order.profiles
         };

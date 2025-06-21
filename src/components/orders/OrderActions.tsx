@@ -46,7 +46,8 @@ const OrderActions: React.FC<OrderActionsProps> = ({ order, onOrderUpdate }) => 
           contact: order.shops.contact,
           address: order.shops.address,
           postal_code: order.shops.postal_code,
-          owner_id: order.shops.owner_id
+          owner_id: order.shops.owner_id,
+          created_at: order.shops.created_at || new Date().toISOString()
         } : undefined
       };
       onOrderUpdate(typedOrder);
@@ -103,7 +104,8 @@ const OrderActions: React.FC<OrderActionsProps> = ({ order, onOrderUpdate }) => 
           contact: order.shops.contact,
           address: order.shops.address,
           postal_code: order.shops.postal_code,
-          owner_id: order.shops.owner_id
+          owner_id: order.shops.owner_id,
+          created_at: order.shops.created_at || new Date().toISOString()
         } : undefined
       };
       onOrderUpdate(typedOrder);

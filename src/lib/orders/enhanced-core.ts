@@ -1,7 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
-import { validateOrderCreation } from '@/lib/business/order-validation';
+import { validateOrderCreation, validateOrderStatusChange } from '@/lib/business/order-validation';
 import { verifyPaymentScreenshot } from '@/lib/business/payment-verification';
 import { createCommissionRecord } from '@/lib/business/commission-calculator';
 import { auditLogger } from '@/lib/security/audit-logger';

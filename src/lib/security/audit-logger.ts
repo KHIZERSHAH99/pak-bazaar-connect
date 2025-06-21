@@ -45,10 +45,9 @@ export class AuditLogger {
     if (this.isProcessing || this.logQueue.length === 0) return;
 
     this.isProcessing = true;
+    const batch = this.logQueue.splice(0, 10); // Process in batches of 10
 
     try {
-      const batch = this.logQueue.splice(0, 10); // Process in batches of 10
-      
       for (const entry of batch) {
         await this.writeToStorage(entry);
       }

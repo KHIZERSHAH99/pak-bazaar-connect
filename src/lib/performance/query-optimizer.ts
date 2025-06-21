@@ -34,37 +34,41 @@ export class QueryOptimizer {
     }
 
     try {
-      // Build and execute query
-      let query = supabase.from(config.table);
+      // Build query step by step
+      let query = supabase.from(config.table as any);
 
       if (config.select) {
         query = query.select(config.select);
       }
 
+      // Apply filters
       if (config.filters) {
         Object.entries(config.filters).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             if (Array.isArray(value)) {
-              query = query.in(key, value);
+              query = (query as any).in(key, value);
             } else if (typeof value === 'string' && value.includes('%')) {
-              query = query.like(key, value);
+              query = (query as any).like(key, value);
             } else {
-              query = query.eq(key, value);
+              query = (query as any).eq(key, value);
             }
           }
         });
       }
 
+      // Apply ordering
       if (config.orderBy) {
-        query = query.order(config.orderBy.column, { ascending: config.orderBy.ascending ?? true });
+        query = (query as any).order(config.orderBy.column, { ascending: config.orderBy.ascending ?? true });
       }
 
+      // Apply limit
       if (config.limit) {
-        query = query.limit(config.limit);
+        query = (query as any).limit(config.limit);
       }
 
-      if (config.offset) {
-        query = query.range(config.offset, config.offset + (config.limit || 10) - 1);
+      // Apply offset/range
+      if (config.offset && config.limit) {
+        query = (query as any).range(config.offset, config.offset + config.limit - 1);
       }
 
       const { data, error } = await query;

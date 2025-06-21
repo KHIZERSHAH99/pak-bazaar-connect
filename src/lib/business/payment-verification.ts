@@ -128,10 +128,7 @@ export const checkPaymentMethodConsistency = async (
       .from('orders')
       .select(`
         payment_method,
-        shops!inner(
-          owner_id,
-          payment_methods!inner(*)
-        )
+        shops!inner(owner_id)
       `)
       .eq('id', orderId)
       .single();
@@ -143,9 +140,17 @@ export const checkPaymentMethodConsistency = async (
       return false;
     }
 
+    // Get wholesaler's payment methods separately
+    const { data: paymentMethods, error: pmError } = await supabase
+      .from('payment_methods')
+      .select('*')
+      .eq('wholesaler_id', order.shops.owner_id)
+      .eq('is_active', true);
+
+    if (pmError || !paymentMethods) return false;
+
     // Check if wholesaler accepts this payment method
-    const shopPaymentMethods = order.shops?.payment_methods || [];
-    const acceptsMethod = shopPaymentMethods.some((pm: any) => {
+    const acceptsMethod = paymentMethods.some((pm: any) => {
       switch (reportedMethod) {
         case 'jazzcash':
           return pm.jazzcash_number && pm.is_active;

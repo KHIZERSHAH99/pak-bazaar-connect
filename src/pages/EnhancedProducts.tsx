@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import { getMarketplaceProducts, getCategories, getCities } from '@/lib/marketplace-optimized';
+import { getMarketplaceProducts, getCategories, getCities } from '@/lib/marketplace';
 import { Product, Category, City } from '@/lib/types';
 import ProductsHeader from '@/components/products/ProductsHeader';
 import ProductsFilters from '@/components/products/ProductsFilters';
@@ -80,7 +80,11 @@ const EnhancedProducts: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Layout
+      title="Products | Pak Bazaar Connect"
+      description="Discover wholesale products from verified suppliers across Pakistan"
+      keywords="wholesale products, Pakistan suppliers, B2B marketplace"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProductsHeader />
         
@@ -129,7 +133,7 @@ const EnhancedProducts: React.FC = () => {
           onLoadMore={loadMore}
         />
       </div>
-    </div>
+    </Layout>
   );
 };
 

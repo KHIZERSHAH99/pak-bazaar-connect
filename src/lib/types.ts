@@ -1,14 +1,11 @@
+
+// Define all the types needed for our application
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
-export type OrderStatus = 'pending' | 'confirmed' | 'rejected' | 'completed';
-export type PaymentMethod = 'bank_transfer' | 'jazzcash' | 'easypaisa' | 'cod';
-export type CommissionStatus = 'pending' | 'paid' | 'cancelled';
 
 export interface Profile {
   id: string;
   email: string;
   role: UserRole;
-  created_at: string;
-  updated_at?: string;
   phone_number?: string;
   business_name?: string;
   contact_name?: string;
@@ -22,14 +19,27 @@ export interface Profile {
   years_in_business?: string;
   cnic_image?: string;
   selfie_image?: string;
+  profile_image?: string;
   verification_status?: string;
   verification_notes?: string;
   is_suspended?: boolean;
   suspension_reason?: string;
-  can_switch_roles?: boolean;
-  last_role_switch?: string;
-  role_switch_count?: number;
-  profile_image?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  created_at?: string;
+}
+
+export interface City {
+  id: string;
+  name: string;
+  province: string;
+  created_at?: string;
 }
 
 export interface Shop {
@@ -40,11 +50,16 @@ export interface Shop {
   address: string;
   postal_code: string;
   logo?: string;
-  city_id?: string;
   commission_rate?: number;
-  created_at: string;
-  company_profiles?: CompanyProfile;
+  city_id?: string;
+  created_at?: string;
+  // Joined data
   cities?: City;
+  company_profiles?: CompanyProfile;
+  // Review data
+  avg_rating?: number;
+  total_reviews?: number;
+  is_verified?: boolean;
 }
 
 export interface Product {
@@ -54,88 +69,17 @@ export interface Product {
   description?: string;
   price: number;
   image?: string;
+  is_active: boolean;
   category_id?: string;
   moq?: number;
-  is_active: boolean;
   verification_status: string;
-  created_at: string;
+  created_at?: string;
+  // Joined data
   categories?: Category;
   shops?: Shop;
-}
-
-export interface Ad {
-  id: string;
-  wholesaler_id: string;
-  headline: string;
-  image?: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-}
-
-export interface Order {
-  id: string;
-  buyer_id: string;
-  shop_id: string;
-  total_amount: number;
-  status: OrderStatus;
-  payment_method?: PaymentMethod;
-  buyer_name?: string;
-  buyer_phone?: string;
-  buyer_address?: string;
-  wholesaler_notes?: string;
-  created_at: string;
-  confirmed_at?: string;
-  rejected_at?: string;
-  screenshot_uploaded_at?: string;
-  payment_screenshot?: string;
-  commission_id?: string;
-  shops?: Shop;
-  profiles?: Profile;
-}
-
-export interface Commission {
-  id: string;
-  transaction_id: string;
-  seller_id: string;
-  sale_amount: number;
-  commission_amount: number;
-  payout_amount: number;
-  created_at: string;
-}
-
-export interface CommissionRecord {
-  id: string;
-  wholesaler_id: string;
-  order_id: string;
-  sale_amount: number;
-  commission_rate?: number;
-  commission_amount: number;
-  status?: CommissionStatus;
-  paid_at?: string;
-  created_at: string;
-  profiles?: Profile;
-}
-
-export interface ChatMessage {
-  id: string;
-  user_id: string;
-  message: string;
-  reply: string;
-  created_at: string;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  description?: string;
-  created_at: string;
-}
-
-export interface City {
-  id: string;
-  name: string;
-  province: string;
-  created_at: string;
+  // Review data
+  avg_rating?: number;
+  total_reviews?: number;
 }
 
 export interface CompanyProfile {
@@ -147,12 +91,14 @@ export interface CompanyProfile {
   phone: string;
   whatsapp?: string;
   website?: string;
-  address: string;
   city_id?: string;
+  address: string;
   business_type: string;
   verification_status: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
+  // Joined data
+  cities?: City;
 }
 
 export interface Inquiry {
@@ -165,7 +111,94 @@ export interface Inquiry {
   buyer_email?: string;
   message: string;
   quantity_needed?: number;
-  status: 'pending' | 'responded' | 'closed';
+  status: string;
+  created_at?: string;
+  // Joined data
+  products?: Product;
+}
+
+export interface Review {
+  id: string;
+  reviewer_id: string;
+  shop_id?: string;
+  product_id?: string;
+  rating: number;
+  comment?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type AdStatus = 'pending' | 'approved' | 'active' | 'rejected';
+export type OrderStatus = 'pending' | 'confirmed' | 'completed' | 'rejected' | 'cancelled';
+export type RoleRequestStatus = 'pending' | 'approved' | 'rejected';
+export type PaymentMethod = 'bank_transfer' | 'jazzcash' | 'easypaisa';
+export type CommissionStatus = 'pending' | 'paid';
+
+export interface Ad {
+  id: string;
+  wholesaler_id: string;
+  headline: string;
+  image?: string;
+  status: AdStatus;
+  created_at?: string;
+}
+
+export interface Order {
+  id: string;
+  buyer_id: string;
+  shop_id: string;
+  total_amount: number;
+  status: OrderStatus;
+  commission_id?: string;
+  payment_screenshot?: string;
+  payment_method?: PaymentMethod;
+  buyer_name?: string;
+  buyer_phone?: string;
+  buyer_address?: string;
+  screenshot_uploaded_at?: string;
+  confirmed_at?: string;
+  rejected_at?: string;
+  wholesaler_notes?: string;
+  created_at?: string;
+  // Joined data
+  shops?: Shop;
+  profiles?: Profile;
+}
+
+export interface PaymentMethodInfo {
+  id: string;
+  wholesaler_id: string;
+  bank_name?: string;
+  account_number?: string;
+  account_title?: string;
+  jazzcash_number?: string;
+  easypaisa_number?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CommissionRecord {
+  id: string;
+  wholesaler_id: string;
+  order_id: string;
+  sale_amount: number;
+  commission_rate: number;
+  commission_amount: number;
+  status: CommissionStatus;
+  paid_at?: string;
+  created_at?: string;
+  // Joined data
+  orders?: Order;
+  profiles?: Profile;
+}
+
+export interface OrderAction {
+  id: string;
+  order_id: string;
+  user_id: string;
+  action: 'created' | 'confirmed' | 'rejected' | 'completed';
+  notes?: string;
   created_at: string;
 }
 
@@ -175,101 +208,39 @@ export interface OrderMessage {
   sender_id: string;
   message: string;
   created_at: string;
+  // Joined data
   profiles?: Profile;
 }
 
-export interface PaymentMethodInfo {
-  id: string;
-  wholesaler_id: string;
-  is_active: boolean;
-  jazzcash_number?: string;
-  easypaisa_number?: string;
-  bank_name?: string;
-  account_number?: string;
-  account_title?: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface WholesalerMonthlySales {
-  month: string;
-  year: number;
-  total_sales: number;
   total_orders: number;
-  commission_earned: number;
+  total_sales: number;
   pending_commission: number;
   paid_commission: number;
 }
 
-// Type guards for runtime validation
-export const isValidUserRole = (role: any): role is UserRole => {
-  return typeof role === 'string' && ['admin', 'wholesaler', 'seller', 'pending'].includes(role);
-};
+export interface Commission {
+  id: string;
+  transaction_id: string;
+  seller_id: string;
+  sale_amount: number;
+  commission_amount: number;
+  payout_amount: number;
+  created_at?: string;
+}
 
-export const isValidOrderStatus = (status: any): status is OrderStatus => {
-  return typeof status === 'string' && ['pending', 'confirmed', 'rejected', 'completed'].includes(status);
-};
+export interface ChatMessage {
+  id: string;
+  user_id: string;
+  message: string;
+  reply: string;
+  created_at?: string;
+}
 
-export const isValidPaymentMethod = (method: any): method is PaymentMethod => {
-  return typeof method === 'string' && ['bank_transfer', 'jazzcash', 'easypaisa', 'cod'].includes(method);
-};
-
-export const validateProfile = (data: any): Profile | null => {
-  if (!data || typeof data !== 'object') return null;
-  
-  const role = isValidUserRole(data.role) ? data.role : 'pending';
-  
-  return {
-    id: data.id || '',
-    email: data.email || '',
-    role,
-    created_at: data.created_at || new Date().toISOString(),
-    updated_at: data.updated_at,
-    phone_number: data.phone_number,
-    business_name: data.business_name,
-    contact_name: data.contact_name,
-    business_type: data.business_type,
-    ntn_number: data.ntn_number,
-    strn_number: data.strn_number,
-    address: data.address,
-    city: data.city,
-    postal_code: data.postal_code,
-    industry: data.industry,
-    years_in_business: data.years_in_business,
-    cnic_image: data.cnic_image,
-    selfie_image: data.selfie_image,
-    verification_status: data.verification_status,
-    verification_notes: data.verification_notes,
-    is_suspended: data.is_suspended,
-    suspension_reason: data.suspension_reason,
-    can_switch_roles: data.can_switch_roles,
-    last_role_switch: data.last_role_switch,
-    role_switch_count: data.role_switch_count,
-    profile_image: data.profile_image
-  };
-};
-
-export const validateOrder = (data: any): Order | null => {
-  if (!data || typeof data !== 'object') return null;
-  
-  return {
-    id: data.id || '',
-    buyer_id: data.buyer_id || '',
-    shop_id: data.shop_id || '',
-    total_amount: Number(data.total_amount) || 0,
-    status: isValidOrderStatus(data.status) ? data.status : 'pending',
-    payment_method: isValidPaymentMethod(data.payment_method) ? data.payment_method : 'bank_transfer',
-    buyer_name: data.buyer_name,
-    buyer_phone: data.buyer_phone,
-    buyer_address: data.buyer_address,
-    wholesaler_notes: data.wholesaler_notes,
-    created_at: data.created_at || new Date().toISOString(),
-    confirmed_at: data.confirmed_at,
-    rejected_at: data.rejected_at,
-    screenshot_uploaded_at: data.screenshot_uploaded_at,
-    payment_screenshot: data.payment_screenshot,
-    commission_id: data.commission_id,
-    shops: data.shops,
-    profiles: data.profiles
-  };
-};
+export interface RoleRequest {
+  id: string;
+  user_id: string;
+  requested_role: UserRole;
+  status: RoleRequestStatus;
+  created_at?: string;
+}

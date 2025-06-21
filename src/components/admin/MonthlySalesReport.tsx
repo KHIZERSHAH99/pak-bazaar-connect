@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -48,10 +49,7 @@ const MonthlySalesReport: React.FC = () => {
             wholesaler_id: wholesaler.id,
             business_name: wholesaler.business_name || 'Unnamed Business',
             email: wholesaler.email,
-            total_orders: monthlyData.total_orders || 0,
-            total_sales: monthlyData.total_sales || 0,
-            pending_commission: monthlyData.pending_commission || 0,
-            paid_commission: monthlyData.paid_commission || 0
+            ...monthlyData
           };
         } catch (error) {
           console.error(`Error fetching sales for ${wholesaler.email}:`, error);

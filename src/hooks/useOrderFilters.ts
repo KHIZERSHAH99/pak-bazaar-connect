@@ -1,57 +1,39 @@
 
 import { useState, useMemo } from 'react';
-import { Order, OrderStatus } from '@/lib/types';
+import { Order } from '@/lib/types';
 
 interface UseOrderFiltersProps {
   orders: Order[];
   searchFields: string[];
 }
 
-interface UseOrderFiltersReturn {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  statusFilter: OrderStatus | 'all';
-  setStatusFilter: (status: OrderStatus | 'all') => void;
-  filteredOrders: Order[];
-}
-
-export const useOrderFilters = ({ orders, searchFields }: UseOrderFiltersProps): UseOrderFiltersReturn => {
+export const useOrderFilters = ({ orders, searchFields }: UseOrderFiltersProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const filteredOrders = useMemo(() => {
-    let filtered = orders;
+    return orders.filter(order => {
+      // Status filter
+      if (statusFilter !== 'all' && order.status !== statusFilter) {
+        return false;
+      }
 
-    // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(order => order.status === statusFilter);
-    }
-
-    // Filter by search term
-    if (searchTerm.trim()) {
-      const lowerSearchTerm = searchTerm.toLowerCase();
-      filtered = filtered.filter(order => {
+      // Search filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
         return searchFields.some(field => {
-          const fieldParts = field.split('.');
-          let value: any = order;
-          
-          for (const part of fieldParts) {
-            value = value?.[part];
-            if (value === undefined || value === null) break;
+          if (field === 'shop_name') {
+            return order.shops?.name?.toLowerCase().includes(searchLower);
           }
-          
-          if (typeof value === 'string') {
-            return value.toLowerCase().includes(lowerSearchTerm);
-          } else if (typeof value === 'number') {
-            return value.toString().includes(lowerSearchTerm);
+          if (field === 'id') {
+            return order.id.toLowerCase().includes(searchLower);
           }
-          
           return false;
         });
-      });
-    }
+      }
 
-    return filtered;
+      return true;
+    });
   }, [orders, searchTerm, statusFilter, searchFields]);
 
   return {

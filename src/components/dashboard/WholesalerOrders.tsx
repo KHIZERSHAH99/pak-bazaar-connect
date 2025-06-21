@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { getWholesalerOrders } from '@/lib/orders-enhanced';
-import { Order, OrderStatus, PaymentMethod, validateOrder } from '@/lib/types';
+import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 import EnhancedOrderDetails from '@/components/orders/EnhancedOrderDetails';
 import OrderStats from '@/components/orders/OrderStats';
 import OrderFilters from '@/components/orders/OrderFilters';
@@ -39,38 +39,33 @@ const WholesalerOrders: React.FC = () => {
         const orderData = await getWholesalerOrders(false);
         console.log('Raw order data:', orderData);
         
-        // Process the raw data into proper Order objects with validation
-        const processedOrders: Order[] = orderData.map((item: any) => {
-          const validatedOrder = validateOrder(item);
-          return validatedOrder || {
-            id: item.id || '',
-            buyer_id: item.buyer_id || '',
-            shop_id: item.shop_id || '',
-            total_amount: Number(item.total_amount) || 0,
-            status: (item.status || 'pending') as OrderStatus,
-            payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
-            buyer_name: item.buyer_name || null,
-            buyer_phone: item.buyer_phone || null,
-            buyer_address: item.buyer_address || null,
-            payment_screenshot: item.payment_screenshot || null,
-            screenshot_uploaded_at: item.screenshot_uploaded_at || null,
-            created_at: item.created_at || null,
-            confirmed_at: item.confirmed_at || null,
-            rejected_at: item.rejected_at || null,
-            wholesaler_notes: item.wholesaler_notes || null,
-            commission_id: item.commission_id || null,
-            shops: item.shops ? {
-              id: item.shops.id || '',
-              name: item.shops.name || '',
-              contact: item.shops.contact || '',
-              address: item.shops.address || '',
-              postal_code: item.shops.postal_code || '',
-              owner_id: item.shops.owner_id || '',
-              created_at: item.shops.created_at || new Date().toISOString()
-            } : undefined,
-            profiles: item.profiles
-          };
-        });
+        // Process the raw data into proper Order objects
+        const processedOrders: Order[] = orderData.map((item: any) => ({
+          id: item.id || '',
+          buyer_id: item.buyer_id || '',
+          shop_id: item.shop_id || '',
+          total_amount: Number(item.total_amount) || 0,
+          status: (item.status || 'pending') as OrderStatus,
+          payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
+          buyer_name: item.buyer_name || null,
+          buyer_phone: item.buyer_phone || null,
+          buyer_address: item.buyer_address || null,
+          payment_screenshot: item.payment_screenshot || null,
+          screenshot_uploaded_at: item.screenshot_uploaded_at || null,
+          created_at: item.created_at || null,
+          confirmed_at: item.confirmed_at || null,
+          rejected_at: item.rejected_at || null,
+          wholesaler_notes: item.wholesaler_notes || null,
+          commission_id: item.commission_id || null,
+          shops: item.shops ? {
+            id: item.shops.id || '',
+            name: item.shops.name || '',
+            contact: item.shops.contact || '',
+            address: item.shops.address || '',
+            postal_code: item.shops.postal_code || '',
+            owner_id: item.shops.owner_id || ''
+          } : undefined
+        }));
         
         console.log('Processed orders:', processedOrders);
         setOrders(processedOrders);
@@ -121,8 +116,7 @@ const WholesalerOrders: React.FC = () => {
             contact: fullOrderData.shops.contact || order.shops?.contact || '',
             address: fullOrderData.shops.address || order.shops?.address || '',
             postal_code: fullOrderData.shops.postal_code || order.shops?.postal_code || '',
-            owner_id: fullOrderData.shops.owner_id || order.shops?.owner_id || '',
-            created_at: fullOrderData.shops.created_at || order.shops?.created_at || new Date().toISOString()
+            owner_id: fullOrderData.shops.owner_id || order.shops?.owner_id || ''
           } : order.shops,
           profiles: fullOrderData.profiles || order.profiles
         };

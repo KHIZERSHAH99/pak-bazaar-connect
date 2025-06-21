@@ -55,12 +55,7 @@ export const getUserProfile = async (userId: string): Promise<Profile | null> =>
       .single();
 
     if (error) throw error;
-    
-    // Cast the role to UserRole for type safety
-    return {
-      ...data,
-      role: data.role as UserRole
-    };
+    return data;
   } catch (error) {
     console.error('Error fetching profile:', error);
     return null;
@@ -348,36 +343,17 @@ export const updateOrderStatus = async (orderId: string, status: string, notes?:
   }
 };
 
-// Role management - using raw SQL queries since functions don't exist in types yet
+// Role management
 export const createRoleRequest = async (requestedRole: UserRole) => {
   try {
-    const { data, error } = await supabase.rpc('switch_business_role', {
-      target_role: requestedRole
+    const { data, error } = await supabase.rpc('create_role_request', {
+      requested_role: requestedRole
     });
 
     if (error) throw error;
     return { data, error: null };
   } catch (error: any) {
-    // Fallback to direct database query if function doesn't exist
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('role_requests')
-        .insert({
-          user_id: user.id,
-          requested_role: requestedRole,
-          status: 'pending'
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (fallbackError: any) {
-      return { data: null, error: fallbackError.message };
-    }
+    return { data: null, error: error.message };
   }
 };
 
@@ -396,14 +372,7 @@ export const switchBusinessRole = async (targetRole: UserRole) => {
 
 export const getPendingRoleRequests = async () => {
   try {
-    const { data, error } = await supabase
-      .from('role_requests')
-      .select(`
-        *,
-        profiles!role_requests_user_id_fkey(email, contact_name, business_name, role)
-      `)
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false });
+    const { data, error } = await supabase.rpc('get_pending_role_requests');
 
     if (error) throw error;
     return { data, error: null };
@@ -414,32 +383,9 @@ export const getPendingRoleRequests = async () => {
 
 export const approveRoleRequest = async (requestId: string) => {
   try {
-    // Get the role request first
-    const { data: request, error: requestError } = await supabase
-      .from('role_requests')
-      .select('*')
-      .eq('id', requestId)
-      .single();
-
-    if (requestError) throw requestError;
-
-    // Update the user's role
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .update({ role: request.requested_role })
-      .eq('id', request.user_id)
-      .select()
-      .single();
-
-    if (profileError) throw profileError;
-
-    // Mark request as approved
-    const { data, error } = await supabase
-      .from('role_requests')
-      .update({ status: 'approved' })
-      .eq('id', requestId)
-      .select()
-      .single();
+    const { data, error } = await supabase.rpc('approve_role_request', {
+      request_id: requestId
+    });
 
     if (error) throw error;
     return { data, error: null };

@@ -17,7 +17,7 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
     }])
     .select(`
       *,
-      profiles(id, email, role, business_name, created_at)
+      profiles(id, email, role, business_name)
     `);
 
   if (error) {
@@ -25,21 +25,13 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
     throw error;
   }
 
-  const messageData = data[0];
   return {
-    id: messageData.id,
-    order_id: messageData.order_id,
-    sender_id: messageData.sender_id,
-    message: messageData.message,
-    created_at: messageData.created_at,
-    profiles: messageData.profiles ? {
-      id: messageData.profiles.id,
-      email: messageData.profiles.email,
-      role: messageData.profiles.role as any,
-      business_name: messageData.profiles.business_name,
-      created_at: messageData.profiles.created_at || new Date().toISOString()
+    ...data[0],
+    profiles: data[0].profiles ? {
+      ...data[0].profiles,
+      role: data[0].profiles.role as any
     } : undefined
-  } as OrderMessage;
+  };
 };
 
 // Get order messages
@@ -48,7 +40,7 @@ export const getOrderMessages = async (orderId: string): Promise<OrderMessage[]>
     .from('order_messages')
     .select(`
       *,
-      profiles(id, email, role, business_name, created_at)
+      profiles(id, email, role, business_name)
     `)
     .eq('order_id', orderId)
     .order('created_at', { ascending: true });
@@ -58,18 +50,11 @@ export const getOrderMessages = async (orderId: string): Promise<OrderMessage[]>
     return [];
   }
 
-  return (data || []).map(messageData => ({
-    id: messageData.id,
-    order_id: messageData.order_id,
-    sender_id: messageData.sender_id,
-    message: messageData.message,
-    created_at: messageData.created_at,
-    profiles: messageData.profiles ? {
-      id: messageData.profiles.id,
-      email: messageData.profiles.email,
-      role: messageData.profiles.role as any,
-      business_name: messageData.profiles.business_name,
-      created_at: messageData.profiles.created_at || new Date().toISOString()
+  return (data || []).map(message => ({
+    ...message,
+    profiles: message.profiles ? {
+      ...message.profiles,
+      role: message.profiles.role as any
     } : undefined
-  } as OrderMessage));
+  }));
 };

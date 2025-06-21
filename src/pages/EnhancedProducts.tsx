@@ -36,7 +36,6 @@ const EnhancedProducts: React.FC = () => {
         min_price: minPrice ? parseFloat(minPrice) : undefined,
         max_price: maxPrice ? parseFloat(maxPrice) : undefined,
         min_rating: selectedRating === 'all' ? undefined : parseInt(selectedRating),
-        offset: (page - 1) * limit,
         limit
       });
     },

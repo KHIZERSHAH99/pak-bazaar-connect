@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 
 interface UseInfiniteScrollOptions<T> {
   fetchFunction: (page: number, limit: number) => Promise<T[]>;

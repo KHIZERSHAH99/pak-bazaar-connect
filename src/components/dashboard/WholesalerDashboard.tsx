@@ -1,13 +1,10 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { Store, Package, FileText, ShoppingCart } from 'lucide-react';
 import QuickActions from './QuickActions';
 import DashboardStats from './DashboardStats';
-
-const WholesalerDashboard: React.FC = () => (
-  <div className="animate-fadeIn space-y-6">
+const WholesalerDashboard: React.FC = () => <div className="animate-fadeIn space-y-6">
     <div>
       <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 font-poppins">Wholesaler Dashboard</h1>
       <p className="text-muted-foreground font-poppins">Manage your business operations and track performance</p>
@@ -16,7 +13,7 @@ const WholesalerDashboard: React.FC = () => (
     <DashboardStats />
     <QuickActions />
     
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 px-[2px] my-[17px]">
       <Link to="/dashboard/shops">
         <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
           <div className="flex items-center mb-4">
@@ -65,7 +62,5 @@ const WholesalerDashboard: React.FC = () => (
         </Card>
       </Link>
     </div>
-  </div>
-);
-
+  </div>;
 export default WholesalerDashboard;

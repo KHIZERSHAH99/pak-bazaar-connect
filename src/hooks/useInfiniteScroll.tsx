@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 
 interface UseInfiniteScrollProps<T> {
   fetchFunction: (page: number, limit: number) => Promise<T[]>;
@@ -64,7 +64,7 @@ export function useInfiniteScroll<T>({
   }, [loadMore]);
 
   // Initial load
-  React.useEffect(() => {
+  useEffect(() => {
     if (items.length === 0 && !isLoadingRef.current) {
       loadMore();
     }

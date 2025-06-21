@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContextEnhanced';
+import { UserRole } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertCircle, Mail, Key, User, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { UserRole } from '@/lib/types';
 
 const FixedSignupForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -27,7 +27,7 @@ const FixedSignupForm: React.FC = () => {
     setError(null);
     
     if (!email || !password || !confirmPassword) {
-      setError('Please fill in all fields');
+      setError('Please fill in all required fields');
       return;
     }
 
@@ -50,12 +50,14 @@ const FixedSignupForm: React.FC = () => {
         throw new Error(error);
       }
 
-      // Redirect to login page after successful signup
-      navigate('/login');
+      // Show success message and redirect
+      navigate('/login', { 
+        state: { message: 'Account created successfully! Please check your email to verify your account.' }
+      });
     } catch (error: any) {
       console.error('Signup error:', error);
       setError(error.message || 'Signup failed. Please try again.');
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -65,7 +67,7 @@ const FixedSignupForm: React.FC = () => {
       <CardContent className="pt-6">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900 font-poppins">Create Account</h1>
-          <p className="text-gray-600 mt-2 font-poppins">Join our B2B marketplace</p>
+          <p className="text-gray-600 mt-2 font-poppins">Join Pakistan's B2B marketplace</p>
         </div>
 
         {error && (
@@ -76,6 +78,22 @@ const FixedSignupForm: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 flex items-center font-poppins">
+              <User className="h-4 w-4 mr-1 text-pakistani_green-700" />
+              Account Type
+            </label>
+            <Select value={role} onValueChange={(value: UserRole) => setRole(value)}>
+              <SelectTrigger className="w-full p-3 border border-gray-300 rounded-md focus:ring-pakistani_green-500 focus:border-pakistani_green-500 font-poppins">
+                <SelectValue placeholder="Select your role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="seller">Seller - Buy wholesale products</SelectItem>
+                <SelectItem value="wholesaler">Wholesaler - Sell to retailers</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="space-y-2">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 flex items-center font-poppins">
               <Mail className="h-4 w-4 mr-1 text-pakistani_green-700" />
@@ -93,22 +111,6 @@ const FixedSignupForm: React.FC = () => {
               required
             />
           </div>
-
-          <div className="space-y-2">
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 flex items-center font-poppins">
-              <User className="h-4 w-4 mr-1 text-pakistani_green-700" />
-              Account Type
-            </label>
-            <Select value={role} onValueChange={(value: UserRole) => setRole(value)} disabled={isLoading}>
-              <SelectTrigger className="w-full p-3 border border-gray-300 rounded-md focus:ring-pakistani_green-500 focus:border-pakistani_green-500 font-poppins">
-                <SelectValue placeholder="Select your role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="seller">Seller - Buy wholesale products</SelectItem>
-                <SelectItem value="wholesaler">Wholesaler - Sell to retailers</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
           
           <div className="space-y-2">
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 flex items-center font-poppins">
@@ -121,7 +123,7 @@ const FixedSignupForm: React.FC = () => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 className="w-full p-3 pr-10 border border-gray-300 rounded-md focus:ring-pakistani_green-500 focus:border-pakistani_green-500 font-poppins"
                 disabled={isLoading}
                 autoComplete="new-password"

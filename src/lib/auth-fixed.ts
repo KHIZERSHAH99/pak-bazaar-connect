@@ -37,7 +37,11 @@ export const getUserProfile = async (): Promise<UserProfile | null> => {
       return null;
     }
 
-    return data;
+    // Cast the role to the expected type
+    return {
+      ...data,
+      role: data.role as 'admin' | 'wholesaler' | 'seller' | 'pending'
+    } as UserProfile;
   } catch (error) {
     console.error('Error in getUserProfile:', error);
     return null;

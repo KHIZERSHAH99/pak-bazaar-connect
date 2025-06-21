@@ -55,7 +55,12 @@ export const getUserProfile = async (userId: string): Promise<Profile | null> =>
       .single();
 
     if (error) throw error;
-    return data;
+    
+    // Cast the role to UserRole type to fix TypeScript error
+    return {
+      ...data,
+      role: data.role as UserRole
+    };
   } catch (error) {
     console.error('Error fetching profile:', error);
     return null;
@@ -343,12 +348,21 @@ export const updateOrderStatus = async (orderId: string, status: string, notes?:
   }
 };
 
-// Role management
+// Role management - simplified without calling non-existent functions
 export const createRoleRequest = async (requestedRole: UserRole) => {
   try {
-    const { data, error } = await supabase.rpc('create_role_request', {
-      requested_role: requestedRole
-    });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const { data, error } = await supabase
+      .from('role_requests')
+      .insert({
+        user_id: user.id,
+        requested_role: requestedRole,
+        status: 'pending'
+      })
+      .select()
+      .single();
 
     if (error) throw error;
     return { data, error: null };
@@ -372,7 +386,14 @@ export const switchBusinessRole = async (targetRole: UserRole) => {
 
 export const getPendingRoleRequests = async () => {
   try {
-    const { data, error } = await supabase.rpc('get_pending_role_requests');
+    const { data, error } = await supabase
+      .from('role_requests')
+      .select(`
+        *,
+        profiles!role_requests_user_id_fkey(email, business_name, contact_name)
+      `)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
 
     if (error) throw error;
     return { data, error: null };
@@ -383,9 +404,30 @@ export const getPendingRoleRequests = async () => {
 
 export const approveRoleRequest = async (requestId: string) => {
   try {
-    const { data, error } = await supabase.rpc('approve_role_request', {
-      request_id: requestId
-    });
+    // First get the request details
+    const { data: request, error: fetchError } = await supabase
+      .from('role_requests')
+      .select('*')
+      .eq('id', requestId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    // Update the user's role
+    const { error: updateProfileError } = await supabase
+      .from('profiles')
+      .update({ role: request.requested_role })
+      .eq('id', request.user_id);
+
+    if (updateProfileError) throw updateProfileError;
+
+    // Mark the request as approved
+    const { data, error } = await supabase
+      .from('role_requests')
+      .update({ status: 'approved' })
+      .eq('id', requestId)
+      .select()
+      .single();
 
     if (error) throw error;
     return { data, error: null };

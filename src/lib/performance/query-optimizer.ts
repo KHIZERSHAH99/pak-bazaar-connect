@@ -34,23 +34,25 @@ export class QueryOptimizer {
     }
 
     try {
-      // Build query step by step
-      let query = supabase.from(config.table as any);
+      // Build query step by step with proper typing
+      let queryBuilder = supabase.from(config.table as any);
 
       if (config.select) {
-        query = query.select(config.select);
+        queryBuilder = queryBuilder.select(config.select);
+      } else {
+        queryBuilder = queryBuilder.select('*');
       }
 
-      // Apply filters
+      // Apply filters - use type assertion since Supabase types are complex
       if (config.filters) {
         Object.entries(config.filters).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             if (Array.isArray(value)) {
-              query = query.in(key, value);
+              queryBuilder = (queryBuilder as any).in(key, value);
             } else if (typeof value === 'string' && value.includes('%')) {
-              query = query.like(key, value);
+              queryBuilder = (queryBuilder as any).like(key, value);
             } else {
-              query = query.eq(key, value);
+              queryBuilder = (queryBuilder as any).eq(key, value);
             }
           }
         });
@@ -58,20 +60,20 @@ export class QueryOptimizer {
 
       // Apply ordering
       if (config.orderBy) {
-        query = query.order(config.orderBy.column, { ascending: config.orderBy.ascending ?? true });
+        queryBuilder = (queryBuilder as any).order(config.orderBy.column, { ascending: config.orderBy.ascending ?? true });
       }
 
       // Apply limit
       if (config.limit) {
-        query = query.limit(config.limit);
+        queryBuilder = (queryBuilder as any).limit(config.limit);
       }
 
       // Apply offset/range
       if (config.offset && config.limit) {
-        query = query.range(config.offset, config.offset + config.limit - 1);
+        queryBuilder = (queryBuilder as any).range(config.offset, config.offset + config.limit - 1);
       }
 
-      const { data, error } = await query;
+      const { data, error } = await queryBuilder;
 
       if (error) throw error;
 

@@ -1,7 +1,7 @@
 
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 
 // Lazy load components for better performance

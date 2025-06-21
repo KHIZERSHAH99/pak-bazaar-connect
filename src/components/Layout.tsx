@@ -1,10 +1,7 @@
 
 import React from 'react';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import SEOHead from '@/components/ui/seo-head';
-import PerformanceMonitor from '@/components/ui/performance-monitor';
-import { usePageAnalytics } from '@/hooks/usePageAnalytics';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,25 +12,34 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ 
   children, 
-  title,
-  description,
+  title, 
+  description, 
   keywords 
 }) => {
-  usePageAnalytics();
+  // Set document title if provided
+  React.useEffect(() => {
+    if (title) {
+      document.title = title;
+    }
+  }, [title]);
+
+  // Set meta description if provided
+  React.useEffect(() => {
+    if (description) {
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute('content', description);
+      }
+    }
+  }, [description]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
-      <SEOHead 
-        title={title}
-        description={description}
-        keywords={keywords}
-      />
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-1">
         {children}
       </main>
       <Footer />
-      <PerformanceMonitor />
     </div>
   );
 };

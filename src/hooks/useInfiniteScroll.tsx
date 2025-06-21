@@ -1,103 +1,81 @@
 
-import React, { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
-interface UseInfiniteScrollOptions<T> {
+interface UseInfiniteScrollProps<T> {
   fetchFunction: (page: number, limit: number) => Promise<T[]>;
   initialLimit?: number;
-  initialPage?: number;
 }
 
 interface UseInfiniteScrollReturn<T> {
   items: T[];
   loading: boolean;
   hasMore: boolean;
-  error: string | null;
   loadMore: () => void;
   refresh: () => void;
-  reset: () => void;
+  error: string | null;
 }
 
 export function useInfiniteScroll<T>({
   fetchFunction,
-  initialLimit = 20,
-  initialPage = 1
-}: UseInfiniteScrollOptions<T>): UseInfiniteScrollReturn<T> {
+  initialLimit = 20
+}: UseInfiniteScrollProps<T>): UseInfiniteScrollReturn<T> {
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(initialPage);
-  const isInitialized = useRef(false);
+  const [page, setPage] = useState(0);
+  const isLoadingRef = useRef(false);
 
   const loadMore = useCallback(async () => {
-    if (loading || !hasMore) return;
+    if (isLoadingRef.current || !hasMore) return;
+
+    isLoadingRef.current = true;
+    setLoading(true);
+    setError(null);
 
     try {
-      setLoading(true);
-      setError(null);
-
       const newItems = await fetchFunction(page, initialLimit);
       
       if (newItems.length === 0) {
         setHasMore(false);
       } else {
-        setItems(prevItems => {
-          // Avoid duplicates by filtering out items with same id
-          const existingIds = new Set(prevItems.map((item: any) => item.id));
-          const uniqueNewItems = newItems.filter((item: any) => !existingIds.has(item.id));
-          return [...prevItems, ...uniqueNewItems];
-        });
-        
-        setPage(prevPage => prevPage + 1);
-        
-        // If we got fewer items than requested, we've reached the end
-        if (newItems.length < initialLimit) {
-          setHasMore(false);
-        }
+        setItems(prev => page === 0 ? newItems : [...prev, ...newItems]);
+        setPage(prev => prev + 1);
+        setHasMore(newItems.length === initialLimit);
       }
     } catch (err) {
-      console.error('Error loading more items:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error loading more items:', err);
     } finally {
       setLoading(false);
+      isLoadingRef.current = false;
     }
-  }, [fetchFunction, page, initialLimit, loading, hasMore]);
+  }, [fetchFunction, page, hasMore, initialLimit]);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(() => {
     setItems([]);
-    setPage(initialPage);
+    setPage(0);
     setHasMore(true);
     setError(null);
-    isInitialized.current = false;
-    
     // Trigger initial load
-    await loadMore();
-  }, [loadMore, initialPage]);
-
-  const reset = useCallback(() => {
-    setItems([]);
-    setPage(initialPage);
-    setHasMore(true);
-    setError(null);
-    setLoading(false);
-    isInitialized.current = false;
-  }, [initialPage]);
+    setTimeout(() => {
+      loadMore();
+    }, 0);
+  }, [loadMore]);
 
   // Initial load
   React.useEffect(() => {
-    if (!isInitialized.current) {
-      isInitialized.current = true;
+    if (items.length === 0 && !isLoadingRef.current) {
       loadMore();
     }
-  }, [loadMore]);
+  }, []);
 
   return {
     items,
     loading,
     hasMore,
-    error,
     loadMore,
     refresh,
-    reset
+    error
   };
 }

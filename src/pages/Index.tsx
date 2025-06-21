@@ -1,30 +1,29 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import Layout from '@/components/Layout';
-import TopBanner from '@/components/home/TopBanner';
+import { useAuth } from '@/contexts/AuthContextOptimized';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import HeroSection from '@/components/home/HeroSection';
-import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
+import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import CallToActionSection from '@/components/home/CallToActionSection';
+import TopBanner from '@/components/home/TopBanner';
 
 const Index = () => {
   const { user } = useAuth();
 
   return (
-    <Layout
-      title="Pak Bazaar Connect - Pakistan's Leading B2B Marketplace"
-      description="Connect wholesalers and retailers across Pakistan. Discover quality products, build lasting business relationships, and grow your business with trusted suppliers."
-      keywords="pakistan, b2b, marketplace, wholesale, retail, suppliers, products, karachi, lahore, islamabad, faisalabad, sialkot"
-    >
-      <div className="min-h-screen bg-gradient-to-b from-background via-green-50/20 dark:via-green-950/20 to-pakistani_green-50/20 dark:to-pakistani_green-950/30">
-        <TopBanner />
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <TopBanner />
+      <Navbar />
+      <main className="flex-1">
         <HeroSection />
-        <WhyChooseUsSection />
         <FeaturedProducts />
+        <WhyChooseUsSection />
         <CallToActionSection />
-      </div>
-    </Layout>
+      </main>
+      <Footer />
+    </div>
   );
 };
 

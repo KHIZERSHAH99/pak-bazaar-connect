@@ -10,6 +10,7 @@ const Login = lazy(() => import('@/pages/FixedLogin'));
 const Signup = lazy(() => import('@/pages/FixedSignup'));
 const Dashboard = lazy(() => import('@/pages/FixedDashboard'));
 const OptimizedProfile = lazy(() => import('@/pages/OptimizedProfile'));
+const Products = lazy(() => import('@/pages/EnhancedProducts'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 // Lazy load dashboard pages
@@ -30,6 +31,7 @@ const AppRoutes: React.FC = () => {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Index />} />
+        <Route path="/products" element={<Products />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 

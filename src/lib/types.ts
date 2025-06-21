@@ -1,5 +1,9 @@
 
+
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
+export type OrderStatus = 'pending' | 'confirmed' | 'rejected' | 'completed';
+export type PaymentMethod = 'bank_transfer' | 'jazzcash' | 'easypaisa' | 'cod';
+export type CommissionStatus = 'pending' | 'paid' | 'cancelled';
 
 export interface Profile {
   id: string;
@@ -55,6 +59,8 @@ export interface Product {
   is_active: boolean;
   verification_status: string;
   created_at: string;
+  categories?: Category;
+  shops?: Shop;
 }
 
 export interface Ad {
@@ -71,9 +77,8 @@ export interface Order {
   buyer_id: string;
   shop_id: string;
   total_amount: number;
-  status: 'pending' | 'confirmed' | 'rejected' | 'completed';
-  payment_method?: string;
-  payment_screenshot?: string;
+  status: OrderStatus;
+  payment_method?: PaymentMethod;
   buyer_name?: string;
   buyer_phone?: string;
   buyer_address?: string;
@@ -82,6 +87,10 @@ export interface Order {
   confirmed_at?: string;
   rejected_at?: string;
   screenshot_uploaded_at?: string;
+  payment_screenshot?: string;
+  commission_id?: string;
+  shops?: Shop;
+  profiles?: Profile;
 }
 
 export interface Commission {
@@ -91,6 +100,18 @@ export interface Commission {
   sale_amount: number;
   commission_amount: number;
   payout_amount: number;
+  created_at: string;
+}
+
+export interface CommissionRecord {
+  id: string;
+  wholesaler_id: string;
+  order_id: string;
+  sale_amount: number;
+  commission_rate?: number;
+  commission_amount: number;
+  status?: CommissionStatus;
+  paid_at?: string;
   created_at: string;
 }
 
@@ -147,9 +168,46 @@ export interface Inquiry {
   created_at: string;
 }
 
+export interface OrderMessage {
+  id: string;
+  order_id: string;
+  sender_id: string;
+  message: string;
+  created_at: string;
+}
+
+export interface PaymentMethodInfo {
+  id: string;
+  wholesaler_id: string;
+  is_active: boolean;
+  jazzcash_number?: string;
+  easypaisa_number?: string;
+  bank_name?: string;
+  account_number?: string;
+  account_title?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WholesalerMonthlySales {
+  month: string;
+  year: number;
+  total_sales: number;
+  total_orders: number;
+  commission_earned: number;
+}
+
 // Type guards for runtime validation
 export const isValidUserRole = (role: any): role is UserRole => {
   return typeof role === 'string' && ['admin', 'wholesaler', 'seller', 'pending'].includes(role);
+};
+
+export const isValidOrderStatus = (status: any): status is OrderStatus => {
+  return typeof status === 'string' && ['pending', 'confirmed', 'rejected', 'completed'].includes(status);
+};
+
+export const isValidPaymentMethod = (method: any): method is PaymentMethod => {
+  return typeof method === 'string' && ['bank_transfer', 'jazzcash', 'easypaisa', 'cod'].includes(method);
 };
 
 export const validateProfile = (data: any): Profile | null => {
@@ -186,3 +244,29 @@ export const validateProfile = (data: any): Profile | null => {
     profile_image: data.profile_image
   };
 };
+
+export const validateOrder = (data: any): Order | null => {
+  if (!data || typeof data !== 'object') return null;
+  
+  return {
+    id: data.id || '',
+    buyer_id: data.buyer_id || '',
+    shop_id: data.shop_id || '',
+    total_amount: Number(data.total_amount) || 0,
+    status: isValidOrderStatus(data.status) ? data.status : 'pending',
+    payment_method: isValidPaymentMethod(data.payment_method) ? data.payment_method : 'bank_transfer',
+    buyer_name: data.buyer_name,
+    buyer_phone: data.buyer_phone,
+    buyer_address: data.buyer_address,
+    wholesaler_notes: data.wholesaler_notes,
+    created_at: data.created_at || new Date().toISOString(),
+    confirmed_at: data.confirmed_at,
+    rejected_at: data.rejected_at,
+    screenshot_uploaded_at: data.screenshot_uploaded_at,
+    payment_screenshot: data.payment_screenshot,
+    commission_id: data.commission_id,
+    shops: data.shops,
+    profiles: data.profiles
+  };
+};
+

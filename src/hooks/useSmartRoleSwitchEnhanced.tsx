@@ -34,6 +34,9 @@ export const useSmartRoleSwitchEnhanced = (): UseSmartRoleSwitchReturn => {
     if (!profile) return false;
     if (profile.role === role) return false;
     
+    // Don't allow switching to admin or pending
+    if (role === 'admin' || role === 'pending') return false;
+    
     if (!['seller', 'wholesaler'].includes(role)) return false;
     
     if ((profile.role === 'seller' || profile.role === 'wholesaler') && 

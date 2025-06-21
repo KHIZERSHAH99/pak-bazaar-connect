@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { getSellerOrders, reusePreviousOrder } from '@/lib/orders-enhanced';
-import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
+import { Order, OrderStatus, PaymentMethod, validateOrder } from '@/lib/types';
 import EnhancedOrderDetails from '@/components/orders/EnhancedOrderDetails';
 import EnhancedOrderForm from '@/components/orders/EnhancedOrderForm';
 import OrderReuseDialog from '@/components/orders/OrderReuseDialog';
@@ -33,7 +33,7 @@ const SellerOrders: React.FC = () => {
     filteredOrders
   } = useOrderFilters({
     orders,
-    searchFields: ['shop_name', 'id']
+    searchFields: ['shops.name', 'id']
   });
 
   const counts = useOrderCounts(orders);
@@ -42,20 +42,30 @@ const SellerOrders: React.FC = () => {
     const fetchOrders = async () => {
       try {
         const orderData = await getSellerOrders();
-        // Cast and ensure proper typing
-        const typedOrders: Order[] = orderData.map((order: any) => ({
-          ...order,
-          status: order.status as OrderStatus,
-          payment_method: order.payment_method as PaymentMethod,
-          shops: order.shops ? {
-            id: order.shops.id,
-            name: order.shops.name,
-            contact: order.shops.contact || '',
-            address: order.shops.address || '',
-            postal_code: order.shops.postal_code || '',
-            owner_id: order.shops.owner_id
-          } : undefined
-        }));
+        // Validate and transform the orders
+        const typedOrders: Order[] = orderData.map((order: any) => {
+          const validatedOrder = validateOrder(order);
+          return validatedOrder || {
+            id: order.id || '',
+            buyer_id: order.buyer_id || '',
+            shop_id: order.shop_id || '',
+            total_amount: Number(order.total_amount) || 0,
+            status: order.status as OrderStatus || 'pending',
+            payment_method: order.payment_method as PaymentMethod || 'bank_transfer',
+            buyer_name: order.buyer_name,
+            buyer_phone: order.buyer_phone,
+            buyer_address: order.buyer_address,
+            wholesaler_notes: order.wholesaler_notes,
+            created_at: order.created_at || new Date().toISOString(),
+            confirmed_at: order.confirmed_at,
+            rejected_at: order.rejected_at,
+            screenshot_uploaded_at: order.screenshot_uploaded_at,
+            payment_screenshot: order.payment_screenshot,
+            commission_id: order.commission_id,
+            shops: order.shops,
+            profiles: order.profiles
+          };
+        });
         setOrders(typedOrders);
       } catch (error: any) {
         console.error('Error fetching orders:', error);

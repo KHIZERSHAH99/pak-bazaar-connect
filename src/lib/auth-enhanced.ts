@@ -22,22 +22,30 @@ export const cleanupAuthState = () => {
   });
 };
 
-// Helper function to check rate limits
+// Helper function to check rate limits - simplified version
 const checkRateLimit = async (identifier: string, attemptType: string) => {
   try {
-    const { data, error } = await supabase.rpc('check_rate_limit', {
-      p_identifier: identifier,
-      p_attempt_type: attemptType,
-      p_max_attempts: attemptType === 'login' ? 5 : 3,
-      p_window_minutes: 15
-    });
-
-    if (error) {
-      console.error('Rate limit check error:', error);
-      return { allowed: true }; // Allow on error to not block legitimate users
+    // For now, use a simple localStorage-based rate limiting until the function is available
+    const rateLimitKey = `rate_limit_${identifier}_${attemptType}`;
+    const attempts = JSON.parse(localStorage.getItem(rateLimitKey) || '[]');
+    const now = Date.now();
+    const fifteenMinutesAgo = now - (15 * 60 * 1000);
+    
+    // Filter out old attempts
+    const recentAttempts = attempts.filter((time: number) => time > fifteenMinutesAgo);
+    
+    if (recentAttempts.length >= 5) {
+      return { 
+        allowed: false, 
+        message: 'Too many attempts. Please try again later.' 
+      };
     }
-
-    return data;
+    
+    // Record this attempt
+    recentAttempts.push(now);
+    localStorage.setItem(rateLimitKey, JSON.stringify(recentAttempts));
+    
+    return { allowed: true };
   } catch (error) {
     console.error('Rate limit check failed:', error);
     return { allowed: true }; // Allow on error
@@ -219,17 +227,30 @@ export const enhancedSignOut = async () => {
   }
 };
 
-// Updated role change function - now uses the secure function
+// Updated role change function - uses fallback approach
 export const secureChangeRole = async (newRole: UserRole) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) throw new Error('User not authenticated');
 
-    // Use the new secure role switching function
-    const { data, error } = await supabase.rpc('secure_switch_business_role', {
-      target_role: newRole
-    });
+    // Try the new secure function first, fallback to old one
+    let data, error;
+    
+    try {
+      const result = await supabase.rpc('secure_switch_business_role', {
+        target_role: newRole
+      });
+      data = result.data;
+      error = result.error;
+    } catch (fallbackError) {
+      console.log('New function not available, trying fallback');
+      const result = await supabase.rpc('switch_business_role', {
+        target_role: newRole
+      });
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) throw error;
     

@@ -105,15 +105,28 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
         variant: "default"
       });
 
-      console.log('🔄 Calling secure_switch_business_role function');
+      console.log('🔄 Calling role switch function');
 
-      // Use the new secure role switching function
-      const { data: functionResult, error: functionError } = await supabase.rpc('secure_switch_business_role', {
-        target_role: targetRole
-      });
+      // Try the new secure function first, fallback to old one
+      let functionResult, functionError;
+      
+      try {
+        const result = await supabase.rpc('secure_switch_business_role', {
+          target_role: targetRole
+        });
+        functionResult = result.data;
+        functionError = result.error;
+      } catch (error) {
+        console.log('New function not available, trying fallback');
+        const result = await supabase.rpc('switch_business_role', {
+          target_role: targetRole
+        });
+        functionResult = result.data;
+        functionError = result.error;
+      }
 
       if (functionError) {
-        console.error('Secure role switch error:', functionError);
+        console.error('Role switch error:', functionError);
         throw functionError;
       }
 
@@ -124,7 +137,7 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
         throw new Error(response?.error || 'Role switch failed');
       }
       
-      console.log('✅ Secure role switch successful');
+      console.log('✅ Role switch successful');
       
       // Refresh auth status
       await checkAuthStatus();
@@ -141,7 +154,7 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
       }, 1500);
 
     } catch (error: any) {
-      console.error('Secure role switch error:', error);
+      console.error('Role switch error:', error);
       
       let errorMessage = t('try_again');
       

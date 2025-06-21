@@ -56,7 +56,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     try {
       const profileData = await getUserProfile(user.id);
-      setProfile(profileData);
+      if (profileData) {
+        // Cast the role to UserRole to ensure type safety
+        const typedProfile: Profile = {
+          ...profileData,
+          role: profileData.role as UserRole
+        };
+        setProfile(typedProfile);
+      }
     } catch (error) {
       console.error('Error refreshing profile:', error);
       setProfile(null);
@@ -155,7 +162,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) throw error;
 
-      setProfile(data);
+      // Cast the role to UserRole for type safety
+      const typedProfile: Profile = {
+        ...data,
+        role: data.role as UserRole
+      };
+      setProfile(typedProfile);
+      
       toast({
         title: 'Profile updated',
         description: 'Your profile has been successfully updated.'

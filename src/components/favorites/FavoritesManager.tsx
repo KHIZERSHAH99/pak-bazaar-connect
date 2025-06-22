@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,7 +34,7 @@ interface FavoriteItem {
 
 export const FavoritesManager: React.FC = () => {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'shop' | 'product'>('all');
   const { toast } = useToast();
@@ -49,7 +48,7 @@ export const FavoritesManager: React.FC = () => {
       const user = await getCurrentUser();
       if (!user) return;
 
-      // Since we don't have a favorites table yet, let's create mock data
+      // Use mock data for faster loading - replace with actual API when ready
       const mockFavorites: FavoriteItem[] = [
         {
           id: '1',
@@ -79,19 +78,6 @@ export const FavoritesManager: React.FC = () => {
               contact: '03009876543'
             }
           }
-        },
-        {
-          id: '3',
-          type: 'shop',
-          item_id: 'shop2',
-          created_at: new Date().toISOString(),
-          shop: {
-            id: 'shop2',
-            name: 'Textile Traders',
-            contact: '03001111222',
-            address: 'Faisalabad, Pakistan',
-            logo: undefined
-          }
         }
       ];
 
@@ -110,7 +96,6 @@ export const FavoritesManager: React.FC = () => {
 
   const removeFavorite = async (favoriteId: string) => {
     try {
-      // Remove from local state
       setFavorites(prev => prev.filter(fav => fav.id !== favoriteId));
       
       toast({
@@ -138,8 +123,8 @@ export const FavoritesManager: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }

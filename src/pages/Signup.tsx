@@ -8,9 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
-import { OTPVerification } from '@/components/auth/OTPVerification';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, EyeOff, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, Phone } from 'lucide-react';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -23,8 +22,6 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showOTPVerification, setShowOTPVerification] = useState(false);
-  const [phoneVerified, setPhoneVerified] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -33,10 +30,10 @@ const Signup = () => {
   };
 
   const validateForm = () => {
-    if (!formData.email || !formData.password || !formData.phoneNumber) {
+    if (!formData.email || !formData.password) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please fill in email and password.",
         variant: "destructive",
       });
       return false;
@@ -60,10 +57,10 @@ const Signup = () => {
       return false;
     }
 
-    if (!formData.phoneNumber.match(/^03\d{9}$/)) {
+    if (formData.phoneNumber && !formData.phoneNumber.match(/^03\d{9}$/)) {
       toast({
         title: "Invalid Phone Number",
-        description: "Please enter a valid Pakistani phone number (03XXXXXXXXX).",
+        description: "Please enter a valid Pakistani phone number (03XXXXXXXXX) or leave it empty.",
         variant: "destructive",
       });
       return false;
@@ -72,20 +69,8 @@ const Signup = () => {
     return true;
   };
 
-  const handlePhoneVerification = () => {
-    if (!validateForm()) return;
-    setShowOTPVerification(true);
-  };
-
   const handleSignup = async () => {
-    if (!phoneVerified) {
-      toast({
-        title: "Phone Verification Required",
-        description: "Please verify your phone number first.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
     try {
@@ -95,8 +80,8 @@ const Signup = () => {
         options: {
           data: {
             role: formData.role,
-            phone_number: formData.phoneNumber,
-            phone_verified: true
+            phone_number: formData.phoneNumber || null,
+            phone_verified: false // Phone verification is optional now
           }
         }
       });
@@ -130,33 +115,6 @@ const Signup = () => {
     }
   };
 
-  if (showOTPVerification && !phoneVerified) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-md">
-          <OTPVerification
-            phoneNumber={formData.phoneNumber}
-            onVerified={(verified) => {
-              setPhoneVerified(verified);
-              if (verified) {
-                setShowOTPVerification(false);
-              }
-            }}
-            onPhoneChange={(phone) => handleInputChange('phoneNumber', phone)}
-          />
-          <div className="mt-4 text-center">
-            <Button
-              variant="ghost"
-              onClick={() => setShowOTPVerification(false)}
-            >
-              Back to Signup
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md">
@@ -184,16 +142,23 @@ const Signup = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Phone Number *</Label>
+            <Label htmlFor="phoneNumber">
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                Phone Number (Optional)
+              </div>
+            </Label>
             <Input
               id="phoneNumber"
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-              placeholder="03XXXXXXXXX"
+              placeholder="03XXXXXXXXX (Optional)"
               maxLength={11}
-              required
             />
+            <p className="text-xs text-muted-foreground">
+              Phone verification is optional. You can add it later in your profile.
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -255,30 +220,19 @@ const Signup = () => {
             </div>
           </div>
 
-          {phoneVerified && (
-            <Alert className="border-green-200 bg-green-50">
-              <AlertDescription className="text-green-700">
-                ✓ Phone number verified successfully
-              </AlertDescription>
-            </Alert>
-          )}
+          <Alert className="border-blue-200 bg-blue-50">
+            <AlertDescription className="text-blue-700">
+              ✨ Quick registration! Phone verification is optional and can be completed later.
+            </AlertDescription>
+          </Alert>
 
-          {!phoneVerified ? (
-            <Button
-              onClick={handlePhoneVerification}
-              className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
-            >
-              Verify Phone & Continue
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSignup}
-              disabled={loading}
-              className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
-            >
-              {loading ? 'Creating Account...' : 'Create Account'}
-            </Button>
-          )}
+          <Button
+            onClick={handleSignup}
+            disabled={loading}
+            className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
+          >
+            {loading ? 'Creating Account...' : 'Create Account'}
+          </Button>
 
           <div className="text-center text-sm">
             <span className="text-muted-foreground">Already have an account? </span>

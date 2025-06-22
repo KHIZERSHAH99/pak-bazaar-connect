@@ -28,7 +28,7 @@ class QueryOptimizerEnhanced {
   }
 
   async optimizedQuery(
-    tableName: 'shops' | 'products' | 'orders' | 'ads' | 'profiles',
+    tableName: string,
     options: {
       select?: string;
       filters?: Record<string, any>;
@@ -36,7 +36,7 @@ class QueryOptimizerEnhanced {
       pagination?: { page: number; pageSize?: number };
       config?: QueryOptimizationConfig;
     } = {}
-  ) {
+  ): Promise<any[]> {
     const config = { ...this.defaultConfig, ...options.config };
     const cacheKey = this.getCacheKey(tableName, options);
 
@@ -49,35 +49,35 @@ class QueryOptimizerEnhanced {
       }
     }
 
-    let query = supabase.from(tableName).select(options.select || '*');
-
-    // Apply filters with index optimization
-    if (options.filters) {
-      Object.entries(options.filters).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          query = query.in(key, value);
-        } else if (value !== null && value !== undefined) {
-          query = query.eq(key, value);
-        }
-      });
-    }
-
-    // Apply ordering with index hints
-    if (options.orderBy) {
-      query = query.order(options.orderBy.column, { 
-        ascending: options.orderBy.ascending ?? true 
-      });
-    }
-
-    // Apply pagination
-    if (config.enablePagination && options.pagination) {
-      const { page, pageSize = config.pageSize } = options.pagination;
-      const from = (page - 1) * pageSize!;
-      const to = from + pageSize! - 1;
-      query = query.range(from, to);
-    }
-
     try {
+      let query = supabase.from(tableName as any).select(options.select || '*');
+
+      // Apply filters with index optimization
+      if (options.filters) {
+        Object.entries(options.filters).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            query = query.in(key, value);
+          } else if (value !== null && value !== undefined) {
+            query = query.eq(key, value);
+          }
+        });
+      }
+
+      // Apply ordering with index hints
+      if (options.orderBy) {
+        query = query.order(options.orderBy.column, { 
+          ascending: options.orderBy.ascending ?? true 
+        });
+      }
+
+      // Apply pagination
+      if (config.enablePagination && options.pagination) {
+        const { page, pageSize = config.pageSize } = options.pagination;
+        const from = (page - 1) * pageSize!;
+        const to = from + pageSize! - 1;
+        query = query.range(from, to);
+      }
+
       const { data, error } = await query;
       
       if (error) throw error;
@@ -85,14 +85,14 @@ class QueryOptimizerEnhanced {
       // Cache the result
       if (config.enableCaching) {
         this.cache.set(cacheKey, {
-          data,
+          data: data || [],
           timestamp: Date.now(),
           ttl: config.cacheTimeout!
         });
         console.log(`Cached result for ${tableName}`);
       }
 
-      return data;
+      return data || [];
     } catch (error) {
       console.error(`Query optimization error for ${tableName}:`, error);
       throw error;
@@ -104,7 +104,7 @@ class QueryOptimizerEnhanced {
     city?: string;
     owner_id?: string;
     isActive?: boolean;
-  } = {}) {
+  } = {}): Promise<any[]> {
     return this.optimizedQuery('shops', {
       select: 'id, name, contact, address, logo, owner_id, city_id, commission_rate',
       filters,
@@ -117,7 +117,7 @@ class QueryOptimizerEnhanced {
     category_id?: string;
     is_active?: boolean;
     verification_status?: string;
-  } = {}) {
+  } = {}): Promise<any[]> {
     const productFilters = {
       ...filters,
       is_active: true,
@@ -133,7 +133,7 @@ class QueryOptimizerEnhanced {
     });
   }
 
-  async getOptimizedOrders(userId: string, userRole: 'seller' | 'wholesaler') {
+  async getOptimizedOrders(userId: string, userRole: 'seller' | 'wholesaler'): Promise<any[]> {
     if (userRole === 'seller') {
       return this.optimizedQuery('orders', {
         select: `

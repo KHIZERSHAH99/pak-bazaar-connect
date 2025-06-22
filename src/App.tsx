@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +9,7 @@ import { ThemeProvider } from "next-themes";
 import AppErrorBoundary from "@/components/ui/AppErrorBoundary";
 import AuthErrorBoundary from "@/components/auth/AuthErrorBoundary";
 import AppRoutes from "@/routes/AppRoutes";
+import PerformanceMonitor from "@/components/performance/PerformanceMonitor";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,9 +18,11 @@ const queryClient = new QueryClient({
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 10 * 60 * 1000, // 10 minutes
       refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
     },
     mutations: {
       retry: 1,
+      gcTime: 5 * 60 * 1000,
     },
   },
 });
@@ -45,6 +47,7 @@ const App = () => {
                   <BrowserRouter>
                     <AuthProvider>
                       <AppRoutes />
+                      <PerformanceMonitor />
                     </AuthProvider>
                   </BrowserRouter>
                 </div>

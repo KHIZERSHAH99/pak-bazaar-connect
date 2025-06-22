@@ -11,13 +11,15 @@ interface LayoutProps {
   title?: string;
   description?: string;
   keywords?: string;
+  showHeaderAd?: boolean;
 }
 
 const Layout: React.FC<LayoutProps> = ({ 
   children, 
   title,
   description,
-  keywords 
+  keywords,
+  showHeaderAd = false
 }) => {
   usePageAnalytics();
 
@@ -29,9 +31,11 @@ const Layout: React.FC<LayoutProps> = ({
         keywords={keywords}
       />
       <Navbar />
+      
       <main className="flex-grow">
         {children}
       </main>
+      
       <Footer />
       <PerformanceMonitor />
     </div>

@@ -6,6 +6,8 @@ import { Product, Category, City } from '@/lib/types';
 import ProductsHeader from '@/components/products/ProductsHeader';
 import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
+import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
+import SidebarAdBanner from '@/components/ads/SidebarAdBanner';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -64,29 +66,65 @@ const Products: React.FC = () => {
 
   return (
     <Layout>
+      <HeaderAdBanner />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProductsHeader />
         
-        <ProductsFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          selectedCity={selectedCity}
-          setSelectedCity={setSelectedCity}
-          selectedRating={selectedRating}
-          setSelectedRating={setSelectedRating}
-          minPrice={minPrice}
-          setMinPrice={setMinPrice}
-          maxPrice={maxPrice}
-          setMaxPrice={setMaxPrice}
-          categories={categories}
-          cities={cities}
-          onSearch={handleSearch}
-          onClearFilters={clearFilters}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <ProductsFilters
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              selectedCity={selectedCity}
+              setSelectedCity={setSelectedCity}
+              selectedRating={selectedRating}
+              setSelectedRating={setSelectedRating}
+              minPrice={minPrice}
+              setMinPrice={setMinPrice}
+              maxPrice={maxPrice}
+              setMaxPrice={setMaxPrice}
+              categories={categories}
+              cities={cities}
+              onSearch={handleSearch}
+              onClearFilters={clearFilters}
+            />
 
-        <ProductsGrid products={products} loading={loading} />
+            <ProductsGrid products={products} loading={loading} />
+          </div>
+          
+          {/* Sidebar with Ad */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8 space-y-6">
+              <SidebarAdBanner />
+              
+              {/* Additional sidebar content */}
+              <div className="bg-green-50 rounded-lg p-6 border border-green-200">
+                <h3 className="font-semibold text-green-800 mb-2 font-poppins">
+                  🌟 Featured Suppliers
+                </h3>
+                <p className="text-sm text-green-700 font-poppins">
+                  Connect with verified wholesalers offering premium products at competitive prices.
+                </p>
+              </div>
+              
+              <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                <h3 className="font-semibold text-blue-800 mb-2 font-poppins">
+                  💡 Buying Tips
+                </h3>
+                <ul className="text-sm text-blue-700 space-y-1 font-poppins">
+                  <li>• Compare prices from multiple suppliers</li>
+                  <li>• Check minimum order quantities</li>
+                  <li>• Verify supplier credentials</li>
+                  <li>• Read product reviews</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </Layout>
   );

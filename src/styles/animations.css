@@ -1,0 +1,65 @@
+
+/* Fade in animation for products */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+/* Smooth hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* AdSense container styling */
+.adsense-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90px;
+}
+
+.adsense-container ins {
+  background: transparent !important;
+}
+
+/* Loading pulse effect */
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Bounce animation for loading dots */
+.animate-bounce-delayed {
+  animation: bounce 1s infinite;
+}
+
+.animate-bounce-delayed:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.animate-bounce-delayed:nth-child(3) {
+  animation-delay: 0.2s;
+}

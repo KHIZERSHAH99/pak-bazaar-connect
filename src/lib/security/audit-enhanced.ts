@@ -51,3 +51,49 @@ export const logSecurityViolation = async (violationType: string, details: any) 
     console.error('Failed to log security violation:', error);
   }
 };
+
+// Order-specific audit logging functions
+export const logOrderCreated = async (orderId: string, orderDetails: any) => {
+  try {
+    await logAuditEvent('order_created', 'orders', orderId, null, {
+      order_details: orderDetails,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Failed to log order creation:', error);
+  }
+};
+
+export const logOrderConfirmed = async (orderId: string, userId: string) => {
+  try {
+    await logAuditEvent('order_confirmed', 'orders', orderId, null, {
+      confirmed_by: userId,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Failed to log order confirmation:', error);
+  }
+};
+
+export const logOrderRejected = async (orderId: string, userId: string, reason?: string) => {
+  try {
+    await logAuditEvent('order_rejected', 'orders', orderId, null, {
+      rejected_by: userId,
+      reason: reason || 'No reason provided',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Failed to log order rejection:', error);
+  }
+};
+
+export const logPaymentScreenshotUploaded = async (orderId: string, filePath: string) => {
+  try {
+    await logAuditEvent('payment_screenshot_uploaded', 'orders', orderId, null, {
+      file_path: filePath,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Failed to log payment screenshot upload:', error);
+  }
+};

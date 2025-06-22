@@ -1,247 +1,82 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { Eye, EyeOff, UserPlus, Phone } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import EnhancedSignupForm from '@/components/auth/EnhancedSignupForm';
+import { Flag } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const Signup = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'seller',
-    phoneNumber: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+const Signup: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const validateForm = () => {
-    if (!formData.email || !formData.password) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in email and password.",
-        variant: "destructive",
-      });
-      return false;
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
     }
-
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match.",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    if (formData.password.length < 6) {
-      toast({
-        title: "Weak Password",
-        description: "Password must be at least 6 characters long.",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    if (formData.phoneNumber && !formData.phoneNumber.match(/^03\d{9}$/)) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid Pakistani phone number (03XXXXXXXXX) or leave it empty.",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSignup = async () => {
-    if (!validateForm()) return;
-
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password,
-        options: {
-          data: {
-            role: formData.role,
-            phone_number: formData.phoneNumber || null,
-            phone_verified: false // Phone verification is optional now
-          }
-        }
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        toast({
-          title: "Account Created Successfully",
-          description: "You can now sign in with your credentials.",
-        });
-        navigate('/login');
-      }
-
-    } catch (error: any) {
-      let errorMessage = "Failed to create account. Please try again.";
-      
-      if (error.message.includes('already registered')) {
-        errorMessage = "An account with this email already exists.";
-      } else if (error.message.includes('password')) {
-        errorMessage = "Password does not meet requirements.";
-      }
-      
-      toast({
-        title: "Signup Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [user, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="flex items-center justify-center gap-2">
-            <UserPlus className="h-5 w-5" />
-            Create Account
-          </CardTitle>
-          <CardDescription>
-            Join Pakistan's premier B2B marketplace
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-screen bg-gradient-to-b from-white to-green-50 flex flex-col">
+      {/* Top Banner */}
+      <div className="bg-pakistani_green-700 text-white py-2 px-4 text-center relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center opacity-5">
+          <Flag className="w-40 h-40 text-white" />
+        </div>
+        <p className="font-medium text-sm md:text-base font-poppins">Join Now! Free Ads for First 10 Wholesalers!</p>
+      </div>
 
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address *</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              placeholder="Enter your email"
-              required
-            />
-          </div>
+      {/* Header */}
+      <header className="bg-white shadow-sm py-4 px-6">
+        <div className="container mx-auto flex justify-between items-center">
+          <Link to="/" className="flex items-center">
+            <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
+              <span className="text-white text-2xl font-bold">PBC</span>
+            </div>
+            <span className="ml-2 text-xl font-bold text-pakistani_green-800 hidden md:inline font-poppins">
+              Pak Bazaar Connect
+            </span>
+          </Link>
+          
+          <nav className="flex items-center space-x-2">
+            <Link to="/login">
+              <button className="border border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 px-4 py-2 rounded-md text-sm font-medium font-poppins transition-colors">
+                Login
+              </button>
+            </Link>
+          </nav>
+        </div>
+      </header>
 
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber">
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                Phone Number (Optional)
-              </div>
-            </Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              value={formData.phoneNumber}
-              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-              placeholder="03XXXXXXXXX (Optional)"
-              maxLength={11}
-            />
-            <p className="text-xs text-muted-foreground">
-              Phone verification is optional. You can add it later in your profile.
+      <div className="container mx-auto flex-grow py-8 md:py-12 px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-pakistani_green-800 font-poppins">Join Pakistan's Leading B2B Marketplace</h1>
+          <p className="text-gray-600 mt-2 font-poppins text-sm md:text-base">Connect with trusted buyers and suppliers across Pakistan</p>
+        </div>
+        
+        <EnhancedSignupForm />
+        
+        <div className="mt-8 max-w-2xl mx-auto">
+          <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+            <h3 className="font-medium text-gray-800 mb-2 flex items-center font-poppins">
+              <div className="w-4 h-4 bg-pakistani_green-700 rounded-full mr-2"></div>
+              Trusted by Businesses Across Pakistan
+            </h3>
+            <p className="text-sm md:text-base text-gray-600 font-poppins">
+              Pak Bazaar Connect verifies all businesses to ensure a safe and reliable platform. 
+              Join thousands of verified Pakistani businesses already growing their reach.
             </p>
           </div>
+        </div>
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="role">Account Type *</Label>
-            <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="seller">Seller (Buy wholesale products)</SelectItem>
-                <SelectItem value="wholesaler">Wholesaler (Sell to retailers)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Password *</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
-                placeholder="Create a password"
-                required
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password *</Label>
-            <div className="relative">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                placeholder="Confirm your password"
-                required
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-            </div>
-          </div>
-
-          <Alert className="border-blue-200 bg-blue-50">
-            <AlertDescription className="text-blue-700">
-              ✨ Quick registration! Phone verification is optional and can be completed later.
-            </AlertDescription>
-          </Alert>
-
-          <Button
-            onClick={handleSignup}
-            disabled={loading}
-            className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
-          >
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </Button>
-
-          <div className="text-center text-sm">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link to="/login" className="text-pakistani_green-600 hover:underline">
-              Sign in
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Footer */}
+      <footer className="bg-pakistani_green-800 text-white py-4 px-6">
+        <div className="container mx-auto text-center text-sm font-poppins">
+          <p>© 2024 Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.</p>
+        </div>
+      </footer>
     </div>
   );
 };

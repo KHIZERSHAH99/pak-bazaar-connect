@@ -1,40 +1,80 @@
 
 import React, { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from '@/hooks/use-toast';
-import { Upload, AlertTriangle, Lock, Shield } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { getCurrentUser } from '@/lib/auth';
+import { toast } from '@/hooks/use-toast';
+import { Upload, AlertTriangle, Lock } from 'lucide-react';
+import { createOrderWithPaymentEnhanced } from '@/lib/orders/core-enhanced';
+import { PaymentMethod } from '@/lib/types';
 
 interface SecureOrderFormProps {
   shopId: string;
   shopName: string;
   onOrderCreated?: () => void;
-  onClose?: () => void;
 }
 
 export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({ 
   shopId, 
   shopName, 
-  onOrderCreated,
-  onClose 
+  onOrderCreated 
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     totalAmount: '',
-    paymentMethod: 'bank_transfer',
+    paymentMethod: '' as PaymentMethod,
     buyerName: '',
     buyerPhone: '',
     buyerAddress: '',
     screenshot: null as File | null,
   });
-  const { toast } = useToast();
+
+  const queryClient = useQueryClient();
+
+  const createOrderMutation = useMutation({
+    mutationFn: async () => {
+      if (!formData.screenshot) throw new Error('Payment screenshot is required');
+      
+      return createOrderWithPaymentEnhanced(shopId, Number(formData.totalAmount), {
+        method: formData.paymentMethod,
+        screenshot: formData.screenshot,
+        buyerName: formData.buyerName,
+        buyerPhone: formData.buyerPhone,
+        buyerAddress: formData.buyerAddress,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      toast({
+        title: "Order Created Successfully",
+        description: "Your order has been submitted and is pending approval.",
+      });
+      resetForm();
+      onOrderCreated?.();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Order Creation Failed",
+        description: error.message || "Please check your details and try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const resetForm = () => {
+    setFormData({
+      totalAmount: '',
+      paymentMethod: '' as PaymentMethod,
+      buyerName: '',
+      buyerPhone: '',
+      buyerAddress: '',
+      screenshot: null,
+    });
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -61,21 +101,6 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
     }
   };
 
-  const uploadScreenshot = async (file: File) => {
-    const user = await getCurrentUser();
-    if (!user) throw new Error('User not authenticated');
-
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-    
-    const { data, error } = await supabase.storage
-      .from('payment-screenshots')
-      .upload(fileName, file);
-
-    if (error) throw error;
-    return data.path;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -83,6 +108,15 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
       toast({
         title: "Invalid Amount",
         description: "Please enter a valid order amount.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.paymentMethod) {
+      toast({
+        title: "Payment Method Required",
+        description: "Please select a payment method.",
         variant: "destructive",
       });
       return;
@@ -108,56 +142,7 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const user = await getCurrentUser();
-      if (!user) throw new Error('User not authenticated');
-
-      // Check if user is trying to order from their own shop
-      const { data: shop } = await supabase
-        .from('shops')
-        .select('owner_id')
-        .eq('id', shopId)
-        .single();
-
-      if (shop?.owner_id === user.id) {
-        throw new Error('You cannot order from your own shop');
-      }
-
-      // Upload screenshot
-      const screenshotPath = await uploadScreenshot(formData.screenshot);
-
-      // Create order
-      const { data: order, error } = await supabase
-        .from('orders')
-        .insert({
-          buyer_id: user.id,
-          shop_id: shopId,
-          total_amount: Number(formData.totalAmount),
-          payment_method: formData.paymentMethod,
-          payment_screenshot: screenshotPath,
-          buyer_name: formData.buyerName,
-          buyer_phone: formData.buyerPhone,
-          buyer_address: formData.buyerAddress,
-          screenshot_uploaded_at: new Date().toISOString(),
-          status: 'pending'
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      toast({
-        title: "Order Created Successfully",
-        description: "Your order has been submitted and is pending approval.",
-      });
-
-      onOrderCreated?.();
-      onClose?.();
-    } catch (error: any) {
-      toast({
-        title: "Order Creation Failed",
-        description: error.message || "Please check your details and try again.",
-        variant: "destructive",
-      });
+      await createOrderMutation.mutateAsync();
     } finally {
       setIsSubmitting(false);
     }
@@ -171,21 +156,25 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
           Create Secure Order
         </CardTitle>
         <CardDescription>
-          Place an order with {shopName}. Your contact details will only be visible after confirmation.
+          Place an order with {shopName}. All information is encrypted and secure.
         </CardDescription>
       </CardHeader>
 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Security Notice */}
-          <Alert className="border-blue-200 bg-blue-50">
-            <Shield className="h-4 w-4" />
-            <AlertDescription>
-              <strong>Privacy Protected:</strong> Your phone number and address will only be visible 
-              to the wholesaler after they confirm your order. Payment screenshots are automatically 
-              deleted after 3 days for your security.
-            </AlertDescription>
-          </Alert>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5" />
+              <div className="text-sm text-blue-800">
+                <p className="font-medium">Secure Order Process</p>
+                <p className="mt-1">
+                  Your order details and payment screenshot are encrypted and only visible 
+                  to you and the wholesaler. We never store sensitive payment information.
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Order Amount */}
           <div className="space-y-2">
@@ -207,7 +196,9 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
             <Label>Payment Method *</Label>
             <Select 
               value={formData.paymentMethod} 
-              onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}
+              onValueChange={(value: PaymentMethod) => 
+                setFormData(prev => ({ ...prev, paymentMethod: value }))
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select payment method" />
@@ -216,6 +207,7 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
                 <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
                 <SelectItem value="jazzcash">JazzCash</SelectItem>
                 <SelectItem value="easypaisa">EasyPaisa</SelectItem>
+                <SelectItem value="cod">Cash on Delivery</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -287,30 +279,24 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
           </div>
 
           {/* Submit Button */}
-          <div className="flex gap-4">
-            {onClose && (
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-                Cancel
-              </Button>
+          <Button 
+            type="submit" 
+            className="w-full" 
+            size="lg"
+            disabled={isSubmitting || createOrderMutation.isPending}
+          >
+            {isSubmitting ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Creating Secure Order...
+              </>
+            ) : (
+              <>
+                <Lock className="h-4 w-4 mr-2" />
+                Create Secure Order
+              </>
             )}
-            <Button 
-              type="submit" 
-              className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700" 
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creating Order...
-                </>
-              ) : (
-                <>
-                  <Lock className="h-4 w-4 mr-2" />
-                  Create Secure Order
-                </>
-              )}
-            </Button>
-          </div>
+          </Button>
         </form>
       </CardContent>
     </Card>

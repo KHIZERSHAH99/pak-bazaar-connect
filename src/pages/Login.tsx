@@ -1,155 +1,70 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { Eye, EyeOff, LogIn, AlertTriangle } from 'lucide-react';
-import { DemoAccountInfo } from '@/components/demo/DemoAccountInfo';
+import React, { useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import Layout from '@/components/Layout';
+import LoginForm from '@/components/auth/LoginForm';
+import LoginHeader from '@/components/auth/LoginHeader';
+import { Card } from '@/components/ui/card';
+import { Flag } from 'lucide-react';
 
-const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleLogin = async () => {
-    if (!formData.email || !formData.password) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in both email and password.",
-        variant: "destructive",
-      });
-      return;
+  React.useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
     }
-
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password,
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        toast({
-          title: "Login Successful",
-          description: "Welcome back!",
-        });
-        navigate('/dashboard');
-      }
-
-    } catch (error: any) {
-      let errorMessage = "Login failed. Please try again.";
-      
-      if (error.message.includes('Invalid login credentials')) {
-        errorMessage = "Invalid email or password. Make sure the account exists - demo accounts need to be created via signup first!";
-      } else if (error.message.includes('Email not confirmed')) {
-        errorMessage = "Please confirm your email address.";
-      }
-      
-      toast({
-        title: "Login Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [user, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8">
-      <div className="w-full max-w-md">
-        {/* Demo Account Info */}
-        <DemoAccountInfo />
-
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="flex items-center justify-center gap-2">
-              <LogIn className="h-5 w-5" />
-              Sign In
-            </CardTitle>
-            <CardDescription>
-              Sign in to your Pakistan B2B account
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <Alert className="border-yellow-200 bg-yellow-50">
-              <AlertTriangle className="h-4 w-4 text-yellow-600" />
-              <AlertDescription className="text-yellow-700">
-                <strong>Demo accounts need to be created first!</strong><br />
-                Only khizerfight@gmail.com already exists. Create other demo accounts via 
-                <Link to="/signup" className="underline ml-1">signup</Link>.
-              </AlertDescription>
-            </Alert>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            <Button
-              onClick={handleLogin}
-              disabled={loading}
-              className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
-            >
-              {loading ? 'Signing In...' : 'Sign In'}
-            </Button>
-
-            <div className="text-center text-sm">
-              <span className="text-muted-foreground">Don't have an account? </span>
-              <Link to="/signup" className="text-pakistani_green-600 hover:underline">
-                Sign up
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen bg-gradient-to-b from-white to-green-50 dark:from-gray-950 dark:to-gray-900 flex flex-col">
+      {/* Top Banner */}
+      <div className="bg-pakistani_green-700 text-white py-2 px-4 text-center relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center opacity-5">
+          <Flag className="w-40 h-40 text-white" />
+        </div>
+        <p className="font-medium text-sm md:text-base font-poppins">Join Now! Free Ads for First 10 Wholesalers!</p>
       </div>
+
+      {/* Header */}
+      <header className="bg-white dark:bg-gray-950 shadow-sm py-4 px-6">
+        <div className="container mx-auto flex justify-between items-center">
+          <Link to="/" className="flex items-center">
+            <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
+              <span className="text-white text-2xl font-bold">PBC</span>
+            </div>
+            <span className="ml-2 text-xl font-bold text-pakistani_green-800 dark:text-white hidden md:inline font-poppins">
+              Pak Bazaar Connect
+            </span>
+          </Link>
+          
+          <nav className="flex items-center space-x-2">
+            <Link to="/signup">
+              <button className="border border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 dark:text-pakistani_green-200 dark:border-pakistani_green-300 dark:hover:bg-gray-900 px-4 py-2 rounded-md text-sm font-medium font-poppins transition-colors">
+                Sign Up
+              </button>
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      <div className="container mx-auto flex-grow py-12 px-4">
+        <div className="max-w-md mx-auto">
+          <Card className="border-none shadow-lg overflow-hidden bg-card dark:bg-gray-900">
+            <LoginHeader />
+            <LoginForm />
+          </Card>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-pakistani_green-800 dark:bg-gray-950 text-white py-4 px-6">
+        <div className="container mx-auto text-center text-sm font-poppins">
+          <p>© 2024 Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.</p>
+        </div>
+      </footer>
     </div>
   );
 };

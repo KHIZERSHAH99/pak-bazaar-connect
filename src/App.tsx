@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContextFixed";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 // Lazy load components
@@ -30,35 +31,37 @@ const queryClient = new QueryClient();
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Suspense fallback={
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-              </div>
-            }>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/sellers" element={<Sellers />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/admin" element={<AdminPanel />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/dashboard/shops" element={<DashboardShops />} />
-                <Route path="/dashboard/products" element={<DashboardProducts />} />
-                <Route path="/dashboard/ads" element={<DashboardAds />} />
-                <Route path="/dashboard/browse-shops" element={<DashboardBrowseShops />} />
-                <Route path="/dashboard/shop/:shopId/products" element={<ShopProducts />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Suspense fallback={
+                <div className="min-h-screen flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                </div>
+              }>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/sellers" element={<Sellers />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/admin" element={<AdminPanel />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/dashboard/shops" element={<DashboardShops />} />
+                  <Route path="/dashboard/products" element={<DashboardProducts />} />
+                  <Route path="/dashboard/ads" element={<DashboardAds />} />
+                  <Route path="/dashboard/browse-shops" element={<DashboardBrowseShops />} />
+                  <Route path="/dashboard/shop/:shopId/products" element={<ShopProducts />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );

@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContextFixed";
-import ErrorBoundary from "@/components/ui/ErrorBoundary";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 // Lazy load components
 const Index = lazy(() => import("@/pages/Index"));
@@ -16,7 +16,7 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Products = lazy(() => import("@/pages/Products"));
 const Sellers = lazy(() => import("@/pages/Sellers"));
 const Profile = lazy(() => import("@/pages/Profile"));
-const AdminPanel = lazy(() => import("@/pages/AdminPanel"));
+const AdminPanel = lazy(() => import("@/pages/admin/AdminPanel"));
 
 // Dashboard pages
 const DashboardShops = lazy(() => import("@/pages/dashboard/DashboardShops"));

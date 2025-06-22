@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn, AlertTriangle } from 'lucide-react';
 import { DemoAccountInfo } from '@/components/demo/DemoAccountInfo';
 
 const Login = () => {
@@ -56,7 +56,7 @@ const Login = () => {
       let errorMessage = "Login failed. Please try again.";
       
       if (error.message.includes('Invalid login credentials')) {
-        errorMessage = "Invalid email or password.";
+        errorMessage = "Invalid email or password. Make sure the account exists - demo accounts need to be created via signup first!";
       } else if (error.message.includes('Email not confirmed')) {
         errorMessage = "Please confirm your email address.";
       }
@@ -89,6 +89,15 @@ const Login = () => {
           </CardHeader>
 
           <CardContent className="space-y-4">
+            <Alert className="border-yellow-200 bg-yellow-50">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-700">
+                <strong>Demo accounts need to be created first!</strong><br />
+                Only khizerfight@gmail.com already exists. Create other demo accounts via 
+                <Link to="/signup" className="underline ml-1">signup</Link>.
+              </AlertDescription>
+            </Alert>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
               <Input
@@ -123,12 +132,6 @@ const Login = () => {
                 </Button>
               </div>
             </div>
-
-            <Alert className="border-green-200 bg-green-50">
-              <AlertDescription className="text-green-700">
-                💡 Use the demo accounts above to test different user roles!
-              </AlertDescription>
-            </Alert>
 
             <Button
               onClick={handleLogin}

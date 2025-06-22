@@ -37,7 +37,7 @@ export const FavoritesManager: React.FC = () => {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<'all' | 'shops' | 'products'>('all');
+  const [filter, setFilter] = useState<'all' | 'shop' | 'product'>('all');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -184,15 +184,15 @@ export const FavoritesManager: React.FC = () => {
             All ({favorites.length})
           </Button>
           <Button
-            variant={filter === 'shops' ? 'default' : 'outline'}
-            onClick={() => setFilter('shops')}
+            variant={filter === 'shop' ? 'default' : 'outline'}
+            onClick={() => setFilter('shop')}
             size="sm"
           >
             Shops ({favorites.filter(f => f.type === 'shop').length})
           </Button>
           <Button
-            variant={filter === 'products' ? 'default' : 'outline'}
-            onClick={() => setFilter('products')}
+            variant={filter === 'product' ? 'default' : 'outline'}
+            onClick={() => setFilter('product')}
             size="sm"
           >
             Products ({favorites.filter(f => f.type === 'product').length})

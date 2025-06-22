@@ -21,9 +21,7 @@ const demoAccounts = [
     password: 'wholesaler123',
     icon: ShoppingBag,
     color: 'bg-blue-100 text-blue-800',
-    icon
-
-: 'text-blue-600'
+    iconColor: 'text-blue-600'
   },
   {
     role: 'Seller',

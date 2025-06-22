@@ -10,10 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LayoutDashboard, LogOut, ChevronDown, Heart, MessageSquare, BarChart, Sun, Moon, Globe } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { User, LayoutDashboard, LogOut, ChevronDown, Heart, MessageSquare, BarChart, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useSmartRoleSwitch } from '@/hooks/useSmartRoleSwitch';
 
 interface UserMenuProps {
   email?: string;
@@ -23,28 +21,12 @@ interface UserMenuProps {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge }) => {
-  const { t, language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { switchRole, canSwitchTo, isSwitching } = useSmartRoleSwitch();
   
   const handleThemeToggle = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  const handleLanguageToggle = () => {
-    setLanguage(language === 'en' ? 'ur' : 'en');
-  };
-
-  const handleRoleSwitch = async () => {
-    const targetRole = role === 'seller' ? 'wholesaler' : 'seller';
-    if (canSwitchTo(targetRole as any)) {
-      await switchRole(targetRole as any);
-    }
-  };
-
-  const canSwitch = role === 'seller' || role === 'wholesaler';
-  const targetRole = role === 'seller' ? 'wholesaler' : 'seller';
-  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -72,13 +54,13 @@ const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge
         <DropdownMenuItem asChild>
           <Link to="/profile" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
             <User className="h-4 w-4" />
-            {t('profile')}
+            Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to="/dashboard" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
             <LayoutDashboard className="h-4 w-4" />
-            {t('dashboard')}
+            Dashboard
           </Link>
         </DropdownMenuItem>
 
@@ -106,21 +88,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge
 
         <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
 
-        {/* Role Switcher */}
-        {canSwitch && (
-          <>
-            <DropdownMenuItem 
-              onClick={handleRoleSwitch}
-              disabled={isSwitching}
-              className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300"
-            >
-              <User className="h-4 w-4" />
-              {isSwitching ? 'Switching...' : `Switch to ${targetRole}`}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
-          </>
-        )}
-
         {/* Theme Toggle */}
         <DropdownMenuItem 
           onClick={handleThemeToggle}
@@ -128,15 +95,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge
         >
           {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-        </DropdownMenuItem>
-
-        {/* Language Toggle */}
-        <DropdownMenuItem 
-          onClick={handleLanguageToggle}
-          className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300"
-        >
-          <Globe className="h-4 w-4" />
-          {language === 'en' ? 'اردو' : 'English'}
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
@@ -147,7 +105,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge
           className="text-red-600 dark:text-red-400 cursor-pointer flex items-center gap-3 font-poppins hover:bg-red-50 dark:hover:bg-red-900/20"
         >
           <LogOut className="h-4 w-4" />
-          {t('logout')}
+          Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

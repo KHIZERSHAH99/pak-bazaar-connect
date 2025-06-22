@@ -1,77 +1,122 @@
 
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, Wifi, WifiOff } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import { queryOptimizer } from '@/lib/performance/query-optimizer-enhanced';
 
 interface PerformanceMetrics {
   loadTime: number;
-  connectionType: string;
-  isOnline: boolean;
+  renderTime: number;
+  cacheHitRate: number;
+  memoryUsage: number;
+  apiCalls: number;
 }
 
 const PerformanceMonitor: React.FC = () => {
+  const { profile } = useAuth();
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     loadTime: 0,
-    connectionType: 'unknown',
-    isOnline: navigator.onLine
+    renderTime: 0,
+    cacheHitRate: 0,
+    memoryUsage: 0,
+    apiCalls: 0
   });
-  const [showSlowConnectionWarning, setShowSlowConnectionWarning] = useState(false);
+  
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Measure initial load time
-    const loadTime = performance.now();
-    setMetrics(prev => ({ ...prev, loadTime }));
+    // Only show for admin users
+    const isAdmin = profile?.role === 'admin';
+    setIsVisible(isAdmin);
 
-    // Get connection info if available
-    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
-    if (connection) {
-      setMetrics(prev => ({ 
-        ...prev, 
-        connectionType: connection.effectiveType || 'unknown' 
-      }));
+    if (!isVisible) return;
 
-      // Show warning for slow connections
-      if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
-        setShowSlowConnectionWarning(true);
-      }
-    }
-
-    // Listen for online/offline events
-    const handleOnline = () => setMetrics(prev => ({ ...prev, isOnline: true }));
-    const handleOffline = () => setMetrics(prev => ({ ...prev, isOnline: false }));
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+    const updateMetrics = () => {
+      const cacheStats = queryOptimizer.getCacheStats();
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      
+      setMetrics({
+        loadTime: navigation ? Math.round(navigation.loadEventEnd - navigation.fetchStart) : 0,
+        renderTime: Math.round(performance.now()),
+        cacheHitRate: Math.round(cacheStats.hitRate * 100),
+        memoryUsage: (performance as any).memory ? 
+          Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024) : 0,
+        apiCalls: cacheStats.totalEntries
+      });
     };
-  }, []);
 
-  if (!metrics.isOnline) {
-    return (
-      <Alert variant="destructive" className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md">
-        <WifiOff className="h-4 w-4" />
-        <AlertDescription className="font-poppins">
-          You're offline. Some features may not be available.
-        </AlertDescription>
-      </Alert>
-    );
-  }
+    updateMetrics();
+    const interval = setInterval(updateMetrics, 5000);
 
-  if (showSlowConnectionWarning) {
-    return (
-      <Alert className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md bg-yellow-50 border-yellow-200 text-yellow-800">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertDescription className="font-poppins">
-          Slow connection detected. Images and content may load slowly.
-        </AlertDescription>
-      </Alert>
-    );
-  }
+    return () => clearInterval(interval);
+  }, [isVisible, profile]);
 
-  return null;
+  if (!isVisible) return null;
+
+  const getPerformanceStatus = (value: number, thresholds: [number, number]) => {
+    if (value <= thresholds[0]) return 'success';
+    if (value <= thresholds[1]) return 'warning';
+    return 'destructive';
+  };
+
+  return (
+    <Card className="fixed bottom-4 right-4 w-80 z-50 shadow-lg border-2">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm flex items-center justify-between">
+          Performance Monitor (Admin)
+          <Badge variant="destructive" className="text-xs">
+            ADMIN
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 text-xs">
+        <div className="flex justify-between items-center">
+          <span>Page Load:</span>
+          <Badge variant={getPerformanceStatus(metrics.loadTime, [2000, 4000])}>
+            {metrics.loadTime}ms
+          </Badge>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <span>Render Time:</span>
+          <Badge variant={getPerformanceStatus(metrics.renderTime, [100, 300])}>
+            {metrics.renderTime}ms
+          </Badge>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <span>Cache Hit Rate:</span>
+          <Badge variant={metrics.cacheHitRate > 70 ? 'success' : 'warning'}>
+            {metrics.cacheHitRate}%
+          </Badge>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <span>Memory:</span>
+          <Badge variant={getPerformanceStatus(metrics.memoryUsage, [50, 100])}>
+            {metrics.memoryUsage}MB
+          </Badge>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <span>API Calls:</span>
+          <Badge variant="outline">
+            {metrics.apiCalls}
+          </Badge>
+        </div>
+        
+        <div className="pt-2 border-t">
+          <button 
+            onClick={() => queryOptimizer.clearCache()}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Clear Cache
+          </button>
+        </div>
+      </CardContent>
+    </Card>
+  );
 };
 
 export default PerformanceMonitor;

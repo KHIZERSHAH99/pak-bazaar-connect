@@ -1,10 +1,13 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
-import { Store, Package, FileText, ShoppingCart } from 'lucide-react';
+import { Store, Package, FileText, ShoppingCart, BarChart3 } from 'lucide-react';
 import QuickActions from './QuickActions';
 import DashboardStats from './DashboardStats';
-const WholesalerDashboard: React.FC = () => <div className="animate-fadeIn space-y-6">
+
+const WholesalerDashboard: React.FC = () => (
+  <div className="animate-fadeIn space-y-6">
     <div>
       <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 font-poppins">Wholesaler Dashboard</h1>
       <p className="text-muted-foreground font-poppins">Manage your business operations and track performance</p>
@@ -13,12 +16,12 @@ const WholesalerDashboard: React.FC = () => <div className="animate-fadeIn space
     <DashboardStats />
     <QuickActions />
     
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 px-[2px] my-[17px]">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       <Link to="/dashboard/shops">
         <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
           <div className="flex items-center mb-4">
-            <div className="bg-blue-100 dark:bg-blue-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <Store className="h-6 w-6 text-blue-700 dark:text-blue-400" />
+            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
+              <Store className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
             </div>
             <h3 className="text-lg font-semibold font-poppins">My Shops</h3>
           </div>
@@ -29,38 +32,52 @@ const WholesalerDashboard: React.FC = () => <div className="animate-fadeIn space
       <Link to="/dashboard/products">
         <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
           <div className="flex items-center mb-4">
-            <div className="bg-green-100 dark:bg-green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <Package className="h-6 w-6 text-green-700 dark:text-green-400" />
+            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
+              <Package className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
             </div>
             <h3 className="text-lg font-semibold font-poppins">Products</h3>
           </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Add and manage product listings for your shops.</p>
+          <p className="text-muted-foreground font-poppins text-sm md:text-base">Add and manage your product catalog.</p>
         </Card>
       </Link>
       
       <Link to="/dashboard/ads">
         <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
           <div className="flex items-center mb-4">
-            <div className="bg-purple-100 dark:bg-purple-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <FileText className="h-6 w-6 text-purple-700 dark:text-purple-400" />
+            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
+              <FileText className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
             </div>
             <h3 className="text-lg font-semibold font-poppins">Advertisements</h3>
           </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Create and manage promotional advertisements.</p>
+          <p className="text-muted-foreground font-poppins text-sm md:text-base">Create and manage your advertising campaigns.</p>
         </Card>
       </Link>
       
       <Link to="/dashboard/wholesaler-orders">
         <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
           <div className="flex items-center mb-4">
-            <div className="bg-yellow-100 dark:bg-yellow-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <ShoppingCart className="h-6 w-6 text-yellow-700 dark:text-yellow-400" />
+            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
+              <ShoppingCart className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
             </div>
             <h3 className="text-lg font-semibold font-poppins">Orders</h3>
           </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">View and process orders from sellers.</p>
+          <p className="text-muted-foreground font-poppins text-sm md:text-base">View and manage incoming orders from sellers.</p>
+        </Card>
+      </Link>
+      
+      <Link to="/dashboard/analytics">
+        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
+          <div className="flex items-center mb-4">
+            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
+              <BarChart3 className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
+            </div>
+            <h3 className="text-lg font-semibold font-poppins">Analytics</h3>
+          </div>
+          <p className="text-muted-foreground font-poppins text-sm md:text-base">Track your business performance and insights.</p>
         </Card>
       </Link>
     </div>
-  </div>;
+  </div>
+);
+
 export default WholesalerDashboard;

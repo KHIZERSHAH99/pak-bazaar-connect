@@ -28,7 +28,7 @@ class QueryOptimizerEnhanced {
   }
 
   async optimizedQuery(
-    tableName: string,
+    tableName: 'shops' | 'products' | 'orders' | 'ads' | 'profiles',
     options: {
       select?: string;
       filters?: Record<string, any>;
@@ -49,14 +49,7 @@ class QueryOptimizerEnhanced {
       }
     }
 
-    let query = supabase.from(tableName);
-
-    // Apply select fields
-    if (options.select) {
-      query = query.select(options.select);
-    } else {
-      query = query.select('*');
-    }
+    let query = supabase.from(tableName).select(options.select || '*');
 
     // Apply filters with index optimization
     if (options.filters) {
@@ -141,19 +134,35 @@ class QueryOptimizerEnhanced {
   }
 
   async getOptimizedOrders(userId: string, userRole: 'seller' | 'wholesaler') {
-    const filters = userRole === 'seller' 
-      ? { buyer_id: userId }
-      : {}; // Wholesaler orders filtered by shop ownership in RLS
-
-    return this.optimizedQuery('orders', {
-      select: `
-        id, status, total_amount, created_at, buyer_name, buyer_phone,
-        shops!inner(id, name, owner_id)
-      `,
-      filters,
-      orderBy: { column: 'created_at', ascending: false },
-      config: { pageSize: 10 }
-    });
+    if (userRole === 'seller') {
+      return this.optimizedQuery('orders', {
+        select: `
+          id, status, total_amount, created_at, buyer_name, buyer_phone
+        `,
+        filters: { buyer_id: userId },
+        orderBy: { column: 'created_at', ascending: false },
+        config: { pageSize: 10 }
+      });
+    } else {
+      // For wholesalers, we need to get orders for their shops
+      const { data: shops } = await supabase
+        .from('shops')
+        .select('id')
+        .eq('owner_id', userId);
+      
+      const shopIds = shops?.map(shop => shop.id) || [];
+      
+      if (shopIds.length === 0) return [];
+      
+      return this.optimizedQuery('orders', {
+        select: `
+          id, status, total_amount, created_at, buyer_name, buyer_phone
+        `,
+        filters: { shop_id: shopIds },
+        orderBy: { column: 'created_at', ascending: false },
+        config: { pageSize: 10 }
+      });
+    }
   }
 
   // Cache management

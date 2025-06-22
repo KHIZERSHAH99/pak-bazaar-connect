@@ -20,7 +20,8 @@ const OptimizedDashboardStats: React.FC = () => {
       if (profile.role === 'wholesaler') {
         promises.push(
           queryOptimizer.getOptimizedProducts(undefined, { 
-            shop_id: profile.id 
+            is_active: true,
+            verification_status: 'approved'
           }),
           queryOptimizer.getOptimizedOrders(profile.id, 'wholesaler')
         );

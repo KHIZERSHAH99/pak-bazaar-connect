@@ -36,7 +36,7 @@ const PerformanceMonitor: React.FC = () => {
       const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
       
       setMetrics({
-        loadTime: navigation ? Math.round(navigation.loadEventEnd - navigation.navigationStart) : 0,
+        loadTime: navigation ? Math.round(navigation.loadEventEnd - navigation.fetchStart) : 0,
         renderTime: Math.round(performance.now()),
         cacheHitRate: Math.round(cacheStats.hitRate * 100),
         memoryUsage: (performance as any).memory ? 

@@ -1,95 +1,153 @@
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import React from "react";
+import { AlertTriangle, RefreshCw, Home, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface Props {
-  children: ReactNode;
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+  fallback?: React.ComponentType<{ error: Error; resetError: () => void }>;
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
-  error?: Error;
-  errorInfo?: ErrorInfo;
+  error: Error | null;
+  errorInfo: React.ErrorInfo | null;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
-
-  static getDerivedStateFromError(error: Error): State {
+  
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return { hasError: true, error };
   }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    this.setState({
-      error,
-      errorInfo,
-    });
+  
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+    this.setState({ errorInfo });
+    
+    // Log to external service in production
+    if (process.env.NODE_ENV === 'production') {
+      // TODO: Add error logging service
+    }
   }
-
-  handleReload = () => {
+  
+  handleRefresh = () => {
     window.location.reload();
   };
 
-  handleReset = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+  handleGoHome = () => {
+    window.location.href = '/';
   };
 
+  handleReportError = () => {
+    // TODO: Add error reporting functionality
+    console.log('Error reported:', this.state.error);
+  };
+
+  resetError = () => {
+    this.setState({ hasError: false, error: null, errorInfo: null });
+  };
+  
   render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        const FallbackComponent = this.props.fallback;
+        return <FallbackComponent error={this.state.error!} resetError={this.resetError} />;
+      }
+
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-          <Card className="max-w-md w-full">
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+          <Card className="max-w-md mx-auto border-destructive/20 shadow-lg">
             <CardHeader className="text-center">
-              <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
-              </div>
-              <CardTitle className="text-xl font-semibold text-gray-900">
-                Something went wrong
+              <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+              <CardTitle className="text-destructive text-xl font-bold font-poppins">
+                Oops! Something went wrong
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-gray-600 text-center">
-                We encountered an unexpected error. Please try refreshing the page or contact support if the issue persists.
+              <p className="text-sm text-muted-foreground font-poppins text-center">
+                We apologize for the inconvenience. An unexpected error occurred while loading this page.
               </p>
               
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="mt-4 p-3 bg-gray-100 rounded-md text-sm">
-                  <summary className="cursor-pointer font-medium">Error Details</summary>
-                  <pre className="mt-2 whitespace-pre-wrap text-xs">
-                    {this.state.error.toString()}
-                    {this.state.errorInfo?.componentStack}
-                  </pre>
-                </details>
-              )}
-              
-              <div className="flex space-x-3">
-                <Button
-                  onClick={this.handleReset}
-                  variant="outline"
-                  className="flex-1"
+              <div className="flex flex-col gap-2">
+                <Button 
+                  onClick={this.handleRefresh}
+                  className="bg-green-600 hover:bg-green-700 font-poppins w-full"
                 >
-                  Try Again
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh Page
                 </Button>
-                <Button
-                  onClick={this.handleReload}
-                  className="flex-1"
+                
+                <Button 
+                  onClick={this.handleGoHome}
+                  variant="outline"
+                  className="font-poppins w-full"
                 >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Reload Page
+                  <Home className="h-4 w-4 mr-2" />
+                  Go to Homepage
+                </Button>
+                
+                <Button 
+                  onClick={this.handleReportError}
+                  variant="ghost"
+                  size="sm"
+                  className="font-poppins w-full"
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Report this issue
                 </Button>
               </div>
+
+              <details className="mt-4 text-xs text-muted-foreground">
+                <summary className="cursor-pointer font-medium mb-2">
+                  Technical Details (for developers)
+                </summary>
+                <div className="mt-2 p-3 bg-muted rounded-md text-left break-all font-mono">
+                  <div className="mb-2">
+                    <strong>Error:</strong> {this.state.error?.toString()}
+                  </div>
+                  {this.state.errorInfo && (
+                    <div>
+                      <strong>Stack:</strong>
+                      <pre className="text-xs mt-1 whitespace-pre-wrap">
+                        {this.state.errorInfo.componentStack}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              </details>
             </CardContent>
           </Card>
         </div>
       );
     }
-
+    
     return this.props.children;
   }
 }
+
+// Hook for functional components to handle errors
+export const useErrorHandler = () => {
+  const [error, setError] = React.useState<Error | null>(null);
+
+  const resetError = React.useCallback(() => {
+    setError(null);
+  }, []);
+
+  const handleError = React.useCallback((error: Error) => {
+    console.error('Error handled:', error);
+    setError(error);
+  }, []);
+
+  React.useEffect(() => {
+    if (error) {
+      throw error;
+    }
+  }, [error]);
+
+  return { handleError, resetError };
+};

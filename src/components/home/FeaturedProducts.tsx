@@ -1,183 +1,173 @@
 
-import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Package, MapPin, ShoppingCart, ArrowRight } from 'lucide-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  image?: string;
-  shops: {
-    name: string;
-    cities?: {
-      name: string;
-      province: string;
-    };
-  };
-  categories?: {
-    name: string;
-  };
-}
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowRight, Star, MapPin, Package } from 'lucide-react';
+import OptimizedImage from '@/components/ui/image-optimizer';
+import LazyLoadWrapper from '@/components/ui/lazy-load-wrapper';
 
 const FeaturedProducts = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchFeaturedProducts();
-  }, []);
-
-  const fetchFeaturedProducts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .select(`
-          id,
-          name,
-          price,
-          image,
-          shops!inner (
-            name,
-            cities (
-              name,
-              province
-            )
-          ),
-          categories (
-            name
-          )
-        `)
-        .eq('is_active', true)
-        .eq('verification_status', 'approved')
-        .order('created_at', { ascending: false })
-        .limit(6);
-
-      if (error) throw error;
-      setProducts(data || []);
-    } catch (error) {
-      console.error('Error fetching featured products:', error);
-    } finally {
-      setLoading(false);
+  const featuredProducts = [
+    {
+      id: 1,
+      name: "Premium Rice - 25KG",
+      price: "PKR 3,500",
+      originalPrice: "PKR 4,000",
+      image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=300&fit=crop",
+      supplier: "Al-Barakah Trading",
+      location: "Karachi, Sindh",
+      rating: 4.8,
+      reviews: 120,
+      badge: "Best Seller",
+      moq: "100 bags"
+    },
+    {
+      id: 2,
+      name: "Organic Cotton Fabric",
+      price: "PKR 850",
+      originalPrice: "PKR 1,000",
+      image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
+      supplier: "Textile Solutions",
+      location: "Faisalabad, Punjab",
+      rating: 4.9,
+      reviews: 85,
+      badge: "Premium",
+      moq: "200 meters"
+    },
+    {
+      id: 3,
+      name: "Industrial LED Lights",
+      price: "PKR 1,200",
+      originalPrice: "PKR 1,500",
+      image: "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=400&h=300&fit=crop",
+      supplier: "ElectroMax",
+      location: "Lahore, Punjab",
+      rating: 4.7,
+      reviews: 95,
+      badge: "Energy Saver",
+      moq: "50 units"
+    },
+    {
+      id: 4,
+      name: "Surgical Instruments Set",
+      price: "PKR 25,000",
+      originalPrice: "PKR 30,000",
+      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=300&fit=crop",
+      supplier: "MediCorp International",
+      location: "Sialkot, Punjab",
+      rating: 4.9,
+      reviews: 150,
+      badge: "Certified",
+      moq: "10 sets"
     }
-  };
-
-  if (loading) {
-    return (
-      <section className="py-16 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4 font-poppins">Featured Products</h2>
-            <p className="text-muted-foreground font-poppins">Discover quality products from trusted suppliers</p>
-          </div>
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  ];
 
   return (
-    <section className="py-16 bg-muted/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-white dark:bg-gray-900">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4 font-poppins">Featured Products</h2>
-          <p className="text-muted-foreground font-poppins">Discover quality products from trusted suppliers</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 font-poppins">
+            Featured Products
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 font-poppins">
+            Discover top-quality products from verified suppliers across Pakistan
+          </p>
+          <Link to="/products">
+            <Button variant="outline" className="border-pakistani_green-600 text-pakistani_green-600 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-950 font-poppins">
+              View All Products
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
         </div>
 
-        {products.length === 0 ? (
-          <Card className="p-12 text-center">
-            <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2 font-poppins">No Products Yet</h3>
-            <p className="text-muted-foreground font-poppins mb-6">
-              Be the first wholesaler to add products to our marketplace!
-            </p>
-            <Link to="/signup">
-              <Button className="bg-primary hover:bg-primary/90">
-                Join as Wholesaler
-              </Button>
-            </Link>
-          </Card>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product) => (
-                <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                  {product.image ? (
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="aspect-video bg-muted flex items-center justify-center">
-                      <Package className="w-12 h-12 text-muted-foreground" />
-                    </div>
-                  )}
+        {/* Products Grid */}
+        <LazyLoadWrapper height="400px" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredProducts.map((product) => (
+            <Link key={product.id} to={`/product/${product.id}`}>
+              <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-pakistani_green-200/50 dark:hover:shadow-pakistani_green-900/50">
+                {/* Product Image */}
+                <div className="relative overflow-hidden">
+                  <OptimizedImage
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    quality="medium"
+                    containerClassName="h-48"
+                  />
+                  <Badge className="absolute top-3 left-3 bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
+                    {product.badge}
+                  </Badge>
+                  <div className="absolute top-3 right-3 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Package className="w-4 h-4 text-pakistani_green-600" />
+                  </div>
+                </div>
+
+                {/* Product Details */}
+                <div className="p-5 space-y-3">
+                  <h3 className="font-semibold text-lg text-gray-900 dark:text-white group-hover:text-pakistani_green-600 transition-colors font-poppins line-clamp-2">
+                    {product.name}
+                  </h3>
                   
-                  <div className="p-6">
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between">
-                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors font-poppins line-clamp-2">
-                          {product.name}
-                        </h3>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-primary font-poppins">
-                          PKR {product.price.toLocaleString()}
-                        </span>
-                        {product.categories && (
-                          <Badge className="bg-primary/10 text-primary">
-                            {product.categories.name}
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium text-foreground font-poppins">
-                          {product.shops.name}
-                        </p>
-                        {product.shops.cities && (
-                          <div className="flex items-center text-xs text-muted-foreground">
-                            <MapPin className="w-3 h-3 mr-1" />
-                            <span className="font-poppins">
-                              {product.shops.cities.name}, {product.shops.cities.province}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <Button className="w-full bg-primary hover:bg-primary/90 font-poppins">
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        Contact Supplier
-                      </Button>
+                  {/* Price */}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl font-bold text-pakistani_green-600 dark:text-pakistani_green-400 font-poppins">
+                      {product.price}
+                    </span>
+                    <span className="text-sm text-gray-500 line-through font-poppins">
+                      {product.originalPrice}
+                    </span>
+                  </div>
+
+                  {/* Supplier Info */}
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">
+                      {product.supplier}
+                    </p>
+                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                      <MapPin className="w-3 h-3 mr-1" />
+                      <span className="font-poppins">{product.location}</span>
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
 
-            <div className="text-center mt-12">
-              <Link to="/products">
-                <Button variant="outline" size="lg" className="font-poppins">
-                  View All Products
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </>
-        )}
+                  {/* Rating & MOQ */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">
+                        {product.rating}
+                      </span>
+                      <span className="text-xs text-gray-500 font-poppins">
+                        ({product.reviews})
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-poppins">
+                      MOQ: {product.moq}
+                    </span>
+                  </div>
+
+                  {/* Action Button */}
+                  <Button className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    View Details
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </LazyLoadWrapper>
+
+        {/* Call to Action */}
+        <div className="text-center mt-12">
+          <Link to="/signup">
+            <Button size="lg" className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins shadow-lg">
+              Start Your Business Journey
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );

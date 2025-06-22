@@ -1,11 +1,9 @@
 
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { enhancedSignIn, cleanupAuthState } from '@/lib/auth-enhanced';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { AlertCircle, Mail, Key, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -19,9 +17,7 @@ const LoginForm: React.FC = () => {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const navigate = useNavigate();
-  const location = useLocation();
-  const { toast } = useToast();
-  const { checkAuthStatus } = useAuth();
+  const { signIn } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,53 +36,18 @@ const LoginForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Clean up any old state before attempting sign in
-      cleanupAuthState();
+      const result = await signIn(email, password);
       
-      if (!navigator.onLine) {
-        throw new Error('No internet connection. Please check your network and try again.');
+      if (result.error) {
+        setAttempts(prev => prev + 1);
+        setError(result.error);
+      } else {
+        navigate('/dashboard');
       }
-      
-      await enhancedSignIn(email, password);
-      await checkAuthStatus();
-
-      toast({
-        title: 'Login Successful',
-        description: 'Welcome back! Redirecting to dashboard...'
-      });
-
-      // Force navigation with page reload for clean state
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 1000);
-      
     } catch (error: any) {
       console.error('Login error:', error);
       setAttempts(prev => prev + 1);
-      
-      let errorMessage = 'Login failed. Please check your credentials and try again';
-
-      if (error.message) {
-        if (error.message.includes('Invalid login credentials')) {
-          errorMessage = 'Invalid email or password. Please check your credentials.';
-        } else if (error.message.includes('Email not confirmed')) {
-          errorMessage = 'Please verify your email address before logging in.';
-        } else if (error.message.includes('rate limit') || error.message.includes('Too many')) {
-          errorMessage = 'Too many login attempts. Please try again later.';
-        } else if (error.message.includes('network') || error.message.includes('fetch')) {
-          errorMessage = 'Network error. Please check your connection and try again.';
-        } else {
-          errorMessage = error.message;
-        }
-      }
-
-      setError(errorMessage);
-
-      toast({
-        title: 'Login Failed',
-        description: errorMessage,
-        variant: 'destructive'
-      });
+      setError('Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -109,13 +70,6 @@ const LoginForm: React.FC = () => {
           <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center text-red-600 dark:text-red-300 text-sm border border-red-100 dark:border-red-800">
             <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
             <span>{error}</span>
-          </div>
-        )}
-
-        {attempts >= 3 && attempts < 5 && (
-          <div className="mb-6 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg flex items-center text-yellow-700 dark:text-yellow-300 text-sm border border-yellow-200 dark:border-yellow-800">
-            <Shield className="h-5 w-5 mr-2 flex-shrink-0" />
-            <span>Multiple failed attempts detected. Please ensure you're using the correct credentials.</span>
           </div>
         )}
 

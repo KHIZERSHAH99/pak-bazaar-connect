@@ -4,6 +4,7 @@ import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/hooks/use-toast';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -14,6 +15,9 @@ interface AuthState {
   loading: boolean;
   checkAuthStatus: () => Promise<void>;
   refreshProfile: () => Promise<Profile | null>;
+  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, role: string) => Promise<{ error: string | null }>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState>({
@@ -23,11 +27,14 @@ const AuthContext = createContext<AuthState>({
   loading: true,
   checkAuthStatus: async () => {},
   refreshProfile: async () => null,
+  signIn: async () => ({ error: null }),
+  signUp: async () => ({ error: null }),
+  signOut: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
 
-// Helper function to clean up auth state to prevent "limbo" states
+// Helper function to clean up auth state
 const cleanupAuthState = () => {
   Object.keys(localStorage).forEach((key) => {
     if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
@@ -50,7 +57,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = useCallback(async (userId: string, forceRefresh = false): Promise<Profile | null> => {
     try {
-      // Cache profile data for 5 minutes to reduce redundant fetches
       const now = Date.now();
       if (!forceRefresh && profile && profileFetchTimestamp > 0 && now - profileFetchTimestamp < 300000) {
         return profile;
@@ -81,6 +87,88 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return fetchUserProfile(user.id, true);
   }, [user, fetchUserProfile]);
 
+  const signIn = async (email: string, password: string) => {
+    try {
+      cleanupAuthState();
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase().trim(),
+        password
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Welcome back!',
+        description: 'You have been successfully logged in.'
+      });
+
+      return { error: null };
+    } catch (error: any) {
+      console.error('Sign in error:', error);
+      toast({
+        title: 'Sign in failed',
+        description: error.message || 'Failed to sign in. Please try again.',
+        variant: 'destructive'
+      });
+      return { error: error.message };
+    }
+  };
+
+  const signUp = async (email: string, password: string, role: string) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email.toLowerCase().trim(),
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+          data: { role }
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Account created!',
+        description: 'Please check your email to verify your account.'
+      });
+
+      return { error: null };
+    } catch (error: any) {
+      console.error('Sign up error:', error);
+      toast({
+        title: 'Sign up failed',
+        description: error.message || 'Failed to create account. Please try again.',
+        variant: 'destructive'
+      });
+      return { error: error.message };
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      cleanupAuthState();
+
+      toast({
+        title: 'Logged out',
+        description: 'You have been successfully logged out.'
+      });
+    } catch (error: any) {
+      console.error('Sign out error:', error);
+      toast({
+        title: 'Sign out failed',
+        description: error.message || 'Failed to sign out. Please try again.',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const checkAuthStatus = useCallback(async () => {
     try {
       setLoading(true);
@@ -99,7 +187,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(currentSession);
         setUser(currentSession.user);
         
-        // Only fetch profile if we don't have cached data
         const userProfile = await fetchUserProfile(currentSession.user.id);
         setProfile(userProfile);
       } else {
@@ -120,20 +207,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let mounted = true;
     
-    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         if (!mounted) return;
         
         console.log('Auth state changed:', event);
         
-        // Update state synchronously
         setSession(currentSession);
         setUser(currentSession?.user || null);
         
-        // Handle profile fetch for authenticated users
         if (currentSession?.user && event !== 'TOKEN_REFRESHED') {
-          // Use setTimeout to prevent potential deadlocks
           setTimeout(() => {
             if (mounted) {
               fetchUserProfile(currentSession.user.id, event === 'SIGNED_IN');
@@ -148,14 +231,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Check for existing session only once
     checkAuthStatus();
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []); // Empty dependency array to run only once
+  }, []);
 
   return (
     <AuthContext.Provider value={{ 
@@ -164,14 +246,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       session, 
       loading, 
       checkAuthStatus,
-      refreshProfile
+      refreshProfile,
+      signIn,
+      signUp,
+      signOut
     }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Loading screen component to use throughout the app
+// Loading screen component
 export const LoadingScreen: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-screen p-4">
     <div className="w-16 h-16 border-4 border-pakistani_green-600 border-t-transparent rounded-full animate-spin mb-4"></div>

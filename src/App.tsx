@@ -7,7 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "next-themes";
-import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import AppErrorBoundary from "@/components/ui/AppErrorBoundary";
 import AuthErrorBoundary from "@/components/auth/AuthErrorBoundary";
 import AppRoutes from "@/routes/AppRoutes";
 
@@ -17,7 +17,10 @@ const queryClient = new QueryClient({
       retry: 3,
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 10 * 60 * 1000, // 10 minutes
-      refetchOnWindowFocus: false,
+      refetchOn
+
+
+Focus: false,
     },
     mutations: {
       retry: 1,
@@ -37,7 +40,7 @@ const App = () => {
       >
         <LanguageProvider>
           <TooltipProvider>
-            <ErrorBoundary>
+            <AppErrorBoundary>
               <AuthErrorBoundary>
                 <div className="min-h-screen bg-background text-foreground transition-colors duration-200 font-poppins">
                   <Toaster />
@@ -49,7 +52,7 @@ const App = () => {
                   </BrowserRouter>
                 </div>
               </AuthErrorBoundary>
-            </ErrorBoundary>
+            </AppErrorBoundary>
           </TooltipProvider>
         </LanguageProvider>
       </ThemeProvider>

@@ -634,7 +634,11 @@ export type Database = {
           is_suspended: boolean | null
           last_role_switch: string | null
           ntn_number: string | null
+          otp_attempts: number | null
+          otp_code: string | null
+          otp_expires_at: string | null
           phone_number: string | null
+          phone_verified: boolean | null
           postal_code: string | null
           profile_image: string | null
           role: string
@@ -662,7 +666,11 @@ export type Database = {
           is_suspended?: boolean | null
           last_role_switch?: string | null
           ntn_number?: string | null
+          otp_attempts?: number | null
+          otp_code?: string | null
+          otp_expires_at?: string | null
           phone_number?: string | null
+          phone_verified?: boolean | null
           postal_code?: string | null
           profile_image?: string | null
           role?: string
@@ -690,7 +698,11 @@ export type Database = {
           is_suspended?: boolean | null
           last_role_switch?: string | null
           ntn_number?: string | null
+          otp_attempts?: number | null
+          otp_code?: string | null
+          otp_expires_at?: string | null
           phone_number?: string | null
+          phone_verified?: boolean | null
           postal_code?: string | null
           profile_image?: string | null
           role?: string
@@ -820,6 +832,10 @@ export type Database = {
       add_order_tracking: {
         Args: { p_order_id: string; p_status: string; p_notes?: string }
         Returns: string
+      }
+      delete_old_payment_screenshots: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       delete_old_screenshots: {
         Args: Record<PropertyKey, never>

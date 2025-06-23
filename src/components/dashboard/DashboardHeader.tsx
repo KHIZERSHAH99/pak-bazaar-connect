@@ -1,6 +1,5 @@
 
 import React from "react";
-import RoleSwitcherProminent from "../navbar/RoleSwitcherProminent";
 import CODBadge from "./CODBadge";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -11,7 +10,12 @@ const DashboardHeader: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row items-center gap-4 justify-between mb-6 mt-2">
       <div className="flex flex-col">
-        <RoleSwitcherProminent />
+        <h2 className="text-lg font-semibold text-foreground font-poppins">
+          Dashboard - {profile?.role && profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
+        </h2>
+        <p className="text-sm text-muted-foreground font-poppins">
+          Manage your business operations
+        </p>
       </div>
       {/* Show COD badge if user is seller/wholesaler */}
       {(profile?.role === "seller" || profile?.role === "wholesaler") && (

@@ -1,3 +1,4 @@
+
 // Re-export all the modules to maintain backward compatibility
 import { supabase as supabaseClient } from '@/integrations/supabase/client';
 import * as authModule from './auth';
@@ -35,8 +36,7 @@ export const {
   signUp,
   signOut,
   getCurrentUser,
-  getUserProfile,
-  changeRole
+  getUserProfile
 } = authModule;
 
 export const {

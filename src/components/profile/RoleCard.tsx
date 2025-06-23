@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface RoleCardProps {
   title: string;
@@ -24,7 +23,6 @@ const RoleCard: React.FC<RoleCardProps> = ({
   currentRole
 }) => {
   const isCurrentRole = currentRole === targetRole;
-  const { profile } = useAuth();
 
   return (
     <Card className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md ${

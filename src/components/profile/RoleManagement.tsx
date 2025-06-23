@@ -8,14 +8,10 @@ import RoleCard from './RoleCard';
 
 interface RoleManagementProps {
   currentRole?: string;
-  isRequesting: boolean;
-  onRoleChange: (role: UserRole) => void;
 }
 
 const RoleManagement: React.FC<RoleManagementProps> = ({
-  currentRole,
-  isRequesting,
-  onRoleChange
+  currentRole
 }) => {
   const isSellerRole = currentRole === 'seller';
   const { t } = useLanguage();
@@ -27,40 +23,24 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
           {t('role_management')}
         </h2>
         <p className="text-pakistani_green-700 dark:text-pakistani_green-200 text-sm font-poppins">
-          {t('choose_role')}
+          {t('your_current_role')}
         </p>
       </div>
       
       <div className="p-4 md:p-6">
-        <div className="bg-amber-50/80 dark:bg-amber-900/30 border border-amber-200/60 dark:border-amber-700/50 rounded-lg p-4 mb-6 backdrop-blur-sm">
+        <div className="bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-700/50 rounded-lg p-4 mb-6 backdrop-blur-sm">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+            <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-sm text-amber-800 dark:text-amber-200 font-poppins font-medium mb-1">
-                {t('role_change_notice')}
+              <p className="text-sm text-blue-800 dark:text-blue-200 font-poppins font-medium mb-1">
+                Role Information
               </p>
-              <p className="text-sm text-amber-700 dark:text-amber-300 font-poppins">
-                {t('role_change_desc')}
+              <p className="text-sm text-blue-700 dark:text-blue-300 font-poppins">
+                Your account role determines what features you can access on the platform.
               </p>
             </div>
           </div>
         </div>
-
-        {isSellerRole && (
-          <div className="bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-700/50 rounded-lg p-4 mb-6 backdrop-blur-sm">
-            <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-blue-800 dark:text-blue-200 font-poppins font-medium mb-1">
-                  {t('becoming_wholesaler')}
-                </p>
-                <p className="text-sm text-blue-700 dark:text-blue-300 font-poppins">
-                  {t('becoming_wholesaler_desc')}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <RoleCard
@@ -75,8 +55,6 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
             ]}
             targetRole="wholesaler"
             currentRole={currentRole}
-            isRequesting={isRequesting}
-            onRoleChange={onRoleChange}
           />
           
           <RoleCard
@@ -91,8 +69,6 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
             ]}
             targetRole="seller"
             currentRole={currentRole}
-            isRequesting={isRequesting}
-            onRoleChange={onRoleChange}
           />
         </div>
       </div>

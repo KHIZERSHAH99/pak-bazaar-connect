@@ -22,15 +22,18 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
   const isRegisteredForRole = useCallback((role: UserRole): boolean => {
     if (!profile) return false;
     
+    // Cast profile role to UserRole for proper comparison
+    const currentRole = profile.role as UserRole;
+    
     // User is registered for their current role
-    if (profile.role === role) return true;
+    if (currentRole === role) return true;
     
     // Admin can access any role
-    if (profile.role === 'admin') return true;
+    if (currentRole === 'admin') return true;
     
     // For seller and wholesaler, they can switch between each other
     if (role === 'seller' || role === 'wholesaler') {
-      return profile.role === 'seller' || profile.role === 'wholesaler' || profile.role === 'admin';
+      return currentRole === 'seller' || currentRole === 'wholesaler' || currentRole === 'admin';
     }
     
     return false;
@@ -39,19 +42,21 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
   // Check if user can switch to a specific role
   const canSwitchTo = useCallback((role: UserRole): boolean => {
     if (!profile) return false;
-    if (profile.role === role) return false; // Can't switch to current role
+    
+    const currentRole = profile.role as UserRole;
+    if (currentRole === role) return false; // Can't switch to current role
     
     // Only allow switching for business roles (seller/wholesaler)
     if (!['seller', 'wholesaler'].includes(role)) return false;
     
     // Allow switching between seller and wholesaler
-    if ((profile.role === 'seller' || profile.role === 'wholesaler') && 
+    if ((currentRole === 'seller' || currentRole === 'wholesaler') && 
         (role === 'seller' || role === 'wholesaler')) {
       return true;
     }
     
     // Admin can switch to any business role for testing purposes
-    if (profile.role === 'admin' && (role === 'seller' || role === 'wholesaler')) {
+    if (currentRole === 'admin' && (role === 'seller' || role === 'wholesaler')) {
       return true;
     }
     

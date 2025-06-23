@@ -77,9 +77,11 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     if (!canSwitchTo(targetRole)) {
       let message = "Unauthorized access";
       
-      if (profile.role === 'pending') {
+      // Fixed the comparison issue by properly handling the role types
+      const currentRole = profile.role as UserRole;
+      if (currentRole === 'pending') {
         message = "Verification pending";
-      } else if (profile.role === targetRole) {
+      } else if (currentRole === targetRole) {
         message = `You are already a ${targetRole}`;
       } else {
         message = "Unauthorized access";

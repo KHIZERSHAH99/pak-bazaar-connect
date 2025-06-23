@@ -3,7 +3,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 import { logAuditEvent } from '@/lib/security/audit-enhanced';
-import { RoleSwitchResponse } from '@/types/role-switch';
 
 // Export UserRole for use in other components
 export type { UserRole } from '@/lib/types';
@@ -223,37 +222,6 @@ export const enhancedSignOut = async () => {
     console.log('✅ Enhanced sign out successful');
   } catch (error) {
     console.error('Enhanced sign out error:', error);
-    throw error;
-  }
-};
-
-// Updated role change function - uses the existing switch_business_role function
-export const secureChangeRole = async (newRole: UserRole) => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) throw new Error('User not authenticated');
-
-    // Use the existing switch_business_role function
-    const { data, error } = await supabase.rpc('switch_business_role', {
-      target_role: newRole
-    });
-
-    if (error) throw error;
-    
-    // Type cast the response data
-    const response = data as unknown as RoleSwitchResponse;
-    
-    if (!response.success) throw new Error(response.error);
-
-    toast({
-      title: "Role Changed Successfully",
-      description: `You are now a ${newRole}!`,
-    });
-
-    return { success: true };
-  } catch (error) {
-    console.error('Secure role change error:', error);
     throw error;
   }
 };

@@ -1,8 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
-import { toast } from '@/hooks/use-toast';
-import { enhancedSignIn, enhancedSignUp, enhancedSignOut, secureChangeRole } from './auth-enhanced';
+import { enhancedSignIn, enhancedSignUp, enhancedSignOut } from './auth-enhanced';
 
 // Export UserRole for use in other components
 export type { UserRole } from '@/lib/types';
@@ -25,7 +24,6 @@ export const cleanupAuthState = () => {
 export const signIn = enhancedSignIn;
 export const signUp = enhancedSignUp;
 export const signOut = enhancedSignOut;
-export const changeRole = secureChangeRole;
 
 export const getCurrentUser = async () => {
   try {

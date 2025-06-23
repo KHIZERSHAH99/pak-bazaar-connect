@@ -1,15 +1,10 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, ArrowRight, ExternalLink, UserPlus } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { UserRole } from '@/lib/supabase';
-import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useSmartRoleSwitch } from '@/hooks/useSmartRoleSwitch';
-import { useToast } from '@/hooks/use-toast';
 
 interface RoleCardProps {
   title: string;
@@ -18,8 +13,6 @@ interface RoleCardProps {
   features: string[];
   targetRole: UserRole;
   currentRole?: string;
-  isRequesting: boolean;
-  onRoleChange: (role: UserRole) => void;
 }
 
 const RoleCard: React.FC<RoleCardProps> = ({
@@ -28,40 +21,10 @@ const RoleCard: React.FC<RoleCardProps> = ({
   icon,
   features,
   targetRole,
-  currentRole,
-  isRequesting,
-  onRoleChange
+  currentRole
 }) => {
   const isCurrentRole = currentRole === targetRole;
   const { profile } = useAuth();
-  const { t } = useLanguage();
-  const { switchRole, isRegisteredForRole, isSwitching, canSwitchTo } = useSmartRoleSwitch();
-  const { toast } = useToast();
-
-  const canSwitch = canSwitchTo(targetRole);
-  const isRegistered = isRegisteredForRole(targetRole);
-
-  const handleAction = async () => {
-    if (profile && canSwitch) {
-      await switchRole(targetRole);
-    } else {
-      // Fallback to original onRoleChange for non-authenticated users
-      onRoleChange(targetRole);
-    }
-  };
-
-  const getButtonText = () => {
-    if (isSwitching) return t('processing');
-    if (!profile) return `${t('switch_to')} ${title}`;
-    if (!isRegistered) return `${t('sign_up_as')} ${title}`;
-    return `${t('switch_to')} ${title}`;
-  };
-
-  const getButtonIcon = () => {
-    if (isSwitching) return null;
-    if (!profile || !isRegistered) return <UserPlus className="ml-2 h-4 w-4" />;
-    return <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />;
-  };
 
   return (
     <Card className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md ${
@@ -85,7 +48,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
           {isCurrentRole && (
             <Badge variant="default" className="flex items-center gap-1 font-poppins bg-pakistani_green-100 text-pakistani_green-800">
               <CheckCircle className="h-3 w-3" />
-              {t('current')}
+              Current
             </Badge>
           )}
         </div>
@@ -97,23 +60,11 @@ const RoleCard: React.FC<RoleCardProps> = ({
         </ul>
         
         {!isCurrentRole && (
-          <Button 
-            variant="outline"
-            className="w-full group font-poppins"
-            onClick={handleAction}
-            disabled={isSwitching || isRequesting}
-            title={getButtonText()}
-          >
-            {getButtonText()}
-            {getButtonIcon()}
-          </Button>
-        )}
-
-        {/* Registration Status Indicator */}
-        {!isCurrentRole && profile && !isRegistered && canSwitch && (
-          <p className="text-xs text-amber-600 mt-2 font-poppins text-center">
-            {t('registration_required')}
-          </p>
+          <div className="text-center">
+            <p className="text-sm text-gray-500 font-poppins">
+              Contact administrator to change your role
+            </p>
+          </div>
         )}
       </div>
     </Card>

@@ -2,7 +2,6 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { RoleSwitchResponse } from '@/types/role-switch';
@@ -17,7 +16,6 @@ interface UseSmartRoleSwitchReturn {
 export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
   const { profile, checkAuthStatus } = useAuth();
   const { toast } = useToast();
-  const { t } = useLanguage();
   const [isSwitching, setIsSwitching] = useState(false);
 
   // Check if user is registered for a specific role
@@ -68,8 +66,8 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     // Validate target role
     if (!['seller', 'wholesaler'].includes(targetRole)) {
       toast({
-        title: t('cannot_switch_role'),
-        description: t('unauthorized_access'),
+        title: "Cannot switch role",
+        description: "Unauthorized access",
         variant: "destructive"
       });
       return;
@@ -77,18 +75,18 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
 
     // Check if user can switch to target role
     if (!canSwitchTo(targetRole)) {
-      let message = t('unauthorized_access');
+      let message = "Unauthorized access";
       
       if (profile.role === 'pending') {
-        message = t('verification_pending');
+        message = "Verification pending";
       } else if (profile.role === targetRole) {
-        message = `${t('current')} ${t(targetRole)}`;
+        message = `You are already a ${targetRole}`;
       } else {
-        message = t('unauthorized_access');
+        message = "Unauthorized access";
       }
       
       toast({
-        title: t('cannot_switch_role'),
+        title: "Cannot switch role",
         description: message,
         variant: "destructive"
       });
@@ -100,8 +98,8 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     try {
       // Show loading state
       toast({
-        title: t('switching_role'),
-        description: `${t('switching_role')} ${t(targetRole)}...`,
+        title: "Switching role",
+        description: `Switching to ${targetRole}...`,
         variant: "default"
       });
 
@@ -130,8 +128,8 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
       await checkAuthStatus();
       
       toast({
-        title: t('role_switched_successfully'),
-        description: `${t('current')} ${t(targetRole)}`,
+        title: "Role switched successfully",
+        description: `You are now a ${targetRole}`,
         variant: "default"
       });
 
@@ -143,15 +141,15 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
     } catch (error: any) {
       console.error('Role switch error:', error);
       
-      let errorMessage = t('try_again');
+      let errorMessage = "Please try again";
       
       if (error.message) {
         if (error.message.includes('Already in target role')) {
-          errorMessage = `${t('current')} ${t(targetRole)}`;
+          errorMessage = `You are already a ${targetRole}`;
         } else if (error.message.includes('not authenticated') || error.message.includes('unauthorized')) {
-          errorMessage = t('unauthorized_access');
+          errorMessage = "Unauthorized access";
         } else if (error.message.includes('network') || error.message.includes('fetch')) {
-          errorMessage = t('network_error');
+          errorMessage = "Network error";
         } else if (error.message.includes('Maximum role switches')) {
           errorMessage = 'Maximum role switches per day exceeded. Please try again tomorrow.';
         } else if (error.message.includes('Cannot switch to seller while you have an active shop')) {
@@ -162,14 +160,14 @@ export const useSmartRoleSwitch = (): UseSmartRoleSwitchReturn => {
       }
       
       toast({
-        title: t('role_switch_failed'),
+        title: "Role switch failed",
         description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setIsSwitching(false);
     }
-  }, [profile, isSwitching, canSwitchTo, toast, checkAuthStatus, t]);
+  }, [profile, isSwitching, canSwitchTo, toast, checkAuthStatus]);
 
   return {
     switchRole,

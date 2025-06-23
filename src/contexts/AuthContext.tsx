@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { Profile } from '@/lib/types';
+import { Profile, UserRole } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
@@ -10,6 +10,7 @@ interface AuthContextType {
   profile: Profile | null;
   session: Session | null;
   loading: boolean;
+  signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
   checkAuthStatus: () => Promise<void>;
 }
@@ -54,10 +55,35 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return null;
       }
       
-      return data;
+      // Type cast the role to ensure it matches UserRole
+      if (data) {
+        return {
+          ...data,
+          role: data.role as UserRole
+        } as Profile;
+      }
+      
+      return null;
     } catch (error) {
       console.error('Profile fetch error:', error);
       return null;
+    }
+  };
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return { error: undefined };
+    } catch (error: any) {
+      return { error: error.message || 'Login failed' };
     }
   };
 
@@ -167,6 +193,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     profile,
     session,
     loading,
+    signIn,
     signOut,
     checkAuthStatus
   };

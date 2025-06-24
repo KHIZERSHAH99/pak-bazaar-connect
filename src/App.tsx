@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "next-themes";
 import AppErrorBoundary from "@/components/ui/AppErrorBoundary";
 import AuthErrorBoundary from "@/components/auth/AuthErrorBoundary";
@@ -37,22 +38,24 @@ const App = () => {
         disableTransitionOnChange={false}
         storageKey="pak-bazaar-theme"
       >
-        <TooltipProvider>
-          <AppErrorBoundary>
-            <AuthErrorBoundary>
-              <div className="min-h-screen bg-background text-foreground transition-colors duration-200 font-poppins">
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <AuthProvider>
-                    <AppRoutes />
-                    <PerformanceMonitor />
-                  </AuthProvider>
-                </BrowserRouter>
-              </div>
-            </AuthErrorBoundary>
-          </AppErrorBoundary>
-        </TooltipProvider>
+        <LanguageProvider>
+          <TooltipProvider>
+            <AppErrorBoundary>
+              <AuthErrorBoundary>
+                <div className="min-h-screen bg-background text-foreground transition-colors duration-200 font-poppins">
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <AuthProvider>
+                      <AppRoutes />
+                      <PerformanceMonitor />
+                    </AuthProvider>
+                  </BrowserRouter>
+                </div>
+              </AuthErrorBoundary>
+            </AppErrorBoundary>
+          </TooltipProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

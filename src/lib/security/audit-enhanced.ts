@@ -29,7 +29,7 @@ export const logAuditEvent = async (
       p_record_id: recordId,
       p_old_values: oldValues ? JSON.stringify(oldValues) : null,
       p_new_values: newValues ? JSON.stringify(newValues) : null,
-      p_user_agent: userAgent || navigator.userAgent
+      p_user_agent: userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : null)
     });
 
     if (error) {
@@ -95,5 +95,26 @@ export const logPaymentScreenshotUploaded = async (orderId: string, filePath: st
     });
   } catch (error) {
     console.error('Failed to log payment screenshot upload:', error);
+  }
+};
+
+// Additional security monitoring functions
+export const logRoleChangeRequest = async (userId: string, fromRole: string, toRole: string) => {
+  try {
+    await logAuditEvent('role_change_requested', 'profiles', userId, { role: fromRole }, { role: toRole });
+  } catch (error) {
+    console.error('Failed to log role change request:', error);
+  }
+};
+
+export const logSuspiciousActivity = async (activityType: string, details: any) => {
+  try {
+    await logAuditEvent('suspicious_activity', null, null, null, {
+      activity_type: activityType,
+      details,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Failed to log suspicious activity:', error);
   }
 };

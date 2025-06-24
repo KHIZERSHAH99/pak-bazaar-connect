@@ -2,7 +2,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
-import { logAuditEvent } from '@/lib/security/audit-enhanced';
 
 // Export UserRole for use in other components
 export type { UserRole } from '@/lib/types';
@@ -21,28 +20,61 @@ export const cleanupAuthState = () => {
   });
 };
 
-// Helper function to check rate limits - simplified version
-const checkRateLimit = async (identifier: string, attemptType: string) => {
+// Helper function to log audit events directly using the database function
+const logAuditEvent = async (
+  eventType: string,
+  tableName?: string,
+  recordId?: string,
+  oldValues?: any,
+  newValues?: any,
+  userAgent?: string
+) => {
   try {
-    // For now, use a simple localStorage-based rate limiting until the function is available
-    const rateLimitKey = `rate_limit_${identifier}_${attemptType}`;
-    const attempts = JSON.parse(localStorage.getItem(rateLimitKey) || '[]');
-    const now = Date.now();
-    const fifteenMinutesAgo = now - (15 * 60 * 1000);
+    const { data: { user } } = await supabase.auth.getUser();
     
-    // Filter out old attempts
-    const recentAttempts = attempts.filter((time: number) => time > fifteenMinutesAgo);
+    const { error } = await supabase.rpc('log_audit_event', {
+      p_user_id: user?.id || null,
+      p_event_type: eventType,
+      p_table_name: tableName,
+      p_record_id: recordId,
+      p_old_values: oldValues ? JSON.stringify(oldValues) : null,
+      p_new_values: newValues ? JSON.stringify(newValues) : null,
+      p_user_agent: userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : null)
+    });
+
+    if (error) {
+      console.error('Audit logging error:', error);
+    }
+  } catch (error) {
+    console.error('Failed to log audit event:', error);
+    // Don't throw error to avoid breaking the main flow
+  }
+};
+
+// Server-side rate limiting using database
+const checkServerRateLimit = async (identifier: string, attemptType: string) => {
+  try {
+    // Use audit_logs table for rate limiting
+    const fifteenMinutesAgo = new Date(Date.now() - (15 * 60 * 1000)).toISOString();
     
-    if (recentAttempts.length >= 5) {
-      return { 
-        allowed: false, 
-        message: 'Too many attempts. Please try again later.' 
-      };
+    const { data, error } = await supabase
+      .from('audit_logs')
+      .select('id')
+      .eq('event_type', `${attemptType}_attempt`)
+      .gte('created_at', fifteenMinutesAgo)
+      .eq('new_values->email', identifier);
+    
+    if (error) {
+      console.error('Rate limit check error:', error);
+      return { allowed: true }; // Allow on error
     }
     
-    // Record this attempt
-    recentAttempts.push(now);
-    localStorage.setItem(rateLimitKey, JSON.stringify(recentAttempts));
+    if (data && data.length >= 5) {
+      return { 
+        allowed: false, 
+        message: 'Too many attempts. Please try again in 15 minutes.' 
+      };
+    }
     
     return { allowed: true };
   } catch (error) {
@@ -54,12 +86,12 @@ const checkRateLimit = async (identifier: string, attemptType: string) => {
 // Enhanced authentication with comprehensive security logging and rate limiting
 export const enhancedSignIn = async (email: string, password: string) => {
   try {
-    console.log('🔐 Starting enhanced sign in process with rate limiting');
+    console.log('🔐 Starting enhanced sign in process');
     
     const cleanEmail = email.toLowerCase().trim();
     
-    // Check rate limit before attempting login
-    const rateLimitResult = await checkRateLimit(cleanEmail, 'login');
+    // Check server-side rate limit
+    const rateLimitResult = await checkServerRateLimit(cleanEmail, 'login');
     
     if (!rateLimitResult.allowed) {
       const errorMessage = rateLimitResult.message || 'Too many login attempts. Please try again later.';
@@ -71,6 +103,12 @@ export const enhancedSignIn = async (email: string, password: string) => {
       throw new Error(errorMessage);
     }
     
+    // Log login attempt
+    await logAuditEvent('login_attempt', 'profiles', null, null, { 
+      email: cleanEmail,
+      timestamp: new Date().toISOString()
+    });
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email: cleanEmail,
       password
@@ -80,9 +118,10 @@ export const enhancedSignIn = async (email: string, password: string) => {
       console.error('Sign in error:', error);
       
       // Log failed login attempt
-      await logAuditEvent('login_failed', null, null, null, { 
+      await logAuditEvent('login_failed', 'profiles', null, null, { 
         email: cleanEmail, 
-        error: error.message 
+        error: error.message,
+        timestamp: new Date().toISOString()
       });
       
       // Show user-friendly error messages
@@ -104,7 +143,8 @@ export const enhancedSignIn = async (email: string, password: string) => {
 
     // Log successful login
     await logAuditEvent('login_success', 'profiles', data.user?.id, null, { 
-      email: cleanEmail 
+      email: cleanEmail,
+      timestamp: new Date().toISOString()
     });
 
     console.log('✅ Enhanced sign in successful');
@@ -122,12 +162,12 @@ export const enhancedSignUp = async (
   businessData?: any
 ) => {
   try {
-    console.log('🔐 Starting enhanced sign up process with rate limiting', { email, role });
+    console.log('🔐 Starting enhanced sign up process', { email, role });
     
     const cleanEmail = email.toLowerCase().trim();
     
-    // Check rate limit before attempting signup
-    const rateLimitResult = await checkRateLimit(cleanEmail, 'signup');
+    // Check server-side rate limit
+    const rateLimitResult = await checkServerRateLimit(cleanEmail, 'signup');
     
     if (!rateLimitResult.allowed) {
       const errorMessage = rateLimitResult.message || 'Too many signup attempts. Please try again later.';
@@ -138,6 +178,13 @@ export const enhancedSignUp = async (
       });
       throw new Error(errorMessage);
     }
+    
+    // Log signup attempt
+    await logAuditEvent('signup_attempt', 'profiles', null, null, { 
+      email: cleanEmail,
+      role,
+      timestamp: new Date().toISOString()
+    });
     
     const { data, error } = await supabase.auth.signUp({
       email: cleanEmail,
@@ -155,10 +202,11 @@ export const enhancedSignUp = async (
       console.error('Sign up error:', error);
       
       // Log failed signup attempt
-      await logAuditEvent('signup_failed', null, null, null, { 
+      await logAuditEvent('signup_failed', 'profiles', null, null, { 
         email: cleanEmail, 
         role,
-        error: error.message 
+        error: error.message,
+        timestamp: new Date().toISOString()
       });
       
       // Show user-friendly error messages
@@ -183,7 +231,8 @@ export const enhancedSignUp = async (
     // Log successful signup
     await logAuditEvent('signup_success', 'profiles', data.user?.id, null, { 
       email: cleanEmail,
-      role 
+      role,
+      timestamp: new Date().toISOString()
     });
 
     // Show success message
@@ -206,18 +255,28 @@ export const enhancedSignOut = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     
     // Log logout attempt
-    await logAuditEvent('logout', 'profiles', user?.id);
+    await logAuditEvent('logout_attempt', 'profiles', user?.id, null, {
+      timestamp: new Date().toISOString()
+    });
     
-    const { error } = await supabase.auth.signOut();
+    // Clean up state first
+    cleanupAuthState();
+    
+    const { error } = await supabase.auth.signOut({ scope: 'global' });
     
     if (error) {
       console.error('Sign out error:', error);
+      await logAuditEvent('logout_failed', 'profiles', user?.id, null, {
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
       throw error;
     }
     
-    // Clear any cached data
-    localStorage.removeItem('user_profile');
-    sessionStorage.clear();
+    // Log successful logout
+    await logAuditEvent('logout_success', 'profiles', user?.id, null, {
+      timestamp: new Date().toISOString()
+    });
     
     console.log('✅ Enhanced sign out successful');
   } catch (error) {

@@ -2,16 +2,16 @@
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import UserProfile from '@/components/dashboard/UserProfile';
+import SellerAnalytics from '@/components/dashboard/SellerAnalytics';
 
-const Profile: React.FC = () => {
+const DashboardAnalytics: React.FC = () => {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={['wholesaler', 'admin']}>
       <DashboardLayout>
-        <UserProfile />
+        <SellerAnalytics />
       </DashboardLayout>
     </ProtectedRoute>
   );
 };
 
-export default Profile;
+export default DashboardAnalytics;

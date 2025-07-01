@@ -1,32 +1,38 @@
 
 import React from 'react';
-import Layout from '@/components/Layout';
+import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart } from 'lucide-react';
 
 const Favorites: React.FC = () => {
   return (
-    <Layout>
-      <ProtectedRoute>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-3 mb-8">
-            <Heart className="h-8 w-8 text-red-500" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-poppins">My Favorites</h1>
-          </div>
+    <ProtectedRoute>
+      <DashboardLayout>
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-poppins">Favorites</h1>
           
-          <Card className="p-12 text-center">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 font-poppins">
+                <Heart className="w-5 h-5" />
+                Your Favorite Items
+              </CardTitle>
+            </CardHeader>
             <CardContent>
-              <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2 font-poppins">No favorites yet</h3>
-              <p className="text-gray-600 dark:text-gray-400 font-poppins">
-                Start adding products and shops to your favorites to see them here.
+              <p className="text-gray-600 dark:text-gray-300 font-poppins">
+                Save products and shops you're interested in to easily find them later.
               </p>
+              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <p className="text-gray-800 dark:text-gray-200 font-poppins text-sm">
+                  ❤️ No favorites yet. Start browsing products and shops to add them to your favorites!
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
-      </ProtectedRoute>
-    </Layout>
+      </DashboardLayout>
+    </ProtectedRoute>
   );
 };
 

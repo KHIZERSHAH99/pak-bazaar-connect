@@ -1,62 +1,81 @@
 
 import React from 'react';
-import Layout from '@/components/Layout';
+import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import SellerAnalytics from '@/components/analytics/SellerAnalytics';
-import { BarChart, AlertCircle, TrendingUp } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BarChart3, TrendingUp, Users, ShoppingBag } from 'lucide-react';
 
 const Analytics: React.FC = () => {
-  const { profile } = useAuth();
-  const { t } = useLanguage();
-
-  // Check if user has the right role for analytics
-  const canViewAnalytics = profile?.role === 'wholesaler' || profile?.role === 'admin';
-
-  if (!canViewAnalytics) {
-    return (
-      <Layout>
-        <ProtectedRoute>
-          <div className="container mx-auto px-4 py-16 text-center">
-            <Card className="max-w-md mx-auto">
-              <CardContent className="p-8">
-                <AlertCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-gray-700 mb-2 font-poppins">
-                  {t('unauthorized_access')}
-                </h2>
-                <p className="text-gray-600 font-poppins">
-                  {t('view_analytics')} - {t('wholesaler')} {t('registration_required')}
-                </p>
+  return (
+    <ProtectedRoute allowedRoles={['wholesaler', 'admin']}>
+      <DashboardLayout>
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-poppins">Analytics</h1>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium font-poppins">Total Sales</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold font-poppins">PKR 0</div>
+                <p className="text-xs text-muted-foreground font-poppins">+0% from last month</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium font-poppins">Orders</CardTitle>
+                <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold font-poppins">0</div>
+                <p className="text-xs text-muted-foreground font-poppins">+0% from last month</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium font-poppins">Customers</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold font-poppins">0</div>
+                <p className="text-xs text-muted-foreground font-poppins">+0% from last month</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium font-poppins">Revenue</CardTitle>
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold font-poppins">PKR 0</div>
+                <p className="text-xs text-muted-foreground font-poppins">+0% from last month</p>
               </CardContent>
             </Card>
           </div>
-        </ProtectedRoute>
-      </Layout>
-    );
-  }
-
-  return (
-    <Layout>
-      <ProtectedRoute>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-3 mb-8">
-            <TrendingUp className="h-8 w-8 text-green-600" />
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-poppins">
-                {t('analytics_dashboard')}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Real-time analytics with comprehensive insights
-              </p>
-            </div>
-          </div>
           
-          <SellerAnalytics />
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-poppins">Business Analytics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 dark:text-gray-300 font-poppins">
+                Track your business performance, sales trends, and customer insights.
+              </p>
+              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <p className="text-gray-800 dark:text-gray-200 font-poppins text-sm">
+                  📊 Analytics data will appear here once you start making sales!
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </ProtectedRoute>
-    </Layout>
+      </DashboardLayout>
+    </ProtectedRoute>
   );
 };
 

@@ -20,13 +20,13 @@ export const cleanupAuthState = () => {
   });
 };
 
-// Helper function to log audit events directly using the database function
+// Simplified audit logging function
 const logAuditEvent = async (
   eventType: string,
   tableName?: string,
   recordId?: string,
-  oldValues?: any,
-  newValues?: any,
+  oldValues?: Record<string, any>,
+  newValues?: Record<string, any>,
   userAgent?: string
 ) => {
   try {
@@ -35,8 +35,8 @@ const logAuditEvent = async (
     const { error } = await supabase.rpc('log_audit_event', {
       p_user_id: user?.id || null,
       p_event_type: eventType,
-      p_table_name: tableName,
-      p_record_id: recordId,
+      p_table_name: tableName || null,
+      p_record_id: recordId || null,
       p_old_values: oldValues ? JSON.stringify(oldValues) : null,
       p_new_values: newValues ? JSON.stringify(newValues) : null,
       p_user_agent: userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : null)
@@ -104,7 +104,7 @@ export const enhancedSignIn = async (email: string, password: string) => {
     }
     
     // Log login attempt
-    await logAuditEvent('login_attempt', 'profiles', null, null, { 
+    await logAuditEvent('login_attempt', 'profiles', undefined, undefined, { 
       email: cleanEmail,
       timestamp: new Date().toISOString()
     });
@@ -118,7 +118,7 @@ export const enhancedSignIn = async (email: string, password: string) => {
       console.error('Sign in error:', error);
       
       // Log failed login attempt
-      await logAuditEvent('login_failed', 'profiles', null, null, { 
+      await logAuditEvent('login_failed', 'profiles', undefined, undefined, { 
         email: cleanEmail, 
         error: error.message,
         timestamp: new Date().toISOString()
@@ -142,7 +142,7 @@ export const enhancedSignIn = async (email: string, password: string) => {
     }
 
     // Log successful login
-    await logAuditEvent('login_success', 'profiles', data.user?.id, null, { 
+    await logAuditEvent('login_success', 'profiles', data.user?.id, undefined, { 
       email: cleanEmail,
       timestamp: new Date().toISOString()
     });
@@ -159,7 +159,7 @@ export const enhancedSignUp = async (
   email: string, 
   password: string, 
   role: UserRole,
-  businessData?: any
+  businessData?: Record<string, any>
 ) => {
   try {
     console.log('🔐 Starting enhanced sign up process', { email, role });
@@ -180,7 +180,7 @@ export const enhancedSignUp = async (
     }
     
     // Log signup attempt
-    await logAuditEvent('signup_attempt', 'profiles', null, null, { 
+    await logAuditEvent('signup_attempt', 'profiles', undefined, undefined, { 
       email: cleanEmail,
       role,
       timestamp: new Date().toISOString()
@@ -202,7 +202,7 @@ export const enhancedSignUp = async (
       console.error('Sign up error:', error);
       
       // Log failed signup attempt
-      await logAuditEvent('signup_failed', 'profiles', null, null, { 
+      await logAuditEvent('signup_failed', 'profiles', undefined, undefined, { 
         email: cleanEmail, 
         role,
         error: error.message,
@@ -229,7 +229,7 @@ export const enhancedSignUp = async (
     }
 
     // Log successful signup
-    await logAuditEvent('signup_success', 'profiles', data.user?.id, null, { 
+    await logAuditEvent('signup_success', 'profiles', data.user?.id, undefined, { 
       email: cleanEmail,
       role,
       timestamp: new Date().toISOString()
@@ -255,7 +255,7 @@ export const enhancedSignOut = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     
     // Log logout attempt
-    await logAuditEvent('logout_attempt', 'profiles', user?.id, null, {
+    await logAuditEvent('logout_attempt', 'profiles', user?.id, undefined, {
       timestamp: new Date().toISOString()
     });
     
@@ -266,7 +266,7 @@ export const enhancedSignOut = async () => {
     
     if (error) {
       console.error('Sign out error:', error);
-      await logAuditEvent('logout_failed', 'profiles', user?.id, null, {
+      await logAuditEvent('logout_failed', 'profiles', user?.id, undefined, {
         error: error.message,
         timestamp: new Date().toISOString()
       });
@@ -274,7 +274,7 @@ export const enhancedSignOut = async () => {
     }
     
     // Log successful logout
-    await logAuditEvent('logout_success', 'profiles', user?.id, null, {
+    await logAuditEvent('logout_success', 'profiles', user?.id, undefined, {
       timestamp: new Date().toISOString()
     });
     

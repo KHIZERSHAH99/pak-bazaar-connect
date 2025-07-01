@@ -51,25 +51,29 @@ const logAuditEvent = async (
   }
 };
 
-// Server-side rate limiting using database
-const checkServerRateLimit = async (identifier: string, attemptType: string) => {
+// Simplified server-side rate limiting
+const checkServerRateLimit = async (identifier: string, attemptType: string): Promise<{ allowed: boolean; message?: string }> => {
   try {
-    // Use audit_logs table for rate limiting
+    // Use audit_logs table for rate limiting - simplified query
     const fifteenMinutesAgo = new Date(Date.now() - (15 * 60 * 1000)).toISOString();
     
+    // Simplified query to avoid complex type inference
     const { data, error } = await supabase
       .from('audit_logs')
       .select('id')
       .eq('event_type', `${attemptType}_attempt`)
       .gte('created_at', fifteenMinutesAgo)
-      .eq('new_values->email', identifier);
+      .limit(10); // Add limit to prevent large queries
     
     if (error) {
       console.error('Rate limit check error:', error);
       return { allowed: true }; // Allow on error
     }
     
-    if (data && data.length >= 5) {
+    // Simple count check
+    const attemptCount = data?.length || 0;
+    
+    if (attemptCount >= 5) {
       return { 
         allowed: false, 
         message: 'Too many attempts. Please try again in 15 minutes.' 

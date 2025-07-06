@@ -4,10 +4,10 @@ import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePhoneSignupForm } from './signup/usePhoneSignupForm';
-import RoleSelectionStep from './signup/RoleSelectionStep';
+import RoleSelectionStep from './RoleSelectionStep';
 import PhoneAccountInfoStep from './signup/PhoneAccountInfoStep';
 import BusinessInfoStep from './signup/BusinessInfoStep';
-import SellerInfoStep from './signup/SellerInfoStep';
+import SellerInfoStep from './SellerInfoStep';
 import FinalStep from './signup/FinalStep';
 
 const SignupForm: React.FC = () => {

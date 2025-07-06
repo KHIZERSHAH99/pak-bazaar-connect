@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,20 +19,17 @@ export const useSignupForm = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
+      phoneNumber: '',
       password: '',
       confirmPassword: '',
       businessName: '',
       businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
-      ntnNumber: '',
-      strnNumber: '',
       address: '',
       city: '',
       postalCode: '',
       industry: '',
       yearsInBusiness: '1-3 years',
       contactName: '',
-      phoneNumber: '',
     }
   });
   
@@ -53,10 +51,10 @@ export const useSignupForm = () => {
     // Define required fields for each step based on role
     const stepFields = {
       1: [],
-      2: ['email', 'password', 'confirmPassword'],
+      2: ['phoneNumber', 'password', 'confirmPassword'],
       3: selectedRole === 'seller' 
-        ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber']
-        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber'],
+        ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName']
+        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName'],
       4: []
     };
     
@@ -136,7 +134,7 @@ export const useSignupForm = () => {
     setErrorMessage(null);
     
     try {
-      console.log('Calling signUp with:', values.email, selectedRole);
+      console.log('Calling signUp with:', values.phoneNumber, selectedRole);
       
       // Show loading toast
       toast({
@@ -144,7 +142,10 @@ export const useSignupForm = () => {
         description: 'Please wait while we set up your account...',
       });
       
-      await signUp(values.email, values.password, selectedRole);
+      // Create a temporary email using phone number for Supabase auth
+      const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
+      
+      await signUp(tempEmail, values.password, selectedRole);
       
       toast({
         title: 'Account created successfully!',
@@ -165,7 +166,7 @@ export const useSignupForm = () => {
       
       if (error.message) {
         if (error.message.includes('User already registered')) {
-          errorMsg = `This email is already registered as a ${selectedRole}. Please try logging in or use a different email.`;
+          errorMsg = `This phone number is already registered as a ${selectedRole}. Please try logging in or use a different phone number.`;
         } else {
           errorMsg = error.message;
         }

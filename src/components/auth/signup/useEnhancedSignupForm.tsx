@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +13,7 @@ export const useEnhancedSignupForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<UserRole>('wholesaler');
-  const [isEmailBlocked, setIsEmailBlocked] = useState(false);
+  const [isPhoneBlocked, setIsPhoneBlocked] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -20,20 +21,17 @@ export const useEnhancedSignupForm = () => {
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      email: '',
+      phoneNumber: '',
       password: '',
       confirmPassword: '',
       businessName: '',
       businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
-      ntnNumber: '',
-      strnNumber: '',
       address: '',
       city: '',
       postalCode: '',
       industry: '',
       yearsInBusiness: '1-3 years',
       contactName: '',
-      phoneNumber: '',
     }
   });
   
@@ -52,10 +50,10 @@ export const useEnhancedSignupForm = () => {
   const validateCurrentStep = async () => {
     const stepFields = {
       1: [],
-      2: ['email', 'password', 'confirmPassword'],
+      2: ['phoneNumber', 'password', 'confirmPassword'],
       3: selectedRole === 'seller' 
-        ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber']
-        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'phoneNumber', 'ntnNumber', 'industry'],
+        ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName']
+        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'industry'],
       4: []
     };
     
@@ -85,14 +83,14 @@ export const useEnhancedSignupForm = () => {
   const nextStep = async () => {
     console.log('NextStep called, current step:', currentStep, 'selected role:', selectedRole);
     
-    // Block progression if email is blocked
-    if (currentStep === 2 && isEmailBlocked) {
+    // Block progression if phone is blocked
+    if (currentStep === 2 && isPhoneBlocked) {
       toast({
-        title: 'Email Already Registered',
-        description: 'Please use a different email address to continue.',
+        title: 'Phone Number Already Registered',
+        description: 'Please use a different phone number to continue.',
         variant: 'destructive',
       });
-      setErrorMessage('Cannot proceed with an already registered email address.');
+      setErrorMessage('Cannot proceed with an already registered phone number.');
       return;
     }
     
@@ -129,15 +127,15 @@ export const useEnhancedSignupForm = () => {
     setSelectedRole(role);
     // Update business type default based on role
     const defaultBusinessType = role === 'seller' ? 'Retailer' : 'Wholesaler';
-    form.setValue('businessType', defaultBusinessType as any);
+    form.setValue('businessType', defaultBusiness as any);
     console.log('Set default business type to:', defaultBusinessType);
   };
 
-  const handleEmailBlocked = (blocked: boolean) => {
-    setIsEmailBlocked(blocked);
+  const handlePhoneBlocked = (blocked: boolean) => {
+    setIsPhoneBlocked(blocked);
     if (blocked) {
-      setErrorMessage('This email is already registered. Please use a different email address.');
-    } else if (errorMessage && errorMessage.includes('email')) {
+      setErrorMessage('This phone number is already registered. Please use a different phone number.');
+    } else if (errorMessage && errorMessage.includes('phone')) {
       setErrorMessage(null);
     }
   };
@@ -147,10 +145,10 @@ export const useEnhancedSignupForm = () => {
     console.log('Form values:', values);
     
     // Final validation checks
-    if (isEmailBlocked) {
+    if (isPhoneBlocked) {
       toast({
         title: 'Registration Blocked',
-        description: 'Cannot register with an already used email address.',
+        description: 'Cannot register with an already used phone number.',
         variant: 'destructive',
       });
       return;
@@ -183,7 +181,7 @@ export const useEnhancedSignupForm = () => {
     setErrorMessage(null);
     
     try {
-      console.log('Calling enhancedSignUp with:', values.email, selectedRole);
+      console.log('Calling enhancedSignUp with:', values.phoneNumber, selectedRole);
       
       // Show loading toast
       toast({
@@ -191,8 +189,11 @@ export const useEnhancedSignupForm = () => {
         description: 'Please wait while we set up your account...',
       });
       
+      // Create a temporary email using phone number for Supabase auth
+      const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
+      
       // Call enhanced signup with form data
-      await enhancedSignUp(values.email, values.password, selectedRole, values);
+      await enhancedSignUp(tempEmail, values.password, selectedRole, values);
       
       toast({
         title: 'Account Created Successfully!',
@@ -218,9 +219,9 @@ export const useEnhancedSignupForm = () => {
       
       if (error.message) {
         if (error.message.includes('User already registered') || error.message.includes('already exists')) {
-          errorMsg = `This email is already registered. Please try logging in or use a different email.`;
-        } else if (error.message.includes('Invalid email')) {
-          errorMsg = 'Please enter a valid email address.';
+          errorMsg = `This phone number is already registered. Please try logging in or use a different phone number.`;
+        } else if (error.message.includes('Invalid phone')) {
+          errorMsg = 'Please enter a valid phone number.';
         } else if (error.message.includes('Password')) {
           errorMsg = 'Password does not meet requirements. Please choose a stronger password.';
         } else if (error.message.includes('network') || error.message.includes('fetch')) {
@@ -238,8 +239,8 @@ export const useEnhancedSignupForm = () => {
         variant: 'destructive',
       });
       
-      // If it's an email error, go back to step 2
-      if (errorMsg.includes('email') && currentStep > 2) {
+      // If it's a phone error, go back to step 2
+      if (errorMsg.includes('phone') && currentStep > 2) {
         setCurrentStep(2);
       }
       
@@ -255,12 +256,12 @@ export const useEnhancedSignupForm = () => {
     errorMessage,
     selectedRole,
     totalSteps,
-    isEmailBlocked,
+    isPhoneBlocked,
     getStepTitle,
     nextStep,
     prevStep,
     handleRoleSelect,
-    handleEmailBlocked,
+    handlePhoneBlocked,
     onSubmit
   };
 };

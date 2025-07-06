@@ -4,7 +4,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Eye, EyeOff, Phone, Lock, AlertCircle, CheckCircle, X, Loader2 } from 'lucide-react';
-import { checkPhoneExistsGlobal } from '@/lib/validation-enhanced';
+import { checkPhoneExists } from '@/lib/validation-enhanced';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -40,7 +40,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
 
       try {
         setPhoneStatus('checking');
-        const exists = await checkPhoneExistsGlobal(debouncedPhone);
+        const exists = await checkPhoneExists(debouncedPhone);
         
         if (exists) {
           setPhoneStatus('blocked');

@@ -127,7 +127,7 @@ export const useEnhancedSignupForm = () => {
     setSelectedRole(role);
     // Update business type default based on role
     const defaultBusinessType = role === 'seller' ? 'Retailer' : 'Wholesaler';
-    form.setValue('businessType', defaultBusiness as any);
+    form.setValue('businessType', defaultBusinessType as any);
     console.log('Set default business type to:', defaultBusinessType);
   };
 

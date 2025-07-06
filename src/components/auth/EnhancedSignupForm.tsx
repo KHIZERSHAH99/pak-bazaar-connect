@@ -20,12 +20,12 @@ const EnhancedSignupForm = () => {
     errorMessage,
     selectedRole,
     totalSteps,
-    isEmailBlocked,
+    isPhoneBlocked,
     getStepTitle,
     nextStep,
     prevStep,
     handleRoleSelect,
-    handleEmailBlocked,
+    handlePhoneBlocked,
     onSubmit
   } = useEnhancedSignupForm();
 
@@ -62,7 +62,7 @@ const EnhancedSignupForm = () => {
                 form={form} 
                 isLoading={isLoading} 
                 selectedRole={selectedRole}
-                onEmailBlocked={handleEmailBlocked}
+                onPhoneBlocked={handlePhoneBlocked}
               />
             )}
             
@@ -81,7 +81,7 @@ const EnhancedSignupForm = () => {
             <NavigationButtons
               currentStep={currentStep}
               totalSteps={totalSteps}
-              isLoading={isLoading || isEmailBlocked}
+              isLoading={isLoading || isPhoneBlocked}
               selectedRole={selectedRole}
               onPrevStep={prevStep}
               onNextStep={nextStep}

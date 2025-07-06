@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Building2, Edit3, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -22,9 +21,7 @@ const BusinessDetails: React.FC<BusinessDetailsProps> = ({ profile, onUpdate }) 
     business_name: profile.business_name || '',
     business_type: profile.business_type || 'wholesaler',
     industry: profile.industry || '',
-    years_in_business: profile.years_in_business || '',
-    ntn_number: profile.ntn_number || '',
-    strn_number: profile.strn_number || ''
+    years_in_business: profile.years_in_business || ''
   });
   const { toast } = useToast();
 
@@ -69,9 +66,7 @@ const BusinessDetails: React.FC<BusinessDetailsProps> = ({ profile, onUpdate }) 
       business_name: profile.business_name || '',
       business_type: profile.business_type || 'wholesaler',
       industry: profile.industry || '',
-      years_in_business: profile.years_in_business || '',
-      ntn_number: profile.ntn_number || '',
-      strn_number: profile.strn_number || ''
+      years_in_business: profile.years_in_business || ''
     });
     setIsEditing(false);
   };
@@ -89,7 +84,7 @@ const BusinessDetails: React.FC<BusinessDetailsProps> = ({ profile, onUpdate }) 
                 Business Information
               </h2>
               <p className="text-blue-700 dark:text-blue-200 text-sm font-poppins">
-                Manage your business details and registration information
+                Manage your business details and information
               </p>
             </div>
           </div>
@@ -189,44 +184,6 @@ const BusinessDetails: React.FC<BusinessDetailsProps> = ({ profile, onUpdate }) 
               <div className="p-3 bg-muted/50 rounded-md border border-border/50">
                 <p className="font-medium text-foreground font-poppins">
                   {profile.years_in_business || 'Not provided'}
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ntn_number" className="font-poppins">NTN Number</Label>
-            {isEditing ? (
-              <Input
-                id="ntn_number"
-                value={formData.ntn_number}
-                onChange={(e) => handleInputChange('ntn_number', e.target.value)}
-                placeholder="Enter NTN number"
-                className="font-poppins"
-              />
-            ) : (
-              <div className="p-3 bg-muted/50 rounded-md border border-border/50">
-                <p className="font-medium text-foreground font-poppins">
-                  {profile.ntn_number || 'Not provided'}
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="strn_number" className="font-poppins">STRN Number</Label>
-            {isEditing ? (
-              <Input
-                id="strn_number"
-                value={formData.strn_number}
-                onChange={(e) => handleInputChange('strn_number', e.target.value)}
-                placeholder="Enter STRN number"
-                className="font-poppins"
-              />
-            ) : (
-              <div className="p-3 bg-muted/50 rounded-md border border-border/50">
-                <p className="font-medium text-foreground font-poppins">
-                  {profile.strn_number || 'Not provided'}
                 </p>
               </div>
             )}

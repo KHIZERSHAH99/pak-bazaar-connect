@@ -1,71 +1,60 @@
 
-import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import LoginForm from '@/components/auth/LoginForm';
-import LoginHeader from '@/components/auth/LoginHeader';
-import { Card } from '@/components/ui/card';
-import { Flag } from 'lucide-react';
+import PhoneLoginForm from '@/components/auth/PhoneLoginForm';
+import SignupForm from '@/components/auth/SignupForm';
+import { Button } from '@/components/ui/button';
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
-  React.useEffect(() => {
-    if (user) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [user, navigate]);
+  const [showSignup, setShowSignup] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-green-50 dark:from-gray-950 dark:to-gray-900 flex flex-col">
-      {/* Top Banner */}
-      <div className="bg-pakistani_green-700 text-white py-2 px-4 text-center relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center opacity-5">
-          <Flag className="w-40 h-40 text-white" />
+    <Layout>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-poppins mb-2">
+              {showSignup ? 'Create Account' : 'Welcome Back'}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 font-poppins">
+              {showSignup 
+                ? 'Sign up to start your business journey' 
+                : 'Sign in to your account'
+              }
+            </p>
+          </div>
         </div>
-        <p className="font-medium text-sm md:text-base font-poppins">Join Now! Free Ads for First 10 Wholesalers!</p>
-      </div>
 
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-950 shadow-sm py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link to="/" className="flex items-center">
-            <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md">
-              <span className="text-white text-2xl font-bold">PBC</span>
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
+          <div className="px-4 py-8 sm:px-10">
+            {showSignup ? <SignupForm /> : <PhoneLoginForm />}
+            
+            <div className="mt-6 text-center">
+              <Button
+                variant="link"
+                onClick={() => setShowSignup(!showSignup)}
+                className="text-pakistani_green-600 hover:text-pakistani_green-700 font-poppins"
+              >
+                {showSignup 
+                  ? 'Already have an account? Sign in' 
+                  : "Don't have an account? Sign up"
+                }
+              </Button>
             </div>
-            <span className="ml-2 text-xl font-bold text-pakistani_green-800 dark:text-white hidden md:inline font-poppins">
-              Pak Bazaar Connect
-            </span>
-          </Link>
-          
-          <nav className="flex items-center space-x-2">
-            <Link to="/signup">
-              <button className="border border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 dark:text-pakistani_green-200 dark:border-pakistani_green-300 dark:hover:bg-gray-900 px-4 py-2 rounded-md text-sm font-medium font-poppins transition-colors">
-                Sign Up
-              </button>
-            </Link>
-          </nav>
-        </div>
-      </header>
 
-      <div className="container mx-auto flex-grow py-12 px-4">
-        <div className="max-w-md mx-auto">
-          <Card className="border-none shadow-lg overflow-hidden bg-card dark:bg-gray-900">
-            <LoginHeader />
-            <LoginForm />
-          </Card>
+            <div className="mt-6 text-center">
+              <Link
+                to="/"
+                className="text-sm text-gray-600 dark:text-gray-300 hover:text-pakistani_green-600 font-poppins"
+              >
+                ← Back to Home
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-pakistani_green-800 dark:bg-gray-950 text-white py-4 px-6">
-        <div className="container mx-auto text-center text-sm font-poppins">
-          <p>© 2024 Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.</p>
-        </div>
-      </footer>
-    </div>
+    </Layout>
   );
 };
 

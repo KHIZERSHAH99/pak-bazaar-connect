@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Store, Package, CreditCard, MessageSquare, BarChart3 } from 'lucide-react';
-import WholesalerShops from './WholesalerShops';
-import WholesalerProducts from './WholesalerProducts';
-import WholesalerAds from './WholesalerAds';
+import ShopsManagement from './ShopsManagement';
+import ProductsManagement from './ProductsManagement';
+import AdsManagement from './AdsManagement';
 import WholesalerOrders from './WholesalerOrders';
 import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
@@ -46,11 +46,11 @@ const WholesalerDashboard: React.FC = () => {
             </TabsList>
 
             <TabsContent value="shops">
-              <WholesalerShops />
+              <ShopsManagement />
             </TabsContent>
 
             <TabsContent value="products">
-              <WholesalerProducts />
+              <ProductsManagement />
             </TabsContent>
 
             <TabsContent value="orders">
@@ -58,7 +58,7 @@ const WholesalerDashboard: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="ads">
-              <WholesalerAds />
+              <AdsManagement />
             </TabsContent>
 
             <TabsContent value="payment">

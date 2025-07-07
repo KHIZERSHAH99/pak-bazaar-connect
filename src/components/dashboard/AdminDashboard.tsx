@@ -1,80 +1,164 @@
 
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
-import { FileText, MessageSquare, Users, BarChart3, Shield } from 'lucide-react';
-import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Users, MessageSquare, DollarSign, Settings, Eye } from 'lucide-react';
+import { getRoleRequests, approveRoleRequest } from '@/lib/supabase';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
+import CommissionDashboard from '@/components/admin/CommissionDashboard';
+import ChatInterface from '@/components/chat/ChatInterface';
 
-const AdminDashboard: React.FC = () => (
-  <div className="animate-fadeIn space-y-6">
-    <Breadcrumbs items={[
-      { label: 'Dashboard', href: '/dashboard' },
-      { label: 'Admin' }
-    ]} />
-    
-    <div>
-      <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 font-poppins">Admin Dashboard</h1>
-      <p className="text-muted-foreground font-poppins">Platform administration and oversight</p>
-    </div>
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-      <Link to="/admin" aria-label="Go to Admin Panel">
-        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group focus-within:ring-2 focus-within:ring-green-500">
-          <div className="flex items-center mb-4">
-            <div className="bg-blue-100 dark:bg-blue-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <BarChart3 className="h-6 w-6 text-blue-700 dark:text-blue-400" />
-            </div>
-            <h3 className="text-lg font-semibold font-poppins">Admin Panel</h3>
-          </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Comprehensive platform overview and management tools.</p>
-        </Card>
-      </Link>
+const AdminDashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('commissions');
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-      <Link to="/dashboard/ad-approvals" aria-label="Go to Ad Approvals">
-        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group focus-within:ring-2 focus-within:ring-green-500">
-          <div className="flex items-center mb-4">
-            <div className="bg-purple-100 dark:bg-purple-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <FileText className="h-6 w-6 text-purple-700 dark:text-purple-400" />
-            </div>
-            <h3 className="text-lg font-semibold font-poppins">Ad Approvals</h3>
-          </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Review and approve advertisement submissions from wholesalers.</p>
-        </Card>
-      </Link>
+  const { data: roleRequests = [], isLoading } = useQuery({
+    queryKey: ['role-requests'],
+    queryFn: getRoleRequests,
+  });
 
-      <Link to="/dashboard/chat" aria-label="Go to Support Chat">
-        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group focus-within:ring-2 focus-within:ring-green-500">
-          <div className="flex items-center mb-4">
-            <div className="bg-green-100 dark:bg-green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <MessageSquare className="h-6 w-6 text-green-700 dark:text-green-400" />
-            </div>
-            <h3 className="text-lg font-semibold font-poppins">Support Chat</h3>
-          </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Access the AI chat support to help users with questions.</p>
-        </Card>
-      </Link>
+  const approveMutation = useMutation({
+    mutationFn: approveRoleRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['role-requests'] });
+      toast({
+        title: "Role Request Approved",
+        description: "The role change has been approved successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to approve role request",
+        variant: "destructive",
+      });
+    },
+  });
 
-      <Card className="p-4 md:p-6 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-        <div className="flex items-center mb-4">
-          <div className="bg-green-100 dark:bg-green-800/50 p-3 rounded-full mr-4">
-            <Users className="h-6 w-6 text-green-700 dark:text-green-400" />
-          </div>
-          <h3 className="text-lg font-semibold font-poppins text-green-800 dark:text-green-200">User Management</h3>
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900 font-poppins">Admin Dashboard</h1>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="commissions" className="font-poppins">
+                <DollarSign className="h-4 w-4 mr-2" />
+                Commissions
+              </TabsTrigger>
+              <TabsTrigger value="role-requests" className="font-poppins">
+                <Users className="h-4 w-4 mr-2" />
+                Role Requests
+              </TabsTrigger>
+              <TabsTrigger value="preview" className="font-poppins">
+                <Eye className="h-4 w-4 mr-2" />
+                Preview
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="font-poppins">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="commissions">
+              <CommissionDashboard />
+            </TabsContent>
+
+            <TabsContent value="role-requests">
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold font-poppins">Pending Role Requests</h2>
+                
+                {isLoading ? (
+                  <div className="space-y-4">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="animate-pulse bg-gray-200 h-20 rounded"></div>
+                    ))}
+                  </div>
+                ) : roleRequests.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 font-poppins">No pending role requests</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {roleRequests.map((request: any) => (
+                      <div key={request.id} className="border rounded-lg p-4 flex justify-between items-center">
+                        <div>
+                          <p className="font-medium font-poppins">
+                            User ID: {request.user_id}
+                          </p>
+                          <p className="text-sm text-gray-600 font-poppins">
+                            Requested Role: <span className="font-medium">{request.requested_role}</span>
+                          </p>
+                          <p className="text-xs text-gray-500 font-poppins">
+                            Submitted: {new Date(request.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => approveMutation.mutate(request.id)}
+                          disabled={approveMutation.isPending}
+                          className="bg-pakistani_green-600 text-white px-4 py-2 rounded hover:bg-pakistani_green-700 disabled:opacity-50 font-poppins"
+                        >
+                          {approveMutation.isPending ? 'Approving...' : 'Approve'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="preview">
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold font-poppins">User Experience Preview</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border rounded-lg p-6 text-center">
+                    <h3 className="font-medium mb-4 font-poppins">Wholesaler View</h3>
+                    <button
+                      onClick={() => window.open('/dashboard?preview=wholesaler', '_blank')}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-poppins"
+                    >
+                      Preview Dashboard
+                    </button>
+                  </div>
+                  <div className="border rounded-lg p-6 text-center">
+                    <h3 className="font-medium mb-4 font-poppins">Seller View</h3>
+                    <button
+                      onClick={() => window.open('/dashboard?preview=seller', '_blank')}
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-poppins"
+                    >
+                      Preview Dashboard
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="settings">
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold font-poppins">System Settings</h2>
+                <div className="border rounded-lg p-6">
+                  <p className="text-gray-600 font-poppins">
+                    Advanced system settings and configurations will be available here.
+                  </p>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
-        <p className="text-green-700 dark:text-green-300 font-poppins text-sm md:text-base">Users can now instantly switch roles without approval. Role changes are immediate and automatic.</p>
-      </Card>
 
-      <Card className="p-4 md:p-6 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-        <div className="flex items-center mb-4">
-          <div className="bg-blue-100 dark:bg-blue-800/50 p-3 rounded-full mr-4">
-            <Shield className="h-6 w-6 text-blue-700 dark:text-blue-400" />
+        <div className="space-y-6">
+          <div className="lg:block hidden">
+            <ChatInterface />
           </div>
-          <h3 className="text-lg font-semibold font-poppins text-blue-800 dark:text-blue-200">Platform Security</h3>
         </div>
-        <p className="text-blue-700 dark:text-blue-300 font-poppins text-sm md:text-base">Monitor platform security, user verification, and fraud prevention.</p>
-      </Card>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default AdminDashboard;

@@ -1,83 +1,83 @@
 
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
-import { Store, Package, FileText, ShoppingCart, BarChart3 } from 'lucide-react';
-import QuickActions from './QuickActions';
-import DashboardStats from './DashboardStats';
+import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Store, Package, CreditCard, MessageSquare, BarChart3 } from 'lucide-react';
+import WholesalerShops from './WholesalerShops';
+import WholesalerProducts from './WholesalerProducts';
+import WholesalerAds from './WholesalerAds';
+import WholesalerOrders from './WholesalerOrders';
+import ChatInterface from '@/components/chat/ChatInterface';
+import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
+import NotificationCenter from '@/components/notifications/NotificationCenter';
 
-const WholesalerDashboard: React.FC = () => (
-  <div className="animate-fadeIn space-y-6">
-    <div>
-      <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 font-poppins">Wholesaler Dashboard</h1>
-      <p className="text-muted-foreground font-poppins">Manage your business operations and track performance</p>
+const WholesalerDashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('shops');
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900 font-poppins">Wholesaler Dashboard</h1>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="shops" className="font-poppins">
+                <Store className="h-4 w-4 mr-2" />
+                Shops
+              </TabsTrigger>
+              <TabsTrigger value="products" className="font-poppins">
+                <Package className="h-4 w-4 mr-2" />
+                Products
+              </TabsTrigger>
+              <TabsTrigger value="orders" className="font-poppins">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Orders
+              </TabsTrigger>
+              <TabsTrigger value="ads" className="font-poppins">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Ads
+              </TabsTrigger>
+              <TabsTrigger value="payment" className="font-poppins">
+                <CreditCard className="h-4 w-4 mr-2" />
+                Payment
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="shops">
+              <WholesalerShops />
+            </TabsContent>
+
+            <TabsContent value="products">
+              <WholesalerProducts />
+            </TabsContent>
+
+            <TabsContent value="orders">
+              <WholesalerOrders />
+            </TabsContent>
+
+            <TabsContent value="ads">
+              <WholesalerAds />
+            </TabsContent>
+
+            <TabsContent value="payment">
+              <PaymentMethodsSetup />
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div className="space-y-6">
+          <NotificationCenter />
+          
+          <div className="lg:block hidden">
+            <ChatInterface />
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <DashboardStats />
-    <QuickActions />
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-      <Link to="/dashboard/shops">
-        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
-          <div className="flex items-center mb-4">
-            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <Store className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
-            </div>
-            <h3 className="text-lg font-semibold font-poppins">My Shops</h3>
-          </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Manage your wholesale shops and business information.</p>
-        </Card>
-      </Link>
-      
-      <Link to="/dashboard/products">
-        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
-          <div className="flex items-center mb-4">
-            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <Package className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
-            </div>
-            <h3 className="text-lg font-semibold font-poppins">Products</h3>
-          </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Add and manage your product catalog.</p>
-        </Card>
-      </Link>
-      
-      <Link to="/dashboard/ads">
-        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
-          <div className="flex items-center mb-4">
-            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <FileText className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
-            </div>
-            <h3 className="text-lg font-semibold font-poppins">Advertisements</h3>
-          </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Create and manage your advertising campaigns.</p>
-        </Card>
-      </Link>
-      
-      <Link to="/dashboard/wholesaler-orders">
-        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
-          <div className="flex items-center mb-4">
-            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <ShoppingCart className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
-            </div>
-            <h3 className="text-lg font-semibold font-poppins">Orders</h3>
-          </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">View and manage incoming orders from sellers.</p>
-        </Card>
-      </Link>
-      
-      <Link to="/dashboard/analytics">
-        <Card className="p-4 md:p-6 hover:bg-muted transition-all duration-200 cursor-pointer h-full hover:shadow-md group">
-          <div className="flex items-center mb-4">
-            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform">
-              <BarChart3 className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
-            </div>
-            <h3 className="text-lg font-semibold font-poppins">Analytics</h3>
-          </div>
-          <p className="text-muted-foreground font-poppins text-sm md:text-base">Track your business performance and insights.</p>
-        </Card>
-      </Link>
-    </div>
-  </div>
-);
+  );
+};
 
 export default WholesalerDashboard;

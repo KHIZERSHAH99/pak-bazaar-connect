@@ -197,6 +197,38 @@ export type Database = {
           },
         ]
       }
+      commission_settings: {
+        Row: {
+          commission_percentage: number | null
+          created_at: string | null
+          created_by: string | null
+          effective_from: string | null
+          id: string
+        }
+        Insert: {
+          commission_percentage?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          effective_from?: string | null
+          id?: string
+        }
+        Update: {
+          commission_percentage?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          effective_from?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_settings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commissions: {
         Row: {
           commission_amount: number
@@ -344,6 +376,91 @@ export type Database = {
           },
         ]
       }
+      monthly_commissions: {
+        Row: {
+          commission_amount: number | null
+          commission_percentage: number | null
+          created_at: string | null
+          due_date: string | null
+          id: string
+          month: string
+          paid_at: string | null
+          payment_status: string | null
+          total_sales: number | null
+          wholesaler_id: string
+        }
+        Insert: {
+          commission_amount?: number | null
+          commission_percentage?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          month: string
+          paid_at?: string | null
+          payment_status?: string | null
+          total_sales?: number | null
+          wholesaler_id: string
+        }
+        Update: {
+          commission_amount?: number | null
+          commission_percentage?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          month?: string
+          paid_at?: string | null
+          payment_status?: string | null
+          total_sales?: number | null
+          wholesaler_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_commissions_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_actions: {
         Row: {
           action: string
@@ -462,6 +579,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          auto_delete_screenshot_at: string | null
           buyer_address: string | null
           buyer_id: string
           buyer_name: string | null
@@ -469,10 +587,13 @@ export type Database = {
           commission_id: string | null
           confirmed_at: string | null
           created_at: string | null
+          delivered_at: string | null
+          delivery_confirmed_by: string | null
           id: string
           payment_method: string | null
           payment_screenshot: string | null
           rejected_at: string | null
+          rejection_reason: string | null
           screenshot_uploaded_at: string | null
           shop_id: string
           status: string
@@ -480,6 +601,7 @@ export type Database = {
           wholesaler_notes: string | null
         }
         Insert: {
+          auto_delete_screenshot_at?: string | null
           buyer_address?: string | null
           buyer_id: string
           buyer_name?: string | null
@@ -487,10 +609,13 @@ export type Database = {
           commission_id?: string | null
           confirmed_at?: string | null
           created_at?: string | null
+          delivered_at?: string | null
+          delivery_confirmed_by?: string | null
           id?: string
           payment_method?: string | null
           payment_screenshot?: string | null
           rejected_at?: string | null
+          rejection_reason?: string | null
           screenshot_uploaded_at?: string | null
           shop_id: string
           status?: string
@@ -498,6 +623,7 @@ export type Database = {
           wholesaler_notes?: string | null
         }
         Update: {
+          auto_delete_screenshot_at?: string | null
           buyer_address?: string | null
           buyer_id?: string
           buyer_name?: string | null
@@ -505,10 +631,13 @@ export type Database = {
           commission_id?: string | null
           confirmed_at?: string | null
           created_at?: string | null
+          delivered_at?: string | null
+          delivery_confirmed_by?: string | null
           id?: string
           payment_method?: string | null
           payment_screenshot?: string | null
           rejected_at?: string | null
+          rejection_reason?: string | null
           screenshot_uploaded_at?: string | null
           shop_id?: string
           status?: string
@@ -516,6 +645,13 @@ export type Database = {
           wholesaler_notes?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "orders_delivery_confirmed_by_fkey"
+            columns: ["delivery_confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "orders_shop_id_fkey"
             columns: ["shop_id"]
@@ -676,6 +812,8 @@ export type Database = {
           id: string
           industry: string | null
           is_suspended: boolean | null
+          last_commission_payment: string | null
+          last_order_data: Json | null
           last_role_switch: string | null
           ntn_number: string | null
           otp_attempts: number | null
@@ -689,7 +827,9 @@ export type Database = {
           role_switch_count: number | null
           selfie_image: string | null
           strn_number: string | null
+          suspended_until: string | null
           suspension_reason: string | null
+          suspension_type: string | null
           updated_at: string | null
           verification_notes: string | null
           verification_status: string | null
@@ -708,6 +848,8 @@ export type Database = {
           id: string
           industry?: string | null
           is_suspended?: boolean | null
+          last_commission_payment?: string | null
+          last_order_data?: Json | null
           last_role_switch?: string | null
           ntn_number?: string | null
           otp_attempts?: number | null
@@ -721,7 +863,9 @@ export type Database = {
           role_switch_count?: number | null
           selfie_image?: string | null
           strn_number?: string | null
+          suspended_until?: string | null
           suspension_reason?: string | null
+          suspension_type?: string | null
           updated_at?: string | null
           verification_notes?: string | null
           verification_status?: string | null
@@ -740,6 +884,8 @@ export type Database = {
           id?: string
           industry?: string | null
           is_suspended?: boolean | null
+          last_commission_payment?: string | null
+          last_order_data?: Json | null
           last_role_switch?: string | null
           ntn_number?: string | null
           otp_attempts?: number | null
@@ -753,7 +899,9 @@ export type Database = {
           role_switch_count?: number | null
           selfie_image?: string | null
           strn_number?: string | null
+          suspended_until?: string | null
           suspension_reason?: string | null
+          suspension_type?: string | null
           updated_at?: string | null
           verification_notes?: string | null
           verification_status?: string | null
@@ -877,6 +1025,14 @@ export type Database = {
         Args: { p_order_id: string; p_status: string; p_notes?: string }
         Returns: string
       }
+      calculate_monthly_commissions: {
+        Args: { target_month?: string }
+        Returns: undefined
+      }
+      delete_completed_order_screenshots: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       delete_old_payment_screenshots: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -916,6 +1072,10 @@ export type Database = {
           p_new_values?: string
           p_user_agent?: string
         }
+        Returns: undefined
+      }
+      suspend_overdue_accounts: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       switch_business_role: {

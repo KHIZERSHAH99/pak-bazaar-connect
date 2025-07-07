@@ -33,8 +33,14 @@ const NotificationCenter: React.FC = () => {
 
       if (error) throw error;
       
-      setNotifications(data || []);
-      setUnreadCount(data?.filter(n => !n.read_at).length || 0);
+      // Cast the data to proper types
+      const typedNotifications: Notification[] = (data || []).map((item: any) => ({
+        ...item,
+        type: item.type as 'order_status' | 'commission' | 'suspension' | 'general'
+      }));
+      
+      setNotifications(typedNotifications);
+      setUnreadCount(typedNotifications.filter(n => !n.read_at).length);
     } catch (error) {
       console.error('Error fetching notifications:', error);
     } finally {

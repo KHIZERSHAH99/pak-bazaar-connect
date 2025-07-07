@@ -161,7 +161,14 @@ export const getMonthlyCommissions = async (wholesalerId?: string): Promise<Mont
 
     const { data, error } = await query;
     if (error) throw error;
-    return data || [];
+    
+    // Cast the data to proper types
+    const typedCommissions: MonthlyCommission[] = (data || []).map((item: any) => ({
+      ...item,
+      payment_status: item.payment_status as 'unpaid' | 'paid' | 'overdue'
+    }));
+    
+    return typedCommissions;
   } catch (error) {
     console.error('Error fetching monthly commissions:', error);
     throw error;

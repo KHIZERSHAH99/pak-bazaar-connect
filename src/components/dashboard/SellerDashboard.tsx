@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Package, MessageSquare, Bell } from 'lucide-react';
 import SellerOrders from './SellerOrders';
-import ChatInterface from '@/components/chat/ChatInterface';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const SellerDashboard: React.FC = () => {
@@ -26,33 +25,21 @@ const SellerDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-1">
               <TabsTrigger value="orders" className="font-poppins">
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 My Orders
-              </TabsTrigger>
-              <TabsTrigger value="chat" className="font-poppins lg:hidden">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Support
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="orders">
               <SellerOrders />
             </TabsContent>
-
-            <TabsContent value="chat" className="lg:hidden">
-              <ChatInterface />
-            </TabsContent>
           </Tabs>
         </div>
 
         <div className="space-y-6">
           <NotificationCenter />
-          
-          <div className="lg:block hidden">
-            <ChatInterface />
-          </div>
         </div>
       </div>
     </div>

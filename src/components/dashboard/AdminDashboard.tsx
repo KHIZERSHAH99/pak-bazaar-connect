@@ -6,7 +6,6 @@ import { getRoleRequests, approveRoleRequest } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import CommissionDashboard from '@/components/admin/CommissionDashboard';
-import ChatInterface from '@/components/chat/ChatInterface';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('commissions');
@@ -43,7 +42,7 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-4">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="commissions" className="font-poppins">
@@ -149,12 +148,6 @@ const AdminDashboard: React.FC = () => {
               </div>
             </TabsContent>
           </Tabs>
-        </div>
-
-        <div className="space-y-6">
-          <div className="lg:block hidden">
-            <ChatInterface />
-          </div>
         </div>
       </div>
     </div>

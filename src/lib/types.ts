@@ -1,4 +1,3 @@
-
 // Define all the types needed for our application
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
 
@@ -24,6 +23,10 @@ export interface Profile {
   verification_notes?: string;
   is_suspended?: boolean;
   suspension_reason?: string;
+  suspension_type?: string;
+  suspended_until?: string;
+  last_commission_payment?: string;
+  last_order_data?: any;
   created_at?: string;
   updated_at?: string;
 }
@@ -158,6 +161,10 @@ export interface Order {
   screenshot_uploaded_at?: string;
   confirmed_at?: string;
   rejected_at?: string;
+  rejection_reason?: string;
+  delivered_at?: string;
+  delivery_confirmed_by?: string;
+  auto_delete_screenshot_at?: string;
   wholesaler_notes?: string;
   created_at?: string;
   // Joined data

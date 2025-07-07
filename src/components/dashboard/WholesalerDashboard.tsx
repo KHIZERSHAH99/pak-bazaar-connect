@@ -7,7 +7,6 @@ import WholesalerShops from './WholesalerShops';
 import WholesalerProducts from './WholesalerProducts';
 import WholesalerAds from './WholesalerAds';
 import WholesalerOrders from './WholesalerOrders';
-import ChatInterface from '@/components/chat/ChatInterface';
 import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 
@@ -70,10 +69,6 @@ const WholesalerDashboard: React.FC = () => {
 
         <div className="space-y-6">
           <NotificationCenter />
-          
-          <div className="lg:block hidden">
-            <ChatInterface />
-          </div>
         </div>
       </div>
     </div>

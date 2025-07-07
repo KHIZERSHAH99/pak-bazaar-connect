@@ -1,150 +1,168 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { AlertCircle, Mail, Key, Shield } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import AdminLoginForm from './AdminLoginForm';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { enhancedSignIn } from '@/lib/auth-enhanced';
 
 const LoginForm: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [attempts, setAttempts] = useState(0);
+  const { toast } = useToast();
   const navigate = useNavigate();
-  const { signIn } = useAuth();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    
-    if (!email || !password) {
-      setError('Please enter both email and password');
-      return;
-    }
-    
-    if (attempts >= 5) {
-      setError('Too many failed attempts. Please wait before trying again.');
-      return;
-    }
-    
     setIsLoading(true);
 
     try {
-      const result = await signIn(email, password);
+      // Clean phone number
+      const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
       
-      if (result.error) {
-        setAttempts(prev => prev + 1);
-        setError(result.error);
-      } else {
-        navigate('/dashboard');
+      if (cleanPhone.length < 10) {
+        throw new Error('Please enter a valid phone number');
       }
+
+      // Convert phone to temp email format
+      const tempEmail = `${cleanPhone}@temp-phone-auth.com`;
+      
+      await enhancedSignIn(tempEmail, password);
+
+      toast({
+        title: 'Welcome back!',
+        description: 'You have successfully logged in.',
+      });
+
+      // Force navigation with page reload for clean state
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1000);
+
     } catch (error: any) {
       console.error('Login error:', error);
-      setAttempts(prev => prev + 1);
-      setError('Login failed. Please try again.');
+      
+      let errorMessage = 'Login failed. Please check your credentials.';
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        errorMessage = 'Invalid phone number or password. Please try again.';
+      } else if (error.message?.includes('Email not confirmed')) {
+        errorMessage = 'Please verify your account before logging in.';
+      } else if (error.message?.includes('Too many requests')) {
+        errorMessage = 'Too many login attempts. Please wait a moment and try again.';
+      }
+
+      toast({
+        title: 'Login Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (showAdminLogin) {
-    return (
-      <Card className="border-none shadow-lg overflow-hidden bg-card dark:bg-card">
-        <CardContent className="pt-6">
-          <AdminLoginForm onBackToRegular={() => setShowAdminLogin(false)} />
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="border-none shadow-lg overflow-hidden bg-card dark:bg-card">
-      <CardContent className="pt-6">
-        {error && (
-          <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center text-red-600 dark:text-red-300 text-sm border border-red-100 dark:border-red-800">
-            <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-            <span>{error}</span>
+    <Card className="w-full max-w-md mx-auto shadow-lg">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold text-pakistani_green-700 font-poppins">
+          Welcome Back
+        </CardTitle>
+        <CardDescription className="font-poppins">
+          Enter your phone number and password to access your account
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber" className="flex items-center font-poppins">
+              <Phone className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              Phone Number
+            </Label>
+            <Input
+              id="phoneNumber"
+              type="tel"
+              placeholder="03XX XXXXXXX"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              disabled={isLoading}
+              className="font-poppins"
+              required
+            />
           </div>
-        )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-foreground flex items-center font-poppins">
-              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-300" />
-              Email Address
-            </label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="w-full p-3 bg-background dark:bg-background border border-input dark:border-input rounded-md focus-visible:ring-pakistani_green-500 font-poppins"
-              disabled={isLoading || attempts >= 5}
-              autoComplete="email"
-              required
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-foreground flex items-center font-poppins">
-              <Key className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-300" />
+            <Label htmlFor="password" className="flex items-center font-poppins">
+              <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
               Password
-            </label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className="w-full p-3 bg-background dark:bg-background border border-input dark:border-input rounded-md focus-visible:ring-pakistani_green-500 font-poppins"
-              disabled={isLoading || attempts >= 5}
-              autoComplete="current-password"
-              required
-            />
+            </Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                className="font-poppins pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                disabled={isLoading}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <Eye className="h-4 w-4 text-muted-foreground" />
+                )}
+              </button>
+            </div>
           </div>
-          
+
           <Button
             type="submit"
-            className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 dark:bg-pakistani_green-700 dark:hover:bg-pakistani_green-600 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-colors font-poppins"
-            disabled={isLoading || attempts >= 5}
-          >
-            {isLoading ? 'Logging In...' : 'Log In'}
-          </Button>
-
-          {attempts >= 5 && (
-            <p className="text-sm text-red-600 dark:text-red-400 text-center font-poppins">
-              Account temporarily locked due to multiple failed attempts. Please try again later.
-            </p>
-          )}
-        </form>
-        
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => setShowAdminLogin(true)}
-            className="inline-flex items-center text-xs text-muted-foreground hover:text-pakistani_green-600 dark:hover:text-pakistani_green-300 transition-colors font-poppins"
+            className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
             disabled={isLoading}
           >
-            <Shield className="h-3 w-3 mr-1" />
-            Admin Access
-          </button>
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Signing In...
+              </>
+            ) : (
+              'Sign In'
+            )}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-muted-foreground font-poppins">
+            Don't have an account?{' '}
+            <a 
+              href="/signup" 
+              className="text-pakistani_green-600 hover:text-pakistani_green-700 font-medium"
+            >
+              Sign up here
+            </a>
+          </p>
+        </div>
+
+        <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+          <h4 className="font-medium text-green-800 mb-2 font-poppins">Demo Accounts:</h4>
+          <div className="text-sm text-green-700 space-y-1 font-poppins">
+            <p><strong>Wholesaler:</strong> 03001234567 | password: demo123</p>
+            <p><strong>Seller:</strong> 03004567890 | password: demo123</p>
+          </div>
         </div>
       </CardContent>
-      
-      <CardFooter className="border-t border-border bg-muted/30 dark:bg-muted/50 flex justify-center p-4">
-        <p className="text-sm text-muted-foreground font-poppins">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 font-medium">
-            Sign Up Here
-          </Link>
-        </p>
-      </CardFooter>
     </Card>
   );
 };

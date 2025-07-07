@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { enhancedSignUp } from '@/lib/auth-enhanced';
+import { enhancedSignUp } from '@/lib/enhanced-auth';
 import { useToast } from '@/hooks/use-toast';
 import { formSchema, FormValues } from './signupSchema';
 import { UserRole } from '@/lib/types';
@@ -67,12 +66,12 @@ export const useEnhancedSignupForm = () => {
         const errorFields = Object.keys(errors);
         
         toast({
-          title: 'Validation Error',
-          description: `Please fix the following fields: ${errorFields.join(', ')}`,
+          title: 'Please Complete All Fields',
+          description: `Missing: ${errorFields.join(', ')}`,
           variant: 'destructive',
         });
         
-        setErrorMessage(`Please complete all required fields: ${errorFields.join(', ')}`);
+        setErrorMessage(`Please complete: ${errorFields.join(', ')}`);
         return false;
       }
     }
@@ -86,11 +85,11 @@ export const useEnhancedSignupForm = () => {
     // Block progression if phone is blocked
     if (currentStep === 2 && isPhoneBlocked) {
       toast({
-        title: 'Phone Number Already Registered',
-        description: 'Please use a different phone number to continue.',
+        title: 'Phone Already Registered',
+        description: 'Please use a different phone number.',
         variant: 'destructive',
       });
-      setErrorMessage('Cannot proceed with an already registered phone number.');
+      setErrorMessage('This phone number is already registered.');
       return;
     }
     
@@ -125,7 +124,6 @@ export const useEnhancedSignupForm = () => {
   const handleRoleSelect = (role: UserRole) => {
     console.log('Role selected:', role);
     setSelectedRole(role);
-    // Update business type default based on role
     const defaultBusinessType = role === 'seller' ? 'Retailer' : 'Wholesaler';
     form.setValue('businessType', defaultBusinessType as any);
     console.log('Set default business type to:', defaultBusinessType);
@@ -134,7 +132,7 @@ export const useEnhancedSignupForm = () => {
   const handlePhoneBlocked = (blocked: boolean) => {
     setIsPhoneBlocked(blocked);
     if (blocked) {
-      setErrorMessage('This phone number is already registered. Please use a different phone number.');
+      setErrorMessage('This phone number is already registered.');
     } else if (errorMessage && errorMessage.includes('phone')) {
       setErrorMessage(null);
     }
@@ -147,8 +145,8 @@ export const useEnhancedSignupForm = () => {
     // Final validation checks
     if (isPhoneBlocked) {
       toast({
-        title: 'Registration Blocked',
-        description: 'Cannot register with an already used phone number.',
+        title: 'Cannot Register',
+        description: 'Phone number is already in use.',
         variant: 'destructive',
       });
       return;
@@ -157,7 +155,7 @@ export const useEnhancedSignupForm = () => {
     if (currentStep !== totalSteps) {
       console.log('Not on final step, current:', currentStep, 'total:', totalSteps);
       toast({
-        title: 'Navigation Error',
+        title: 'Complete All Steps',
         description: 'Please complete all steps before submitting',
         variant: 'destructive',
       });
@@ -170,7 +168,7 @@ export const useEnhancedSignupForm = () => {
       const errors = form.formState.errors;
       const errorFields = Object.keys(errors);
       toast({
-        title: 'Form Validation Failed',
+        title: 'Form Incomplete',
         description: `Please fix: ${errorFields.join(', ')}`,
         variant: 'destructive',
       });
@@ -183,7 +181,6 @@ export const useEnhancedSignupForm = () => {
     try {
       console.log('Calling enhancedSignUp with:', values.phoneNumber, selectedRole);
       
-      // Show loading toast
       toast({
         title: 'Creating Account',
         description: 'Please wait while we set up your account...',
@@ -196,12 +193,8 @@ export const useEnhancedSignupForm = () => {
       await enhancedSignUp(tempEmail, values.password, selectedRole, values);
       
       toast({
-        title: 'Account Created Successfully!',
-        description: `Your ${selectedRole} account is ready to use. ${
-          selectedRole === 'seller' 
-            ? 'You can start browsing products immediately!' 
-            : 'Please complete business verification to access all features.'
-        }`,
+        title: 'Welcome to Pak Bazaar Connect! 🎉',
+        description: `Your ${selectedRole} account has been created successfully. Welcome aboard!`,
         variant: 'default',
       });
       
@@ -215,17 +208,17 @@ export const useEnhancedSignupForm = () => {
     } catch (error: any) {
       console.error('Signup error:', error);
       
-      let errorMsg = 'Failed to create account. Please try again.';
+      let errorMsg = 'Account creation failed. Please try again.';
       
       if (error.message) {
         if (error.message.includes('User already registered') || error.message.includes('already exists')) {
-          errorMsg = `This phone number is already registered. Please try logging in or use a different phone number.`;
+          errorMsg = `This phone number is already registered. Please try logging in instead.`;
         } else if (error.message.includes('Invalid phone')) {
           errorMsg = 'Please enter a valid phone number.';
         } else if (error.message.includes('Password')) {
-          errorMsg = 'Password does not meet requirements. Please choose a stronger password.';
+          errorMsg = 'Password must be at least 8 characters long.';
         } else if (error.message.includes('network') || error.message.includes('fetch')) {
-          errorMsg = 'Network error. Please check your connection and try again.';
+          errorMsg = 'Network error. Please check your connection.';
         } else {
           errorMsg = error.message;
         }

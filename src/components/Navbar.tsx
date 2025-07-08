@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,13 +7,16 @@ import { useToast } from '@/hooks/use-toast';
 import { Flag, Menu, X, ShoppingBag, Users, Zap } from 'lucide-react';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
-
 const Navbar = () => {
-  const { user, profile } = useAuth();
+  const {
+    user,
+    profile
+  } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   const handleLogout = async () => {
     try {
       await signOut();
@@ -32,34 +34,25 @@ const Navbar = () => {
       });
     }
   };
-
   const getRoleBadge = () => {
     if (!profile?.role) return null;
-    
     const roleColors = {
       admin: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
       wholesaler: 'bg-pakistani_green-100 text-pakistani_green-800 dark:bg-pakistani_green-900/20 dark:text-pakistani_green-300',
       seller: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
       pending: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300'
     };
-
-    return (
-      <span className={`px-2 py-0.5 text-xs font-medium rounded-full font-poppins ${roleColors[profile.role as keyof typeof roleColors] || roleColors.pending}`}>
+    return <span className={`px-2 py-0.5 text-xs font-medium rounded-full font-poppins ${roleColors[profile.role as keyof typeof roleColors] || roleColors.pending}`}>
         {profile.role}
-      </span>
-    );
+      </span>;
   };
-
-  return (
-    <>
+  return <>
       {/* Top Banner */}
       <div className="bg-pakistani_green-700 text-white py-2 px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center opacity-5">
           <Flag className="w-40 h-40 text-white" />
         </div>
-        <p className="font-medium text-sm md:text-base font-poppins relative z-10">
-          🎉 Join Now! Free Ads for First 10 Wholesalers! 🚀
-        </p>
+        
       </div>
 
       {/* Main Navbar */}
@@ -81,48 +74,28 @@ const Navbar = () => {
               {/* Main Navigation Links */}
               <div className="flex items-center space-x-1">
                 <Link to="/products">
-                  <Button 
-                    variant="ghost" 
-                    className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200"
-                  >
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
                     <ShoppingBag className="w-4 h-4 mr-2" />
                     Products
                   </Button>
                 </Link>
                 <Link to="/sellers">
-                  <Button 
-                    variant="ghost" 
-                    className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200"
-                  >
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
                     <Users className="w-4 h-4 mr-2" />
                     Sellers
                   </Button>
                 </Link>
                 <Link to="/features">
-                  <Button 
-                    variant="ghost" 
-                    className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200"
-                  >
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
                     <Zap className="w-4 h-4 mr-2" />
                     Features
                   </Button>
                 </Link>
               </div>
 
-              {user ? (
-                <UserMenu
-                  email={profile?.email || user.email}
-                  role={profile?.role}
-                  onLogout={handleLogout}
-                  getRoleBadge={getRoleBadge}
-                />
-              ) : (
-                <div className="flex items-center space-x-3">
+              {user ? <UserMenu email={profile?.email || user.email} role={profile?.role} onLogout={handleLogout} getRoleBadge={getRoleBadge} /> : <div className="flex items-center space-x-3">
                   <Link to="/login">
-                    <Button 
-                      variant="ghost" 
-                      className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
-                    >
+                    <Button variant="ghost" className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins">
                       Login
                     </Button>
                   </Link>
@@ -131,40 +104,21 @@ const Navbar = () => {
                       Sign Up
                     </Button>
                   </Link>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20"
-                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-6 w-6" />
-                ) : (
-                  <Menu className="h-6 w-6" />
-                )}
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
             </div>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        <MobileMenu 
-          isOpen={isMobileMenuOpen} 
-          onClose={() => setIsMobileMenuOpen(false)}
-          user={user}
-          profile={profile}
-          onLogout={handleLogout}
-        />
+        <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} user={user} profile={profile} onLogout={handleLogout} />
       </header>
-    </>
-  );
+    </>;
 };
-
 export default Navbar;

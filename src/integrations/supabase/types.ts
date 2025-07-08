@@ -1155,6 +1155,10 @@ export type Database = {
           paid_commission: number
         }[]
       }
+      increment_coupon_usage: {
+        Args: { coupon_id: string }
+        Returns: undefined
+      }
       log_audit_event: {
         Args: {
           p_user_id: string

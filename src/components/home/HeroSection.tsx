@@ -5,12 +5,12 @@ import { ArrowRight, Users, ShieldCheck, TrendingUp } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
   return (
-    <div className="relative bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 text-white py-20">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
+    <div className="relative bg-gradient-to-br from-pakistani_green-600 via-pakistani_green-700 to-pakistani_green-800 text-white py-24 overflow-hidden">
+      {/* Modern Background Pattern */}
+      <div className="absolute inset-0">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-yellow-300/10 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent"></div>
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,42 +74,42 @@ const HeroSection: React.FC = () => {
           
           {/* Right Content - Features */}
           <div className="space-y-6">
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 border border-white border-opacity-20">
-              <div className="flex items-start space-x-4">
-                <div className="p-3 bg-yellow-400 rounded-lg">
-                  <Users className="h-6 w-6 text-pakistani_green-800" />
+            <div className="group bg-white/10 backdrop-blur-md rounded-3xl p-7 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10">
+              <div className="flex items-start space-x-5">
+                <div className="p-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl shadow-lg group-hover:shadow-yellow-400/30 transition-shadow duration-300">
+                  <Users className="h-7 w-7 text-pakistani_green-800" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold font-poppins">Verified Network</h3>
-                  <p className="text-green-100 font-poppins">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-semibold font-poppins group-hover:text-yellow-100 transition-colors">Verified Network</h3>
+                  <p className="text-green-100/90 font-poppins leading-relaxed">
                     Connect with verified wholesalers and retailers across Pakistan
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 border border-white border-opacity-20">
-              <div className="flex items-start space-x-4">
-                <div className="p-3 bg-yellow-400 rounded-lg">
-                  <ShieldCheck className="h-6 w-6 text-pakistani_green-800" />
+            <div className="group bg-white/10 backdrop-blur-md rounded-3xl p-7 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10">
+              <div className="flex items-start space-x-5">
+                <div className="p-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl shadow-lg group-hover:shadow-yellow-400/30 transition-shadow duration-300">
+                  <ShieldCheck className="h-7 w-7 text-pakistani_green-800" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold font-poppins">Secure Transactions</h3>
-                  <p className="text-green-100 font-poppins">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-semibold font-poppins group-hover:text-yellow-100 transition-colors">Secure Transactions</h3>
+                  <p className="text-green-100/90 font-poppins leading-relaxed">
                     Safe and secure payment processing with buyer protection
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 border border-white border-opacity-20">
-              <div className="flex items-start space-x-4">
-                <div className="p-3 bg-yellow-400 rounded-lg">
-                  <TrendingUp className="h-6 w-6 text-pakistani_green-800" />
+            <div className="group bg-white/10 backdrop-blur-md rounded-3xl p-7 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10">
+              <div className="flex items-start space-x-5">
+                <div className="p-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl shadow-lg group-hover:shadow-yellow-400/30 transition-shadow duration-300">
+                  <TrendingUp className="h-7 w-7 text-pakistani_green-800" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold font-poppins">Business Growth</h3>
-                  <p className="text-green-100 font-poppins">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-semibold font-poppins group-hover:text-yellow-100 transition-colors">Business Growth</h3>
+                  <p className="text-green-100/90 font-poppins leading-relaxed">
                     Expand your reach and grow your business with our platform
                   </p>
                 </div>

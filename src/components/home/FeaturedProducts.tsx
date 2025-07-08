@@ -87,7 +87,7 @@ const FeaturedProducts = () => {
         <LazyLoadWrapper height="400px" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => (
             <Link key={product.id} to={`/product/${product.id}`}>
-              <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-pakistani_green-200/50 dark:hover:shadow-pakistani_green-900/50">
+              <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-pakistani_green-300/30 dark:bg-gray-800/80 dark:hover:shadow-pakistani_green-700/40 hover:scale-[1.02] hover:-translate-y-1">
                 {/* Product Image */}
                 <div className="relative overflow-hidden">
                   <OptimizedImage
@@ -100,7 +100,7 @@ const FeaturedProducts = () => {
                   <Badge className="absolute top-3 left-3 bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
                     {product.badge}
                   </Badge>
-                  <div className="absolute top-3 right-3 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <Package className="w-4 h-4 text-pakistani_green-600" />
                   </div>
                 </div>
@@ -149,9 +149,9 @@ const FeaturedProducts = () => {
                   </div>
 
                   {/* Action Button */}
-                  <Button className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button className="w-full bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 text-white font-poppins mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 rounded-xl shadow-lg hover:shadow-pakistani_green-600/30">
                     View Details
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </div>
               </Card>

@@ -10,7 +10,8 @@ import {
   MessageSquare, 
   BarChart3,
   CheckCircle,
-  Star
+  Star,
+  TrendingUp
 } from 'lucide-react';
 
 const Features: React.FC = () => {
@@ -49,6 +50,13 @@ const Features: React.FC = () => {
 
   return (
     <Layout>
+      {/* AdSense Script */}
+      <script 
+        async 
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6598242635867029"
+        crossOrigin="anonymous"
+      />
+      
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -88,7 +96,7 @@ const Features: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
                   "Free registration for all users",
-                  "No hidden fees or charges",
+                  "Transparent pricing model",
                   "Local payment methods supported",
                   "Urdu language support",
                   "Mobile-friendly platform",

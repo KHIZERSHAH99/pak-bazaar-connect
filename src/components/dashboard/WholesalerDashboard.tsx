@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Store, Package, CreditCard, MessageSquare, BarChart3 } from 'lucide-react';
+import { Store, Package, CreditCard, MessageSquare, BarChart3, Ticket } from 'lucide-react';
 import ShopsManagement from './ShopsManagement';
 import ProductsManagement from './ProductsManagement';
 import AdsManagement from './AdsManagement';
 import WholesalerOrders from './WholesalerOrders';
 import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
+import CouponManagement from '@/components/coupons/CouponManagement';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const WholesalerDashboard: React.FC = () => {
@@ -22,7 +23,7 @@ const WholesalerDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="shops" className="font-poppins">
                 <Store className="h-4 w-4 mr-2" />
                 Shops
@@ -38,6 +39,10 @@ const WholesalerDashboard: React.FC = () => {
               <TabsTrigger value="ads" className="font-poppins">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Ads
+              </TabsTrigger>
+              <TabsTrigger value="coupons" className="font-poppins">
+                <Ticket className="h-4 w-4 mr-2" />
+                Coupons
               </TabsTrigger>
               <TabsTrigger value="payment" className="font-poppins">
                 <CreditCard className="h-4 w-4 mr-2" />
@@ -59,6 +64,10 @@ const WholesalerDashboard: React.FC = () => {
 
             <TabsContent value="ads">
               <AdsManagement />
+            </TabsContent>
+
+            <TabsContent value="coupons">
+              <CouponManagement />
             </TabsContent>
 
             <TabsContent value="payment">

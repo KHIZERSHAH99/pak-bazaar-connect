@@ -2,13 +2,13 @@
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import UserProfile from '@/components/dashboard/UserProfile';
+import EnhancedUserProfile from '@/components/profile/EnhancedUserProfile';
 
 const Profile: React.FC = () => {
   return (
     <ProtectedRoute>
       <DashboardLayout>
-        <UserProfile />
+        <EnhancedUserProfile />
       </DashboardLayout>
     </ProtectedRoute>
   );

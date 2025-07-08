@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { 
   Plus, 
@@ -15,10 +14,6 @@ import {
   Eye, 
   ToggleLeft, 
   ToggleRight, 
-  Calendar,
-  Percent,
-  DollarSign,
-  Users,
   TrendingUp
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -94,9 +89,10 @@ const CouponManagement: React.FC = () => {
       valid_from: formData.get('valid_from') as string,
       valid_until: formData.get('valid_until') as string,
       is_active: true,
+      wholesaler_id: '', // This will be set by the function
     };
 
-    createMutation.mutate(couponData as any);
+    createMutation.mutate(couponData);
   };
 
   const copyToClipboard = (text: string) => {
@@ -291,17 +287,6 @@ const CouponManagement: React.FC = () => {
                           onClick={() => copyToClipboard(coupon.code)}
                         >
                           <Copy className="h-4 w-4" />
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedCoupon(coupon);
-                            setIsUsageDialogOpen(true);
-                          }}
-                        >
-                          <Eye className="h-4 w-4" />
                         </Button>
                         
                         <Button

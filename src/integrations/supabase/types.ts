@@ -326,6 +326,99 @@ export type Database = {
           },
         ]
       }
+      coupon_usage: {
+        Row: {
+          coupon_id: string
+          discount_amount: number
+          id: string
+          order_id: string | null
+          used_at: string
+          user_id: string
+        }
+        Insert: {
+          coupon_id: string
+          discount_amount: number
+          id?: string
+          order_id?: string | null
+          used_at?: string
+          user_id: string
+        }
+        Update: {
+          coupon_id?: string
+          discount_amount?: number
+          id?: string
+          order_id?: string | null
+          used_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_usage_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_usage_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          discount_type: string
+          discount_value: number
+          id: string
+          is_active: boolean
+          min_order_amount: number | null
+          target_buyers: string[] | null
+          target_products: string[] | null
+          usage_limit: number | null
+          used_count: number
+          valid_from: string
+          valid_until: string
+          wholesaler_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          discount_type: string
+          discount_value: number
+          id?: string
+          is_active?: boolean
+          min_order_amount?: number | null
+          target_buyers?: string[] | null
+          target_products?: string[] | null
+          usage_limit?: number | null
+          used_count?: number
+          valid_from: string
+          valid_until: string
+          wholesaler_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          is_active?: boolean
+          min_order_amount?: number | null
+          target_buyers?: string[] | null
+          target_products?: string[] | null
+          usage_limit?: number | null
+          used_count?: number
+          valid_from?: string
+          valid_until?: string
+          wholesaler_id?: string
+        }
+        Relationships: []
+      }
       inquiries: {
         Row: {
           buyer_email: string | null

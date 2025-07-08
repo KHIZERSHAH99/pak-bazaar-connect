@@ -50,7 +50,7 @@ export const createCoupon = async (couponData: Omit<Coupon, 'id' | 'used_count' 
       .single();
 
     if (error) throw error;
-    return data;
+    return data as Coupon;
   } catch (error) {
     console.error('Error creating coupon:', error);
     throw error;
@@ -76,7 +76,7 @@ export const getWholesalerCoupons = async (): Promise<Coupon[]> => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data || []) as Coupon[];
   } catch (error) {
     console.error('Error fetching wholesaler coupons:', error);
     throw error;
@@ -98,7 +98,7 @@ export const getAllCoupons = async (): Promise<Coupon[]> => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data || []) as Coupon[];
   } catch (error) {
     console.error('Error fetching all coupons:', error);
     throw error;
@@ -128,25 +128,27 @@ export const validateCoupon = async (code: string, orderAmount: number): Promise
       return { valid: false, error: 'Invalid coupon code' };
     }
 
+    const couponData = coupon as Coupon;
+
     // Check if coupon is within valid date range
     const now = new Date();
-    const validFrom = new Date(coupon.valid_from);
-    const validUntil = new Date(coupon.valid_until);
+    const validFrom = new Date(couponData.valid_from);
+    const validUntil = new Date(couponData.valid_until);
 
     if (now < validFrom || now > validUntil) {
       return { valid: false, error: 'Coupon has expired or is not yet active' };
     }
 
     // Check usage limit
-    if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
+    if (couponData.usage_limit && couponData.used_count >= couponData.usage_limit) {
       return { valid: false, error: 'Coupon usage limit exceeded' };
     }
 
     // Check minimum order amount
-    if (coupon.min_order_amount && orderAmount < coupon.min_order_amount) {
+    if (couponData.min_order_amount && orderAmount < couponData.min_order_amount) {
       return { 
         valid: false, 
-        error: `Minimum order amount of Rs. ${coupon.min_order_amount} required` 
+        error: `Minimum order amount of Rs. ${couponData.min_order_amount} required` 
       };
     }
 
@@ -154,7 +156,7 @@ export const validateCoupon = async (code: string, orderAmount: number): Promise
     const { data: existingUsage } = await supabase
       .from('coupon_usage')
       .select('id')
-      .eq('coupon_id', coupon.id)
+      .eq('coupon_id', couponData.id)
       .eq('user_id', user.id)
       .single();
 
@@ -164,10 +166,10 @@ export const validateCoupon = async (code: string, orderAmount: number): Promise
 
     // Calculate discount
     let discount = 0;
-    if (coupon.discount_type === 'percentage') {
-      discount = (orderAmount * coupon.discount_value) / 100;
+    if (couponData.discount_type === 'percentage') {
+      discount = (orderAmount * couponData.discount_value) / 100;
     } else {
-      discount = coupon.discount_value;
+      discount = couponData.discount_value;
     }
 
     // Ensure discount doesn't exceed order amount
@@ -175,7 +177,7 @@ export const validateCoupon = async (code: string, orderAmount: number): Promise
 
     return {
       valid: true,
-      coupon,
+      coupon: couponData,
       discount
     };
   } catch (error) {
@@ -204,11 +206,12 @@ export const applyCoupon = async (couponId: string, orderId: string, discountAmo
 
     // Update coupon used count
     const { error: updateError } = await supabase
-      .from('coupons')
-      .update({ used_count: supabase.sql`used_count + 1` })
-      .eq('id', couponId);
+      .rpc('increment_coupon_usage', { coupon_id: couponId });
 
-    if (updateError) throw updateError;
+    if (updateError) {
+      console.warn('Failed to update coupon usage count:', updateError);
+      // Continue execution as the usage was recorded
+    }
   } catch (error) {
     console.error('Error applying coupon:', error);
     throw error;

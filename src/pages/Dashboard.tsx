@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import { Loader2 } from 'lucide-react';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import WholesalerDashboard from '@/components/dashboard/WholesalerDashboard';

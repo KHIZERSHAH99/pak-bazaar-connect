@@ -1,26 +1,6 @@
 
-// Re-export all order functionality from the refactored modules
-export { 
-  createOrderWithPayment, 
-  confirmOrder, 
-  rejectOrder, 
-  reusePreviousOrder 
-} from './orders/core';
+// DEPRECATED: Use ./orders/index.ts instead
+// This file is kept for backward compatibility only
 
-export { 
-  getWholesalerOrders, 
-  getSellerOrders 
-} from './orders/queries';
-
-export { 
-  getWholesalerMonthlySales 
-} from './orders/analytics';
-
-export { 
-  sendOrderMessage, 
-  getOrderMessages 
-} from './orders/messaging';
-
-export { 
-  getWholesalerPaymentMethods 
-} from './orders/payments';
+// Re-export everything from the consolidated orders module
+export * from './orders/index';

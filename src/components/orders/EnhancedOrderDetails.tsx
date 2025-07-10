@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Order } from '@/lib/types';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import OrderHeader from './OrderHeader';
 import OrderActions from './OrderActions';
 import OrderMessaging from './OrderMessaging';

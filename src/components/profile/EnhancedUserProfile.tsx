@@ -18,7 +18,7 @@ import {
   Edit,
   Camera
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import ProfileImageUpload from './ProfileImageUpload';

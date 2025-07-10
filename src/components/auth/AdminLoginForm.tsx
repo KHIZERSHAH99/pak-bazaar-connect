@@ -4,7 +4,7 @@ import { signIn } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import { useNavigate } from 'react-router-dom';
 import { Crown, Eye, EyeOff, Shield } from 'lucide-react';
 
@@ -18,7 +18,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { checkAuthStatus } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Only khizerfight@gmail.com is allowed admin access
@@ -41,7 +41,6 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
     
     try {
       await signIn(email, password);
-      await checkAuthStatus();
       
       toast({
         title: 'Admin Access Granted',

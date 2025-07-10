@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth, LoadingScreen } from '@/contexts/AuthContext';
+import { useAuth, LoadingScreen } from '@/contexts/AuthContextFixed';
 import { UserRole } from '@/lib/types'; // Updated import to use /lib/types
 
 interface ProtectedRouteProps {

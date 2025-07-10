@@ -5,7 +5,7 @@ import { enhancedSignIn } from '@/lib/auth-enhanced';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { AlertCircle, Mail, Key, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -19,7 +19,7 @@ const SecureLoginForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { checkAuthStatus } = useAuth();
+  const { user } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +38,6 @@ const SecureLoginForm: React.FC = () => {
       }
       
       await enhancedSignIn(email, password);
-      await checkAuthStatus();
       
       toast({
         title: 'Success',

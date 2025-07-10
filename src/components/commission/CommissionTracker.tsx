@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { getUserTransactions } from '@/lib/payment';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import SummaryCards from './SummaryCards';
 import TransactionTable from './TransactionTable';
 

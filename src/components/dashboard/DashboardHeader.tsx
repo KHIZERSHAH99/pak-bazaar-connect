@@ -1,7 +1,7 @@
 
 import React from "react";
 import CODBadge from "./CODBadge";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContextFixed";
 
 // Renders the top dashboard toolbar with the role and payment info
 const DashboardHeader: React.FC = () => {

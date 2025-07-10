@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import { useOptimizedQuery } from '@/hooks/useOptimizedQuery';
 import { queryOptimizer } from '@/lib/performance/query-optimizer-enhanced';
 import OptimizedLoader from '@/components/ui/OptimizedLoader';

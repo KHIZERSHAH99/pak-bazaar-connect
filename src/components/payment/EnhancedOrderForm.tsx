@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Upload, CreditCard, Building, Smartphone, MapPin } from 'lucide-react';
 import { createEnhancedOrder, getWholesalerPaymentMethods } from '@/lib/enhanced-payment';
 import { PaymentMethodInfo, OrderFormData } from '@/types/enhanced-payment';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 
 interface EnhancedOrderFormProps {
   shopId: string;

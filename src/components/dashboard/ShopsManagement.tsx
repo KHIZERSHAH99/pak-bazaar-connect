@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Store, Plus, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import CreateShopDialog from '@/components/shops/CreateShopDialog';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import { supabase } from '@/integrations/supabase/client';
 
 const ShopsManagement: React.FC = () => {

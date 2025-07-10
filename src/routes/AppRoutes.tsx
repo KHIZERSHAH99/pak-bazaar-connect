@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { LoadingScreen } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
+import { LoadingScreen } from '@/contexts/AuthContextFixed';
 import Index from '@/pages/Index';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
@@ -138,8 +138,8 @@ const AppRoutes: React.FC = () => {
       <Route 
         path="/dashboard/seller-dashboard" 
         element={
-          user && profile?.role === 'wholesaler' ? 
-          <DashboardAnalytics /> : 
+          user && profile?.role === 'seller' ? 
+          <DashboardSellerOrders /> : 
           <Navigate to="/dashboard" replace />
         } 
       />

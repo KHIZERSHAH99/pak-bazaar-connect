@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Bell, CheckCircle, DollarSign, AlertTriangle, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContextFixed';
 import { Notification } from '@/types/enhanced-payment';
 
 const NotificationCenter: React.FC = () => {

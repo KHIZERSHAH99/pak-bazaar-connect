@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContextFixed';
 import { Loader2 } from 'lucide-react';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
-import RestoredWholesalerDashboard from '@/components/dashboard/RestoredWholesalerDashboard';
-import RestoredSellerDashboard from '@/components/dashboard/RestoredSellerDashboard';
+import WholesalerDashboard from '@/components/dashboard/WholesalerDashboard';
+import SellerDashboard from '@/components/dashboard/SellerDashboard';
 import WelcomeOnboarding from '@/components/ui/WelcomeOnboarding';
-import RestoredDashboardLayout from '@/components/dashboard/RestoredDashboardLayout';
+import DashboardLayout from '@/components/DashboardLayout';
 
 const Dashboard: React.FC = () => {
   const { user, profile, loading } = useAuth();
@@ -43,20 +43,20 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <RestoredDashboardLayout>
+      <DashboardLayout>
         <div className="flex justify-center items-center min-h-96">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin text-pakistani_green-600 mx-auto mb-4" />
             <p className="text-gray-600 font-poppins">Loading your dashboard...</p>
           </div>
         </div>
-      </RestoredDashboardLayout>
+      </DashboardLayout>
     );
   }
 
   if (!user || !profile) {
     return (
-      <RestoredDashboardLayout>
+      <DashboardLayout>
         <div className="flex justify-center items-center min-h-96">
           <div className="text-center">
             <h2 className="text-xl font-semibold text-gray-900 mb-2 font-poppins">
@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
         </div>
-      </RestoredDashboardLayout>
+      </DashboardLayout>
     );
   }
 
@@ -82,9 +82,9 @@ const Dashboard: React.FC = () => {
       case 'admin':
         return <AdminDashboard />;
       case 'wholesaler':
-        return <RestoredWholesalerDashboard />;
+        return <WholesalerDashboard />;
       case 'seller':
-        return <RestoredSellerDashboard />;
+        return <SellerDashboard />;
       default:
         return (
           <div className="text-center py-12">
@@ -100,7 +100,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <RestoredDashboardLayout>
+    <DashboardLayout>
       {renderDashboard()}
       
       {showOnboarding && (
@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
           onSkip={handleSkipOnboarding}
         />
       )}
-    </RestoredDashboardLayout>
+    </DashboardLayout>
   );
 };
 

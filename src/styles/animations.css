@@ -1,5 +1,5 @@
 
-/* Performance-optimized animations */
+/* Fade in animation for products */
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -11,163 +11,55 @@
   }
 }
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
 }
 
+/* Smooth hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* AdSense container styling */
+.adsense-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90px;
+}
+
+.adsense-container ins {
+  background: transparent !important;
+}
+
+/* Loading pulse effect */
 @keyframes pulse-soft {
   0%, 100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.8;
+    opacity: 0.5;
   }
-}
-
-@keyframes bounce-soft {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes scale-in {
-  from { 
-    transform: scale(0.95); 
-    opacity: 0; 
-  }
-  to { 
-    transform: scale(1); 
-    opacity: 1; 
-  }
-}
-
-@keyframes slide-in-up {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Utility classes */
-.animate-fade-in {
-  animation: fade-in 0.6s ease-out forwards;
-}
-
-.animate-shimmer {
-  animation: shimmer 2s infinite;
 }
 
 .animate-pulse-soft {
-  animation: pulse-soft 2s ease-in-out infinite;
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.animate-bounce-soft {
-  animation: bounce-soft 2s ease-in-out infinite;
+/* Bounce animation for loading dots */
+.animate-bounce-delayed {
+  animation: bounce 1s infinite;
 }
 
-.animate-scale-in {
-  animation: scale-in 0.3s ease-out forwards;
+.animate-bounce-delayed:nth-child(2) {
+  animation-delay: 0.1s;
 }
 
-.animate-slide-in-up {
-  animation: slide-in-up 0.4s ease-out forwards;
-}
-
-/* Performance optimizations */
-.hover-lift {
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-  will-change: transform, box-shadow;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-/* Image loading optimizations */
-.loading-skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Dark mode skeleton */
-.dark .loading-skeleton {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-  background-size: 200% 100%;
-}
-
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Button press animations */
-.button-press {
-  transition: transform 0.1s ease-in-out;
-}
-
-.button-press:active {
-  transform: scale(0.98);
-}
-
-/* Loading states */
-.loading-dots {
-  display: inline-block;
-}
-
-.loading-dots::after {
-  content: '';
-  animation: loading-dots 1.5s steps(4, end) infinite;
-}
-
-@keyframes loading-dots {
-  0%, 20% { content: ''; }
-  40% { content: '.'; }
-  60% { content: '..'; }
-  80%, 100% { content: '...'; }
-}
-
-/* Focus styles for accessibility */
-.focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pakistani_green-600 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
-}
-
-/* Custom scrollbar */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: hsl(var(--pakistani_green-300)) transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--pakistani_green-300));
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(var(--pakistani_green-400));
+.animate-bounce-delayed:nth-child(3) {
+  animation-delay: 0.2s;
 }

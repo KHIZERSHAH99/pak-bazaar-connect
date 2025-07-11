@@ -1,113 +1,100 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import './styles/fonts.css';
+@import './styles/urdu.css';
 @import './styles/animations.css';
-@import './styles/dashboard-restored.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
 
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-poppins;
   }
 }
 
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 142 76% 36%;
-  --primary-foreground: 355.7 100% 97.3%;
-  --secondary: 210 40% 98%;
-  --secondary-foreground: 222.2 84% 4.9%;
-  --muted: 210 40% 98%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 98%;
-  --accent-foreground: 222.2 84% 4.9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 142 76% 36%;
-  --radius: 0.75rem;
-  --pakistani_green-50: 138 76% 97%;
-  --pakistani_green-100: 140 84% 92%;
-  --pakistani_green-200: 141 78% 85%;
-  --pakistani_green-300: 142 77% 73%;
-  --pakistani_green-400: 142 69% 58%;
-  --pakistani_green-500: 142 76% 36%;
-  --pakistani_green-600: 142 72% 29%;
-  --pakistani_green-700: 143 64% 24%;
-  --pakistani_green-800: 143 61% 20%;
-  --pakistani_green-900: 144 60% 17%;
-  --pakistani_green-950: 145 80% 9%;
-}
-
-.dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 142 76% 36%;
-  --primary-foreground: 222.2 84% 4.9%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 142 76% 36%;
-}
-
-* {
-  border-color: hsl(var(--border));
-}
-
-body {
-  color: hsl(var(--foreground));
-  background: hsl(var(--background));
+.font-poppins {
   font-family: 'Poppins', sans-serif;
 }
 
-/* Ensure all green colors use Pakistani green variants */
-.bg-green-50 { background-color: hsl(var(--pakistani_green-50)) !important; }
-.bg-green-100 { background-color: hsl(var(--pakistani_green-100)) !important; }
-.bg-green-500 { background-color: hsl(var(--pakistani_green-500)) !important; }
-.bg-green-600 { background-color: hsl(var(--pakistani_green-600)) !important; }
-.bg-green-700 { background-color: hsl(var(--pakistani_green-700)) !important; }
-
-.text-green-600 { color: hsl(var(--pakistani_green-600)) !important; }
-.text-green-700 { color: hsl(var(--pakistani_green-700)) !important; }
-
-.border-green-600 { border-color: hsl(var(--pakistani_green-600)) !important; }
-
-/* Dashboard specific overrides */
-.dashboard-btn-primary {
-  background-color: hsl(var(--pakistani_green-600));
-  color: white;
-  border: 1px solid hsl(var(--pakistani_green-600));
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
-.dashboard-btn-primary:hover {
-  background-color: hsl(var(--pakistani_green-700));
-  border-color: hsl(var(--pakistani_green-700));
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.dashboard-link-primary {
-  color: hsl(var(--pakistani_green-600));
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
 }
 
-.dashboard-link-primary:hover {
-  color: hsl(var(--pakistani_green-700));
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
 }

@@ -39,35 +39,49 @@ const WholesalerOrders: React.FC = () => {
         const orderData = await getWholesalerOrders(false);
         console.log('Raw order data:', orderData);
         
-        // Safely process the raw data into proper Order objects
-        const processedOrders: Order[] = orderData
-          .filter((item: any) => item && typeof item === 'object' && item.id)
-          .map((item: any) => ({
-            id: item.id || '',
-            buyer_id: item.buyer_id || '',
-            shop_id: item.shop_id || '',
-            total_amount: Number(item.total_amount) || 0,
-            status: (item.status || 'pending') as OrderStatus,
-            payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
-            buyer_name: item.buyer_name || null,
-            buyer_phone: item.buyer_phone || null,
-            buyer_address: item.buyer_address || null,
-            payment_screenshot: item.payment_screenshot || null,
-            screenshot_uploaded_at: item.screenshot_uploaded_at || null,
-            created_at: item.created_at || null,
-            confirmed_at: item.confirmed_at || null,
-            rejected_at: item.rejected_at || null,
-            wholesaler_notes: item.wholesaler_notes || null,
-            commission_id: item.commission_id || null,
-            shops: item.shops ? {
-              id: item.shops.id || '',
-              name: item.shops.name || '',
-              contact: item.shops.contact || '',
-              address: item.shops.address || '',
-              postal_code: item.shops.postal_code || '',
-              owner_id: item.shops.owner_id || ''
-            } : undefined
-          }));
+        // Safely process and validate the raw data into proper Order objects
+        const processedOrders: Order[] = [];
+        
+        for (const item of orderData) {
+          // Check if item is valid and has required properties
+          if (!item || typeof item !== 'object' || !('id' in item)) {
+            console.warn('Invalid order item:', item);
+            continue;
+          }
+
+          try {
+            const order: Order = {
+              id: String(item.id || ''),
+              buyer_id: String(item.buyer_id || ''),
+              shop_id: String(item.shop_id || ''),
+              total_amount: Number(item.total_amount) || 0,
+              status: (item.status || 'pending') as OrderStatus,
+              payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
+              buyer_name: item.buyer_name || null,
+              buyer_phone: item.buyer_phone || null,
+              buyer_address: item.buyer_address || null,
+              payment_screenshot: item.payment_screenshot || null,
+              screenshot_uploaded_at: item.screenshot_uploaded_at || null,
+              created_at: item.created_at || null,
+              confirmed_at: item.confirmed_at || null,
+              rejected_at: item.rejected_at || null,
+              wholesaler_notes: item.wholesaler_notes || null,
+              commission_id: item.commission_id || null,
+              shops: (item.shops && typeof item.shops === 'object') ? {
+                id: String(item.shops.id || ''),
+                name: String(item.shops.name || ''),
+                contact: String(item.shops.contact || ''),
+                address: String(item.shops.address || ''),
+                postal_code: String(item.shops.postal_code || ''),
+                owner_id: String(item.shops.owner_id || '')
+              } : undefined
+            };
+            
+            processedOrders.push(order);
+          } catch (processError) {
+            console.error('Error processing order item:', processError, item);
+          }
+        }
         
         console.log('Processed orders:', processedOrders);
         setOrders(processedOrders);
@@ -93,12 +107,12 @@ const WholesalerOrders: React.FC = () => {
       const fullOrders = await getWholesalerOrders(true);
       const fullOrderData = fullOrders.find((o: any) => o && o.id === order.id);
         
-      if (fullOrderData) {
-        // Process the full order data
+      if (fullOrderData && typeof fullOrderData === 'object' && 'id' in fullOrderData) {
+        // Process the full order data safely
         const typedOrder: Order = {
-          id: fullOrderData.id || order.id,
-          buyer_id: fullOrderData.buyer_id || order.buyer_id,
-          shop_id: fullOrderData.shop_id || order.shop_id,
+          id: String(fullOrderData.id || order.id),
+          buyer_id: String(fullOrderData.buyer_id || order.buyer_id),
+          shop_id: String(fullOrderData.shop_id || order.shop_id),
           total_amount: Number(fullOrderData.total_amount) || order.total_amount,
           status: (fullOrderData.status || 'pending') as OrderStatus,
           payment_method: (fullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
@@ -112,15 +126,16 @@ const WholesalerOrders: React.FC = () => {
           rejected_at: fullOrderData.rejected_at || order.rejected_at,
           wholesaler_notes: fullOrderData.wholesaler_notes || order.wholesaler_notes,
           commission_id: fullOrderData.commission_id || order.commission_id,
-          shops: fullOrderData.shops ? {
-            id: fullOrderData.shops.id || order.shops?.id || '',
-            name: fullOrderData.shops.name || order.shops?.name || '',
-            contact: fullOrderData.shops.contact || order.shops?.contact || '',
-            address: fullOrderData.shops.address || order.shops?.address || '',
-            postal_code: fullOrderData.shops.postal_code || order.shops?.postal_code || '',
-            owner_id: fullOrderData.shops.owner_id || order.shops?.owner_id || ''
+          shops: (fullOrderData.shops && typeof fullOrderData.shops === 'object') ? {
+            id: String(fullOrderData.shops.id || order.shops?.id || ''),
+            name: String(fullOrderData.shops.name || order.shops?.name || ''),
+            contact: String(fullOrderData.shops.contact || order.shops?.contact || ''),
+            address: String(fullOrderData.shops.address || order.shops?.address || ''),
+            postal_code: String(fullOrderData.shops.postal_code || order.shops?.postal_code || ''),
+            owner_id: String(fullOrderData.shops.owner_id || order.shops?.owner_id || '')
           } : order.shops,
-          profiles: fullOrderData.profiles || order.profiles
+          profiles: (fullOrderData.profiles && typeof fullOrderData.profiles === 'object') ? 
+            fullOrderData.profiles : order.profiles
         };
         setSelectedOrder(typedOrder);
         setShowDetails(true);

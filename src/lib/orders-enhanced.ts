@@ -278,33 +278,42 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
 
     const shopIds = shops.map(shop => shop.id);
 
-    // Then get orders for those shops
-    let selectClause = `
-      *,
-      shops (
+    // Then get orders for those shops with safe select clause
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
         id,
-        name,
-        contact,
-        owner_id,
-        address,
-        postal_code
-      )
-    `;
-
-    if (includeFullDetails) {
-      selectClause += `,
+        buyer_id,
+        shop_id,
+        total_amount,
+        status,
+        payment_method,
+        buyer_name,
+        buyer_phone,
+        buyer_address,
+        payment_screenshot,
+        screenshot_uploaded_at,
+        created_at,
+        confirmed_at,
+        rejected_at,
+        wholesaler_notes,
+        commission_id,
+        shops!inner (
+          id,
+          name,
+          contact,
+          owner_id,
+          address,
+          postal_code
+        )
+        ${includeFullDetails ? `,
         profiles!orders_buyer_id_fkey (
           id,
           email,
           business_name,
           role
-        )
-      `;
-    }
-
-    const { data, error } = await supabase
-      .from('orders')
-      .select(selectClause)
+        )` : ''}
+      `)
       .in('shop_id', shopIds)
       .order('created_at', { ascending: false });
 
@@ -313,7 +322,8 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
       return [];
     }
 
-    return data || [];
+    // Return the data with proper type safety
+    return (data || []).filter(item => item && typeof item === 'object' && 'id' in item);
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);
     return [];
@@ -325,8 +335,12 @@ export const getOrderMessages = async (orderId: string) => {
     const { data, error } = await supabase
       .from('order_messages')
       .select(`
-        *,
-        profiles (
+        id,
+        order_id,
+        sender_id,
+        message,
+        created_at,
+        profiles!order_messages_sender_id_fkey (
           id,
           email,
           business_name,
@@ -341,7 +355,14 @@ export const getOrderMessages = async (orderId: string) => {
       return [];
     }
 
-    return data || [];
+    // Process the data to ensure proper typing
+    return (data || []).map(message => ({
+      ...message,
+      profiles: message.profiles ? {
+        ...message.profiles,
+        role: message.profiles.role as any // Type assertion for UserRole
+      } : undefined
+    }));
   } catch (error) {
     console.error('Error in getOrderMessages:', error);
     return [];
@@ -361,8 +382,12 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
         message: message
       }])
       .select(`
-        *,
-        profiles (
+        id,
+        order_id,
+        sender_id,
+        message,
+        created_at,
+        profiles!order_messages_sender_id_fkey (
           id,
           email,
           business_name,
@@ -376,7 +401,14 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
       throw error;
     }
 
-    return data;
+    // Process the response to ensure proper typing
+    return {
+      ...data,
+      profiles: data.profiles ? {
+        ...data.profiles,
+        role: data.profiles.role as any // Type assertion for UserRole
+      } : undefined
+    };
   } catch (error) {
     console.error('Error in sendOrderMessage:', error);
     throw error;

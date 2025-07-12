@@ -15,6 +15,11 @@ import BackendTestButton from '@/components/orders/BackendTestButton';
 import { useOrderFilters } from '@/hooks/useOrderFilters';
 import { useOrderCounts } from '@/hooks/useOrderCounts';
 
+// Type guard to ensure item is not null
+const isValidOrderItem = (item: any): item is NonNullable<typeof item> => {
+  return item !== null && typeof item === 'object' && 'id' in item && item.id;
+};
+
 const WholesalerOrdersEnhanced: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,8 +52,8 @@ const WholesalerOrdersEnhanced: React.FC = () => {
         
         if (Array.isArray(orderData)) {
           for (const item of orderData) {
-            // Strict null check and type validation
-            if (!item || typeof item !== 'object' || !('id' in item) || !item.id) {
+            // Use type guard to check validity
+            if (!isValidOrderItem(item)) {
               console.warn('Invalid order item:', item);
               continue;
             }
@@ -112,7 +117,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
       const fullOrders = await getWholesalerOrders(true);
       const fullOrderData = Array.isArray(fullOrders) ? fullOrders.find((o: any) => o && o.id === order.id) : null;
         
-      if (!fullOrderData || typeof fullOrderData !== 'object' || !('id' in fullOrderData)) {
+      if (!fullOrderData || !isValidOrderItem(fullOrderData)) {
         throw new Error('Order details not found');
       }
 

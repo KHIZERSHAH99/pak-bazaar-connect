@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
+import { enhancedSignIn, enhancedSignUp, enhancedSignOut } from '@/lib/auth-enhanced';
 
 interface Profile {
   id: string;
@@ -29,10 +30,19 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  signIn: (email: string, password: string) => Promise<{ error?: string }>;
+  signUp: (email: string, password: string, role: UserRole) => Promise<{ error?: string }>;
   refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// LoadingScreen component
+export const LoadingScreen: React.FC = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pakistani_green-700"></div>
+  </div>
+);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -91,6 +101,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     } catch (error) {
       console.error('Error in signOut:', error);
+    }
+  };
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const result = await enhancedSignIn(email, password);
+      return { error: result.error };
+    } catch (error: any) {
+      return { error: error.message || 'Sign in failed' };
+    }
+  };
+
+  const signUp = async (email: string, password: string, role: UserRole) => {
+    try {
+      const result = await enhancedSignUp(email, password, role);
+      return { error: result.error };
+    } catch (error: any) {
+      return { error: error.message || 'Sign up failed' };
     }
   };
 
@@ -163,6 +191,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     profile,
     loading,
     signOut,
+    signIn,
+    signUp,
     refreshProfile,
   };
 

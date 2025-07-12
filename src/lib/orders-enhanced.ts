@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 
@@ -163,6 +164,68 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
     return (data || []).filter(item => item && typeof item === 'object' && item.id);
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);
+    throw error;
+  }
+};
+
+export const getSellerOrders = async (): Promise<any[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        shops (
+          id,
+          name,
+          contact,
+          address,
+          postal_code,
+          owner_id
+        )
+      `)
+      .eq('buyer_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching seller orders:', error);
+      throw error;
+    }
+
+    // Filter out null items and ensure proper structure
+    return (data || []).filter(item => item && typeof item === 'object' && item.id);
+  } catch (error) {
+    console.error('Error in getSellerOrders:', error);
+    throw error;
+  }
+};
+
+export const reusePreviousOrder = async (orderId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .eq('buyer_id', user.id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching previous order:', error);
+      throw new Error('Failed to fetch previous order');
+    }
+
+    return {
+      shopId: data.shop_id,
+      shopName: data.shop_name || 'Unknown Shop',
+      totalAmount: data.total_amount
+    };
+  } catch (error: any) {
+    console.error('Error in reusePreviousOrder:', error);
     throw error;
   }
 };

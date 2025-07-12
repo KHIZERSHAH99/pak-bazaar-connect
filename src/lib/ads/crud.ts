@@ -1,9 +1,43 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { Ad, CreateAdData } from './types';
 import { transformAd } from './transforms';
 
-export const createAd = async (adData: CreateAdData) => {
+// Use more specific types to avoid deep instantiation issues
+type AdData = {
+  id: string;
+  wholesaler_id: string;
+  product_id?: string;
+  headline: string;
+  image?: string;
+  status: string;
+  ad_type?: string;
+  budget_cap?: number;
+  daily_budget_limit?: number;
+  campaign_start_date?: string;
+  campaign_end_date?: string;
+  current_spend?: number;
+  total_orders?: number;
+  is_auto_stopped?: boolean;
+  tracking_token?: string;
+  created_at: string;
+  products?: {
+    name: string;
+    price: number;
+    image?: string;
+  };
+};
+
+type CreateAdData = {
+  product_id: string;
+  headline: string;
+  image?: string;
+  budget_cap: number;
+  daily_budget_limit?: number;
+  campaign_start_date?: string;
+  campaign_end_date?: string;
+};
+
+export const createAd = async (adData: CreateAdData): Promise<AdData> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
 
@@ -42,7 +76,7 @@ export const createAd = async (adData: CreateAdData) => {
   return transformAd(data);
 };
 
-export const getAdsByWholesaler = async (): Promise<Ad[]> => {
+export const getAdsByWholesaler = async (): Promise<AdData[]> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
@@ -67,7 +101,7 @@ export const getAdsByWholesaler = async (): Promise<Ad[]> => {
   return (data || []).map(transformAd);
 };
 
-export const getActiveAds = async (limit = 10): Promise<Ad[]> => {
+export const getActiveAds = async (limit = 10): Promise<AdData[]> => {
   const { data, error } = await supabase
     .from('ads')
     .select(`
@@ -91,7 +125,7 @@ export const getActiveAds = async (limit = 10): Promise<Ad[]> => {
   return (data || []).map(transformAd);
 };
 
-export const getPendingAds = async (): Promise<Ad[]> => {
+export const getPendingAds = async (): Promise<AdData[]> => {
   const { data, error } = await supabase
     .from('ads')
     .select(`
@@ -113,7 +147,7 @@ export const getPendingAds = async (): Promise<Ad[]> => {
   return (data || []).map(transformAd);
 };
 
-export const approveAd = async (adId: string, isApproved: boolean = true): Promise<Ad> => {
+export const approveAd = async (adId: string, isApproved: boolean = true): Promise<AdData> => {
   const status = isApproved ? 'active' : 'rejected';
   
   const { data, error } = await supabase
@@ -138,7 +172,7 @@ export const approveAd = async (adId: string, isApproved: boolean = true): Promi
   return transformAd(data);
 };
 
-export const pauseAd = async (adId: string): Promise<Ad> => {
+export const pauseAd = async (adId: string): Promise<AdData> => {
   const { data, error } = await supabase
     .from('ads')
     .update({ status: 'paused' })
@@ -161,7 +195,7 @@ export const pauseAd = async (adId: string): Promise<Ad> => {
   return transformAd(data);
 };
 
-export const resumeAd = async (adId: string): Promise<Ad> => {
+export const resumeAd = async (adId: string): Promise<AdData> => {
   const { data, error } = await supabase
     .from('ads')
     .update({ 

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 export interface OrderFormData {
@@ -322,8 +321,10 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
       return [];
     }
 
-    // Return the data with proper type safety
-    return (data || []).filter(item => item && typeof item === 'object' && 'id' in item);
+    // Return the data with proper type safety - filter out any null items
+    return (data || []).filter((item): item is NonNullable<typeof item> => {
+      return item != null && typeof item === 'object' && 'id' in item;
+    });
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);
     return [];

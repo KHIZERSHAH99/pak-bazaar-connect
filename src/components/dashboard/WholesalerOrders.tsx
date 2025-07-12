@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -44,14 +43,15 @@ const WholesalerOrders: React.FC = () => {
         
         for (const item of orderData) {
           // Check if item is valid and has required properties - with proper type guard
-          if (!item || typeof item !== 'object' || !('id' in item) || item === null) {
+          if (!item || typeof item !== 'object' || !('id' in item)) {
             console.warn('Invalid order item:', item);
             continue;
           }
 
-          // Now we know item is not null and is an object with 'id' property
+          // Type assertion after validation - we know item is not null here
+          const validItem = item as NonNullable<typeof item> & Record<string, any>;
+          
           try {
-            const validItem = item as Record<string, any>;
             const order: Order = {
               id: String(validItem.id || ''),
               buyer_id: String(validItem.buyer_id || ''),
@@ -109,42 +109,43 @@ const WholesalerOrders: React.FC = () => {
       const fullOrders = await getWholesalerOrders(true);
       const fullOrderData = fullOrders.find((o: any) => o && o.id === order.id);
         
-      if (fullOrderData && typeof fullOrderData === 'object' && 'id' in fullOrderData && fullOrderData !== null) {
-        // Process the full order data safely with proper type guard
-        const validFullOrderData = fullOrderData as Record<string, any>;
-        const typedOrder: Order = {
-          id: String(validFullOrderData.id || order.id),
-          buyer_id: String(validFullOrderData.buyer_id || order.buyer_id),
-          shop_id: String(validFullOrderData.shop_id || order.shop_id),
-          total_amount: Number(validFullOrderData.total_amount) || order.total_amount,
-          status: (validFullOrderData.status || 'pending') as OrderStatus,
-          payment_method: (validFullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
-          buyer_name: validFullOrderData.buyer_name || order.buyer_name,
-          buyer_phone: validFullOrderData.buyer_phone || order.buyer_phone,
-          buyer_address: validFullOrderData.buyer_address || order.buyer_address,
-          payment_screenshot: validFullOrderData.payment_screenshot || order.payment_screenshot,
-          screenshot_uploaded_at: validFullOrderData.screenshot_uploaded_at || order.screenshot_uploaded_at,
-          created_at: validFullOrderData.created_at || order.created_at,
-          confirmed_at: validFullOrderData.confirmed_at || order.confirmed_at,
-          rejected_at: validFullOrderData.rejected_at || order.rejected_at,
-          wholesaler_notes: validFullOrderData.wholesaler_notes || order.wholesaler_notes,
-          commission_id: validFullOrderData.commission_id || order.commission_id,
-          shops: (validFullOrderData.shops && typeof validFullOrderData.shops === 'object' && validFullOrderData.shops !== null) ? {
-            id: String(validFullOrderData.shops.id || order.shops?.id || ''),
-            name: String(validFullOrderData.shops.name || order.shops?.name || ''),
-            contact: String(validFullOrderData.shops.contact || order.shops?.contact || ''),
-            address: String(validFullOrderData.shops.address || order.shops?.address || ''),
-            postal_code: String(validFullOrderData.shops.postal_code || order.shops?.postal_code || ''),
-            owner_id: String(validFullOrderData.shops.owner_id || order.shops?.owner_id || '')
-          } : order.shops,
-          profiles: (validFullOrderData.profiles && typeof validFullOrderData.profiles === 'object' && validFullOrderData.profiles !== null) ? 
-            validFullOrderData.profiles : order.profiles
-        };
-        setSelectedOrder(typedOrder);
-        setShowDetails(true);
-      } else {
+      if (!fullOrderData || typeof fullOrderData !== 'object' || !('id' in fullOrderData)) {
         throw new Error('Order details not found');
       }
+
+      // Type assertion after validation - we know fullOrderData is not null here
+      const validFullOrderData = fullOrderData as NonNullable<typeof fullOrderData> & Record<string, any>;
+      
+      const typedOrder: Order = {
+        id: String(validFullOrderData.id || order.id),
+        buyer_id: String(validFullOrderData.buyer_id || order.buyer_id),
+        shop_id: String(validFullOrderData.shop_id || order.shop_id),
+        total_amount: Number(validFullOrderData.total_amount) || order.total_amount,
+        status: (validFullOrderData.status || 'pending') as OrderStatus,
+        payment_method: (validFullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
+        buyer_name: validFullOrderData.buyer_name || order.buyer_name,
+        buyer_phone: validFullOrderData.buyer_phone || order.buyer_phone,
+        buyer_address: validFullOrderData.buyer_address || order.buyer_address,
+        payment_screenshot: validFullOrderData.payment_screenshot || order.payment_screenshot,
+        screenshot_uploaded_at: validFullOrderData.screenshot_uploaded_at || order.screenshot_uploaded_at,
+        created_at: validFullOrderData.created_at || order.created_at,
+        confirmed_at: validFullOrderData.confirmed_at || order.confirmed_at,
+        rejected_at: validFullOrderData.rejected_at || order.rejected_at,
+        wholesaler_notes: validFullOrderData.wholesaler_notes || order.wholesaler_notes,
+        commission_id: validFullOrderData.commission_id || order.commission_id,
+        shops: (validFullOrderData.shops && typeof validFullOrderData.shops === 'object' && validFullOrderData.shops !== null) ? {
+          id: String(validFullOrderData.shops.id || order.shops?.id || ''),
+          name: String(validFullOrderData.shops.name || order.shops?.name || ''),
+          contact: String(validFullOrderData.shops.contact || order.shops?.contact || ''),
+          address: String(validFullOrderData.shops.address || order.shops?.address || ''),
+          postal_code: String(validFullOrderData.shops.postal_code || order.shops?.postal_code || ''),
+          owner_id: String(validFullOrderData.shops.owner_id || order.shops?.owner_id || '')
+        } : order.shops,
+        profiles: (validFullOrderData.profiles && typeof validFullOrderData.profiles === 'object' && validFullOrderData.profiles !== null) ? 
+          validFullOrderData.profiles : order.profiles
+      };
+      setSelectedOrder(typedOrder);
+      setShowDetails(true);
     } catch (error: any) {
       console.error('Error loading order details:', error);
       toast({

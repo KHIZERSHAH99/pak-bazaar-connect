@@ -1,53 +1,46 @@
 
+import { Database } from '@/integrations/supabase/types';
+
+export type AdStatus = 'pending' | 'active' | 'rejected' | 'approved' | 'paused';
+
 export interface Ad {
   id: string;
   wholesaler_id: string;
-  product_id?: string;
   headline: string;
   image?: string;
-  status: 'pending' | 'approved' | 'rejected' | 'active' | 'paused';
-  ad_type?: string;
-  budget_cap?: number;
-  daily_budget_limit?: number;
-  campaign_start_date?: string;
-  campaign_end_date?: string;
+  status: AdStatus;
+  created_at: string;
+  // Enhanced fields for analytics
   current_spend?: number;
   total_orders?: number;
+  budget_cap?: number;
+  campaign_start_date?: string;
+  campaign_end_date?: string;
   is_auto_stopped?: boolean;
-  tracking_token?: string;
-  created_at: string;
-  products?: {
-    name: string;
-    price: number;
-    image?: string;
-  };
+}
+
+export interface CreateAdRequest {
+  headline: string;
+  image?: string;
+  budget_cap?: number;
+  campaign_end_date?: string;
 }
 
 export interface AdOrder {
   id: string;
   ad_id: string;
-  order_id: string;
-  tracking_token: string;
-  cost_charged: number;
+  buyer_id: string;
+  order_amount: number;
   created_at: string;
 }
 
 export interface AdAnalytics {
-  id: string;
-  ad_id: string;
-  date: string;
-  impressions: number;
-  clicks: number;
-  orders: number;
-  spend: number;
+  total_views: number;
+  total_clicks: number;
+  total_orders: number;
+  total_revenue: number;
+  conversion_rate: number;
+  click_through_rate: number;
 }
 
-export interface CreateAdData {
-  product_id: string;
-  headline: string;
-  image?: string;
-  budget_cap: number;
-  daily_budget_limit?: number;
-  campaign_start_date?: string;
-  campaign_end_date?: string;
-}
+export type CreateAdData = Omit<Ad, 'id' | 'created_at' | 'status'>;

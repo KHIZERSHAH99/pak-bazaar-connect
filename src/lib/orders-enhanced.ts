@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { Order, OrderStatus } from '@/lib/types';
 
@@ -20,6 +21,9 @@ export const fetchOrdersWithAnalytics = async (
         shops!inner (
           id,
           name,
+          contact,
+          address,
+          postal_code,
           owner_id
         ),
         profiles!orders_buyer_id_fkey (
@@ -47,7 +51,15 @@ export const fetchOrdersWithAnalytics = async (
              typeof item.id === 'string';
     }).map(item => ({
       ...item,
-      status: item.status as OrderStatus
+      status: item.status as OrderStatus,
+      shops: item.shops ? {
+        id: item.shops.id,
+        name: item.shops.name,
+        contact: item.shops.contact || '',
+        address: item.shops.address || '',
+        postal_code: item.shops.postal_code || '',
+        owner_id: item.shops.owner_id
+      } : undefined
     })) as Order[];
 
     return transformedData;
@@ -99,6 +111,9 @@ export const createOrderWithValidation = async (orderData: any): Promise<Order |
         shops!inner (
           id,
           name,
+          contact,
+          address,
+          postal_code,
           owner_id
         ),
         profiles!orders_buyer_id_fkey (
@@ -117,7 +132,15 @@ export const createOrderWithValidation = async (orderData: any): Promise<Order |
     // Transform the data with proper typing
     const transformedData = {
       ...data,
-      status: data.status as OrderStatus
+      status: data.status as OrderStatus,
+      shops: data.shops ? {
+        id: data.shops.id,
+        name: data.shops.name,
+        contact: data.shops.contact || '',
+        address: data.shops.address || '',
+        postal_code: data.shops.postal_code || '',
+        owner_id: data.shops.owner_id
+      } : undefined
     } as Order;
 
     return transformedData;
@@ -142,6 +165,9 @@ export const getWholesalerOrders = async (): Promise<Order[]> => {
         shops!inner (
           id,
           name,
+          contact,
+          address,
+          postal_code,
           owner_id
         ),
         profiles!orders_buyer_id_fkey (
@@ -167,12 +193,81 @@ export const getWholesalerOrders = async (): Promise<Order[]> => {
              typeof item.id === 'string';
     }).map(item => ({
       ...item,
-      status: item.status as OrderStatus
+      status: item.status as OrderStatus,
+      shops: item.shops ? {
+        id: item.shops.id,
+        name: item.shops.name,
+        contact: item.shops.contact || '',
+        address: item.shops.address || '',
+        postal_code: item.shops.postal_code || '',
+        owner_id: item.shops.owner_id
+      } : undefined
     })) as Order[];
 
     return transformedData;
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);
+    throw error;
+  }
+};
+
+export const getSellerOrders = async (): Promise<Order[]> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.log('No authenticated user found');
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        shops!inner (
+          id,
+          name,
+          contact,
+          address,
+          postal_code,
+          owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .eq('buyer_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching seller orders:', error);
+      throw error;
+    }
+
+    // Transform and filter data with proper typing
+    const transformedData = (data || []).filter(item => {
+      return item && 
+             typeof item === 'object' && 
+             'id' in item && 
+             item.id &&
+             typeof item.id === 'string';
+    }).map(item => ({
+      ...item,
+      status: item.status as OrderStatus,
+      shops: item.shops ? {
+        id: item.shops.id,
+        name: item.shops.name,
+        contact: item.shops.contact || '',
+        address: item.shops.address || '',
+        postal_code: item.shops.postal_code || '',
+        owner_id: item.shops.owner_id
+      } : undefined
+    })) as Order[];
+
+    return transformedData;
+  } catch (error) {
+    console.error('Error in getSellerOrders:', error);
     throw error;
   }
 };
@@ -186,6 +281,9 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
         shops!inner (
           id,
           name,
+          contact,
+          address,
+          postal_code,
           owner_id
         ),
         profiles!orders_buyer_id_fkey (
@@ -210,7 +308,15 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
     // Transform the data with proper typing
     const transformedData = {
       ...data,
-      status: data.status as OrderStatus
+      status: data.status as OrderStatus,
+      shops: data.shops ? {
+        id: data.shops.id,
+        name: data.shops.name,
+        contact: data.shops.contact || '',
+        address: data.shops.address || '',
+        postal_code: data.shops.postal_code || '',
+        owner_id: data.shops.owner_id
+      } : undefined
     } as Order;
 
     return transformedData;
@@ -231,6 +337,9 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
         shops!inner (
           id,
           name,
+          contact,
+          address,
+          postal_code,
           owner_id
         ),
         profiles!orders_buyer_id_fkey (
@@ -249,7 +358,15 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
     // Transform the data with proper typing
     const transformedData = {
       ...data,
-      status: data.status as OrderStatus
+      status: data.status as OrderStatus,
+      shops: data.shops ? {
+        id: data.shops.id,
+        name: data.shops.name,
+        contact: data.shops.contact || '',
+        address: data.shops.address || '',
+        postal_code: data.shops.postal_code || '',
+        owner_id: data.shops.owner_id
+      } : undefined
     } as Order;
 
     return transformedData;
@@ -270,6 +387,9 @@ export const addWholesalerNotes = async (orderId: string, notes: string): Promis
         shops!inner (
           id,
           name,
+          contact,
+          address,
+          postal_code,
           owner_id
         ),
         profiles!orders_buyer_id_fkey (
@@ -288,12 +408,253 @@ export const addWholesalerNotes = async (orderId: string, notes: string): Promis
     // Transform the data with proper typing
     const transformedData = {
       ...data,
-      status: data.status as OrderStatus
+      status: data.status as OrderStatus,
+      shops: data.shops ? {
+        id: data.shops.id,
+        name: data.shops.name,
+        contact: data.shops.contact || '',
+        address: data.shops.address || '',
+        postal_code: data.shops.postal_code || '',
+        owner_id: data.shops.owner_id
+      } : undefined
     } as Order;
 
     return transformedData;
   } catch (error) {
     console.error('Error in addWholesalerNotes:', error);
     return null;
+  }
+};
+
+export const confirmOrder = async (orderId: string, notes?: string): Promise<Order> => {
+  try {
+    const updateData: any = { 
+      status: 'confirmed',
+      confirmed_at: new Date().toISOString()
+    };
+    
+    if (notes) {
+      updateData.wholesaler_notes = notes;
+    }
+
+    const { data, error } = await supabase
+      .from('orders')
+      .update(updateData)
+      .eq('id', orderId)
+      .select(`
+        *,
+        shops!inner (
+          id,
+          name,
+          contact,
+          address,
+          postal_code,
+          owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .single();
+
+    if (error) {
+      console.error('Error confirming order:', error);
+      throw error;
+    }
+
+    return {
+      ...data,
+      status: data.status as OrderStatus,
+      shops: data.shops ? {
+        id: data.shops.id,
+        name: data.shops.name,
+        contact: data.shops.contact || '',
+        address: data.shops.address || '',
+        postal_code: data.shops.postal_code || '',
+        owner_id: data.shops.owner_id
+      } : undefined
+    } as Order;
+  } catch (error) {
+    console.error('Error in confirmOrder:', error);
+    throw error;
+  }
+};
+
+export const rejectOrder = async (orderId: string, reason: string): Promise<Order> => {
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ 
+        status: 'rejected',
+        rejected_at: new Date().toISOString(),
+        wholesaler_notes: reason
+      })
+      .eq('id', orderId)
+      .select(`
+        *,
+        shops!inner (
+          id,
+          name,
+          contact,
+          address,
+          postal_code,
+          owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .single();
+
+    if (error) {
+      console.error('Error rejecting order:', error);
+      throw error;
+    }
+
+    return {
+      ...data,
+      status: data.status as OrderStatus,
+      shops: data.shops ? {
+        id: data.shops.id,
+        name: data.shops.name,
+        contact: data.shops.contact || '',
+        address: data.shops.address || '',
+        postal_code: data.shops.postal_code || '',
+        owner_id: data.shops.owner_id
+      } : undefined
+    } as Order;
+  } catch (error) {
+    console.error('Error in rejectOrder:', error);
+    throw error;
+  }
+};
+
+export const createOrderWithPayment = async (
+  shopId: string,
+  totalAmount: number,
+  paymentMethod: string,
+  paymentScreenshot: File
+): Promise<Order> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Upload payment screenshot
+    const screenshotPath = `${user.id}/${Date.now()}_${paymentScreenshot.name}`;
+    const { error: uploadError } = await supabase.storage
+      .from('payment-screenshots')
+      .upload(screenshotPath, paymentScreenshot);
+
+    if (uploadError) {
+      throw new Error(`Failed to upload payment screenshot: ${uploadError.message}`);
+    }
+
+    // Create order
+    const orderData = {
+      buyer_id: user.id,
+      shop_id: shopId,
+      total_amount: totalAmount,
+      payment_method: paymentMethod,
+      payment_screenshot: screenshotPath,
+      screenshot_uploaded_at: new Date().toISOString(),
+      status: 'pending'
+    };
+
+    const order = await createOrderWithValidation(orderData);
+    if (!order) {
+      throw new Error('Failed to create order');
+    }
+
+    return order;
+  } catch (error) {
+    console.error('Error in createOrderWithPayment:', error);
+    throw error;
+  }
+};
+
+export const reusePreviousOrder = async (previousOrderId: string): Promise<any> => {
+  try {
+    const previousOrder = await getOrderById(previousOrderId);
+    if (!previousOrder) {
+      throw new Error('Previous order not found');
+    }
+
+    return {
+      shopId: previousOrder.shop_id,
+      shopName: previousOrder.shops?.name || 'Unknown Shop',
+      totalAmount: previousOrder.total_amount
+    };
+  } catch (error) {
+    console.error('Error in reusePreviousOrder:', error);
+    throw error;
+  }
+};
+
+export const getOrderMessages = async (orderId: string): Promise<any[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('order_messages')
+      .select(`
+        *,
+        profiles!order_messages_sender_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching order messages:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getOrderMessages:', error);
+    return [];
+  }
+};
+
+export const sendOrderMessage = async (orderId: string, message: string): Promise<any> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const { data, error } = await supabase
+      .from('order_messages')
+      .insert({
+        order_id: orderId,
+        sender_id: user.id,
+        message: message
+      })
+      .select(`
+        *,
+        profiles!order_messages_sender_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .single();
+
+    if (error) {
+      console.error('Error sending order message:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in sendOrderMessage:', error);
+    throw error;
   }
 };

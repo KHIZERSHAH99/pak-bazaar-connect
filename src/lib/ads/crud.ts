@@ -1,284 +1,175 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
-// Simplified type definitions to avoid deep instantiation
-interface Product {
-  name: string;
-  price: number;
-  image?: string;
-}
-
-interface AdData {
+export interface Ad {
   id: string;
   wholesaler_id: string;
-  product_id?: string;
   headline: string;
   image?: string;
-  status: string;
-  ad_type?: string;
-  budget_cap?: number;
-  daily_budget_limit?: number;
-  campaign_start_date?: string;
-  campaign_end_date?: string;
-  current_spend?: number;
-  total_orders?: number;
-  is_auto_stopped?: boolean;
-  tracking_token?: string;
+  status: 'pending' | 'approved' | 'active' | 'rejected';
   created_at: string;
-  products?: Product;
 }
 
-interface CreateAdData {
-  product_id: string;
+export interface CreateAdRequest {
   headline: string;
-  image?: string;
-  budget_cap: number;
-  daily_budget_limit?: number;
-  campaign_start_date?: string;
-  campaign_end_date?: string;
+  image?: File;
 }
 
-const transformAd = (data: any): AdData => {
-  return {
-    id: data.id,
-    wholesaler_id: data.wholesaler_id,
-    product_id: data.product_id,
-    headline: data.headline,
-    image: data.image,
-    status: data.status,
-    ad_type: data.ad_type,
-    budget_cap: data.budget_cap,
-    daily_budget_limit: data.daily_budget_limit,
-    campaign_start_date: data.campaign_start_date,
-    campaign_end_date: data.campaign_end_date,
-    current_spend: data.current_spend,
-    total_orders: data.total_orders,
-    is_auto_stopped: data.is_auto_stopped,
-    tracking_token: data.tracking_token,
-    created_at: data.created_at,
-    products: data.products ? {
-      name: data.products.name,
-      price: data.products.price,
-      image: data.products.image
-    } : undefined
-  };
-};
-
-export const createAd = async (adData: CreateAdData): Promise<AdData> => {
+export const createAd = async (adData: CreateAdRequest): Promise<Ad> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
 
-  const { data, error } = await supabase
-    .from('ads')
-    .insert([{
-      wholesaler_id: user.id,
-      product_id: adData.product_id,
-      headline: adData.headline,
-      image: adData.image,
-      status: 'pending',
-      ad_type: 'cpo',
-      budget_cap: adData.budget_cap || 0,
-      daily_budget_limit: adData.daily_budget_limit || 0,
-      campaign_start_date: adData.campaign_start_date,
-      campaign_end_date: adData.campaign_end_date,
-      current_spend: 0,
-      total_orders: 0,
-      is_auto_stopped: false
-    }])
-    .select(`
-      *,
-      products!inner (
-        name,
-        price,
-        image
-      )
-    `)
-    .single();
-  
-  if (error) {
-    console.error('Error creating ad:', error);
+  try {
+    let imageUrl: string | null = null;
+
+    // Upload image if provided
+    if (adData.image) {
+      const fileExt = adData.image.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('ad_images')
+        .upload(fileName, adData.image);
+
+      if (uploadError) {
+        console.error('Error uploading ad image:', uploadError);
+        throw new Error('Failed to upload ad image');
+      }
+
+      imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/ad_images/${fileName}`;
+    }
+
+    // Create ad record
+    const { data, error } = await supabase
+      .from('ads')
+      .insert([
+        {
+          wholesaler_id: user.id,
+          headline: adData.headline,
+          image: imageUrl,
+          status: 'pending'
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating ad:', error);
+      throw new Error('Failed to create ad');
+    }
+
+    return data as Ad;
+  } catch (error: any) {
+    console.error('Error in createAd:', error);
     throw error;
   }
-  
-  return transformAd(data);
 };
 
-export const getAdsByWholesaler = async (): Promise<AdData[]> => {
+export const getWholesalerAds = async (): Promise<Ad[]> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
-  const { data, error } = await supabase
-    .from('ads')
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
-    .eq('wholesaler_id', user.id)
-    .order('created_at', { ascending: false });
-  
-  if (error) {
-    console.error('Error fetching ads:', error);
-    return [];
-  }
-  
-  return (data || []).map(transformAd);
-};
-
-export const getActiveAds = async (limit = 10): Promise<AdData[]> => {
-  const { data, error } = await supabase
-    .from('ads')
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
-    .eq('status', 'active')
-    .eq('is_auto_stopped', false)
-    .order('created_at', { ascending: false })
-    .limit(limit);
-  
-  if (error) {
-    console.error('Error fetching active ads:', error);
-    return [];
-  }
-  
-  return (data || []).map(transformAd);
-};
-
-export const getPendingAds = async (): Promise<AdData[]> => {
-  const { data, error } = await supabase
-    .from('ads')
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false });
-  
-  if (error) {
-    console.error('Error fetching pending ads:', error);
-    return [];
-  }
-  
-  return (data || []).map(transformAd);
-};
-
-export const approveAd = async (adId: string, isApproved: boolean = true): Promise<AdData> => {
-  const status = isApproved ? 'active' : 'rejected';
-  
-  const { data, error } = await supabase
-    .from('ads')
-    .update({ status })
-    .eq('id', adId)
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
-    .single();
-  
-  if (error) {
-    console.error('Error updating ad status:', error);
-    throw error;
-  }
-  
-  return transformAd(data);
-};
-
-export const pauseAd = async (adId: string): Promise<AdData> => {
-  const { data, error } = await supabase
-    .from('ads')
-    .update({ status: 'paused' })
-    .eq('id', adId)
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
-    .single();
-  
-  if (error) {
-    console.error('Error pausing ad:', error);
-    throw error;
-  }
-  
-  return transformAd(data);
-};
-
-export const resumeAd = async (adId: string): Promise<AdData> => {
-  const { data, error } = await supabase
-    .from('ads')
-    .update({ 
-      status: 'active',
-      is_auto_stopped: false 
-    })
-    .eq('id', adId)
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
-    .single();
-  
-  if (error) {
-    console.error('Error resuming ad:', error);
-    throw error;
-  }
-  
-  return transformAd(data);
-};
-
-export const trackAdOrder = async (trackingToken: string, orderId: string, costCharged: number) => {
   try {
-    // Get the ad by tracking token
-    const { data: ad, error: adError } = await supabase
+    const { data, error } = await supabase
       .from('ads')
-      .select('id')
-      .eq('tracking_token', trackingToken)
-      .single();
-
-    if (adError || !ad) {
-      console.error('Ad not found for tracking token:', trackingToken);
-      return { success: false, error: 'Ad not found' };
-    }
-
-    // Call the edge function to increment spend
-    const { data, error } = await supabase.functions.invoke('increment-ad-spend', {
-      body: {
-        ad_id: ad.id,
-        spend_amount: costCharged,
-        order_id: orderId
-      }
-    });
+      .select('*')
+      .eq('wholesaler_id', user.id)
+      .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error tracking ad order:', error);
-      return { success: false, error: error.message };
+      console.error('Error fetching wholesaler ads:', error);
+      throw error;
     }
 
-    return { success: true, data };
+    return (data || []) as Ad[];
   } catch (error) {
-    console.error('Error in trackAdOrder:', error);
-    return { success: false, error: 'Failed to track ad order' };
+    console.error('Error in getWholesalerAds:', error);
+    throw error;
+  }
+};
+
+export const getActiveAds = async (limit = 10): Promise<Ad[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('ads')
+      .select('*')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching active ads:', error);
+      throw error;
+    }
+
+    return (data || []) as Ad[];
+  } catch (error) {
+    console.error('Error in getActiveAds:', error);
+    throw error;
+  }
+};
+
+export const updateAdStatus = async (adId: string, status: 'approved' | 'rejected' | 'active'): Promise<Ad> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  try {
+    const { data, error } = await supabase
+      .from('ads')
+      .update({ status })
+      .eq('id', adId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating ad status:', error);
+      throw new Error('Failed to update ad status');
+    }
+
+    return data as Ad;
+  } catch (error: any) {
+    console.error('Error in updateAdStatus:', error);
+    throw error;
+  }
+};
+
+export const getPendingAds = async (): Promise<Ad[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('ads')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching pending ads:', error);
+      throw error;
+    }
+
+    return (data || []) as Ad[];
+  } catch (error) {
+    console.error('Error in getPendingAds:', error);
+    throw error;
+  }
+};
+
+export const deleteAd = async (adId: string): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  try {
+    const { error } = await supabase
+      .from('ads')
+      .delete()
+      .eq('id', adId)
+      .eq('wholesaler_id', user.id);
+
+    if (error) {
+      console.error('Error deleting ad:', error);
+      throw new Error('Failed to delete ad');
+    }
+  } catch (error: any) {
+    console.error('Error in deleteAd:', error);
+    throw error;
   }
 };

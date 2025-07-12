@@ -59,11 +59,14 @@ export const createOrderWithPaymentEnhanced = async (
   }
 };
 
-export const confirmOrderEnhanced = async (orderId: string): Promise<Order> => {
+// Alias for backward compatibility
+export const createOrderWithPayment = createOrderWithPaymentEnhanced;
+
+export const confirmOrderEnhanced = async (orderId: string, notes?: string): Promise<Order> => {
   try {
     const { data, error } = await supabase
       .from('orders')
-      .update({ status: 'confirmed', confirmed_at: new Date().toISOString() })
+      .update({ status: 'confirmed', confirmed_at: new Date().toISOString(), wholesaler_notes: notes })
       .eq('id', orderId)
       .select('*')
       .single();
@@ -80,11 +83,14 @@ export const confirmOrderEnhanced = async (orderId: string): Promise<Order> => {
   }
 };
 
-export const rejectOrderEnhanced = async (orderId: string): Promise<Order> => {
+// Alias for backward compatibility
+export const confirmOrder = confirmOrderEnhanced;
+
+export const rejectOrderEnhanced = async (orderId: string, notes?: string): Promise<Order> => {
   try {
     const { data, error } = await supabase
       .from('orders')
-      .update({ status: 'rejected', rejected_at: new Date().toISOString() })
+      .update({ status: 'rejected', rejected_at: new Date().toISOString(), wholesaler_notes: notes })
       .eq('id', orderId)
       .select('*')
       .single();
@@ -101,6 +107,9 @@ export const rejectOrderEnhanced = async (orderId: string): Promise<Order> => {
   }
 };
 
+// Alias for backward compatibility
+export const rejectOrder = rejectOrderEnhanced;
+
 export const getOrderWithSecurity = async (orderId: string): Promise<Order | null> => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
@@ -110,13 +119,6 @@ export const getOrderWithSecurity = async (orderId: string): Promise<Order | nul
             .from('orders')
             .select('*')
             .eq('id', orderId)
-            .or(`buyer_id.eq.${user.id},shop_id.in.(${
-                supabase
-                    .from('shops')
-                    .select('id')
-                    .eq('owner_id', user.id)
-                    .then(res => res.data?.map(shop => shop.id).join(','))
-            })`)
             .single();
 
         if (error) {
@@ -136,7 +138,6 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
   if (!user) return [];
 
   try {
-    // Build the select query properly
     let selectQuery = `
       *,
       shops!inner (
@@ -165,7 +166,7 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
       throw error;
     }
 
-    // Return properly filtered and typed data
+    // Return properly filtered and typed data with null safety
     return (data || []).filter(item => item && typeof item === 'object' && item.id);
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);
@@ -226,11 +227,76 @@ export const reusePreviousOrder = async (orderId: string) => {
 
     return {
       shopId: data.shop_id,
-      shopName: data.shop_name || 'Unknown Shop',
+      shopName: 'Unknown Shop', // We don't have shop_name in the data
       totalAmount: data.total_amount
     };
   } catch (error: any) {
     console.error('Error in reusePreviousOrder:', error);
+    throw error;
+  }
+};
+
+// Order messaging functions
+export const getOrderMessages = async (orderId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  try {
+    const { data, error } = await supabase
+      .from('order_messages')
+      .select(`
+        *,
+        profiles!order_messages_sender_id_fkey (
+          email,
+          business_name
+        )
+      `)
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching order messages:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error: any) {
+    console.error('Error in getOrderMessages:', error);
+    throw error;
+  }
+};
+
+export const sendOrderMessage = async (orderId: string, message: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  try {
+    const { data, error } = await supabase
+      .from('order_messages')
+      .insert([
+        {
+          order_id: orderId,
+          sender_id: user.id,
+          message: message.trim()
+        }
+      ])
+      .select(`
+        *,
+        profiles!order_messages_sender_id_fkey (
+          email,
+          business_name
+        )
+      `)
+      .single();
+
+    if (error) {
+      console.error('Error sending order message:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error: any) {
+    console.error('Error in sendOrderMessage:', error);
     throw error;
   }
 };

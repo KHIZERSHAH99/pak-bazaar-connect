@@ -1,3 +1,4 @@
+
 // Define all the types needed for our application
 export type UserRole = 'admin' | 'wholesaler' | 'seller' | 'pending';
 
@@ -215,8 +216,8 @@ export interface OrderMessage {
   sender_id: string;
   message: string;
   created_at: string;
-  // Joined data
-  profiles?: Profile;
+  // Joined data - make profiles optional to handle partial data
+  profiles?: Partial<Profile>;
 }
 
 export interface WholesalerMonthlySales {

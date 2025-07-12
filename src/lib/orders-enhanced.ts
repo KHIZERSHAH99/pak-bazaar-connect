@@ -261,9 +261,27 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
   if (!user) return [];
 
   try {
+    // First get shop IDs owned by the user
+    const { data: shops, error: shopsError } = await supabase
+      .from('shops')
+      .select('id')
+      .eq('owner_id', user.id);
+
+    if (shopsError) {
+      console.error('Error fetching shops:', shopsError);
+      return [];
+    }
+
+    if (!shops || shops.length === 0) {
+      return [];
+    }
+
+    const shopIds = shops.map(shop => shop.id);
+
+    // Then get orders for those shops
     let selectClause = `
       *,
-      shops!inner (
+      shops (
         id,
         name,
         contact,
@@ -275,10 +293,11 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
 
     if (includeFullDetails) {
       selectClause += `,
-        profiles (
+        profiles!orders_buyer_id_fkey (
           id,
           email,
-          business_name
+          business_name,
+          role
         )
       `;
     }
@@ -286,7 +305,7 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
     const { data, error } = await supabase
       .from('orders')
       .select(selectClause)
-      .eq('shops.owner_id', user.id)
+      .in('shop_id', shopIds)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -310,7 +329,8 @@ export const getOrderMessages = async (orderId: string) => {
         profiles (
           id,
           email,
-          business_name
+          business_name,
+          role
         )
       `)
       .eq('order_id', orderId)
@@ -345,7 +365,8 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
         profiles (
           id,
           email,
-          business_name
+          business_name,
+          role
         )
       `)
       .single();

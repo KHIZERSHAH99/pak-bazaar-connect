@@ -39,33 +39,35 @@ const WholesalerOrders: React.FC = () => {
         const orderData = await getWholesalerOrders(false);
         console.log('Raw order data:', orderData);
         
-        // Process the raw data into proper Order objects
-        const processedOrders: Order[] = orderData.map((item: any) => ({
-          id: item.id || '',
-          buyer_id: item.buyer_id || '',
-          shop_id: item.shop_id || '',
-          total_amount: Number(item.total_amount) || 0,
-          status: (item.status || 'pending') as OrderStatus,
-          payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
-          buyer_name: item.buyer_name || null,
-          buyer_phone: item.buyer_phone || null,
-          buyer_address: item.buyer_address || null,
-          payment_screenshot: item.payment_screenshot || null,
-          screenshot_uploaded_at: item.screenshot_uploaded_at || null,
-          created_at: item.created_at || null,
-          confirmed_at: item.confirmed_at || null,
-          rejected_at: item.rejected_at || null,
-          wholesaler_notes: item.wholesaler_notes || null,
-          commission_id: item.commission_id || null,
-          shops: item.shops ? {
-            id: item.shops.id || '',
-            name: item.shops.name || '',
-            contact: item.shops.contact || '',
-            address: item.shops.address || '',
-            postal_code: item.shops.postal_code || '',
-            owner_id: item.shops.owner_id || ''
-          } : undefined
-        }));
+        // Safely process the raw data into proper Order objects
+        const processedOrders: Order[] = orderData
+          .filter((item: any) => item && typeof item === 'object' && item.id)
+          .map((item: any) => ({
+            id: item.id || '',
+            buyer_id: item.buyer_id || '',
+            shop_id: item.shop_id || '',
+            total_amount: Number(item.total_amount) || 0,
+            status: (item.status || 'pending') as OrderStatus,
+            payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
+            buyer_name: item.buyer_name || null,
+            buyer_phone: item.buyer_phone || null,
+            buyer_address: item.buyer_address || null,
+            payment_screenshot: item.payment_screenshot || null,
+            screenshot_uploaded_at: item.screenshot_uploaded_at || null,
+            created_at: item.created_at || null,
+            confirmed_at: item.confirmed_at || null,
+            rejected_at: item.rejected_at || null,
+            wholesaler_notes: item.wholesaler_notes || null,
+            commission_id: item.commission_id || null,
+            shops: item.shops ? {
+              id: item.shops.id || '',
+              name: item.shops.name || '',
+              contact: item.shops.contact || '',
+              address: item.shops.address || '',
+              postal_code: item.shops.postal_code || '',
+              owner_id: item.shops.owner_id || ''
+            } : undefined
+          }));
         
         console.log('Processed orders:', processedOrders);
         setOrders(processedOrders);
@@ -89,7 +91,7 @@ const WholesalerOrders: React.FC = () => {
     try {
       // Fetch full order details
       const fullOrders = await getWholesalerOrders(true);
-      const fullOrderData = fullOrders.find((o: any) => o.id === order.id);
+      const fullOrderData = fullOrders.find((o: any) => o && o.id === order.id);
         
       if (fullOrderData) {
         // Process the full order data

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -44,47 +45,46 @@ const WholesalerOrdersEnhanced: React.FC = () => {
         // Safely process and validate the raw data into proper Order objects
         const processedOrders: Order[] = [];
         
-        for (const item of orderData) {
-          // Check if item is valid and has required properties - with proper type guard
-          if (!item || typeof item !== 'object' || !('id' in item)) {
-            console.warn('Invalid order item:', item);
-            continue;
-          }
+        if (Array.isArray(orderData)) {
+          for (const item of orderData) {
+            // Strict null check and type validation
+            if (!item || typeof item !== 'object' || !('id' in item) || !item.id) {
+              console.warn('Invalid order item:', item);
+              continue;
+            }
 
-          // Type assertion after validation - we know item is not null here
-          const validItem = item as NonNullable<typeof item> & Record<string, any>;
-          
-          try {
-            const order: Order = {
-              id: String(validItem.id || ''),
-              buyer_id: String(validItem.buyer_id || ''),
-              shop_id: String(validItem.shop_id || ''),
-              total_amount: Number(validItem.total_amount) || 0,
-              status: (validItem.status || 'pending') as OrderStatus,
-              payment_method: (validItem.payment_method || 'bank_transfer') as PaymentMethod,
-              buyer_name: validItem.buyer_name || null,
-              buyer_phone: validItem.buyer_phone || null,
-              buyer_address: validItem.buyer_address || null,
-              payment_screenshot: validItem.payment_screenshot || null,
-              screenshot_uploaded_at: validItem.screenshot_uploaded_at || null,
-              created_at: validItem.created_at || null,
-              confirmed_at: validItem.confirmed_at || null,
-              rejected_at: validItem.rejected_at || null,
-              wholesaler_notes: validItem.wholesaler_notes || null,
-              commission_id: validItem.commission_id || null,
-              shops: (validItem.shops && typeof validItem.shops === 'object' && validItem.shops !== null) ? {
-                id: String(validItem.shops.id || ''),
-                name: String(validItem.shops.name || ''),
-                contact: String(validItem.shops.contact || ''),
-                address: String(validItem.shops.address || ''),
-                postal_code: String(validItem.shops.postal_code || ''),
-                owner_id: String(validItem.shops.owner_id || '')
-              } : undefined
-            };
-            
-            processedOrders.push(order);
-          } catch (processError) {
-            console.error('Error processing order item:', processError, item);
+            try {
+              const order: Order = {
+                id: String(item.id || ''),
+                buyer_id: String(item.buyer_id || ''),
+                shop_id: String(item.shop_id || ''),
+                total_amount: Number(item.total_amount) || 0,
+                status: (item.status || 'pending') as OrderStatus,
+                payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
+                buyer_name: item.buyer_name || null,
+                buyer_phone: item.buyer_phone || null,
+                buyer_address: item.buyer_address || null,
+                payment_screenshot: item.payment_screenshot || null,
+                screenshot_uploaded_at: item.screenshot_uploaded_at || null,
+                created_at: item.created_at || null,
+                confirmed_at: item.confirmed_at || null,
+                rejected_at: item.rejected_at || null,
+                wholesaler_notes: item.wholesaler_notes || null,
+                commission_id: item.commission_id || null,
+                shops: (item.shops && typeof item.shops === 'object') ? {
+                  id: String(item.shops.id || ''),
+                  name: String(item.shops.name || ''),
+                  contact: String(item.shops.contact || ''),
+                  address: String(item.shops.address || ''),
+                  postal_code: String(item.shops.postal_code || ''),
+                  owner_id: String(item.shops.owner_id || '')
+                } : undefined
+              };
+              
+              processedOrders.push(order);
+            } catch (processError) {
+              console.error('Error processing order item:', processError, item);
+            }
           }
         }
         
@@ -110,42 +110,39 @@ const WholesalerOrdersEnhanced: React.FC = () => {
     try {
       // Fetch full order details if needed
       const fullOrders = await getWholesalerOrders(true);
-      const fullOrderData = fullOrders.find((o: any) => o && o.id === order.id);
+      const fullOrderData = Array.isArray(fullOrders) ? fullOrders.find((o: any) => o && o.id === order.id) : null;
         
       if (!fullOrderData || typeof fullOrderData !== 'object' || !('id' in fullOrderData)) {
         throw new Error('Order details not found');
       }
 
-      // Type assertion after validation - we know fullOrderData is not null here
-      const validFullOrderData = fullOrderData as NonNullable<typeof fullOrderData> & Record<string, any>;
-      
       const typedOrder: Order = {
-        id: String(validFullOrderData.id || order.id),
-        buyer_id: String(validFullOrderData.buyer_id || order.buyer_id),
-        shop_id: String(validFullOrderData.shop_id || order.shop_id),
-        total_amount: Number(validFullOrderData.total_amount) || order.total_amount,
-        status: (validFullOrderData.status || 'pending') as OrderStatus,
-        payment_method: (validFullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
-        buyer_name: validFullOrderData.buyer_name || order.buyer_name,
-        buyer_phone: validFullOrderData.buyer_phone || order.buyer_phone,
-        buyer_address: validFullOrderData.buyer_address || order.buyer_address,
-        payment_screenshot: validFullOrderData.payment_screenshot || order.payment_screenshot,
-        screenshot_uploaded_at: validFullOrderData.screenshot_uploaded_at || order.screenshot_uploaded_at,
-        created_at: validFullOrderData.created_at || order.created_at,
-        confirmed_at: validFullOrderData.confirmed_at || order.confirmed_at,
-        rejected_at: validFullOrderData.rejected_at || order.rejected_at,
-        wholesaler_notes: validFullOrderData.wholesaler_notes || order.wholesaler_notes,
-        commission_id: validFullOrderData.commission_id || order.commission_id,
-        shops: (validFullOrderData.shops && typeof validFullOrderData.shops === 'object' && validFullOrderData.shops !== null) ? {
-          id: String(validFullOrderData.shops.id || order.shops?.id || ''),
-          name: String(validFullOrderData.shops.name || order.shops?.name || ''),
-          contact: String(validFullOrderData.shops.contact || order.shops?.contact || ''),
-          address: String(validFullOrderData.shops.address || order.shops?.address || ''),
-          postal_code: String(validFullOrderData.shops.postal_code || order.shops?.postal_code || ''),
-          owner_id: String(validFullOrderData.shops.owner_id || order.shops?.owner_id || '')
+        id: String(fullOrderData.id || order.id),
+        buyer_id: String(fullOrderData.buyer_id || order.buyer_id),
+        shop_id: String(fullOrderData.shop_id || order.shop_id),
+        total_amount: Number(fullOrderData.total_amount) || order.total_amount,
+        status: (fullOrderData.status || 'pending') as OrderStatus,
+        payment_method: (fullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
+        buyer_name: fullOrderData.buyer_name || order.buyer_name,
+        buyer_phone: fullOrderData.buyer_phone || order.buyer_phone,
+        buyer_address: fullOrderData.buyer_address || order.buyer_address,
+        payment_screenshot: fullOrderData.payment_screenshot || order.payment_screenshot,
+        screenshot_uploaded_at: fullOrderData.screenshot_uploaded_at || order.screenshot_uploaded_at,
+        created_at: fullOrderData.created_at || order.created_at,
+        confirmed_at: fullOrderData.confirmed_at || order.confirmed_at,
+        rejected_at: fullOrderData.rejected_at || order.rejected_at,
+        wholesaler_notes: fullOrderData.wholesaler_notes || order.wholesaler_notes,
+        commission_id: fullOrderData.commission_id || order.commission_id,
+        shops: (fullOrderData.shops && typeof fullOrderData.shops === 'object') ? {
+          id: String(fullOrderData.shops.id || order.shops?.id || ''),
+          name: String(fullOrderData.shops.name || order.shops?.name || ''),
+          contact: String(fullOrderData.shops.contact || order.shops?.contact || ''),
+          address: String(fullOrderData.shops.address || order.shops?.address || ''),
+          postal_code: String(fullOrderData.shops.postal_code || order.shops?.postal_code || ''),
+          owner_id: String(fullOrderData.shops.owner_id || order.shops?.owner_id || '')
         } : order.shops,
-        profiles: (validFullOrderData.profiles && typeof validFullOrderData.profiles === 'object' && validFullOrderData.profiles !== null) ? 
-          validFullOrderData.profiles : order.profiles
+        profiles: (fullOrderData.profiles && typeof fullOrderData.profiles === 'object') ? 
+          fullOrderData.profiles : order.profiles
       };
       setSelectedOrder(typedOrder);
       setBuyerDetailsRevealed(typedOrder.status !== 'pending');

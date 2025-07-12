@@ -1,9 +1,14 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { transformAd } from './transforms';
 
-// Use more specific types to avoid deep instantiation issues
-type AdData = {
+// Simplified type definitions to avoid deep instantiation
+interface Product {
+  name: string;
+  price: number;
+  image?: string;
+}
+
+interface AdData {
   id: string;
   wholesaler_id: string;
   product_id?: string;
@@ -20,14 +25,10 @@ type AdData = {
   is_auto_stopped?: boolean;
   tracking_token?: string;
   created_at: string;
-  products?: {
-    name: string;
-    price: number;
-    image?: string;
-  };
-};
+  products?: Product;
+}
 
-type CreateAdData = {
+interface CreateAdData {
   product_id: string;
   headline: string;
   image?: string;
@@ -35,6 +36,32 @@ type CreateAdData = {
   daily_budget_limit?: number;
   campaign_start_date?: string;
   campaign_end_date?: string;
+}
+
+const transformAd = (data: any): AdData => {
+  return {
+    id: data.id,
+    wholesaler_id: data.wholesaler_id,
+    product_id: data.product_id,
+    headline: data.headline,
+    image: data.image,
+    status: data.status,
+    ad_type: data.ad_type,
+    budget_cap: data.budget_cap,
+    daily_budget_limit: data.daily_budget_limit,
+    campaign_start_date: data.campaign_start_date,
+    campaign_end_date: data.campaign_end_date,
+    current_spend: data.current_spend,
+    total_orders: data.total_orders,
+    is_auto_stopped: data.is_auto_stopped,
+    tracking_token: data.tracking_token,
+    created_at: data.created_at,
+    products: data.products ? {
+      name: data.products.name,
+      price: data.products.price,
+      image: data.products.image
+    } : undefined
+  };
 };
 
 export const createAd = async (adData: CreateAdData): Promise<AdData> => {
@@ -60,7 +87,7 @@ export const createAd = async (adData: CreateAdData): Promise<AdData> => {
     }])
     .select(`
       *,
-      products (
+      products!inner (
         name,
         price,
         image

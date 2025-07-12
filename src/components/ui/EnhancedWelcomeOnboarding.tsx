@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useNavigate } from 'react-router-dom';
 import { 
   CheckCircle, 
   ShoppingCart, 
@@ -31,6 +32,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
   onSkip
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const navigate = useNavigate();
 
   const getStepsForRole = () => {
     if (userRole === 'wholesaler') {
@@ -41,6 +43,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           subtitle: 'Your B2B Success Starts Here',
           description: 'Join thousands of successful wholesalers who are growing their business with our platform. Get ready to expand your reach across Pakistan!',
           action: 'Get Started',
+          link: '/dashboard',
           highlight: 'Free for First 10 Wholesalers!',
           benefits: [
             'Reach buyers nationwide',
@@ -55,7 +58,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           subtitle: 'Create Your Online Presence',
           description: 'Create your professional shop profile with contact details, address, and logo to attract more customers.',
           action: 'Create Shop',
-          link: '/dashboard?tab=shops',
+          link: '/dashboard/shops',
           benefits: [
             'Professional shop profile',
             'Upload your business logo',
@@ -69,7 +72,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           subtitle: 'Showcase Your Inventory',
           description: 'Add your wholesale products with competitive pricing, MOQ, and detailed descriptions to attract buyers.',
           action: 'Add Products',
-          link: '/dashboard?tab=products',
+          link: '/dashboard/products',
           benefits: [
             'Upload product images',
             'Set competitive prices',
@@ -83,7 +86,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           subtitle: 'Boost Your Sales',
           description: 'Create discount coupons and promotional ads to attract more customers and increase your sales.',
           action: 'Start Promoting',
-          link: '/dashboard?tab=coupons',
+          link: '/dashboard/ads',
           benefits: [
             'Create discount coupons',
             'Run promotional campaigns',
@@ -100,6 +103,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           subtitle: 'Discover Quality Wholesale Products',
           description: 'Connect with verified wholesalers across Pakistan and access thousands of quality products at wholesale prices.',
           action: 'Start Shopping',
+          link: '/dashboard/browse-shops',
           highlight: 'Verified Wholesalers Only!',
           benefits: [
             'Browse verified suppliers',
@@ -128,7 +132,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           subtitle: 'Build Business Relationships',
           description: 'Communicate directly with wholesalers, negotiate prices, and place orders with confidence.',
           action: 'Start Ordering',
-          link: '/dashboard?tab=orders',
+          link: '/dashboard/seller-orders',
           benefits: [
             'Direct communication',
             'Secure order placement',
@@ -155,10 +159,25 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
 
   const handleAction = () => {
     if (currentStepData.link) {
-      window.location.href = currentStepData.link;
+      // Mark tutorial as completed
+      localStorage.setItem('tutorial_completed', 'true');
+      navigate(currentStepData.link);
+      onComplete();
     } else {
       handleNext();
     }
+  };
+
+  const handleSkip = () => {
+    // Mark tutorial as completed when skipped
+    localStorage.setItem('tutorial_completed', 'true');
+    onSkip();
+  };
+
+  const handleComplete = () => {
+    // Mark tutorial as completed
+    localStorage.setItem('tutorial_completed', 'true');
+    onComplete();
   };
 
   return (
@@ -167,7 +186,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
         {/* Header with Progress */}
         <div className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 text-white p-6 relative">
           <button
-            onClick={onSkip}
+            onClick={handleSkip}
             className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors"
           >
             <X className="h-5 w-5" />
@@ -230,7 +249,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
               variant="outline"
-              onClick={onSkip}
+              onClick={handleSkip}
               className="flex-1 font-poppins"
             >
               Skip Tour
@@ -269,6 +288,20 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
               }
             </p>
           </div>
+
+          {/* Complete Button for last step */}
+          {currentStep === steps.length - 1 && (
+            <div className="mt-6 text-center">
+              <Button
+                onClick={handleComplete}
+                variant="ghost"
+                className="font-poppins"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Complete Tour
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

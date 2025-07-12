@@ -1,6 +1,12 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
+// Re-export everything from modular ads library
+export * from './ads/types';
+export * from './ads/crud';
+export * from './ads/analytics';
+export * from './ads/transforms';
+
+// Legacy compatibility - keep existing exports
 export interface Ad {
   id: string;
   wholesaler_id: string;
@@ -65,6 +71,7 @@ const transformAd = (dbAd: any): Ad => ({
   products: dbAd.products || undefined
 });
 
+// Legacy functions for backward compatibility
 export const createAd = async (adData: {
   product_id: string;
   headline: string;
@@ -77,16 +84,31 @@ export const createAd = async (adData: {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
 
-  // For now, create with basic fields that exist in current schema
   const { data, error } = await supabase
     .from('ads')
     .insert([{
       wholesaler_id: user.id,
+      product_id: adData.product_id,
       headline: adData.headline,
       image: adData.image,
-      status: 'pending'
+      status: 'pending',
+      ad_type: 'cpo',
+      budget_cap: adData.budget_cap || 0,
+      daily_budget_limit: adData.daily_budget_limit || 0,
+      campaign_start_date: adData.campaign_start_date,
+      campaign_end_date: adData.campaign_end_date,
+      current_spend: 0,
+      total_orders: 0,
+      is_auto_stopped: false
     }])
-    .select()
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .single();
   
   if (error) {
@@ -103,7 +125,14 @@ export const getAdsByWholesaler = async () => {
 
   const { data, error } = await supabase
     .from('ads')
-    .select('*')
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .eq('wholesaler_id', user.id)
     .order('created_at', { ascending: false });
   
@@ -118,8 +147,16 @@ export const getAdsByWholesaler = async () => {
 export const getActiveAds = async (limit = 10) => {
   const { data, error } = await supabase
     .from('ads')
-    .select('*')
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .eq('status', 'active')
+    .eq('is_auto_stopped', false)
     .order('created_at', { ascending: false })
     .limit(limit);
   
@@ -134,7 +171,14 @@ export const getActiveAds = async (limit = 10) => {
 export const getPendingAds = async () => {
   const { data, error } = await supabase
     .from('ads')
-    .select('*')
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .eq('status', 'pending')
     .order('created_at', { ascending: false });
   
@@ -147,13 +191,20 @@ export const getPendingAds = async () => {
 };
 
 export const approveAd = async (adId: string, isApproved: boolean = true) => {
-  const status = isApproved ? 'approved' : 'rejected';
+  const status = isApproved ? 'active' : 'rejected';
   
   const { data, error } = await supabase
     .from('ads')
     .update({ status })
     .eq('id', adId)
-    .select()
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .single();
   
   if (error) {
@@ -165,15 +216,46 @@ export const approveAd = async (adId: string, isApproved: boolean = true) => {
 };
 
 export const getAdAnalytics = async (adId: string) => {
-  // For now, return empty array since analytics table might not exist yet
-  console.log('Analytics requested for ad:', adId);
-  return [] as AdAnalytics[];
+  try {
+    const { data, error } = await supabase
+      .from('ad_analytics')
+      .select('*')
+      .eq('ad_id', adId)
+      .order('date', { ascending: false })
+      .limit(30);
+
+    if (error) {
+      console.error('Error fetching ad analytics:', error);
+      return [] as AdAnalytics[];
+    }
+
+    return data || [] as AdAnalytics[];
+  } catch (error) {
+    console.error('Error in getAdAnalytics:', error);
+    return [] as AdAnalytics[];
+  }
 };
 
 export const trackAdOrder = async (trackingToken: string, orderId: string, costCharged: number) => {
-  // For now, just log the tracking attempt since ad_orders table might not exist yet
-  console.log('Ad order tracking:', { trackingToken, orderId, costCharged });
-  return { success: true };
+  try {
+    const { data, error } = await supabase.functions.invoke('increment-ad-spend', {
+      body: {
+        tracking_token: trackingToken,
+        order_id: orderId,
+        cost_charged: costCharged
+      }
+    });
+
+    if (error) {
+      console.error('Error tracking ad order:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error in trackAdOrder:', error);
+    return { success: false, error: 'Failed to track ad order' };
+  }
 };
 
 export const pauseAd = async (adId: string) => {
@@ -181,7 +263,14 @@ export const pauseAd = async (adId: string) => {
     .from('ads')
     .update({ status: 'paused' })
     .eq('id', adId)
-    .select()
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .single();
   
   if (error) {
@@ -195,9 +284,19 @@ export const pauseAd = async (adId: string) => {
 export const resumeAd = async (adId: string) => {
   const { data, error } = await supabase
     .from('ads')
-    .update({ status: 'active' })
+    .update({ 
+      status: 'active',
+      is_auto_stopped: false 
+    })
     .eq('id', adId)
-    .select()
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .single();
   
   if (error) {

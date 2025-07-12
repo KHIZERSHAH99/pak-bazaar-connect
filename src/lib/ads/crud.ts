@@ -7,16 +7,31 @@ export const createAd = async (adData: CreateAdData) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
 
-  // For now, create with basic fields that exist in current schema
   const { data, error } = await supabase
     .from('ads')
     .insert([{
       wholesaler_id: user.id,
+      product_id: adData.product_id,
       headline: adData.headline,
       image: adData.image,
-      status: 'pending'
+      status: 'pending',
+      ad_type: 'cpo',
+      budget_cap: adData.budget_cap || 0,
+      daily_budget_limit: adData.daily_budget_limit || 0,
+      campaign_start_date: adData.campaign_start_date,
+      campaign_end_date: adData.campaign_end_date,
+      current_spend: 0,
+      total_orders: 0,
+      is_auto_stopped: false
     }])
-    .select()
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .single();
   
   if (error) {
@@ -33,7 +48,14 @@ export const getAdsByWholesaler = async (): Promise<Ad[]> => {
 
   const { data, error } = await supabase
     .from('ads')
-    .select('*')
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .eq('wholesaler_id', user.id)
     .order('created_at', { ascending: false });
   
@@ -48,8 +70,16 @@ export const getAdsByWholesaler = async (): Promise<Ad[]> => {
 export const getActiveAds = async (limit = 10): Promise<Ad[]> => {
   const { data, error } = await supabase
     .from('ads')
-    .select('*')
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .eq('status', 'active')
+    .eq('is_auto_stopped', false)
     .order('created_at', { ascending: false })
     .limit(limit);
   
@@ -64,7 +94,14 @@ export const getActiveAds = async (limit = 10): Promise<Ad[]> => {
 export const getPendingAds = async (): Promise<Ad[]> => {
   const { data, error } = await supabase
     .from('ads')
-    .select('*')
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .eq('status', 'pending')
     .order('created_at', { ascending: false });
   
@@ -77,13 +114,20 @@ export const getPendingAds = async (): Promise<Ad[]> => {
 };
 
 export const approveAd = async (adId: string, isApproved: boolean = true): Promise<Ad> => {
-  const status = isApproved ? 'approved' : 'rejected';
+  const status = isApproved ? 'active' : 'rejected';
   
   const { data, error } = await supabase
     .from('ads')
     .update({ status })
     .eq('id', adId)
-    .select()
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .single();
   
   if (error) {
@@ -99,7 +143,14 @@ export const pauseAd = async (adId: string): Promise<Ad> => {
     .from('ads')
     .update({ status: 'paused' })
     .eq('id', adId)
-    .select()
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .single();
   
   if (error) {
@@ -113,9 +164,19 @@ export const pauseAd = async (adId: string): Promise<Ad> => {
 export const resumeAd = async (adId: string): Promise<Ad> => {
   const { data, error } = await supabase
     .from('ads')
-    .update({ status: 'active' })
+    .update({ 
+      status: 'active',
+      is_auto_stopped: false 
+    })
     .eq('id', adId)
-    .select()
+    .select(`
+      *,
+      products (
+        name,
+        price,
+        image
+      )
+    `)
     .single();
   
   if (error) {
@@ -124,4 +185,39 @@ export const resumeAd = async (adId: string): Promise<Ad> => {
   }
   
   return transformAd(data);
+};
+
+export const trackAdOrder = async (trackingToken: string, orderId: string, costCharged: number) => {
+  try {
+    // Get the ad by tracking token
+    const { data: ad, error: adError } = await supabase
+      .from('ads')
+      .select('id')
+      .eq('tracking_token', trackingToken)
+      .single();
+
+    if (adError || !ad) {
+      console.error('Ad not found for tracking token:', trackingToken);
+      return { success: false, error: 'Ad not found' };
+    }
+
+    // Call the edge function to increment spend
+    const { data, error } = await supabase.functions.invoke('increment-ad-spend', {
+      body: {
+        ad_id: ad.id,
+        spend_amount: costCharged,
+        order_id: orderId
+      }
+    });
+
+    if (error) {
+      console.error('Error tracking ad order:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error in trackAdOrder:', error);
+    return { success: false, error: 'Failed to track ad order' };
+  }
 };

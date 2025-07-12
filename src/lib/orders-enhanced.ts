@@ -136,31 +136,36 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
   if (!user) return [];
 
   try {
-    let query = supabase
+    // Build the select query properly
+    let selectQuery = `
+      *,
+      shops!inner (
+        id,
+        name,
+        contact,
+        address,
+        postal_code,
+        owner_id
+      )
+    `;
+    
+    if (includeFullDetails) {
+      selectQuery += `,
+      profiles!orders_buyer_id_fkey (email)`;
+    }
+
+    const { data, error } = await supabase
       .from('orders')
-      .select(`
-        *,
-        shops!inner (
-          id,
-          name,
-          contact,
-          address,
-          postal_code,
-          owner_id
-        )
-        ${includeFullDetails ? ',profiles (email)' : ''}
-      `)
+      .select(selectQuery)
       .eq('shops.owner_id', user.id)
       .order('created_at', { ascending: false });
-
-    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching wholesaler orders:', error);
       throw error;
     }
 
-    // Filter out null items and ensure proper structure
+    // Return properly filtered and typed data
     return (data || []).filter(item => item && typeof item === 'object' && item.id);
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);

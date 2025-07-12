@@ -13,9 +13,44 @@ import BackendTestButton from '@/components/orders/BackendTestButton';
 import { useOrderFilters } from '@/hooks/useOrderFilters';
 import { useOrderCounts } from '@/hooks/useOrderCounts';
 
-// Type guard to ensure item is not null
-const isValidOrderItem = (item: any): item is NonNullable<typeof item> => {
-  return item !== null && typeof item === 'object' && 'id' in item && item.id;
+// Helper function to safely convert raw data to Order type
+const convertToOrder = (rawData: any): Order | null => {
+  if (!rawData || typeof rawData !== 'object' || !rawData.id) {
+    return null;
+  }
+
+  try {
+    return {
+      id: String(rawData.id || ''),
+      buyer_id: String(rawData.buyer_id || ''),
+      shop_id: String(rawData.shop_id || ''),
+      total_amount: Number(rawData.total_amount) || 0,
+      status: (rawData.status || 'pending') as OrderStatus,
+      payment_method: (rawData.payment_method || 'bank_transfer') as PaymentMethod,
+      buyer_name: rawData.buyer_name || null,
+      buyer_phone: rawData.buyer_phone || null,
+      buyer_address: rawData.buyer_address || null,
+      payment_screenshot: rawData.payment_screenshot || null,
+      screenshot_uploaded_at: rawData.screenshot_uploaded_at || null,
+      created_at: rawData.created_at || null,
+      confirmed_at: rawData.confirmed_at || null,
+      rejected_at: rawData.rejected_at || null,
+      wholesaler_notes: rawData.wholesaler_notes || null,
+      commission_id: rawData.commission_id || null,
+      shops: (rawData.shops && typeof rawData.shops === 'object') ? {
+        id: String(rawData.shops.id || ''),
+        name: String(rawData.shops.name || ''),
+        contact: String(rawData.shops.contact || ''),
+        address: String(rawData.shops.address || ''),
+        postal_code: String(rawData.shops.postal_code || ''),
+        owner_id: String(rawData.shops.owner_id || '')
+      } : undefined,
+      profiles: rawData.profiles || undefined
+    };
+  } catch (error) {
+    console.error('Error converting raw data to Order:', error, rawData);
+    return null;
+  }
 };
 
 const WholesalerOrders: React.FC = () => {
@@ -48,44 +83,12 @@ const WholesalerOrders: React.FC = () => {
         const processedOrders: Order[] = [];
         
         if (Array.isArray(orderData)) {
-          for (const item of orderData) {
-            // Use type guard to check validity
-            if (!isValidOrderItem(item)) {
-              console.warn('Invalid order item:', item);
-              continue;
-            }
-
-            try {
-              const order: Order = {
-                id: String(item.id || ''),
-                buyer_id: String(item.buyer_id || ''),
-                shop_id: String(item.shop_id || ''),
-                total_amount: Number(item.total_amount) || 0,
-                status: (item.status || 'pending') as OrderStatus,
-                payment_method: (item.payment_method || 'bank_transfer') as PaymentMethod,
-                buyer_name: item.buyer_name || null,
-                buyer_phone: item.buyer_phone || null,
-                buyer_address: item.buyer_address || null,
-                payment_screenshot: item.payment_screenshot || null,
-                screenshot_uploaded_at: item.screenshot_uploaded_at || null,
-                created_at: item.created_at || null,
-                confirmed_at: item.confirmed_at || null,
-                rejected_at: item.rejected_at || null,
-                wholesaler_notes: item.wholesaler_notes || null,
-                commission_id: item.commission_id || null,
-                shops: (item.shops && typeof item.shops === 'object') ? {
-                  id: String(item.shops.id || ''),
-                  name: String(item.shops.name || ''),
-                  contact: String(item.shops.contact || ''),
-                  address: String(item.shops.address || ''),
-                  postal_code: String(item.shops.postal_code || ''),
-                  owner_id: String(item.shops.owner_id || '')
-                } : undefined
-              };
-              
-              processedOrders.push(order);
-            } catch (processError) {
-              console.error('Error processing order item:', processError, item);
+          for (const rawItem of orderData) {
+            const convertedOrder = convertToOrder(rawItem);
+            if (convertedOrder) {
+              processedOrders.push(convertedOrder);
+            } else {
+              console.warn('Could not convert order item:', rawItem);
             }
           }
         }
@@ -112,41 +115,18 @@ const WholesalerOrders: React.FC = () => {
     try {
       // Fetch full order details
       const fullOrders = await getWholesalerOrders(true);
-      const fullOrderData = Array.isArray(fullOrders) ? fullOrders.find((o: any) => o && o.id === order.id) : null;
+      const fullOrderRaw = Array.isArray(fullOrders) ? fullOrders.find((o: any) => o && o.id === order.id) : null;
         
-      if (!fullOrderData || !isValidOrderItem(fullOrderData)) {
+      if (!fullOrderRaw) {
         throw new Error('Order details not found');
       }
 
-      const typedOrder: Order = {
-        id: String(fullOrderData.id || order.id),
-        buyer_id: String(fullOrderData.buyer_id || order.buyer_id),
-        shop_id: String(fullOrderData.shop_id || order.shop_id),
-        total_amount: Number(fullOrderData.total_amount) || order.total_amount,
-        status: (fullOrderData.status || 'pending') as OrderStatus,
-        payment_method: (fullOrderData.payment_method || 'bank_transfer') as PaymentMethod,
-        buyer_name: fullOrderData.buyer_name || order.buyer_name,
-        buyer_phone: fullOrderData.buyer_phone || order.buyer_phone,
-        buyer_address: fullOrderData.buyer_address || order.buyer_address,
-        payment_screenshot: fullOrderData.payment_screenshot || order.payment_screenshot,
-        screenshot_uploaded_at: fullOrderData.screenshot_uploaded_at || order.screenshot_uploaded_at,
-        created_at: fullOrderData.created_at || order.created_at,
-        confirmed_at: fullOrderData.confirmed_at || order.confirmed_at,
-        rejected_at: fullOrderData.rejected_at || order.rejected_at,
-        wholesaler_notes: fullOrderData.wholesaler_notes || order.wholesaler_notes,
-        commission_id: fullOrderData.commission_id || order.commission_id,
-        shops: (fullOrderData.shops && typeof fullOrderData.shops === 'object') ? {
-          id: String(fullOrderData.shops.id || order.shops?.id || ''),
-          name: String(fullOrderData.shops.name || order.shops?.name || ''),
-          contact: String(fullOrderData.shops.contact || order.shops?.contact || ''),
-          address: String(fullOrderData.shops.address || order.shops?.address || ''),
-          postal_code: String(fullOrderData.shops.postal_code || order.shops?.postal_code || ''),
-          owner_id: String(fullOrderData.shops.owner_id || order.shops?.owner_id || '')
-        } : order.shops,
-        profiles: (fullOrderData.profiles && typeof fullOrderData.profiles === 'object') ? 
-          fullOrderData.profiles : order.profiles
-      };
-      setSelectedOrder(typedOrder);
+      const fullOrder = convertToOrder(fullOrderRaw);
+      if (!fullOrder) {
+        throw new Error('Could not process order details');
+      }
+
+      setSelectedOrder(fullOrder);
       setShowDetails(true);
     } catch (error: any) {
       console.error('Error loading order details:', error);

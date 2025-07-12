@@ -1,58 +1,16 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
-// Re-export everything from modular ads library with explicit naming to avoid conflicts
-export type { Ad as ModularAd, AdOrder, AdAnalytics, CreateAdData } from './ads/types';
+// Re-export everything from modular ads library - using the main Ad type
+export { Ad, AdOrder, AdAnalytics, CreateAdData } from './ads/types';
 export * from './ads/crud';
 export { getAdAnalytics, getAdPerformanceSummary } from './ads/analytics';
 export * from './ads/transforms';
 
-// Legacy compatibility - keep existing exports
-export interface LegacyAd {
-  id: string;
-  wholesaler_id: string;
-  product_id?: string;
-  headline: string;
-  image?: string;
-  status: 'pending' | 'approved' | 'rejected' | 'active' | 'paused';
-  ad_type?: string;
-  budget_cap?: number;
-  daily_budget_limit?: number;
-  campaign_start_date?: string;
-  campaign_end_date?: string;
-  current_spend?: number;
-  total_orders?: number;
-  is_auto_stopped?: boolean;
-  tracking_token?: string;
-  created_at: string;
-  products?: {
-    name: string;
-    price: number;
-    image?: string;
-  };
-}
+// Legacy compatibility interface - keep for backward compatibility but use the main Ad type
+export type LegacyAd = Ad;
 
-export interface AdOrder {
-  id: string;
-  ad_id: string;
-  order_id: string;
-  tracking_token: string;
-  cost_charged: number;
-  created_at: string;
-}
-
-export interface AdAnalytics {
-  id: string;
-  ad_id: string;
-  date: string;
-  impressions: number;
-  clicks: number;
-  orders: number;
-  spend: number;
-}
-
-// Helper function to transform database row to LegacyAd interface
-const transformLegacyAd = (dbAd: any): LegacyAd => ({
+// Helper function to transform database row to Ad interface
+const transformLegacyAd = (dbAd: any): Ad => ({
   id: dbAd.id,
   wholesaler_id: dbAd.wholesaler_id,
   headline: dbAd.headline,

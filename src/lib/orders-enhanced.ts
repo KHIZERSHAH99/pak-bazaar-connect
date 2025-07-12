@@ -132,31 +132,29 @@ export const getOrderWithSecurity = async (orderId: string): Promise<Order | nul
     }
 };
 
-export const getWholesalerOrders = async (includeFullDetails = false) => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
-
+export const getWholesalerOrders = async (): Promise<Order[]> => {
   try {
-    let selectQuery = `
-      *,
-      shops!inner (
-        id,
-        name,
-        contact,
-        address,
-        postal_code,
-        owner_id
-      )
-    `;
-    
-    if (includeFullDetails) {
-      selectQuery += `,
-      profiles!orders_buyer_id_fkey (email)`;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.log('No authenticated user found');
+      return [];
     }
 
     const { data, error } = await supabase
       .from('orders')
-      .select(selectQuery)
+      .select(`
+        *,
+        shops!inner (
+          id,
+          name,
+          owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
       .eq('shops.owner_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -165,8 +163,14 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
       throw error;
     }
 
-    // Return properly filtered and typed data with null safety
-    return (data || []).filter(item => item && typeof item === 'object' && 'id' in item && item.id);
+    // Return properly filtered and typed data with improved null safety
+    return (data || []).filter(item => {
+      return item && 
+             typeof item === 'object' && 
+             'id' in item && 
+             item.id &&
+             typeof item.id === 'string';
+    });
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);
     throw error;

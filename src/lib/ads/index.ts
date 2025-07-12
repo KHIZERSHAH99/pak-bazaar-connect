@@ -4,5 +4,5 @@ export * from './transforms';
 export * from './crud';
 // Don't re-export analytics to avoid duplicate trackAdOrder export
 export { getAdAnalytics, getAdPerformanceSummary } from './analytics';
-// Export types with explicit naming to avoid conflicts
-export type { Ad, AdOrder, AdAnalytics, CreateAdData } from './types';
+// Export types - no conflicts now since we use the main Ad type everywhere
+export * from './types';

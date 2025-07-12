@@ -1,6 +1,13 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { AdAnalytics } from './types';
+
+export interface AdAnalytics {
+  date: string;
+  impressions: number;
+  clicks: number;
+  orders: number;
+  spend: number;
+}
 
 // Mock analytics since ad_analytics table doesn't exist in TypeScript schema yet
 export const getAdAnalytics = async (adId: string): Promise<AdAnalytics[]> => {
@@ -17,8 +24,6 @@ export const getAdAnalytics = async (adId: string): Promise<AdAnalytics[]> => {
       date.setDate(date.getDate() - i);
       
       mockAnalytics.push({
-        id: `analytics_${adId}_${i}`,
-        ad_id: adId,
         date: date.toISOString().split('T')[0],
         impressions: Math.floor(Math.random() * 100) + 10,
         clicks: Math.floor(Math.random() * 20) + 1,

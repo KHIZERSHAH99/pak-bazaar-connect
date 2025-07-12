@@ -141,11 +141,9 @@ const EnhancedCreateAdDialog: React.FC<EnhancedCreateAdDialogProps> = ({
       const campaignEndDate = calculateEndDate(formData.campaign_days);
 
       await createAd({
-        product_id: selectedProduct,
         headline: formData.headline.trim(),
         image: imageUrl,
         budget_cap: parseFloat(formData.budget_cap),
-        daily_budget_limit: formData.daily_budget_limit ? parseFloat(formData.daily_budget_limit) : undefined,
         campaign_start_date: new Date().toISOString(),
         campaign_end_date: campaignEndDate,
       });

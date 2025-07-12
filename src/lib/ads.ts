@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 // Re-export everything from modular ads library
 export * from './ads/types';
 export * from './ads/crud';
-export * from './ads/analytics';
+export { getAdAnalytics, getAdPerformanceSummary } from './ads/analytics';
 export * from './ads/transforms';
 
 // Legacy compatibility - keep existing exports
@@ -215,28 +215,18 @@ export const approveAd = async (adId: string, isApproved: boolean = true) => {
   return transformAd(data);
 };
 
-export const getAdAnalytics = async (adId: string) => {
+// Mock analytics for now since tables don't exist in TypeScript schema
+export const getAdAnalyticsLegacy = async (adId: string) => {
   try {
-    const { data, error } = await supabase
-      .from('ad_analytics')
-      .select('*')
-      .eq('ad_id', adId)
-      .order('date', { ascending: false })
-      .limit(30);
-
-    if (error) {
-      console.error('Error fetching ad analytics:', error);
-      return [] as AdAnalytics[];
-    }
-
-    return data || [] as AdAnalytics[];
+    console.log('Getting legacy ad analytics for:', adId);
+    return [] as AdAnalytics[];
   } catch (error) {
-    console.error('Error in getAdAnalytics:', error);
+    console.error('Error in getAdAnalyticsLegacy:', error);
     return [] as AdAnalytics[];
   }
 };
 
-export const trackAdOrder = async (trackingToken: string, orderId: string, costCharged: number) => {
+export const trackAdOrderLegacy = async (trackingToken: string, orderId: string, costCharged: number) => {
   try {
     const { data, error } = await supabase.functions.invoke('increment-ad-spend', {
       body: {
@@ -253,7 +243,7 @@ export const trackAdOrder = async (trackingToken: string, orderId: string, costC
 
     return { success: true, data };
   } catch (error) {
-    console.error('Error in trackAdOrder:', error);
+    console.error('Error in trackAdOrderLegacy:', error);
     return { success: false, error: 'Failed to track ad order' };
   }
 };

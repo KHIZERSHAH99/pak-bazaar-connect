@@ -3,4 +3,5 @@
 export * from './types';
 export * from './transforms';
 export * from './crud';
-export * from './analytics';
+// Don't re-export analytics to avoid duplicate trackAdOrder export
+export { getAdAnalytics, getAdPerformanceSummary } from './analytics';

@@ -96,6 +96,28 @@ export const createOrder = async (orderData: OrderFormData) => {
   }
 };
 
+export const createOrderWithPayment = async (
+  shopId: string,
+  totalAmount: number,
+  paymentDetails: {
+    method: 'bank_transfer' | 'jazzcash' | 'easypaisa';
+    screenshot: File;
+    buyerName: string;
+    buyerPhone: string;
+    buyerAddress: string;
+  }
+) => {
+  return createOrder({
+    shop_id: shopId,
+    total_amount: totalAmount,
+    payment_method: paymentDetails.method,
+    buyer_name: paymentDetails.buyerName,
+    buyer_phone: paymentDetails.buyerPhone,
+    buyer_address: paymentDetails.buyerAddress,
+    payment_screenshot: paymentDetails.screenshot
+  });
+};
+
 export const confirmOrder = async (orderId: string, wholesalerNotes?: string) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
@@ -201,7 +223,7 @@ export const markOrderDelivered = async (orderId: string) => {
   }
 };
 
-export const getOrdersByBuyer = async () => {
+export const getSellerOrders = async () => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
@@ -211,41 +233,59 @@ export const getOrdersByBuyer = async () => {
       .select(`
         *,
         shops (
+          id,
           name,
           contact,
-          owner_id
+          owner_id,
+          address,
+          postal_code
         )
       `)
       .eq('buyer_id', user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching buyer orders:', error);
+      console.error('Error fetching seller orders:', error);
       return [];
     }
 
     return data || [];
   } catch (error) {
-    console.error('Error in getOrdersByBuyer:', error);
+    console.error('Error in getSellerOrders:', error);
     return [];
   }
 };
 
-export const getOrdersByWholesaler = async () => {
+export const getWholesalerOrders = async (includeFullDetails = false) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
   try {
+    let selectClause = `
+      *,
+      shops!inner (
+        id,
+        name,
+        contact,
+        owner_id,
+        address,
+        postal_code
+      )
+    `;
+
+    if (includeFullDetails) {
+      selectClause += `,
+        profiles (
+          id,
+          email,
+          business_name
+        )
+      `;
+    }
+
     const { data, error } = await supabase
       .from('orders')
-      .select(`
-        *,
-        shops!inner (
-          name,
-          contact,
-          owner_id
-        )
-      `)
+      .select(selectClause)
       .eq('shops.owner_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -256,7 +296,107 @@ export const getOrdersByWholesaler = async () => {
 
     return data || [];
   } catch (error) {
-    console.error('Error in getOrdersByWholesaler:', error);
+    console.error('Error in getWholesalerOrders:', error);
     return [];
+  }
+};
+
+export const getOrderMessages = async (orderId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('order_messages')
+      .select(`
+        *,
+        profiles (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching order messages:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getOrderMessages:', error);
+    return [];
+  }
+};
+
+export const sendOrderMessage = async (orderId: string, message: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  try {
+    const { data, error } = await supabase
+      .from('order_messages')
+      .insert([{
+        order_id: orderId,
+        sender_id: user.id,
+        message: message
+      }])
+      .select(`
+        *,
+        profiles (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .single();
+
+    if (error) {
+      console.error('Error sending order message:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in sendOrderMessage:', error);
+    throw error;
+  }
+};
+
+export const reusePreviousOrder = async (previousOrderId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  try {
+    // Get the previous order details
+    const { data: previousOrder, error: fetchError } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        shops (
+          id,
+          name,
+          contact
+        )
+      `)
+      .eq('id', previousOrderId)
+      .eq('buyer_id', user.id)
+      .single();
+
+    if (fetchError || !previousOrder) {
+      throw new Error('Previous order not found');
+    }
+
+    return {
+      shopId: previousOrder.shop_id,
+      shopName: previousOrder.shops?.name || '',
+      totalAmount: previousOrder.total_amount,
+      buyerName: previousOrder.buyer_name,
+      buyerPhone: previousOrder.buyer_phone,
+      buyerAddress: previousOrder.buyer_address,
+      paymentMethod: previousOrder.payment_method
+    };
+  } catch (error) {
+    console.error('Error in reusePreviousOrder:', error);
+    throw error;
   }
 };

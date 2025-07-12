@@ -52,9 +52,14 @@ export const getUserProfile = async (userId: string): Promise<Profile | null> =>
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      console.log(`Profile not found for user ID: ${userId}`);
+      return null;
+    }
     
     // Cast the role to UserRole type to fix TypeScript error
     return {
@@ -74,9 +79,14 @@ export const updateUserProfile = async (userId: string, updates: Partial<Profile
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', userId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Profile not found or update failed' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -102,9 +112,14 @@ export const createShop = async (shopData: {
         owner_id: user.id
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Failed to create shop' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -120,7 +135,7 @@ export const getShopsByOwner = async (ownerId: string) => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -141,9 +156,14 @@ export const createProduct = async (productData: {
       .from('products')
       .insert(productData)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Failed to create product' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -159,7 +179,7 @@ export const getProductsByShop = async (shopId: string) => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -179,7 +199,7 @@ export const getActiveProducts = async (limit: number = 20) => {
       .limit(limit);
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -202,9 +222,14 @@ export const createAd = async (adData: {
         status: 'pending'
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Failed to create ad' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -220,7 +245,7 @@ export const getAdsByWholesaler = async (wholesalerId: string) => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -236,7 +261,7 @@ export const getActiveAds = async (limit: number = 10) => {
       .limit(limit);
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -256,13 +281,19 @@ export const createOrder = async (orderData: {
     if (!user) throw new Error('User not authenticated');
 
     // Check if user is trying to order from their own shop
-    const { data: shop } = await supabase
+    const { data: shop, error: shopError } = await supabase
       .from('shops')
       .select('owner_id')
       .eq('id', orderData.shop_id)
-      .single();
+      .maybeSingle();
 
-    if (shop?.owner_id === user.id) {
+    if (shopError) throw shopError;
+
+    if (!shop) {
+      throw new Error('Shop not found');
+    }
+
+    if (shop.owner_id === user.id) {
       throw new Error('Cannot order from your own shop');
     }
 
@@ -274,9 +305,14 @@ export const createOrder = async (orderData: {
         status: 'pending'
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Failed to create order' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -295,7 +331,7 @@ export const getOrdersByBuyer = async (buyerId: string) => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -314,7 +350,7 @@ export const getOrdersByWholesaler = async (wholesalerId: string) => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -339,9 +375,14 @@ export const updateOrderStatus = async (orderId: string, status: string, notes?:
       .update(updates)
       .eq('id', orderId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Order not found or update failed' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -362,9 +403,14 @@ export const createRoleRequest = async (requestedRole: UserRole) => {
         status: 'pending'
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Failed to create role request' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -396,7 +442,7 @@ export const getPendingRoleRequests = async () => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -409,9 +455,13 @@ export const approveRoleRequest = async (requestId: string) => {
       .from('role_requests')
       .select('*')
       .eq('id', requestId)
-      .single();
+      .maybeSingle();
 
     if (fetchError) throw fetchError;
+    
+    if (!request) {
+      return { data: null, error: 'Role request not found' };
+    }
 
     // Update the user's role
     const { error: updateProfileError } = await supabase
@@ -427,9 +477,14 @@ export const approveRoleRequest = async (requestId: string) => {
       .update({ status: 'approved' })
       .eq('id', requestId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Failed to approve role request' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -450,9 +505,14 @@ export const saveChatMessage = async (message: string, reply: string) => {
         reply
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Failed to save chat message' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -472,7 +532,7 @@ export const getChatHistory = async (limit: number = 50) => {
       .limit(limit);
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -519,7 +579,7 @@ export const getPendingAds = async () => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return { data, error: null };
+    return { data: data || [], error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
   }
@@ -532,9 +592,14 @@ export const approveAd = async (adId: string) => {
       .update({ status: 'approved' })
       .eq('id', adId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Ad not found or approval failed' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };
@@ -548,9 +613,14 @@ export const rejectAd = async (adId: string) => {
       .update({ status: 'rejected' })
       .eq('id', adId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      return { data: null, error: 'Ad not found or rejection failed' };
+    }
+    
     return { data, error: null };
   } catch (error: any) {
     return { data: null, error: error.message };

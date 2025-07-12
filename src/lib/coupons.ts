@@ -47,9 +47,14 @@ export const createCoupon = async (couponData: Omit<Coupon, 'id' | 'used_count' 
         used_count: 0
       }])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      throw new Error('Failed to create coupon - no data returned');
+    }
+    
     return data as Coupon;
   } catch (error) {
     console.error('Error creating coupon:', error);
@@ -122,7 +127,7 @@ export const validateCoupon = async (code: string, orderAmount: number): Promise
       .select('*')
       .eq('code', code.toUpperCase())
       .eq('is_active', true)
-      .single();
+      .maybeSingle();
 
     if (error || !coupon) {
       return { valid: false, error: 'Invalid coupon code' };
@@ -158,7 +163,7 @@ export const validateCoupon = async (code: string, orderAmount: number): Promise
       .select('id')
       .eq('coupon_id', couponData.id)
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (existingUsage) {
       return { valid: false, error: 'You have already used this coupon' };

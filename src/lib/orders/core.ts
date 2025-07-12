@@ -24,11 +24,15 @@ export const createOrderWithPayment = async (
     .from('shops')
     .select('owner_id')
     .eq('id', shopId)
-    .single();
+    .maybeSingle();
   
   if (shopError) {
     console.error('Error fetching shop info:', shopError);
     throw shopError;
+  }
+  
+  if (!shop) {
+    throw new Error('Shop not found');
   }
   
   if (shop.owner_id === user.id) {
@@ -67,14 +71,19 @@ export const createOrderWithPayment = async (
       *,
       shops(name, contact, address),
       profiles!orders_buyer_id_fkey(email)
-    `);
+    `)
+    .maybeSingle();
   
   if (error) {
     console.error('Error creating order:', error);
     throw error;
   }
   
-  return data[0];
+  if (!data) {
+    throw new Error('Failed to create order - no data returned');
+  }
+  
+  return data;
 };
 
 // Confirm order (wholesaler action)
@@ -93,15 +102,20 @@ export const confirmOrder = async (orderId: string, notes?: string) => {
     .select(`
       *,
       shops!inner(owner_id)
-    `);
+    `)
+    .maybeSingle();
 
   if (error) {
     console.error('Error confirming order:', error);
     throw error;
   }
 
+  if (!data) {
+    throw new Error('Order not found or confirmation failed');
+  }
+
   // Verify user owns the shop
-  const order = data[0];
+  const order = data;
   if (order.shops?.owner_id !== user.id) {
     throw new Error('Unauthorized to confirm this order');
   }
@@ -125,15 +139,20 @@ export const rejectOrder = async (orderId: string, notes?: string) => {
     .select(`
       *,
       shops!inner(owner_id)
-    `);
+    `)
+    .maybeSingle();
 
   if (error) {
     console.error('Error rejecting order:', error);
     throw error;
   }
 
+  if (!data) {
+    throw new Error('Order not found or rejection failed');
+  }
+
   // Verify user owns the shop
-  const order = data[0];
+  const order = data;
   if (order.shops?.owner_id !== user.id) {
     throw new Error('Unauthorized to reject this order');
   }
@@ -151,7 +170,7 @@ export const reusePreviousOrder = async (previousOrderId: string) => {
     .select('*')
     .eq('id', previousOrderId)
     .eq('buyer_id', user.id)
-    .single();
+    .maybeSingle();
 
   if (error || !previousOrder) {
     throw new Error('Previous order not found');

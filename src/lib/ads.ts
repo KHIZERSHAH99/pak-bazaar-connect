@@ -25,20 +25,18 @@ export const createAd = async (adData: {
       wholesaler_id: user.id,
       headline: adData.headline,
       image: adData.image,
-      status: 'pending',
-      budget_cap: adData.budget_cap || 0,
-      campaign_start_date: adData.campaign_start_date,
-      campaign_end_date: adData.campaign_end_date,
-      current_spend: 0,
-      total_orders: 0,
-      is_auto_stopped: false
+      status: 'pending'
     }])
     .select()
-    .single();
+    .maybeSingle();
   
   if (error) {
     console.error('Error creating ad:', error);
     throw error;
+  }
+  
+  if (!data) {
+    throw new Error('Failed to create ad - no data returned');
   }
   
   return data as Ad;
@@ -101,11 +99,15 @@ export const approveAd = async (adId: string, isApproved: boolean = true) => {
     .update({ status })
     .eq('id', adId)
     .select()
-    .single();
+    .maybeSingle();
   
   if (error) {
     console.error('Error updating ad status:', error);
     throw error;
+  }
+  
+  if (!data) {
+    throw new Error('Ad not found or update failed');
   }
   
   return data as Ad;
@@ -150,11 +152,15 @@ export const pauseAd = async (adId: string) => {
     .update({ status: 'paused' })
     .eq('id', adId)
     .select()
-    .single();
+    .maybeSingle();
   
   if (error) {
     console.error('Error pausing ad:', error);
     throw error;
+  }
+  
+  if (!data) {
+    throw new Error('Ad not found or pause failed');
   }
   
   return data as Ad;
@@ -164,16 +170,19 @@ export const resumeAd = async (adId: string) => {
   const { data, error } = await supabase
     .from('ads')
     .update({ 
-      status: 'active',
-      is_auto_stopped: false 
+      status: 'active'
     })
     .eq('id', adId)
     .select()
-    .single();
+    .maybeSingle();
   
   if (error) {
     console.error('Error resuming ad:', error);
     throw error;
+  }
+  
+  if (!data) {
+    throw new Error('Ad not found or resume failed');
   }
   
   return data as Ad;

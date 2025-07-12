@@ -26,9 +26,14 @@ export const createPaymentMethod = async (paymentData: Omit<PaymentMethodInfo, '
       .from('payment_methods')
       .insert([paymentData])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      throw new Error('Failed to create payment method - no data returned');
+    }
+    
     return data;
   } catch (error) {
     console.error('Error creating payment method:', error);
@@ -50,9 +55,14 @@ export const createEnhancedOrder = async (
       .from('shops')
       .select('owner_id')
       .eq('id', shopId)
-      .single();
+      .maybeSingle();
 
     if (shopError) throw shopError;
+    
+    if (!shop) {
+      throw new Error('Shop not found');
+    }
+    
     if (shop.owner_id === user.id) {
       throw new Error('You cannot order from your own shop');
     }
@@ -83,9 +93,13 @@ export const createEnhancedOrder = async (
         status: 'pending'
       }])
       .select()
-      .single();
+      .maybeSingle();
 
     if (orderError) throw orderError;
+    
+    if (!order) {
+      throw new Error('Failed to create order - no data returned');
+    }
 
     // Save order data for pre-filling next time
     const lastOrderData = {
@@ -115,7 +129,7 @@ export const getCommissionSettings = async (): Promise<CommissionSettings | null
       .select('*')
       .order('effective_from', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== 'PGRST116') throw error;
     return data;
@@ -138,9 +152,14 @@ export const updateCommissionSettings = async (percentage: number): Promise<Comm
         created_by: user.id
       }])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
+    
+    if (!data) {
+      throw new Error('Failed to update commission settings - no data returned');
+    }
+    
     return data;
   } catch (error) {
     console.error('Error updating commission settings:', error);
@@ -192,7 +211,7 @@ export const markCommissionPaid = async (commissionId: string): Promise<void> =>
       .from('monthly_commissions')
       .select('wholesaler_id')
       .eq('id', commissionId)
-      .single();
+      .maybeSingle();
 
     if (commission) {
       await supabase
@@ -221,7 +240,7 @@ export const checkAccountSuspension = async (): Promise<boolean> => {
       .from('profiles')
       .select('is_suspended, suspension_reason')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return profile?.is_suspended || false;
@@ -274,7 +293,7 @@ export const rejectOrderWithReason = async (orderId: string, reason: string): Pr
       .from('orders')
       .select('buyer_id')
       .eq('id', orderId)
-      .single();
+      .maybeSingle();
 
     if (order) {
       await supabase

@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { getCurrentUser } from '@/lib/auth';
 import type { Order, OrderStatus } from '@/lib/types';
 
 export const fetchOrdersWithAnalytics = async (
@@ -112,11 +113,16 @@ export const createOrderWithValidation = async (orderData: any): Promise<Order |
           owner_id
         )
       `)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error creating order:', error);
       throw error;
+    }
+
+    if (!data) {
+      console.error('No order data returned after creation');
+      return null;
     }
 
     // Transform the data with proper typing
@@ -268,7 +274,7 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
         )
       `)
       .eq('id', orderId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching order by ID:', error);
@@ -318,11 +324,16 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
           owner_id
         )
       `)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error updating order status:', error);
       throw error;
+    }
+
+    if (!data) {
+      console.error('No order data returned after status update');
+      return null;
     }
 
     // Transform the data with proper typing
@@ -363,11 +374,16 @@ export const addWholesalerNotes = async (orderId: string, notes: string): Promis
           owner_id
         )
       `)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error adding wholesaler notes:', error);
       throw error;
+    }
+
+    if (!data) {
+      console.error('No order data returned after adding notes');
+      return null;
     }
 
     // Transform the data with proper typing
@@ -391,7 +407,7 @@ export const addWholesalerNotes = async (orderId: string, notes: string): Promis
   }
 };
 
-export const confirmOrder = async (orderId: string, notes?: string): Promise<Order> => {
+export const confirmOrder = async (orderId: string, notes?: string): Promise<Order | null> => {
   try {
     const updateData: any = { 
       status: 'confirmed',
@@ -417,11 +433,16 @@ export const confirmOrder = async (orderId: string, notes?: string): Promise<Ord
           owner_id
         )
       `)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error confirming order:', error);
       throw error;
+    }
+
+    if (!data) {
+      console.error('No order data returned after confirmation');
+      return null;
     }
 
     return {
@@ -438,11 +459,11 @@ export const confirmOrder = async (orderId: string, notes?: string): Promise<Ord
     } as Order;
   } catch (error) {
     console.error('Error in confirmOrder:', error);
-    throw error;
+    return null;
   }
 };
 
-export const rejectOrder = async (orderId: string, reason: string): Promise<Order> => {
+export const rejectOrder = async (orderId: string, reason: string): Promise<Order | null> => {
   try {
     const { data, error } = await supabase
       .from('orders')
@@ -463,11 +484,16 @@ export const rejectOrder = async (orderId: string, reason: string): Promise<Orde
           owner_id
         )
       `)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error rejecting order:', error);
       throw error;
+    }
+
+    if (!data) {
+      console.error('No order data returned after rejection');
+      return null;
     }
 
     return {
@@ -484,7 +510,7 @@ export const rejectOrder = async (orderId: string, reason: string): Promise<Orde
     } as Order;
   } catch (error) {
     console.error('Error in rejectOrder:', error);
-    throw error;
+    return null;
   }
 };
 
@@ -493,7 +519,7 @@ export const createOrderWithPayment = async (
   totalAmount: number,
   paymentMethod: string,
   paymentScreenshot: File
-): Promise<Order> => {
+): Promise<Order | null> => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -529,7 +555,7 @@ export const createOrderWithPayment = async (
     return order;
   } catch (error) {
     console.error('Error in createOrderWithPayment:', error);
-    throw error;
+    return null;
   }
 };
 
@@ -600,11 +626,16 @@ export const sendOrderMessage = async (orderId: string, message: string): Promis
           business_name
         )
       `)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error sending order message:', error);
       throw error;
+    }
+
+    if (!data) {
+      console.error('No message data returned after sending');
+      return null;
     }
 
     return data;

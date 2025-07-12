@@ -1,7 +1,8 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
-// Re-export everything from modular ads library
-export * from './ads/types';
+// Re-export everything from modular ads library with explicit naming to avoid conflicts
+export type { Ad as ModularAd, AdOrder, AdAnalytics, CreateAdData } from './ads/types';
 export * from './ads/crud';
 export { getAdAnalytics, getAdPerformanceSummary } from './ads/analytics';
 export * from './ads/transforms';

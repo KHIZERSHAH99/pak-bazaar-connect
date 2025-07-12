@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 
@@ -167,7 +166,7 @@ export const getWholesalerOrders = async (includeFullDetails = false) => {
     }
 
     // Return properly filtered and typed data with null safety
-    return (data || []).filter(item => item && typeof item === 'object' && item.id);
+    return (data || []).filter(item => item && typeof item === 'object' && 'id' in item && item.id);
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);
     throw error;

@@ -47,7 +47,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
         
         for (const item of orderData) {
           // Check if item is valid and has required properties
-          if (!item || typeof item !== 'object' || !('id' in item)) {
+          if (!item || typeof item !== 'object' || !('id' in item) || item === null) {
             console.warn('Invalid order item:', item);
             continue;
           }
@@ -70,7 +70,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
               rejected_at: item.rejected_at || null,
               wholesaler_notes: item.wholesaler_notes || null,
               commission_id: item.commission_id || null,
-              shops: (item.shops && typeof item.shops === 'object') ? {
+              shops: (item.shops && typeof item.shops === 'object' && item.shops !== null) ? {
                 id: String(item.shops.id || ''),
                 name: String(item.shops.name || ''),
                 contact: String(item.shops.contact || ''),
@@ -110,7 +110,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
       const fullOrders = await getWholesalerOrders(true);
       const fullOrderData = fullOrders.find((o: any) => o && o.id === order.id);
         
-      if (fullOrderData && typeof fullOrderData === 'object' && 'id' in fullOrderData) {
+      if (fullOrderData && typeof fullOrderData === 'object' && 'id' in fullOrderData && fullOrderData !== null) {
         // Process the full order data safely
         const typedOrder: Order = {
           id: String(fullOrderData.id || order.id),
@@ -129,7 +129,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
           rejected_at: fullOrderData.rejected_at || order.rejected_at,
           wholesaler_notes: fullOrderData.wholesaler_notes || order.wholesaler_notes,
           commission_id: fullOrderData.commission_id || order.commission_id,
-          shops: (fullOrderData.shops && typeof fullOrderData.shops === 'object') ? {
+          shops: (fullOrderData.shops && typeof fullOrderData.shops === 'object' && fullOrderData.shops !== null) ? {
             id: String(fullOrderData.shops.id || order.shops?.id || ''),
             name: String(fullOrderData.shops.name || order.shops?.name || ''),
             contact: String(fullOrderData.shops.contact || order.shops?.contact || ''),
@@ -137,7 +137,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
             postal_code: String(fullOrderData.shops.postal_code || order.shops?.postal_code || ''),
             owner_id: String(fullOrderData.shops.owner_id || order.shops?.owner_id || '')
           } : order.shops,
-          profiles: (fullOrderData.profiles && typeof fullOrderData.profiles === 'object') ? 
+          profiles: (fullOrderData.profiles && typeof fullOrderData.profiles === 'object' && fullOrderData.profiles !== null) ? 
             fullOrderData.profiles : order.profiles
         };
         setSelectedOrder(typedOrder);

@@ -21,7 +21,7 @@ export interface Ad {
 
 export interface CreateAdRequest {
   headline: string;
-  image?: string;
+  image?: File;
   budget_cap?: number;
   campaign_end_date?: string;
 }

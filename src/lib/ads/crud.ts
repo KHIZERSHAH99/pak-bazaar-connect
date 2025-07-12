@@ -1,13 +1,13 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Ad, CreateAdRequest } from './types';
+import type { Ad } from './types';
 
-export interface CreateAdRequest {
+export interface AdCreateRequest {
   headline: string;
   image?: File;
 }
 
-export const createAd = async (adData: CreateAdRequest): Promise<Ad> => {
+export const createAd = async (adData: AdCreateRequest): Promise<Ad> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
 

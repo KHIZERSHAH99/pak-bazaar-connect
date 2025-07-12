@@ -79,7 +79,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const orderData = await getWholesalerOrders(false);
+        const orderData = await getWholesalerOrders();
         console.log('Raw order data:', orderData);
         
         // Safely process and validate the raw data into proper Order objects
@@ -117,7 +117,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   const handleViewFullDetails = async (order: Order) => {
     try {
       // Fetch full order details if needed
-      const fullOrders = await getWholesalerOrders(true);
+      const fullOrders = await getWholesalerOrders();
       const fullOrderRaw = Array.isArray(fullOrders) ? fullOrders.find((o: any) => o && o.id === order.id) : null;
         
       if (!fullOrderRaw) {

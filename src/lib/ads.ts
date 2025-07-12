@@ -8,37 +8,11 @@ export * from './ads/crud';
 export { getAdAnalytics, getAdPerformanceSummary } from './ads/analytics';
 export * from './ads/transforms';
 
-// Legacy compatibility interface - keep for backward compatibility but use the main Ad type
-export type LegacyAd = Ad;
-
-// Helper function to transform database row to Ad interface
-const transformLegacyAd = (dbAd: any): Ad => ({
-  id: dbAd.id,
-  wholesaler_id: dbAd.wholesaler_id,
-  headline: dbAd.headline,
-  image: dbAd.image,
-  status: dbAd.status,
-  created_at: dbAd.created_at,
-  product_id: dbAd.product_id || undefined,
-  ad_type: dbAd.ad_type || 'cpo',
-  budget_cap: dbAd.budget_cap || 0,
-  daily_budget_limit: dbAd.daily_budget_limit || 0,
-  campaign_start_date: dbAd.campaign_start_date || undefined,
-  campaign_end_date: dbAd.campaign_end_date || undefined,
-  current_spend: dbAd.current_spend || 0,
-  total_orders: dbAd.total_orders || 0,
-  is_auto_stopped: dbAd.is_auto_stopped || false,
-  tracking_token: dbAd.tracking_token || undefined,
-  products: dbAd.products || undefined
-});
-
 // Legacy functions for backward compatibility
 export const createAd = async (adData: {
-  product_id: string;
   headline: string;
   image?: string;
   budget_cap: number;
-  daily_budget_limit?: number;
   campaign_start_date?: string;
   campaign_end_date?: string;
 }) => {
@@ -49,27 +23,17 @@ export const createAd = async (adData: {
     .from('ads')
     .insert([{
       wholesaler_id: user.id,
-      product_id: adData.product_id,
       headline: adData.headline,
       image: adData.image,
       status: 'pending',
-      ad_type: 'cpo',
       budget_cap: adData.budget_cap || 0,
-      daily_budget_limit: adData.daily_budget_limit || 0,
       campaign_start_date: adData.campaign_start_date,
       campaign_end_date: adData.campaign_end_date,
       current_spend: 0,
       total_orders: 0,
       is_auto_stopped: false
     }])
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
+    .select()
     .single();
   
   if (error) {
@@ -77,7 +41,7 @@ export const createAd = async (adData: {
     throw error;
   }
   
-  return transformLegacyAd(data);
+  return data as Ad;
 };
 
 export const getAdsByWholesaler = async () => {
@@ -86,14 +50,7 @@ export const getAdsByWholesaler = async () => {
 
   const { data, error } = await supabase
     .from('ads')
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
+    .select('*')
     .eq('wholesaler_id', user.id)
     .order('created_at', { ascending: false });
   
@@ -102,22 +59,14 @@ export const getAdsByWholesaler = async () => {
     return [];
   }
   
-  return (data || []).map(transformLegacyAd);
+  return (data || []) as Ad[];
 };
 
 export const getActiveAds = async (limit = 10) => {
   const { data, error } = await supabase
     .from('ads')
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
+    .select('*')
     .eq('status', 'active')
-    .eq('is_auto_stopped', false)
     .order('created_at', { ascending: false })
     .limit(limit);
   
@@ -126,20 +75,13 @@ export const getActiveAds = async (limit = 10) => {
     return [];
   }
   
-  return (data || []).map(transformLegacyAd);
+  return (data || []) as Ad[];
 };
 
 export const getPendingAds = async () => {
   const { data, error } = await supabase
     .from('ads')
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
+    .select('*')
     .eq('status', 'pending')
     .order('created_at', { ascending: false });
   
@@ -148,7 +90,7 @@ export const getPendingAds = async () => {
     return [];
   }
   
-  return (data || []).map(transformLegacyAd);
+  return (data || []) as Ad[];
 };
 
 export const approveAd = async (adId: string, isApproved: boolean = true) => {
@@ -158,14 +100,7 @@ export const approveAd = async (adId: string, isApproved: boolean = true) => {
     .from('ads')
     .update({ status })
     .eq('id', adId)
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
+    .select()
     .single();
   
   if (error) {
@@ -173,7 +108,7 @@ export const approveAd = async (adId: string, isApproved: boolean = true) => {
     throw error;
   }
   
-  return transformLegacyAd(data);
+  return data as Ad;
 };
 
 // Mock analytics for now since tables don't exist in TypeScript schema
@@ -214,14 +149,7 @@ export const pauseAd = async (adId: string) => {
     .from('ads')
     .update({ status: 'paused' })
     .eq('id', adId)
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
+    .select()
     .single();
   
   if (error) {
@@ -229,7 +157,7 @@ export const pauseAd = async (adId: string) => {
     throw error;
   }
   
-  return transformLegacyAd(data);
+  return data as Ad;
 };
 
 export const resumeAd = async (adId: string) => {
@@ -240,14 +168,7 @@ export const resumeAd = async (adId: string) => {
       is_auto_stopped: false 
     })
     .eq('id', adId)
-    .select(`
-      *,
-      products (
-        name,
-        price,
-        image
-      )
-    `)
+    .select()
     .single();
   
   if (error) {
@@ -255,5 +176,5 @@ export const resumeAd = async (adId: string) => {
     throw error;
   }
   
-  return transformLegacyAd(data);
+  return data as Ad;
 };

@@ -25,11 +25,6 @@ export const fetchOrdersWithAnalytics = async (
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .gte('created_at', startDate)
@@ -115,11 +110,6 @@ export const createOrderWithValidation = async (orderData: any): Promise<Order |
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .single();
@@ -169,11 +159,6 @@ export const getWholesalerOrders = async (): Promise<Order[]> => {
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .eq('shops.owner_id', user.id)
@@ -230,11 +215,6 @@ export const getSellerOrders = async (): Promise<Order[]> => {
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .eq('buyer_id', user.id)
@@ -285,11 +265,6 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .eq('id', orderId)
@@ -341,11 +316,6 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .single();
@@ -391,11 +361,6 @@ export const addWholesalerNotes = async (orderId: string, notes: string): Promis
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .single();
@@ -450,11 +415,6 @@ export const confirmOrder = async (orderId: string, notes?: string): Promise<Ord
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .single();
@@ -501,11 +461,6 @@ export const rejectOrder = async (orderId: string, reason: string): Promise<Orde
           address,
           postal_code,
           owner_id
-        ),
-        profiles!orders_buyer_id_fkey (
-          id,
-          email,
-          business_name
         )
       `)
       .single();

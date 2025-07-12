@@ -7,7 +7,7 @@ export { getAdAnalytics, getAdPerformanceSummary } from './ads/analytics';
 export * from './ads/transforms';
 
 // Legacy compatibility - keep existing exports
-export interface Ad {
+export interface LegacyAd {
   id: string;
   wholesaler_id: string;
   product_id?: string;
@@ -50,8 +50,8 @@ export interface AdAnalytics {
   spend: number;
 }
 
-// Helper function to transform database row to Ad interface
-const transformAd = (dbAd: any): Ad => ({
+// Helper function to transform database row to LegacyAd interface
+const transformLegacyAd = (dbAd: any): LegacyAd => ({
   id: dbAd.id,
   wholesaler_id: dbAd.wholesaler_id,
   headline: dbAd.headline,
@@ -116,7 +116,7 @@ export const createAd = async (adData: {
     throw error;
   }
   
-  return transformAd(data);
+  return transformLegacyAd(data);
 };
 
 export const getAdsByWholesaler = async () => {
@@ -141,7 +141,7 @@ export const getAdsByWholesaler = async () => {
     return [];
   }
   
-  return (data || []).map(transformAd);
+  return (data || []).map(transformLegacyAd);
 };
 
 export const getActiveAds = async (limit = 10) => {
@@ -165,7 +165,7 @@ export const getActiveAds = async (limit = 10) => {
     return [];
   }
   
-  return (data || []).map(transformAd);
+  return (data || []).map(transformLegacyAd);
 };
 
 export const getPendingAds = async () => {
@@ -187,7 +187,7 @@ export const getPendingAds = async () => {
     return [];
   }
   
-  return (data || []).map(transformAd);
+  return (data || []).map(transformLegacyAd);
 };
 
 export const approveAd = async (adId: string, isApproved: boolean = true) => {
@@ -212,7 +212,7 @@ export const approveAd = async (adId: string, isApproved: boolean = true) => {
     throw error;
   }
   
-  return transformAd(data);
+  return transformLegacyAd(data);
 };
 
 // Mock analytics for now since tables don't exist in TypeScript schema
@@ -268,7 +268,7 @@ export const pauseAd = async (adId: string) => {
     throw error;
   }
   
-  return transformAd(data);
+  return transformLegacyAd(data);
 };
 
 export const resumeAd = async (adId: string) => {
@@ -294,5 +294,5 @@ export const resumeAd = async (adId: string) => {
     throw error;
   }
   
-  return transformAd(data);
+  return transformLegacyAd(data);
 };

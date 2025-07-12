@@ -84,13 +84,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const order = await createOrderWithPayment(shopId, totalAmount, {
-        method: selectedMethod,
-        screenshot,
-        buyerName: buyerInfo.name,
-        buyerPhone: buyerInfo.phone,
-        buyerAddress: buyerInfo.address
-      });
+      const order = await createOrderWithPayment(shopId, totalAmount, selectedMethod, screenshot);
 
       toast({
         title: "Order Created Successfully",

@@ -1,7 +1,9 @@
-import { supabase } from '@/integrations/supabase/client';
 
-// Re-export everything from modular ads library - using the main Ad type
-export { Ad, AdOrder, AdAnalytics, CreateAdData } from './ads/types';
+import { supabase } from '@/integrations/supabase/client';
+import type { Ad, AdOrder, AdAnalytics, CreateAdData } from './ads/types';
+
+// Re-export types properly
+export type { Ad, AdOrder, AdAnalytics, CreateAdData } from './ads/types';
 export * from './ads/crud';
 export { getAdAnalytics, getAdPerformanceSummary } from './ads/analytics';
 export * from './ads/transforms';
@@ -175,13 +177,13 @@ export const approveAd = async (adId: string, isApproved: boolean = true) => {
 };
 
 // Mock analytics for now since tables don't exist in TypeScript schema
-export const getAdAnalyticsLegacy = async (adId: string) => {
+export const getAdAnalyticsLegacy = async (adId: string): Promise<AdAnalytics[]> => {
   try {
     console.log('Getting legacy ad analytics for:', adId);
-    return [] as AdAnalytics[];
+    return [];
   } catch (error) {
     console.error('Error in getAdAnalyticsLegacy:', error);
-    return [] as AdAnalytics[];
+    return [];
   }
 };
 

@@ -1,135 +1,130 @@
 import { supabase } from '@/integrations/supabase/client';
-import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
+import type { Order, OrderStatus } from '@/lib/types';
 
-export const createOrderWithPaymentEnhanced = async (
-  shop_id: string,
-  total_amount: number,
-  payment_method: PaymentMethod,
-  payment_screenshot: File | null
-): Promise<Order> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('User not authenticated');
-
+export const fetchOrdersWithAnalytics = async (
+  startDate: string,
+  endDate: string
+): Promise<Order[]> => {
   try {
-    // Upload payment screenshot if provided
-    let payment_screenshot_url = null;
-    if (payment_screenshot) {
-      const fileName = `payment_proof_${user.id}_${Date.now()}`;
-      const { data, error } = await supabase.storage
-        .from('payment_proofs')
-        .upload(fileName, payment_screenshot, {
-          cacheControl: '3600',
-          upsert: false
-        });
-
-      if (error) {
-        console.error('Error uploading payment screenshot:', error);
-        throw new Error('Failed to upload payment screenshot');
-      }
-
-      payment_screenshot_url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/payment_proofs/${fileName}`;
-    }
-
-    const { data: orderData, error: orderError } = await supabase
-      .from('orders')
-      .insert([
-        {
-          buyer_id: user.id,
-          shop_id,
-          total_amount,
-          status: 'pending',
-          payment_method,
-          payment_screenshot: payment_screenshot_url,
-          screenshot_uploaded_at: new Date().toISOString(),
-        },
-      ])
-      .select('*')
-      .single();
-
-    if (orderError) {
-      console.error('Error creating order:', orderError);
-      throw new Error('Failed to create order');
-    }
-
-    return orderData as Order;
-  } catch (error: any) {
-    console.error('Error in createOrderWithPaymentEnhanced:', error);
-    throw error;
-  }
-};
-
-// Alias for backward compatibility
-export const createOrderWithPayment = createOrderWithPaymentEnhanced;
-
-export const confirmOrderEnhanced = async (orderId: string, notes?: string): Promise<Order> => {
-  try {
-    const { data, error } = await supabase
-      .from('orders')
-      .update({ status: 'confirmed', confirmed_at: new Date().toISOString(), wholesaler_notes: notes })
-      .eq('id', orderId)
-      .select('*')
-      .single();
-
-    if (error) {
-      console.error('Error confirming order:', error);
-      throw new Error('Failed to confirm order');
-    }
-
-    return data as Order;
-  } catch (error: any) {
-    console.error('Error in confirmOrderEnhanced:', error);
-    throw error;
-  }
-};
-
-// Alias for backward compatibility
-export const confirmOrder = confirmOrderEnhanced;
-
-export const rejectOrderEnhanced = async (orderId: string, notes?: string): Promise<Order> => {
-  try {
-    const { data, error } = await supabase
-      .from('orders')
-      .update({ status: 'rejected', rejected_at: new Date().toISOString(), wholesaler_notes: notes })
-      .eq('id', orderId)
-      .select('*')
-      .single();
-
-    if (error) {
-      console.error('Error rejecting order:', error);
-      throw new Error('Failed to reject order');
-    }
-
-    return data as Order;
-  } catch (error: any) {
-    console.error('Error in rejectOrderEnhanced:', error);
-    throw error;
-  }
-};
-
-// Alias for backward compatibility
-export const rejectOrder = rejectOrderEnhanced;
-
-export const getOrderWithSecurity = async (orderId: string): Promise<Order | null> => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
 
-    try {
-        const { data, error } = await supabase
-            .from('orders')
-            .select('*')
-            .eq('id', orderId)
-            .single();
-
-        if (error) {
-            console.error('Error fetching order:', error);
-            return null;
-        }
-
-        return data as Order;
-    } catch (error: any) {
-        console.error('Error in getOrderWithSecurity:', error);
-        return null;
+    if (!user) {
+      console.error('User not authenticated');
+      return [];
     }
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        shops!inner (
+          id,
+          name,
+          owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .gte('created_at', startDate)
+      .lte('created_at', endDate)
+      .eq('shops.owner_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching orders with analytics:', error);
+      throw error;
+    }
+
+    // Transform and filter data with proper typing
+    const transformedData = (data || []).filter(item => {
+      return item && 
+             typeof item === 'object' && 
+             'id' in item && 
+             item.id &&
+             typeof item.id === 'string';
+    }).map(item => ({
+      ...item,
+      status: item.status as OrderStatus
+    })) as Order[];
+
+    return transformedData;
+  } catch (error) {
+    console.error('Error in fetchOrdersWithAnalytics:', error);
+    throw error;
+  }
+};
+
+export const validateOrderData = (orderData: any): boolean => {
+  const requiredFields = [
+    'buyer_id', 'shop_id', 'total_amount', 'status',
+    'buyer_name', 'buyer_phone', 'buyer_address'
+  ];
+
+  for (const field of requiredFields) {
+    if (!(field in orderData) || orderData[field] === null || orderData[field] === undefined) {
+      console.warn(`Missing or invalid field: ${field}`);
+      return false;
+    }
+  }
+
+  if (typeof orderData.total_amount !== 'number' || orderData.total_amount <= 0) {
+    console.warn('Invalid total_amount: Must be a positive number');
+    return false;
+  }
+
+  const allowedStatuses: OrderStatus[] = ['pending', 'confirmed', 'completed', 'rejected', 'cancelled'];
+  if (!allowedStatuses.includes(orderData.status)) {
+    console.warn(`Invalid status: ${orderData.status}. Allowed statuses are: ${allowedStatuses.join(', ')}`);
+    return false;
+  }
+
+  return true;
+};
+
+export const createOrderWithValidation = async (orderData: any): Promise<Order | null> => {
+  if (!validateOrderData(orderData)) {
+    console.error('Validation failed for order data');
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .insert([orderData])
+      .select(`
+        *,
+        shops!inner (
+          id,
+          name,
+          owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .single();
+
+    if (error) {
+      console.error('Error creating order:', error);
+      throw error;
+    }
+
+    // Transform the data with proper typing
+    const transformedData = {
+      ...data,
+      status: data.status as OrderStatus
+    } as Order;
+
+    return transformedData;
+  } catch (error) {
+    console.error('Error in createOrderWithValidation:', error);
+    return null;
+  }
 };
 
 export const getWholesalerOrders = async (): Promise<Order[]> => {
@@ -163,129 +158,83 @@ export const getWholesalerOrders = async (): Promise<Order[]> => {
       throw error;
     }
 
-    // Return properly filtered and typed data with improved null safety
-    return (data || []).filter(item => {
+    // Transform and filter data with proper typing
+    const transformedData = (data || []).filter(item => {
       return item && 
              typeof item === 'object' && 
              'id' in item && 
              item.id &&
              typeof item.id === 'string';
-    });
+    }).map(item => ({
+      ...item,
+      status: item.status as OrderStatus
+    })) as Order[];
+
+    return transformedData;
   } catch (error) {
     console.error('Error in getWholesalerOrders:', error);
     throw error;
   }
 };
 
-export const getSellerOrders = async (): Promise<any[]> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
-
+export const getOrderById = async (orderId: string): Promise<Order | null> => {
   try {
     const { data, error } = await supabase
       .from('orders')
       .select(`
         *,
-        shops (
+        shops!inner (
           id,
           name,
-          contact,
-          address,
-          postal_code,
           owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
+          email,
+          business_name
         )
       `)
-      .eq('buyer_id', user.id)
-      .order('created_at', { ascending: false });
+      .eq('id', orderId)
+      .single();
 
     if (error) {
-      console.error('Error fetching seller orders:', error);
-      throw error;
+      console.error('Error fetching order by ID:', error);
+      return null;
     }
 
-    // Filter out null items and ensure proper structure
-    return (data || []).filter(item => item && typeof item === 'object' && item.id);
+    if (!data) {
+      console.log(`Order with ID ${orderId} not found`);
+      return null;
+    }
+
+    // Transform the data with proper typing
+    const transformedData = {
+      ...data,
+      status: data.status as OrderStatus
+    } as Order;
+
+    return transformedData;
   } catch (error) {
-    console.error('Error in getSellerOrders:', error);
-    throw error;
+    console.error('Error in getOrderById:', error);
+    return null;
   }
 };
 
-export const reusePreviousOrder = async (orderId: string) => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('User not authenticated');
-
+export const updateOrderStatus = async (orderId: string, status: OrderStatus): Promise<Order | null> => {
   try {
     const { data, error } = await supabase
       .from('orders')
-      .select('*')
+      .update({ status })
       .eq('id', orderId)
-      .eq('buyer_id', user.id)
-      .single();
-
-    if (error) {
-      console.error('Error fetching previous order:', error);
-      throw new Error('Failed to fetch previous order');
-    }
-
-    return {
-      shopId: data.shop_id,
-      shopName: 'Unknown Shop', // We don't have shop_name in the data
-      totalAmount: data.total_amount
-    };
-  } catch (error: any) {
-    console.error('Error in reusePreviousOrder:', error);
-    throw error;
-  }
-};
-
-// Order messaging functions
-export const getOrderMessages = async (orderId: string) => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('User not authenticated');
-
-  try {
-    const { data, error } = await supabase
-      .from('order_messages')
       .select(`
         *,
-        profiles!order_messages_sender_id_fkey (
-          email,
-          business_name
-        )
-      `)
-      .eq('order_id', orderId)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching order messages:', error);
-      throw error;
-    }
-
-    return data || [];
-  } catch (error: any) {
-    console.error('Error in getOrderMessages:', error);
-    throw error;
-  }
-};
-
-export const sendOrderMessage = async (orderId: string, message: string) => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('User not authenticated');
-
-  try {
-    const { data, error } = await supabase
-      .from('order_messages')
-      .insert([
-        {
-          order_id: orderId,
-          sender_id: user.id,
-          message: message.trim()
-        }
-      ])
-      .select(`
-        *,
-        profiles!order_messages_sender_id_fkey (
+        shops!inner (
+          id,
+          name,
+          owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
           email,
           business_name
         )
@@ -293,13 +242,58 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
       .single();
 
     if (error) {
-      console.error('Error sending order message:', error);
+      console.error('Error updating order status:', error);
       throw error;
     }
 
-    return data;
-  } catch (error: any) {
-    console.error('Error in sendOrderMessage:', error);
-    throw error;
+    // Transform the data with proper typing
+    const transformedData = {
+      ...data,
+      status: data.status as OrderStatus
+    } as Order;
+
+    return transformedData;
+  } catch (error) {
+    console.error('Error in updateOrderStatus:', error);
+    return null;
+  }
+};
+
+export const addWholesalerNotes = async (orderId: string, notes: string): Promise<Order | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ wholesaler_notes: notes })
+      .eq('id', orderId)
+      .select(`
+        *,
+        shops!inner (
+          id,
+          name,
+          owner_id
+        ),
+        profiles!orders_buyer_id_fkey (
+          id,
+          email,
+          business_name
+        )
+      `)
+      .single();
+
+    if (error) {
+      console.error('Error adding wholesaler notes:', error);
+      throw error;
+    }
+
+    // Transform the data with proper typing
+    const transformedData = {
+      ...data,
+      status: data.status as OrderStatus
+    } as Order;
+
+    return transformedData;
+  } catch (error) {
+    console.error('Error in addWholesalerNotes:', error);
+    return null;
   }
 };

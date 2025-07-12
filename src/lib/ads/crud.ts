@@ -1,14 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-
-export interface Ad {
-  id: string;
-  wholesaler_id: string;
-  headline: string;
-  image?: string;
-  status: 'pending' | 'approved' | 'active' | 'rejected';
-  created_at: string;
-}
+import type { Ad, CreateAdRequest } from './types';
 
 export interface CreateAdRequest {
   headline: string;

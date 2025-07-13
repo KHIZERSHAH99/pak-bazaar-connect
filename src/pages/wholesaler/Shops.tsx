@@ -8,14 +8,28 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { getShopsByOwner, createShop, Shop, uploadImage } from '@/lib/supabase';
+import { getShopsByOwner, createShop, uploadImage } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Store, Package, Edit, Eye } from 'lucide-react';
+
+interface Shop {
+  id: string;
+  name: string;
+  contact: string;
+  address: string;
+  postal_code: string;
+  logo?: string;
+  owner_id: string;
+  created_at?: string;
+}
 
 const Shops: React.FC = () => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingShop, setEditingShop] = useState<Shop | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -74,7 +88,7 @@ const Shops: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreateShop = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name || !formData.contact || !formData.address || !formData.postal_code) {
@@ -107,7 +121,7 @@ const Shops: React.FC = () => {
         description: 'Your shop has been created successfully',
       });
       
-      setIsDialogOpen(false);
+      setIsCreateDialogOpen(false);
       resetForm();
       fetchShops();
     } catch (error: any) {
@@ -119,6 +133,72 @@ const Shops: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleEditShop = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingShop || !formData.name || !formData.contact || !formData.address || !formData.postal_code) {
+      toast({
+        title: 'Missing fields',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      
+      let logoUrl = editingShop.logo;
+      if (logoFile) {
+        const fileName = `shop_${Date.now()}_${logoFile.name}`;
+        logoUrl = await uploadImage('shop_images', fileName, logoFile);
+      }
+
+      const { error } = await supabase
+        .from('shops')
+        .update({
+          name: formData.name,
+          contact: formData.contact,
+          address: formData.address,
+          postal_code: formData.postal_code,
+          logo: logoUrl,
+        })
+        .eq('id', editingShop.id);
+
+      if (error) throw error;
+      
+      toast({
+        title: 'Shop Updated',
+        description: 'Your shop has been updated successfully',
+      });
+      
+      setIsEditDialogOpen(false);
+      resetForm();
+      setEditingShop(null);
+      fetchShops();
+    } catch (error: any) {
+      toast({
+        title: 'Failed to update shop',
+        description: error.message || 'An error occurred while updating the shop',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const openEditDialog = (shop: Shop) => {
+    setEditingShop(shop);
+    setFormData({
+      name: shop.name,
+      contact: shop.contact,
+      address: shop.address,
+      postal_code: shop.postal_code,
+    });
+    setLogoPreview(shop.logo || null);
+    setIsEditDialogOpen(true);
   };
 
   const resetForm = () => {
@@ -140,10 +220,10 @@ const Shops: React.FC = () => {
     <DashboardLayout>
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">My Shops</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">My Shops</h1>
           <Button 
-            onClick={() => setIsDialogOpen(true)}
-            className="bg-primary hover:bg-pakistani-green-800"
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-primary hover:bg-primary/90"
           >
             <Plus className="w-4 h-4 mr-2" /> Create Shop
           </Button>
@@ -154,15 +234,15 @@ const Shops: React.FC = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : shops.length === 0 ? (
-          <Card className="p-8 text-center">
+          <Card className="p-8 text-center bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
             <div className="flex justify-center mb-4">
-              <Store className="h-16 w-16 text-gray-300" />
+              <Store className="h-16 w-16 text-gray-300 dark:text-gray-600" />
             </div>
-            <h3 className="text-lg font-medium text-gray-700 mb-2">No shops yet</h3>
-            <p className="text-gray-600 mb-6">Create your first shop to start selling products.</p>
+            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">No shops yet</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">Create your first shop to start selling products.</p>
             <Button 
-              onClick={() => setIsDialogOpen(true)}
-              className="bg-primary hover:bg-pakistani-green-800"
+              onClick={() => setIsCreateDialogOpen(true)}
+              className="bg-primary hover:bg-primary/90"
             >
               <Plus className="w-4 h-4 mr-2" /> Create Shop
             </Button>
@@ -170,10 +250,10 @@ const Shops: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {shops.map((shop) => (
-              <Card key={shop.id} className="overflow-hidden">
+              <Card key={shop.id} className="overflow-hidden bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
                 <div className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="h-12 w-12 bg-pakistani-green-100 rounded-full flex items-center justify-center mr-4">
+                    <div className="h-12 w-12 bg-pakistani_green-100/50 dark:bg-pakistani_green-900/30 rounded-full flex items-center justify-center mr-4">
                       {shop.logo ? (
                         <img 
                           src={shop.logo} 
@@ -184,17 +264,17 @@ const Shops: React.FC = () => {
                         <Store className="h-6 w-6 text-primary" />
                       )}
                     </div>
-                    <h3 className="font-semibold text-lg">{shop.name}</h3>
+                    <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{shop.name}</h3>
                   </div>
                   
                   <div className="space-y-2 mb-6">
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-400">
                       <span className="font-medium">Contact:</span> {shop.contact}
                     </p>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-400">
                       <span className="font-medium">Address:</span> {shop.address}
                     </p>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-400">
                       <span className="font-medium">Postal Code:</span> {shop.postal_code}
                     </p>
                   </div>
@@ -203,14 +283,14 @@ const Shops: React.FC = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => handleViewProducts(shop.id)}
-                      className="flex-1"
+                      className="flex-1 border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
                     >
                       <Package className="h-4 w-4 mr-2" /> Products
                     </Button>
                     <Button 
                       variant="outline"
-                      className="flex-1"
-                      // To be implemented
+                      className="flex-1 border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+                      onClick={() => openEditDialog(shop)}
                     >
                       <Edit className="h-4 w-4 mr-2" /> Edit
                     </Button>
@@ -222,16 +302,17 @@ const Shops: React.FC = () => {
         )}
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+      {/* Create Shop Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-background/95 dark:bg-background/90 backdrop-blur-sm">
           <DialogHeader>
-            <DialogTitle>Create New Shop</DialogTitle>
+            <DialogTitle className="text-gray-900 dark:text-gray-100">Create New Shop</DialogTitle>
           </DialogHeader>
           
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleCreateShop}>
             <div className="space-y-4 py-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Shop Name
                 </label>
                 <Input
@@ -241,11 +322,12 @@ const Shops: React.FC = () => {
                   onChange={handleInputChange}
                   placeholder="Enter shop name"
                   disabled={isSubmitting}
+                  className="bg-background/50 dark:bg-background/30"
                 />
               </div>
               
               <div>
-                <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="contact" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Contact Number
                 </label>
                 <Input
@@ -255,11 +337,12 @@ const Shops: React.FC = () => {
                   onChange={handleInputChange}
                   placeholder="Enter contact number"
                   disabled={isSubmitting}
+                  className="bg-background/50 dark:bg-background/30"
                 />
               </div>
               
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Address
                 </label>
                 <Textarea
@@ -270,11 +353,12 @@ const Shops: React.FC = () => {
                   placeholder="Enter shop address"
                   disabled={isSubmitting}
                   rows={3}
+                  className="bg-background/50 dark:bg-background/30"
                 />
               </div>
               
               <div>
-                <label htmlFor="postal_code" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="postal_code" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Postal Code
                 </label>
                 <Input
@@ -284,11 +368,12 @@ const Shops: React.FC = () => {
                   onChange={handleInputChange}
                   placeholder="Enter postal code"
                   disabled={isSubmitting}
+                  className="bg-background/50 dark:bg-background/30"
                 />
               </div>
               
               <div>
-                <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="logo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Shop Logo (optional, max 100KB)
                 </label>
                 <Input
@@ -297,6 +382,7 @@ const Shops: React.FC = () => {
                   accept="image/*"
                   onChange={handleLogoChange}
                   disabled={isSubmitting}
+                  className="bg-background/50 dark:bg-background/30"
                 />
                 {logoPreview && (
                   <div className="mt-2">
@@ -315,19 +401,140 @@ const Shops: React.FC = () => {
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  setIsDialogOpen(false);
+                  setIsCreateDialogOpen(false);
                   resetForm();
                 }}
                 disabled={isSubmitting}
+                className="border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit"
-                className="bg-primary hover:bg-pakistani-green-800"
+                className="bg-primary hover:bg-primary/90"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Creating...' : 'Create Shop'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Shop Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-background/95 dark:bg-background/90 backdrop-blur-sm">
+          <DialogHeader>
+            <DialogTitle className="text-gray-900 dark:text-gray-100">Edit Shop</DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleEditShop}>
+            <div className="space-y-4 py-4">
+              <div>
+                <label htmlFor="edit-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Shop Name
+                </label>
+                <Input
+                  id="edit-name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter shop name"
+                  disabled={isSubmitting}
+                  className="bg-background/50 dark:bg-background/30"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="edit-contact" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Contact Number
+                </label>
+                <Input
+                  id="edit-contact"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleInputChange}
+                  placeholder="Enter contact number"
+                  disabled={isSubmitting}
+                  className="bg-background/50 dark:bg-background/30"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="edit-address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Address
+                </label>
+                <Textarea
+                  id="edit-address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Enter shop address"
+                  disabled={isSubmitting}
+                  rows={3}
+                  className="bg-background/50 dark:bg-background/30"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="edit-postal_code" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Postal Code
+                </label>
+                <Input
+                  id="edit-postal_code"
+                  name="postal_code"
+                  value={formData.postal_code}
+                  onChange={handleInputChange}
+                  placeholder="Enter postal code"
+                  disabled={isSubmitting}
+                  className="bg-background/50 dark:bg-background/30"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="edit-logo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Shop Logo (optional, max 100KB)
+                </label>
+                <Input
+                  id="edit-logo"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoChange}
+                  disabled={isSubmitting}
+                  className="bg-background/50 dark:bg-background/30"
+                />
+                {logoPreview && (
+                  <div className="mt-2">
+                    <img 
+                      src={logoPreview} 
+                      alt="Logo Preview" 
+                      className="h-24 w-24 object-cover rounded-md"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsEditDialogOpen(false);
+                  resetForm();
+                  setEditingShop(null);
+                }}
+                disabled={isSubmitting}
+                className="border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                className="bg-primary hover:bg-primary/90"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Updating...' : 'Update Shop'}
               </Button>
             </DialogFooter>
           </form>

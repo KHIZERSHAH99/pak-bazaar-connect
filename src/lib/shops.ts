@@ -40,6 +40,26 @@ export const createShop = async (shop: Omit<Shop, 'id' | 'owner_id' | 'created_a
   return data[0];
 };
 
+export const updateShop = async (shopId: string, updates: Partial<Shop>) => {
+  const user = await getCurrentUser();
+  
+  if (!user) throw new Error('User not authenticated');
+  
+  const { data, error } = await supabase
+    .from('shops')
+    .update(updates)
+    .eq('id', shopId)
+    .eq('owner_id', user.id)
+    .select();
+  
+  if (error) {
+    console.error('Error updating shop:', error);
+    throw error;
+  }
+  
+  return data[0];
+};
+
 // Seller specific functions
 export const getAllShops = async () => {
   const { data, error } = await supabase

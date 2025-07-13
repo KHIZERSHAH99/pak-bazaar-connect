@@ -1,4 +1,3 @@
-
 // Re-export all the modules to maintain backward compatibility
 import { supabase as supabaseClient } from '@/integrations/supabase/client';
 import * as authModule from './auth';
@@ -42,12 +41,15 @@ export const {
 export const {
   getShopsByOwner,
   createShop,
+  updateShop,
   getAllShops
 } = shopsModule;
 
 export const {
   getProductsByShop,
-  createProduct
+  createProduct,
+  updateProduct,
+  deleteProduct
 } = productsModule;
 
 export const {

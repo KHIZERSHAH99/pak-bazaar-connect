@@ -1,16 +1,13 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Users, ShieldCheck, TrendingUp } from 'lucide-react';
-
 const HeroSection: React.FC = () => {
-  return (
-    <div className="relative bg-gradient-to-br from-pakistani_green-600 via-pakistani_green-700 to-pakistani_green-800 text-white py-24 overflow-hidden">
+  return <div className="relative bg-gradient-to-br from-pakistani_green-600 via-pakistani_green-700 to-pakistani_green-800 text-white py-24 overflow-hidden">
       {/* Modern Background Pattern */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-yellow-300/10 rounded-full blur-3xl"></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent mx-[77px]"></div>
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,21 +33,12 @@ const HeroSection: React.FC = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                className="bg-white text-pakistani_green-700 hover:bg-gray-100 font-poppins"
-                onClick={() => window.location.href = '/signup'}
-              >
+              <Button size="lg" className="bg-white text-pakistani_green-700 hover:bg-gray-100 font-poppins" onClick={() => window.location.href = '/signup'}>
                 Start Selling
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-pakistani_green-700 font-poppins"
-                onClick={() => window.location.href = '/products'}
-              >
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-pakistani_green-700 font-poppins" onClick={() => window.location.href = '/products'}>
                 Browse Products
               </Button>
             </div>
@@ -118,8 +106,6 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default HeroSection;

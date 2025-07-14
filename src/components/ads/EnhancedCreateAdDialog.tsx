@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Upload, X, Package, DollarSign } from 'lucide-react';
 import { getProductsByWholesaler } from '@/lib/products';
 import { createAd } from '@/lib/ads';
-import { uploadImage } from '@/lib/storage';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Product {
   id: string;
@@ -35,8 +35,17 @@ interface AdFormData {
   duration: number;
 }
 
-const EnhancedCreateAdDialog: React.FC = () => {
-  const [open, setOpen] = useState(false);
+interface EnhancedCreateAdDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAdCreated: () => void;
+}
+
+const EnhancedCreateAdDialog: React.FC<EnhancedCreateAdDialogProps> = ({
+  isOpen,
+  onClose,
+  onAdCreated
+}) => {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
@@ -55,10 +64,10 @@ const EnhancedCreateAdDialog: React.FC = () => {
   const [errors, setErrors] = useState<Partial<Record<keyof AdFormData, string>>>({});
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       fetchProducts();
     }
-  }, [open]);
+  }, [isOpen]);
 
   const fetchProducts = async () => {
     setProductsLoading(true);
@@ -145,6 +154,29 @@ const EnhancedCreateAdDialog: React.FC = () => {
     }));
   };
 
+  const uploadImage = async (file: File): Promise<string> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+    
+    const { data, error } = await supabase.storage
+      .from('ad_images')
+      .upload(fileName, file);
+
+    if (error) {
+      console.error('Error uploading ad image:', error);
+      throw new Error('Failed to upload ad image');
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('ad_images')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -164,22 +196,14 @@ const EnhancedCreateAdDialog: React.FC = () => {
       
       // Upload image if provided
       if (formData.image) {
-        const uploadResult = await uploadImage(formData.image, 'ad_images', 'ads');
-        if (uploadResult.error) {
-          throw new Error(`Image upload failed: ${uploadResult.error}`);
-        }
-        imageUrl = uploadResult.data?.publicUrl || '';
+        imageUrl = await uploadImage(formData.image);
       }
 
-      // Create the ad
+      // Create the ad with the correct parameters
       const adData = {
         headline: formData.headline.trim(),
-        description: formData.description.trim(),
         image: imageUrl,
-        linkedProducts: formData.linkedProducts,
-        targetAudience: formData.targetAudience,
-        budget: formData.budget,
-        duration: formData.duration
+        budget_cap: formData.budget
       };
 
       await createAd(adData);
@@ -201,7 +225,8 @@ const EnhancedCreateAdDialog: React.FC = () => {
         duration: 7
       });
       setErrors({});
-      setOpen(false);
+      onClose();
+      onAdCreated();
 
     } catch (error: any) {
       console.error('Error creating ad:', error);
@@ -223,13 +248,7 @@ const EnhancedCreateAdDialog: React.FC = () => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white">
-          <Plus className="w-4 h-4 mr-2" />
-          Create New Ad
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-emerald-900/95 backdrop-blur-md border-emerald-200 dark:border-emerald-700">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-pakistani_green-800 dark:text-emerald-100">
@@ -313,162 +332,30 @@ const EnhancedCreateAdDialog: React.FC = () => {
             )}
           </div>
 
-          {/* Linked Products */}
-          <div className="space-y-4">
+          {/* Budget */}
+          <div className="space-y-2">
             <Label className="text-pakistani_green-700 dark:text-emerald-200 font-medium">
-              Link Products (Optional)
+              Budget (PKR) *
             </Label>
-            {productsLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pakistani_green-700"></div>
-              </div>
-            ) : products.length === 0 ? (
-              <Card className="bg-white/80 dark:bg-emerald-800/50 border-emerald-300 dark:border-emerald-600 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <Package className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-600 dark:text-emerald-300">
-                    You don't have any products yet. Create some products first to link them to your ads.
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto">
-                {products.map((product) => (
-                  <Card
-                    key={product.id}
-                    className={`cursor-pointer transition-all duration-200 backdrop-blur-sm ${
-                      formData.linkedProducts.includes(product.id)
-                        ? 'ring-2 ring-pakistani_green-500 bg-emerald-50/80 dark:bg-emerald-700/50'
-                        : 'bg-white/80 dark:bg-emerald-800/50 hover:bg-emerald-50/60 dark:hover:bg-emerald-700/30'
-                    } border-emerald-300 dark:border-emerald-600`}
-                    onClick={() => handleProductToggle(product.id)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-3">
-                        {product.image && (
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-12 h-12 object-cover rounded-md"
-                          />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-sm text-pakistani_green-800 dark:text-emerald-100 truncate">
-                            {product.name}
-                          </h4>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <Badge variant="secondary" className="text-xs">
-                              <DollarSign className="w-3 h-3 mr-1" />
-                              {product.price}
-                            </Badge>
-                            {product.shops && (
-                              <span className="text-xs text-gray-500 dark:text-emerald-400 truncate">
-                                {product.shops.name}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+            <Input
+              type="number"
+              value={formData.budget}
+              onChange={(e) => handleInputChange('budget', parseFloat(e.target.value) || 0)}
+              placeholder="0"
+              min="0"
+              className="bg-white/80 dark:bg-emerald-800/50 border-emerald-300 dark:border-emerald-600 backdrop-blur-sm"
+            />
+            {errors.budget && (
+              <p className="text-red-500 text-sm">{errors.budget}</p>
             )}
           </div>
-
-          {/* Ad Settings */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label className="text-pakistani_green-700 dark:text-emerald-200 font-medium">
-                Target Audience
-              </Label>
-              <Select
-                value={formData.targetAudience}
-                onValueChange={(value) => handleInputChange('targetAudience', value)}
-              >
-                <SelectTrigger className="bg-white/80 dark:bg-emerald-800/50 border-emerald-300 dark:border-emerald-600 backdrop-blur-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-white/95 dark:bg-emerald-900/95 backdrop-blur-md border-emerald-300 dark:border-emerald-600">
-                  <SelectItem value="general">General Audience</SelectItem>
-                  <SelectItem value="retailers">Retailers</SelectItem>
-                  <SelectItem value="wholesalers">Other Wholesalers</SelectItem>
-                  <SelectItem value="local">Local Businesses</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-pakistani_green-700 dark:text-emerald-200 font-medium">
-                Budget (PKR)
-              </Label>
-              <Input
-                type="number"
-                value={formData.budget}
-                onChange={(e) => handleInputChange('budget', parseFloat(e.target.value) || 0)}
-                placeholder="0"
-                min="0"
-                className="bg-white/80 dark:bg-emerald-800/50 border-emerald-300 dark:border-emerald-600 backdrop-blur-sm"
-              />
-              {errors.budget && (
-                <p className="text-red-500 text-sm">{errors.budget}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-pakistani_green-700 dark:text-emerald-200 font-medium">
-                Duration (Days)
-              </Label>
-              <Select
-                value={formData.duration.toString()}
-                onValueChange={(value) => handleInputChange('duration', parseInt(value))}
-              >
-                <SelectTrigger className="bg-white/80 dark:bg-emerald-800/50 border-emerald-300 dark:border-emerald-600 backdrop-blur-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-white/95 dark:bg-emerald-900/95 backdrop-blur-md border-emerald-300 dark:border-emerald-600">
-                  <SelectItem value="7">7 Days</SelectItem>
-                  <SelectItem value="14">14 Days</SelectItem>
-                  <SelectItem value="30">30 Days</SelectItem>
-                  <SelectItem value="60">60 Days</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Selected Products Summary */}
-          {formData.linkedProducts.length > 0 && (
-            <div className="space-y-2">
-              <Label className="text-pakistani_green-700 dark:text-emerald-200 font-medium">
-                Selected Products ({formData.linkedProducts.length})
-              </Label>
-              <div className="flex flex-wrap gap-2">
-                {formData.linkedProducts.map((productId) => {
-                  const product = products.find(p => p.id === productId);
-                  return product ? (
-                    <Badge
-                      key={productId}
-                      variant="secondary"
-                      className="bg-pakistani_green-100 dark:bg-emerald-700/50 text-pakistani_green-800 dark:text-emerald-100"
-                    >
-                      {product.name}
-                      <X
-                        className="w-3 h-3 ml-1 cursor-pointer"
-                        onClick={() => handleProductToggle(productId)}
-                      />
-                    </Badge>
-                  ) : null;
-                })}
-              </div>
-            </div>
-          )}
 
           {/* Submit Button */}
           <div className="flex justify-end space-x-4 pt-4">
             <Button
               type="button"
               variant="outline"
-              onClick={() => setOpen(false)}
+              onClick={onClose}
               className="bg-white/80 dark:bg-emerald-800/50 border-emerald-300 dark:border-emerald-600 backdrop-blur-sm"
             >
               Cancel

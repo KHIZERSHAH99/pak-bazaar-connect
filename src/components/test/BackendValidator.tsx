@@ -8,7 +8,7 @@ import { CheckCircle, XCircle, AlertCircle, Play } from 'lucide-react';
 import { createProduct, getProductsByWholesaler } from '@/lib/products';
 import { getWholesalerOrders } from '@/lib/orders-enhanced';
 import { getCurrentUser, getUserProfile } from '@/lib/auth';
-import { getShopsByOwner } from '@/lib/shops';
+import { supabase } from '@/integrations/supabase/client';
 
 interface TestResult {
   name: string;
@@ -24,6 +24,16 @@ const BackendValidator: React.FC = () => {
 
   const addResult = (result: TestResult) => {
     setResults(prev => [...prev, result]);
+  };
+
+  const getShopsByOwner = async (ownerId: string) => {
+    const { data, error } = await supabase
+      .from('shops')
+      .select('*')
+      .eq('owner_id', ownerId);
+
+    if (error) throw error;
+    return data || [];
   };
 
   const runTests = async () => {

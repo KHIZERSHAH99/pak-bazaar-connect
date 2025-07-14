@@ -1,23 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Building, 
-  Calendar,
-  CreditCard,
-  ShoppingBag,
-  Shield,
-  Star,
-  Edit,
-  Camera
-} from 'lucide-react';
+import { User, Mail, Phone, MapPin, Building, Calendar, CreditCard, ShoppingBag, Shield, Star, Edit, Camera } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContextFixed';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -25,41 +11,46 @@ import ProfileImageUpload from './ProfileImageUpload';
 import ProfileEditor from './ProfileEditor';
 import BusinessDetails from './BusinessDetails';
 import AccountInfo from './AccountInfo';
-
 const EnhancedUserProfile: React.FC = () => {
-  const { profile } = useAuth();
-  const { toast } = useToast();
+  const {
+    profile
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
   const [orderStats, setOrderStats] = useState({
     totalOrders: 0,
     completedOrders: 0,
     pendingOrders: 0
   });
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (profile) {
       fetchOrderStats();
     }
   }, [profile]);
-
   const fetchOrderStats = async () => {
     if (!profile) return;
-    
     try {
-      const { data: orders, error } = await supabase
-        .from('orders')
-        .select('status')
-        .eq('buyer_id', profile.id);
-
+      const {
+        data: orders,
+        error
+      } = await supabase.from('orders').select('status').eq('buyer_id', profile.id);
       if (error) throw error;
-
       const stats = orders?.reduce((acc, order) => {
         acc.totalOrders++;
         if (order.status === 'completed') acc.completedOrders++;
         if (order.status === 'pending') acc.pendingOrders++;
         return acc;
-      }, { totalOrders: 0, completedOrders: 0, pendingOrders: 0 }) || { totalOrders: 0, completedOrders: 0, pendingOrders: 0 };
-
+      }, {
+        totalOrders: 0,
+        completedOrders: 0,
+        pendingOrders: 0
+      }) || {
+        totalOrders: 0,
+        completedOrders: 0,
+        pendingOrders: 0
+      };
       setOrderStats(stats);
     } catch (error: any) {
       console.error('Error fetching order stats:', error);
@@ -67,7 +58,6 @@ const EnhancedUserProfile: React.FC = () => {
       setLoading(false);
     }
   };
-
   const handleProfileUpdate = () => {
     toast({
       title: "Profile updated",
@@ -75,18 +65,13 @@ const EnhancedUserProfile: React.FC = () => {
     });
     // Refresh profile data if needed
   };
-
   if (!profile) return null;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+  return <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header Section */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">
-              User Profile
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">My Profile</h1>
             <p className="text-gray-600 dark:text-gray-300 font-poppins">
               Manage your account information and preferences
             </p>
@@ -96,10 +81,7 @@ const EnhancedUserProfile: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Profile Image Card */}
             <div className="lg:col-span-1">
-              <ProfileImageUpload 
-                profile={profile} 
-                onImageUpdate={handleProfileUpdate}
-              />
+              <ProfileImageUpload profile={profile} onImageUpdate={handleProfileUpdate} />
             </div>
 
             {/* Quick Stats Cards */}
@@ -139,10 +121,7 @@ const EnhancedUserProfile: React.FC = () => {
                       <Star className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                     </div>
                   </div>
-                  <Badge 
-                    variant={profile.role === 'admin' ? 'default' : 'secondary'}
-                    className="text-lg px-3 py-1 font-poppins capitalize"
-                  >
+                  <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="text-lg px-3 py-1 font-poppins capitalize">
                     {profile.role}
                   </Badge>
                   <p className="text-gray-600 dark:text-gray-300 font-poppins mt-2">Account Type</p>
@@ -155,30 +134,19 @@ const EnhancedUserProfile: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Account Information */}
             <div className="space-y-6">
-              <AccountInfo 
-                email={profile.email}
-                createdAt={profile.created_at}
-              />
+              <AccountInfo email={profile.email} createdAt={profile.created_at} />
             </div>
 
             {/* Personal Information */}
             <div className="space-y-6">
-              <ProfileEditor 
-                profile={profile}
-                onProfileUpdate={handleProfileUpdate}
-              />
+              <ProfileEditor profile={profile} onProfileUpdate={handleProfileUpdate} />
             </div>
           </div>
 
           {/* Business Details (if applicable) */}
-          {(profile.role === 'wholesaler' || profile.role === 'seller') && (
-            <div className="space-y-6">
-              <BusinessDetails 
-                profile={profile}
-                onUpdate={handleProfileUpdate}
-              />
-            </div>
-          )}
+          {(profile.role === 'wholesaler' || profile.role === 'seller') && <div className="space-y-6">
+              <BusinessDetails profile={profile} onUpdate={handleProfileUpdate} />
+            </div>}
 
           {/* Verification Status */}
           <Card className="overflow-hidden border-none shadow-md">
@@ -201,10 +169,7 @@ const EnhancedUserProfile: React.FC = () => {
             <CardContent className="p-4 md:p-6 bg-background/95 dark:bg-background/95">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg border border-border/50">
-                  <Badge 
-                    variant={profile.verification_status === 'approved' ? 'default' : 'secondary'}
-                    className="font-poppins"
-                  >
+                  <Badge variant={profile.verification_status === 'approved' ? 'default' : 'secondary'} className="font-poppins">
                     {profile.verification_status || 'pending'}
                   </Badge>
                   <span className="font-medium text-foreground font-poppins">
@@ -213,10 +178,7 @@ const EnhancedUserProfile: React.FC = () => {
                 </div>
                 
                 <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg border border-border/50">
-                  <Badge 
-                    variant={profile.is_suspended ? 'destructive' : 'default'}
-                    className="font-poppins"
-                  >
+                  <Badge variant={profile.is_suspended ? 'destructive' : 'default'} className="font-poppins">
                     {profile.is_suspended ? 'Suspended' : 'Active'}
                   </Badge>
                   <span className="font-medium text-foreground font-poppins">
@@ -228,8 +190,6 @@ const EnhancedUserProfile: React.FC = () => {
           </Card>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default EnhancedUserProfile;

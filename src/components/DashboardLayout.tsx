@@ -36,14 +36,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-white via-emerald-50/30 to-emerald-100/20 dark:from-emerald-950 dark:via-emerald-900/50 dark:to-emerald-800/30">
       <SEOHead title={title} description={description} />
       <Navbar />
       <div className="flex flex-grow relative">
         {/* Mobile sidebar toggle button - improved positioning */}
         <div className="md:hidden fixed bottom-6 right-6 z-30">
           <Button 
-            className="rounded-full w-12 h-12 flex items-center justify-center bg-pakistani_green-700 hover:bg-pakistani_green-800 shadow-xl border-2 border-background transition-all duration-200 hover:scale-105"
+            className="rounded-full w-12 h-12 flex items-center justify-center bg-pakistani_green-700 hover:bg-pakistani_green-800 shadow-xl border-2 border-white/20 dark:border-emerald-100/20 transition-all duration-200 hover:scale-105 backdrop-blur-sm"
             onClick={toggleSidebar}
             aria-label={sidebarOpen ? "Close menu" : "Open menu"}
           >
@@ -56,7 +56,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           setSidebarOpen={setSidebarOpen}
         />
 
-        {/* Improved overlay */}
+        {/* Improved overlay with blur effect */}
         {sidebarOpen && (
           <div 
             className="fixed inset-0 bg-black/50 z-10 md:hidden backdrop-blur-sm transition-opacity duration-300"
@@ -65,7 +65,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           />
         )}
 
-        <main className="flex-grow p-4 md:p-6 bg-background overflow-auto">
+        <main className="flex-grow p-4 md:p-6 bg-transparent overflow-auto">
           <div className="container mx-auto max-w-7xl">
             <div className="animate-fadeIn">
               {children}

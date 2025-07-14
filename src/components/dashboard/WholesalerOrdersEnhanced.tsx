@@ -11,7 +11,6 @@ import PaymentScreenshot from '@/components/orders/PaymentScreenshot';
 import OrderStats from '@/components/orders/OrderStats';
 import OrderFilters from '@/components/orders/OrderFilters';
 import EmptyOrdersState from '@/components/orders/EmptyOrdersState';
-import BackendTestButton from '@/components/orders/BackendTestButton';
 import { useOrderFilters } from '@/hooks/useOrderFilters';
 import { useOrderCounts } from '@/hooks/useOrderCounts';
 
@@ -156,10 +155,10 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-gray-900 font-poppins">Order Management</h1>
+        <h1 className="text-3xl font-bold text-pakistani_green-800 dark:text-emerald-100 font-poppins">Order Management</h1>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-gray-200 h-20 rounded"></div>
+            <div key={i} className="animate-pulse bg-white/20 dark:bg-emerald-800/20 backdrop-blur-sm h-20 rounded-lg border border-emerald-200 dark:border-emerald-700"></div>
           ))}
         </div>
       </div>
@@ -169,8 +168,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 font-poppins">Order Management</h1>
-        <BackendTestButton />
+        <h1 className="text-3xl font-bold text-pakistani_green-800 dark:text-emerald-100 font-poppins">Order Management</h1>
       </div>
 
       <OrderStats counts={counts} />
@@ -198,9 +196,9 @@ const WholesalerOrdersEnhanced: React.FC = () => {
       )}
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-emerald-900/95 backdrop-blur-md border-emerald-200 dark:border-emerald-700">
           <DialogHeader>
-            <DialogTitle className="font-poppins">
+            <DialogTitle className="font-poppins text-pakistani_green-800 dark:text-emerald-100">
               Order #{selectedOrder?.id.slice(0, 8)} - Management
             </DialogTitle>
           </DialogHeader>

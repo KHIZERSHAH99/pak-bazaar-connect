@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Category, City } from '@/lib/types';
 import { Search, Filter, Star } from 'lucide-react';
-
 interface ProductsFiltersProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
@@ -25,7 +23,6 @@ interface ProductsFiltersProps {
   onSearch: () => void;
   onClearFilters: () => void;
 }
-
 const ProductsFilters: React.FC<ProductsFiltersProps> = ({
   searchTerm,
   setSearchTerm,
@@ -42,23 +39,15 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
   categories,
   cities,
   onSearch,
-  onClearFilters,
+  onClearFilters
 }) => {
   const hasActiveFilters = searchTerm || selectedCategory !== 'all' || selectedCity !== 'all' || selectedRating !== 'all' || minPrice || maxPrice;
-
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-6 mb-8">
+  return <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-6 mb-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         <div className="md:col-span-2 lg:col-span-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            <Input
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              onKeyPress={(e) => e.key === 'Enter' && onSearch()}
-            />
+            <Input placeholder="Search products..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" onKeyPress={e => e.key === 'Enter' && onSearch()} />
           </div>
         </div>
         
@@ -68,11 +57,9 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
+            {categories.map(category => <SelectItem key={category.id} value={category.id}>
                 {category.name}
-              </SelectItem>
-            ))}
+              </SelectItem>)}
           </SelectContent>
         </Select>
 
@@ -82,11 +69,9 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Cities</SelectItem>
-            {cities.map((city) => (
-              <SelectItem key={city.id} value={city.id}>
+            {cities.map(city => <SelectItem key={city.id} value={city.id}>
                 {city.name}
-              </SelectItem>
-            ))}
+              </SelectItem>)}
           </SelectContent>
         </Select>
 
@@ -134,44 +119,26 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         <div>
           <Label htmlFor="minPrice" className="text-sm font-medium">Min Price (PKR)</Label>
-          <Input
-            id="minPrice"
-            type="number"
-            placeholder="0"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
-            className="mt-1"
-          />
+          <Input id="minPrice" type="number" placeholder="0" value={minPrice} onChange={e => setMinPrice(e.target.value)} className="mt-1" />
         </div>
         
         <div>
           <Label htmlFor="maxPrice" className="text-sm font-medium">Max Price (PKR)</Label>
-          <Input
-            id="maxPrice"
-            type="number"
-            placeholder="No limit"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-            className="mt-1"
-          />
+          <Input id="maxPrice" type="number" placeholder="No limit" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} className="mt-1" />
         </div>
       </div>
 
       <div className="flex justify-between items-center mt-6">
-        <Button onClick={onSearch} className="bg-primary hover:bg-pakistani-green-800">
+        <Button onClick={onSearch} className="hover:bg-pakistani-green-800 bg-green-900 hover:bg-green-800 text-slate-50 font-thin text-base text-justify">
           <Search className="h-4 w-4 mr-2" />
           Search
         </Button>
         
-        {hasActiveFilters && (
-          <Button variant="outline" onClick={onClearFilters}>
+        {hasActiveFilters && <Button variant="outline" onClick={onClearFilters}>
             <Filter className="h-4 w-4 mr-2" />
             Clear Filters
-          </Button>
-        )}
+          </Button>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ProductsFilters;

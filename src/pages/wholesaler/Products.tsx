@@ -9,7 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { getShopsByOwner, Shop, createProduct, Product, getProductsByShop, uploadImage } from '@/lib/supabase';
+import { getShopsByOwner, Shop, createProduct, uploadImage } from '@/lib/supabase';
+import { getProductsByShop } from '@/lib/products';
+import { Product } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Package, Edit, Eye, Store } from 'lucide-react';
 import EditProductDialog from '@/components/products/EditProductDialog';
@@ -57,7 +59,7 @@ const Products: React.FC = () => {
     try {
       setLoading(true);
       const data = await getProductsByShop(shopId);
-      setProducts(data);
+      setProducts(data as Product[]);
     } catch (error) {
       console.error(`Failed to fetch products for shop ${shopId}:`, error);
     } finally {

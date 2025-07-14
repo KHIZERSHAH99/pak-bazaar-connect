@@ -16,7 +16,14 @@ export const getProductsByShop = async (shopId: string) => {
         shops:shop_id (
           id,
           name,
-          owner_id
+          owner_id,
+          contact,
+          address,
+          postal_code,
+          logo,
+          commission_rate,
+          city_id,
+          created_at
         )
       `)
       .eq('shop_id', shopId)
@@ -31,6 +38,73 @@ export const getProductsByShop = async (shopId: string) => {
   } catch (error) {
     console.error('Error in getProductsByShop:', error);
     return [];
+  }
+};
+
+export const getProductsByWholesaler = async () => {
+  try {
+    const user = await getCurrentUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        *,
+        categories:category_id (
+          id,
+          name
+        ),
+        shops!inner (
+          id,
+          name,
+          owner_id,
+          contact,
+          address,
+          postal_code,
+          logo,
+          commission_rate,
+          city_id,
+          created_at
+        )
+      `)
+      .eq('shops.owner_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching wholesaler products:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getProductsByWholesaler:', error);
+    return [];
+  }
+};
+
+export const uploadImage = async (bucket: string, fileName: string, file: File): Promise<string> => {
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(fileName, file);
+
+    if (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  } catch (error) {
+    console.error('Error in uploadImage:', error);
+    throw error;
   }
 };
 

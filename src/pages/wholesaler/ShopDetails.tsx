@@ -24,7 +24,7 @@ const ShopDetails: React.FC = () => {
         .from('shops')
         .select(`
           *,
-          cities (
+          cities!city_id (
             name,
             province
           )
@@ -47,7 +47,7 @@ const ShopDetails: React.FC = () => {
         .from('products')
         .select(`
           *,
-          categories (
+          categories!category_id (
             name
           )
         `)
@@ -137,7 +137,7 @@ const ShopDetails: React.FC = () => {
                     </div>
                     {shop.cities && (
                       <div className="flex items-center">
-                        <span className="font-poppins">{shop.cities.name}, {shop.cities.province}</span>
+                        <span className="font-poppins">{shop.cities?.name}, {shop.cities?.province}</span>
                       </div>
                     )}
                     <div className="flex items-center">
@@ -190,7 +190,7 @@ const ShopDetails: React.FC = () => {
                           <p className="text-sm text-gray-600 font-poppins">Rs. {product.price}</p>
                           {product.categories && (
                             <Badge variant="secondary" size="sm" className="mt-1">
-                              {product.categories.name}
+                              {product.categories?.name}
                             </Badge>
                           )}
                         </div>

@@ -101,7 +101,7 @@ export const confirmOrder = async (orderId: string, notes?: string) => {
     .eq('id', orderId)
     .select(`
       *,
-      shops!inner(owner_id)
+      shops!shop_id(owner_id)
     `)
     .maybeSingle();
 
@@ -138,7 +138,7 @@ export const rejectOrder = async (orderId: string, notes?: string) => {
     .eq('id', orderId)
     .select(`
       *,
-      shops!inner(owner_id)
+      shops!shop_id(owner_id)
     `)
     .maybeSingle();
 

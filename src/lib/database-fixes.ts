@@ -216,7 +216,7 @@ export interface FixedProduct {
   price: number;
   image?: string;
   is_active: boolean;
-  verification_status: 'pending' | 'approved' | 'rejected';
+  verification_status: string;
   category_id?: string;
   moq?: number;
   created_at: string;

@@ -81,7 +81,7 @@ export const createProduct = async (productData: {
       })
       .select(`
         *,
-        shops!inner(id, name, contact, address, owner_id)
+      shops!shop_id(id, name, contact, address, owner_id)
       `)
       .single();
 
@@ -107,7 +107,7 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops!inner(id, name, contact, address, owner_id)
+      shops!shop_id(id, name, contact, address, owner_id)
       `)
       .eq('shop_id', shopId)
       .order('created_at', { ascending: false });
@@ -135,7 +135,7 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops!inner(id, name, contact, address, owner_id)
+      shops!shop_id(id, name, contact, address, owner_id)
       `)
       .eq('shops.owner_id', user.id)
       .order('created_at', { ascending: false });
@@ -167,7 +167,7 @@ export const updateProduct = async (
       .from('products')
       .select(`
         *,
-        shops!inner(owner_id)
+      shops!shop_id(owner_id)
       `)
       .eq('id', productId)
       .single();
@@ -186,7 +186,7 @@ export const updateProduct = async (
       .eq('id', productId)
       .select(`
         *,
-        shops!inner(id, name, contact, address, owner_id)
+      shops!shop_id(id, name, contact, address, owner_id)
       `)
       .single();
 
@@ -214,7 +214,7 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       .from('products')
       .select(`
         *,
-        shops!inner(owner_id)
+        shops!shop_id(owner_id)
       `)
       .eq('id', productId)
       .single();
@@ -248,7 +248,7 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
       .from('products')
       .select(`
         *,
-        shops!inner(id, name, contact, address, owner_id)
+        shops!shop_id(id, name, contact, address, owner_id)
       `)
       .eq('is_active', true)
       .eq('verification_status', 'approved') // Only show approved products to public
@@ -273,7 +273,7 @@ export const getProductById = async (productId: string): Promise<Product | null>
       .from('products')
       .select(`
         *,
-        shops!inner(id, name, contact, address, owner_id)
+        shops!shop_id(id, name, contact, address, owner_id)
       `)
       .eq('id', productId)
       .single();

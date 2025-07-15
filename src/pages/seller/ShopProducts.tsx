@@ -120,7 +120,14 @@ const ShopProducts: React.FC = () => {
     setIsOrdering(true);
     try {
       // Update: Call createOrder(shopId, totalAmount)
-      await createOrder(shopId, totalAmount);
+      await createOrder({
+        shopId,
+        totalAmount,
+        paymentMethod: 'bank_transfer',
+        buyerName: user?.email || 'Unknown',
+        buyerPhone: '',
+        buyerAddress: ''
+      });
       toast({
         title: "Order placed",
         description: "Your order has been placed successfully.",

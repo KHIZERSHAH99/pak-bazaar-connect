@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,34 +6,33 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import CreateShopDialog from '@/components/shops/CreateShopDialog';
 import { useAuth } from '@/contexts/AuthContextFixed';
 import { supabase } from '@/integrations/supabase/client';
-
 const ShopsManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [hasExistingShop, setHasExistingShop] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { profile } = useAuth();
-
+  const {
+    profile
+  } = useAuth();
   useEffect(() => {
     checkExistingShops();
   }, [profile]);
-
   const checkExistingShops = async () => {
     if (!profile) return;
-
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) return;
-
-      const { data: shops, error } = await supabase
-        .from('shops')
-        .select('id')
-        .eq('owner_id', user.id);
-
+      const {
+        data: shops,
+        error
+      } = await supabase.from('shops').select('id').eq('owner_id', user.id);
       if (error) {
         console.error('Error checking existing shops:', error);
         return;
       }
-
       setHasExistingShop((shops?.length || 0) > 0);
     } catch (error) {
       console.error('Error checking shops:', error);
@@ -42,15 +40,12 @@ const ShopsManagement: React.FC = () => {
       setLoading(false);
     }
   };
-
   const handleShopCreated = () => {
     console.log('Shop created successfully');
     checkExistingShops(); // Refresh the status
   };
-
   if (loading) {
-    return (
-      <div className="space-y-6">
+    return <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 font-poppins">My Shops</h1>
         </div>
@@ -62,23 +57,15 @@ const ShopsManagement: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 font-poppins">My Shops</h1>
-        {!hasExistingShop && (
-          <Button 
-            className="bg-primary hover:bg-primary/90 font-poppins" 
-            onClick={() => setIsCreateDialogOpen(true)}
-          >
+        {!hasExistingShop && <Button onClick={() => setIsCreateDialogOpen(true)} className="font-poppins text-slate-50 bg-green-800 hover:bg-green-700">
             <Plus className="w-4 h-4 mr-2" />
             Create Shop
-          </Button>
-        )}
+          </Button>}
       </div>
       
       <Card className="bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
@@ -89,8 +76,7 @@ const ShopsManagement: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {!hasExistingShop ? (
-            <>
+          {!hasExistingShop ? <>
               <p className="text-gray-600 dark:text-gray-400 font-poppins mb-4">
                 Create and manage your wholesale shop. Set up your product catalog, manage inventory, and track orders.
               </p>
@@ -99,9 +85,7 @@ const ShopsManagement: React.FC = () => {
                   💡 Start by creating your shop to begin selling products to retailers.
                 </p>
               </div>
-            </>
-          ) : (
-            <>
+            </> : <>
               <p className="text-gray-600 dark:text-gray-400 font-poppins mb-4">
                 Manage your wholesale shop operations. Add products, update inventory, and process orders.
               </p>
@@ -110,18 +94,11 @@ const ShopsManagement: React.FC = () => {
                   ✅ Your shop is active. Use the Products and Orders sections to manage your business.
                 </p>
               </div>
-            </>
-          )}
+            </>}
         </CardContent>
       </Card>
 
-      <CreateShopDialog 
-        isOpen={isCreateDialogOpen} 
-        onClose={() => setIsCreateDialogOpen(false)} 
-        onShopCreated={handleShopCreated} 
-      />
-    </div>
-  );
+      <CreateShopDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} onShopCreated={handleShopCreated} />
+    </div>;
 };
-
 export default ShopsManagement;

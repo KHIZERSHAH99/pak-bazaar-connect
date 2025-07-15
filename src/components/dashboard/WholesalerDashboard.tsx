@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -10,12 +9,9 @@ import WholesalerOrders from './WholesalerOrders';
 import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
 import CouponManagement from '@/components/coupons/CouponManagement';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
-
 const WholesalerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('shops');
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 font-poppins">Wholesaler Dashboard</h1>
       </div>
@@ -76,12 +72,10 @@ const WholesalerDashboard: React.FC = () => {
           </Tabs>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 bg-green-200">
           <NotificationCenter />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default WholesalerDashboard;

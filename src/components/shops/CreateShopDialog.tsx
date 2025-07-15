@@ -76,10 +76,21 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 100 * 1024) {
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
       toast({
         title: 'File too large',
-        description: 'Logo image must be less than 100KB',
+        description: 'Logo image must be less than 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Logo must be an image file',
         variant: 'destructive',
       });
       return;
@@ -222,7 +233,7 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
           </div>
           
           <div>
-            <Label htmlFor="logo">Shop Logo (optional, max 100KB)</Label>
+            <Label htmlFor="logo">Shop Logo (optional, max 5MB)</Label>
             <div className="mt-1">
               <Input
                 id="logo"

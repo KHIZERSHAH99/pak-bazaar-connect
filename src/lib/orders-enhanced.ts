@@ -19,7 +19,7 @@ export const fetchOrdersWithAnalytics = async (
       .from('orders')
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,
@@ -104,7 +104,7 @@ export const createOrderWithValidation = async (orderData: any): Promise<Order |
       .insert([orderData])
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,
@@ -158,7 +158,7 @@ export const getWholesalerOrders = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,
@@ -214,7 +214,7 @@ export const getSellerOrders = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,
@@ -264,7 +264,7 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,
@@ -315,7 +315,7 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
       .eq('id', orderId)
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,
@@ -365,7 +365,7 @@ export const addWholesalerNotes = async (orderId: string, notes: string): Promis
       .eq('id', orderId)
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,
@@ -424,7 +424,7 @@ export const confirmOrder = async (orderId: string, notes?: string): Promise<Ord
       .eq('id', orderId)
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,
@@ -475,7 +475,7 @@ export const rejectOrder = async (orderId: string, reason: string): Promise<Orde
       .eq('id', orderId)
       .select(`
         *,
-        shops!shop_id (
+        shops!fk_orders_shop_id (
           id,
           name,
           contact,

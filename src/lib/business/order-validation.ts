@@ -114,7 +114,7 @@ export const validateOrderStatusChange = async (
     .from('orders')
     .select(`
       *,
-      shops!inner(owner_id)
+      shops!shop_id(owner_id)
     `)
     .eq('id', orderId)
     .single();

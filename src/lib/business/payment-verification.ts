@@ -128,7 +128,7 @@ export const checkPaymentMethodConsistency = async (
       .from('orders')
       .select(`
         payment_method,
-        shops!inner(owner_id)
+        shops!shop_id(owner_id)
       `)
       .eq('id', orderId)
       .single();

@@ -70,8 +70,8 @@ export const getMarketplaceProducts = async (filters?: {
     .select(`
       *,
       categories (id, name),
-      shops!inner (
-        id, 
+      shops!shop_id (
+        id,
         name, 
         contact, 
         address, 
@@ -149,8 +149,8 @@ export const getProductById = async (id: string): Promise<Product | null> => {
     .select(`
       *,
       categories (id, name),
-      shops!inner (
-        id, 
+      shops!shop_id (
+        id,
         name, 
         contact, 
         address,

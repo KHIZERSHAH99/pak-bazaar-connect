@@ -63,7 +63,10 @@ export const {
 export const {
   createOrder,
   getOrdersForWholesaler,
-  getSellerCommissions
+  getOrdersForSeller,
+  updateOrderStatus,
+  getWholesalerCommissions,
+  getOrderById
 } = ordersModule;
 
 export const {

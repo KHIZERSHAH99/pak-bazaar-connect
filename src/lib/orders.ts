@@ -2,22 +2,64 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 
-// Orders
-export const createOrder = async (shopId: string, totalAmount: number) => {
+export interface Order {
+  id: string;
+  buyer_id: string;
+  shop_id: string;
+  total_amount: number;
+  status: 'pending' | 'confirmed' | 'rejected' | 'completed';
+  payment_method?: string;
+  payment_screenshot?: string;
+  buyer_name?: string;
+  buyer_phone?: string;
+  buyer_address?: string;
+  wholesaler_notes?: string;
+  rejection_reason?: string;
+  created_at: string;
+  confirmed_at?: string;
+  rejected_at?: string;
+  delivered_at?: string;
+  shops?: {
+    id: string;
+    name: string;
+    contact: string;
+    address: string;
+    owner_id: string;
+  };
+}
+
+// Enhanced order creation with proper validation
+export const createOrder = async (orderData: {
+  shopId: string;
+  totalAmount: number;
+  paymentMethod?: string;
+  buyerName?: string;
+  buyerPhone?: string;
+  buyerAddress?: string;
+}): Promise<Order> => {
   const user = await getCurrentUser();
   
   if (!user) throw new Error('User not authenticated');
   
+  // Validate input
+  if (!orderData.shopId || !orderData.totalAmount) {
+    throw new Error('Shop ID and total amount are required');
+  }
+  
+  if (orderData.totalAmount <= 0) {
+    throw new Error('Order amount must be greater than 0');
+  }
+  
   // Get shop details to check if user is not ordering from own shop
   const { data: shop, error: shopError } = await supabase
     .from('shops')
-    .select('owner_id')
-    .eq('id', shopId)
+    .select('owner_id, name')
+    .eq('id', orderData.shopId)
     .single();
   
   if (shopError) {
     console.error('Error fetching shop info:', shopError);
-    throw shopError;
+    throw new Error('Shop not found');
   }
   
   if (shop.owner_id === user.id) {
@@ -28,21 +70,29 @@ export const createOrder = async (shopId: string, totalAmount: number) => {
     .from('orders')
     .insert([{
       buyer_id: user.id,
-      shop_id: shopId,
-      total_amount: totalAmount,
+      shop_id: orderData.shopId,
+      total_amount: orderData.totalAmount,
+      payment_method: orderData.paymentMethod || 'bank_transfer',
+      buyer_name: orderData.buyerName,
+      buyer_phone: orderData.buyerPhone,
+      buyer_address: orderData.buyerAddress,
       status: 'pending'
     }])
-    .select();
+    .select(`
+      *,
+      shops!inner(id, name, contact, address, owner_id)
+    `)
+    .single();
   
   if (error) {
     console.error('Error creating order:', error);
-    throw error;
+    throw new Error(`Failed to create order: ${error.message}`);
   }
   
-  return data[0];
+  return data as Order;
 };
 
-export const getOrdersForWholesaler = async () => {
+export const getOrdersForWholesaler = async (): Promise<Order[]> => {
   try {
     const user = await getCurrentUser();
     
@@ -62,30 +112,126 @@ export const getOrdersForWholesaler = async () => {
     
     const { data, error } = await supabase
       .from('orders')
-      .select('*, profiles:buyer_id(email)')
-      .in('shop_id', shopIds);
+      .select(`
+        *,
+        shops!inner(id, name, contact, address, owner_id)
+      `)
+      .in('shop_id', shopIds)
+      .order('created_at', { ascending: false });
     
     if (error) {
       console.error('Error fetching orders:', error);
       return [];
     }
     
-    return data;
+    return (data || []) as Order[];
   } catch (err) {
     console.error('Error in getOrdersForWholesaler:', err);
     return [];
   }
 };
 
-export const getSellerCommissions = async () => {
+export const getOrdersForSeller = async (): Promise<Order[]> => {
+  try {
+    const user = await getCurrentUser();
+    
+    if (!user) return [];
+    
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        shops!inner(id, name, contact, address, owner_id)
+      `)
+      .eq('buyer_id', user.id)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching seller orders:', error);
+      return [];
+    }
+    
+    return (data || []) as Order[];
+  } catch (err) {
+    console.error('Error in getOrdersForSeller:', err);
+    return [];
+  }
+};
+
+export const updateOrderStatus = async (
+  orderId: string, 
+  status: Order['status'], 
+  notes?: string
+): Promise<Order> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('User not authenticated');
+    
+    // Verify user owns the shop for this order
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        shops!inner(owner_id)
+      `)
+      .eq('id', orderId)
+      .single();
+      
+    if (orderError) {
+      throw new Error('Order not found');
+    }
+    
+    if (order.shops.owner_id !== user.id) {
+      throw new Error('You can only update orders for your own shop');
+    }
+    
+    const updateData: any = { status };
+    
+    if (status === 'confirmed') {
+      updateData.confirmed_at = new Date().toISOString();
+    } else if (status === 'rejected') {
+      updateData.rejected_at = new Date().toISOString();
+      if (notes) updateData.rejection_reason = notes;
+    } else if (status === 'completed') {
+      updateData.delivered_at = new Date().toISOString();
+    }
+    
+    if (notes && status !== 'rejected') {
+      updateData.wholesaler_notes = notes;
+    }
+    
+    const { data, error } = await supabase
+      .from('orders')
+      .update(updateData)
+      .eq('id', orderId)
+      .select(`
+        *,
+        shops!inner(id, name, contact, address, owner_id)
+      `)
+      .single();
+      
+    if (error) {
+      console.error('Error updating order status:', error);
+      throw new Error(`Failed to update order: ${error.message}`);
+    }
+    
+    return data as Order;
+  } catch (error) {
+    console.error('Error in updateOrderStatus:', error);
+    throw error;
+  }
+};
+
+export const getWholesalerCommissions = async () => {
   const user = await getCurrentUser();
   
   if (!user) return [];
   
   const { data, error } = await supabase
-    .from('commissions')
+    .from('commission_transactions')
     .select('*')
-    .eq('seller_id', user.id);
+    .eq('wholesaler_id', user.id)
+    .order('created_at', { ascending: false });
   
   if (error) {
     console.error('Error fetching commissions:', error);
@@ -93,4 +239,30 @@ export const getSellerCommissions = async () => {
   }
   
   return data;
+};
+
+export const getOrderById = async (orderId: string): Promise<Order | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        shops!inner(id, name, contact, address, owner_id)
+      `)
+      .eq('id', orderId)
+      .single();
+      
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // Order not found
+      }
+      console.error('Error fetching order by ID:', error);
+      throw error;
+    }
+    
+    return data as Order;
+  } catch (error) {
+    console.error('Error in getOrderById:', error);
+    return null;
+  }
 };

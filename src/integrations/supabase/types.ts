@@ -229,6 +229,57 @@ export type Database = {
           },
         ]
       }
+      commission_transactions: {
+        Row: {
+          commission_amount: number
+          commission_rate: number
+          created_at: string | null
+          id: string
+          order_amount: number
+          order_id: string
+          paid_at: string | null
+          status: string
+          wholesaler_id: string
+        }
+        Insert: {
+          commission_amount: number
+          commission_rate?: number
+          created_at?: string | null
+          id?: string
+          order_amount: number
+          order_id: string
+          paid_at?: string | null
+          status?: string
+          wholesaler_id: string
+        }
+        Update: {
+          commission_amount?: number
+          commission_rate?: number
+          created_at?: string | null
+          id?: string
+          order_amount?: number
+          order_id?: string
+          paid_at?: string | null
+          status?: string
+          wholesaler_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_transactions_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commissions: {
         Row: {
           commission_amount: number
@@ -739,6 +790,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_orders_shop_id"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_delivery_confirmed_by_fkey"
             columns: ["delivery_confirmed_by"]
             isOneToOne: false
@@ -875,6 +933,20 @@ export type Database = {
           verification_status?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_products_category_id"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_products_shop_id"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "products_category_id_fkey"
             columns: ["category_id"]
@@ -1100,6 +1172,13 @@ export type Database = {
           postal_code?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_shops_city_id"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "shops_city_id_fkey"
             columns: ["city_id"]

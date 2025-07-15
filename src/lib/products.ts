@@ -39,13 +39,21 @@ export const createProduct = async (productData: {
       throw new Error('User not authenticated');
     }
 
-    // Validate required fields
-    if (!productData.name || !productData.price || !productData.shop_id) {
+    // Enhanced validation
+    if (!productData.name?.trim() || !productData.price || !productData.shop_id) {
       throw new Error('Missing required fields: name, price, and shop_id are required');
     }
 
     if (productData.price <= 0) {
       throw new Error('Price must be greater than 0');
+    }
+
+    if (productData.name.trim().length < 3 || productData.name.trim().length > 100) {
+      throw new Error('Product name must be between 3 and 100 characters');
+    }
+
+    if (productData.moq && productData.moq < 1) {
+      throw new Error('Minimum order quantity must be at least 1');
     }
 
     // Verify user owns the shop
@@ -243,7 +251,7 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
         shops!inner(id, name, contact, address, owner_id)
       `)
       .eq('is_active', true)
-      .in('verification_status', ['approved', 'pending'])
+      .eq('verification_status', 'approved') // Only show approved products to public
       .order('created_at', { ascending: false })
       .limit(limit);
 

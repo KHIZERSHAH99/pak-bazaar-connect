@@ -3,7 +3,6 @@ import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { Product } from '@/lib/types';
 import ProductCard from './ProductCard';
-import EmptyProductsState from '@/components/ui/EmptyProductsState';
 
 interface ProductsGridProps {
   products: Product[];

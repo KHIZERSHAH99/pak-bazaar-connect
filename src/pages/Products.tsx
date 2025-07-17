@@ -7,14 +7,12 @@ import { useToast } from '@/hooks/use-toast';
 import ProductsHeader from '@/components/products/ProductsHeader';
 import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
-import LoadingSpinner from '@/components/ui/loading-spinner';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
   const [minPrice, setMinPrice] = useState('');
@@ -26,7 +24,6 @@ const Products: React.FC = () => {
     try {
       setLoading(true);
       console.log('Fetching products with filters:', {
-        searchTerm,
         selectedCategory,
         selectedCity,
         minPrice,
@@ -62,11 +59,6 @@ const Products: React.FC = () => {
         .eq('is_active', true)
         .eq('verification_status', 'approved')
         .order('created_at', { ascending: false });
-
-      // Apply search filter
-      if (searchTerm) {
-        query = query.ilike('name', `%${searchTerm}%`);
-      }
 
       // Apply category filter
       if (selectedCategory !== 'all') {
@@ -146,11 +138,7 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [searchTerm, selectedCategory, selectedCity, minPrice, maxPrice]);
-
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-  };
+  }, [selectedCategory, selectedCity, minPrice, maxPrice]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -166,7 +154,6 @@ const Products: React.FC = () => {
   };
 
   const clearFilters = () => {
-    setSearchTerm('');
     setSelectedCategory('all');
     setSelectedCity('all');
     setMinPrice('');
@@ -176,7 +163,7 @@ const Products: React.FC = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <ProductsHeader onSearch={handleSearch} searchTerm={searchTerm} />
+        <ProductsHeader />
         
         <ProductsFilters
           categories={categories}
@@ -191,13 +178,7 @@ const Products: React.FC = () => {
           onClearFilters={clearFilters}
         />
 
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <LoadingSpinner size="lg" text="Loading products..." />
-          </div>
-        ) : (
-          <ProductsGrid products={products} />
-        )}
+        <ProductsGrid products={products} loading={loading} />
       </div>
     </Layout>
   );

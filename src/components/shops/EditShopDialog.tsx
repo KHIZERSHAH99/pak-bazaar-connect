@@ -36,12 +36,9 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-
-  // Query for cities is removed since getCities might not exist - we'll fetch directly
   const [cities, setCities] = useState<City[]>([]);
 
   useEffect(() => {
-    // Fetch cities directly from Supabase
     const fetchCities = async () => {
       try {
         const { data, error } = await supabase
@@ -87,11 +84,11 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
     try {
       let logoUrl = formData.logo;
 
-      // Upload new logo if selected
       if (logoFile) {
         logoUrl = await uploadImage(logoFile, 'shop_images');
       }
 
+      // Fix: Pass only the required 2 arguments
       await updateShop(shop.id, {
         name: formData.name,
         contact: formData.contact,

@@ -10,7 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Shop, City } from '@/lib/types';
 import { updateShop } from '@/lib/shops';
 import { supabase } from '@/integrations/supabase/client';
-import { uploadImage } from '@/lib/storage';
 
 interface EditShopDialogProps {
   isOpen: boolean;
@@ -18,6 +17,30 @@ interface EditShopDialogProps {
   shop: Shop | null;
   onShopUpdated: () => void;
 }
+
+// File upload function
+const uploadImage = async (file: File, bucket: string) => {
+  const user = await supabase.auth.getUser();
+  
+  if (!user.data.user) throw new Error('User not authenticated');
+  
+  const filePath = `${user.data.user.id}/${Date.now()}_${file.name}`;
+  
+  const { error } = await supabase.storage
+    .from(bucket)
+    .upload(filePath, file);
+  
+  if (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+  
+  const { data } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(filePath);
+  
+  return data.publicUrl;
+};
 
 const EditShopDialog: React.FC<EditShopDialogProps> = ({
   isOpen,

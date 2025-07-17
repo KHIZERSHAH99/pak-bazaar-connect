@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Package, Plus } from 'lucide-react';
 import CreateProductDialog from '@/components/products/CreateProductDialog';
+import ProductsList from './ProductsList';
 
 const ProductsManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const handleProductCreated = () => {
-    // Refresh products list if needed
+    // The ProductsList component will automatically refresh via React Query
     console.log('Product created successfully');
   };
 
@@ -34,14 +35,7 @@ const ProductsManagement: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600 font-poppins">
-            Manage your product inventory, prices, and availability. Upload product images and descriptions.
-          </p>
-          <div className="mt-4 p-4 bg-green-50 rounded-lg">
-            <p className="text-green-800 font-poppins text-sm">
-              💡 Add detailed product descriptions and high-quality images to attract more buyers.
-            </p>
-          </div>
+          <ProductsList />
         </CardContent>
       </Card>
 

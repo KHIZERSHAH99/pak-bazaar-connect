@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Product } from '@/lib/types';
@@ -41,7 +42,12 @@ const Products: React.FC = () => {
             city_id,
             logo,
             commission_rate,
-            created_at
+            created_at,
+            cities!shops_city_id_fkey (
+              id,
+              name,
+              province
+            )
           ),
           categories!fk_products_category_id (
             id,
@@ -58,6 +64,10 @@ const Products: React.FC = () => {
         query = query.eq('category_id', selectedCategory);
       }
 
+      if (selectedCity !== 'all') {
+        query = query.eq('shops.city_id', selectedCity);
+      }
+
       if (searchTerm) {
         query = query.ilike('name', `%${searchTerm}%`);
       }
@@ -70,7 +80,9 @@ const Products: React.FC = () => {
         query = query.lte('price', parseFloat(maxPrice));
       }
 
-      const { data, error } = await query.order('created_at', { ascending: false });
+      const { data, error } = await query
+        .order('created_at', { ascending: false })
+        .limit(50);
 
       if (error) {
         console.error('Error fetching products:', error);

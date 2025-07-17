@@ -1,104 +1,163 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Store, Plus, AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Store, Plus, Edit, MapPin, Phone, Package } from 'lucide-react';
+import { Shop } from '@/lib/types';
+import { getShopsByOwner } from '@/lib/shops';
+import { useToast } from '@/hooks/use-toast';
 import CreateShopDialog from '@/components/shops/CreateShopDialog';
-import { useAuth } from '@/contexts/AuthContextFixed';
-import { supabase } from '@/integrations/supabase/client';
+import EditShopDialog from '@/components/shops/EditShopDialog';
+import { useQuery } from '@tanstack/react-query';
+
 const ShopsManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [hasExistingShop, setHasExistingShop] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const {
-    profile
-  } = useAuth();
-  useEffect(() => {
-    checkExistingShops();
-  }, [profile]);
-  const checkExistingShops = async () => {
-    if (!profile) return;
-    try {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
-      if (!user) return;
-      const {
-        data: shops,
-        error
-      } = await supabase.from('shops').select('id').eq('owner_id', user.id);
-      if (error) {
-        console.error('Error checking existing shops:', error);
-        return;
-      }
-      setHasExistingShop((shops?.length || 0) > 0);
-    } catch (error) {
-      console.error('Error checking shops:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
+  const { toast } = useToast();
+
+  const { data: shops = [], isLoading, refetch } = useQuery({
+    queryKey: ['user-shops'],
+    queryFn: getShopsByOwner,
+  });
+
   const handleShopCreated = () => {
-    console.log('Shop created successfully');
-    checkExistingShops(); // Refresh the status
+    refetch();
+    toast({
+      title: "Shop created",
+      description: "Your shop has been created successfully.",
+    });
   };
-  if (loading) {
-    return <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 font-poppins">My Shops</h1>
-        </div>
-        <Card className="bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
-          <CardContent className="p-8">
-            <div className="animate-pulse">
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-            </div>
+
+  const handleShopUpdated = () => {
+    refetch();
+    setSelectedShop(null);
+  };
+
+  const handleEditShop = (shop: Shop) => {
+    setSelectedShop(shop);
+    setIsEditDialogOpen(true);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900 font-poppins">My Shops</h1>
+        <Button 
+          className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
+          onClick={() => setIsCreateDialogOpen(true)}
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Create Shop
+        </Button>
+      </div>
+
+      {shops.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Store className="h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">
+              No shops yet
+            </h3>
+            <p className="text-gray-600 mb-4 font-poppins text-center">
+              Create your first shop to start selling products on our platform.
+            </p>
+            <Button 
+              className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
+              onClick={() => setIsCreateDialogOpen(true)}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create Your First Shop
+            </Button>
           </CardContent>
         </Card>
-      </div>;
-  }
-  return <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 font-poppins">My Shops</h1>
-        {!hasExistingShop && <Button onClick={() => setIsCreateDialogOpen(true)} className="font-poppins text-slate-50 bg-green-800 hover:bg-green-700">
-            <Plus className="w-4 h-4 mr-2" />
-            Create Shop
-          </Button>}
-      </div>
-      
-      <Card className="bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 font-poppins text-gray-900 dark:text-gray-100">
-            <Store className="w-5 h-5" />
-            Shop Management
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!hasExistingShop ? <>
-              <p className="text-gray-600 dark:text-gray-400 font-poppins mb-4">
-                Create and manage your wholesale shop. Set up your product catalog, manage inventory, and track orders.
-              </p>
-              <div className="p-4 bg-blue-50/50 dark:bg-blue-900/30 rounded-lg backdrop-blur-sm">
-                <p className="text-blue-800 dark:text-blue-200 font-poppins text-sm">
-                  💡 Start by creating your shop to begin selling products to retailers.
-                </p>
-              </div>
-            </> : <>
-              <p className="text-gray-600 dark:text-gray-400 font-poppins mb-4">
-                Manage your wholesale shop operations. Add products, update inventory, and process orders.
-              </p>
-              <div className="p-4 bg-pakistani_green-50/50 dark:bg-pakistani_green-900/30 rounded-lg backdrop-blur-sm">
-                <p className="text-pakistani_green-800 dark:text-pakistani_green-200 font-poppins text-sm">
-                  ✅ Your shop is active. Use the Products and Orders sections to manage your business.
-                </p>
-              </div>
-            </>}
-        </CardContent>
-      </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {shops.map((shop) => (
+            <Card key={shop.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              {shop.logo && (
+                <div className="aspect-video relative">
+                  <img
+                    src={shop.logo}
+                    alt={shop.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <CardTitle className="font-poppins text-xl">{shop.name}</CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEditShop(shop)}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="space-y-3">
+                <div className="flex items-center text-gray-600">
+                  <Phone className="w-4 h-4 mr-2" />
+                  <span className="font-poppins">{shop.contact}</span>
+                </div>
+                
+                <div className="flex items-start text-gray-600">
+                  <MapPin className="w-4 h-4 mr-2 mt-1" />
+                  <div className="font-poppins">
+                    <p>{shop.address}</p>
+                    <p className="text-sm">Postal Code: {shop.postal_code}</p>
+                    {shop.cities && (
+                      <p className="text-sm">{shop.cities.name}, {shop.cities.province}</p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between pt-2">
+                  <Badge variant="secondary" className="font-poppins">
+                    <Package className="w-3 h-3 mr-1" />
+                    {shop.commission_rate || 5}% Commission
+                  </Badge>
+                  
+                  {shop.is_verified && (
+                    <Badge className="bg-green-100 text-green-800 font-poppins">
+                      Verified
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-      <CreateShopDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} onShopCreated={handleShopCreated} />
-    </div>;
+      <CreateShopDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        onShopCreated={handleShopCreated}
+      />
+
+      <EditShopDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        shop={selectedShop}
+        onShopUpdated={handleShopUpdated}
+      />
+    </div>
+  );
 };
+
 export default ShopsManagement;

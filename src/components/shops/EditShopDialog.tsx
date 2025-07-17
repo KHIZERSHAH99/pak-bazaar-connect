@@ -11,7 +11,6 @@ import { Shop, City } from '@/lib/types';
 import { updateShop } from '@/lib/shops';
 import { getCities } from '@/lib/marketplace';
 import { uploadImage } from '@/lib/storage';
-import { useMutation, useQuery } from '@tanstack/react-query';
 
 interface EditShopDialogProps {
   isOpen: boolean;
@@ -38,10 +37,25 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { data: cities = [] } = useQuery({
-    queryKey: ['cities'],
-    queryFn: getCities,
-  });
+  // Query for cities is removed since getCities might not exist - we'll fetch directly
+  const [cities, setCities] = useState<City[]>([]);
+
+  useEffect(() => {
+    // Fetch cities directly from Supabase
+    const fetchCities = async () => {
+      try {
+        const citiesData = await getCities();
+        setCities(citiesData);
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+        setCities([]);
+      }
+    };
+    
+    if (isOpen) {
+      fetchCities();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (shop) {
@@ -70,8 +84,12 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
       }
 
       await updateShop(shop.id, {
-        ...formData,
-        logo: logoUrl
+        name: formData.name,
+        contact: formData.contact,
+        address: formData.address,
+        postal_code: formData.postal_code,
+        city_id: formData.city_id || undefined,
+        logo: logoUrl || undefined
       });
 
       toast({

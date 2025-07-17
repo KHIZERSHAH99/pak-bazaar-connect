@@ -2,27 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { uploadImage } from '@/lib/storage';
-
-export interface Product {
-  id: string;
-  shop_id: string;
-  name: string;
-  description?: string;
-  price: number;
-  image?: string;
-  is_active: boolean;
-  verification_status: 'pending' | 'approved' | 'rejected';
-  category_id?: string;
-  moq?: number;
-  created_at: string;
-  shops?: {
-    id: string;
-    name: string;
-    contact: string;
-    address: string;
-    owner_id: string;
-  };
-}
+import { Product } from '@/lib/types';
 
 export const createProduct = async (productData: {
   shop_id: string;
@@ -81,7 +61,8 @@ export const createProduct = async (productData: {
       })
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, owner_id)
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
       `)
       .single();
 
@@ -107,7 +88,8 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, owner_id)
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
       `)
       .eq('shop_id', shopId)
       .order('created_at', { ascending: false });
@@ -135,7 +117,8 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, owner_id)
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
       `)
       .eq('shops.owner_id', user.id)
       .order('created_at', { ascending: false });
@@ -154,7 +137,7 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
 
 export const updateProduct = async (
   productId: string,
-  updates: Partial<Omit<Product, 'id' | 'created_at' | 'shops'>>
+  updates: Partial<Omit<Product, 'id' | 'created_at' | 'shops' | 'categories'>>
 ): Promise<Product> => {
   try {
     const user = await getCurrentUser();
@@ -186,7 +169,8 @@ export const updateProduct = async (
       .eq('id', productId)
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, owner_id)
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
       `)
       .single();
 
@@ -248,10 +232,11 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, owner_id)
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
       `)
       .eq('is_active', true)
-      .eq('verification_status', 'approved') // Only show approved products to public
+      .eq('verification_status', 'approved')
       .order('created_at', { ascending: false })
       .limit(limit);
 
@@ -273,7 +258,8 @@ export const getProductById = async (productId: string): Promise<Product | null>
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, owner_id)
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
       `)
       .eq('id', productId)
       .single();

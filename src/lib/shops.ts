@@ -1,34 +1,15 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
-import { uploadImage } from '@/lib/storage';
-
-export interface Shop {
-  id: string;
-  owner_id: string;
-  name: string;
-  contact: string;
-  address: string;
-  postal_code: string;
-  logo?: string;
-  commission_rate?: number;
-  city_id?: string;
-  created_at?: string;
-  cities?: {
-    id: string;
-    name: string;
-    province: string;
-  };
-  is_verified?: boolean;
-}
+import { Shop } from '@/lib/types';
 
 export const createShop = async (shopData: {
   name: string;
   contact: string;
   address: string;
   postal_code: string;
-  logo?: string;
   city_id?: string;
+  logo?: string;
 }): Promise<Shop> => {
   try {
     const user = await getCurrentUser();
@@ -44,7 +25,7 @@ export const createShop = async (shopData: {
       })
       .select(`
         *,
-        cities!shops_city_id_fkey(id, name, province)
+        cities(id, name, province)
       `)
       .single();
 
@@ -60,9 +41,92 @@ export const createShop = async (shopData: {
   }
 };
 
+export const getShopsByWholesaler = async (): Promise<Shop[]> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const { data, error } = await supabase
+      .from('shops')
+      .select(`
+        *,
+        cities(id, name, province)
+      `)
+      .eq('owner_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching wholesaler shops:', error);
+      throw error;
+    }
+
+    return (data || []) as Shop[];
+  } catch (error) {
+    console.error('Error in getShopsByWholesaler:', error);
+    throw error;
+  }
+};
+
+export const getAllShops = async (): Promise<Shop[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('shops')
+      .select(`
+        *,
+        cities(id, name, province)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching all shops:', error);
+      throw error;
+    }
+
+    return (data || []) as Shop[];
+  } catch (error) {
+    console.error('Error in getAllShops:', error);
+    return [];
+  }
+};
+
+export const getShopById = async (shopId: string): Promise<Shop | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('shops')
+      .select(`
+        *,
+        cities(id, name, province)
+      `)
+      .eq('id', shopId)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // Shop not found
+      }
+      console.error('Error fetching shop by ID:', error);
+      throw error;
+    }
+
+    return data as Shop;
+  } catch (error) {
+    console.error('Error in getShopById:', error);
+    return null;
+  }
+};
+
 export const updateShop = async (
   shopId: string,
-  updates: Partial<Omit<Shop, 'id' | 'owner_id' | 'created_at'>>
+  updates: {
+    name?: string;
+    contact?: string;
+    address?: string;
+    postal_code?: string;
+    city_id?: string;
+    logo?: string;
+  }
 ): Promise<Shop> => {
   try {
     const user = await getCurrentUser();
@@ -91,7 +155,7 @@ export const updateShop = async (
       .eq('id', shopId)
       .select(`
         *,
-        cities!shops_city_id_fkey(id, name, province)
+        cities(id, name, province)
       `)
       .single();
 
@@ -107,56 +171,39 @@ export const updateShop = async (
   }
 };
 
-export const getShopsByOwner = async (): Promise<Shop[]> => {
+export const deleteShop = async (shopId: string): Promise<void> => {
   try {
     const user = await getCurrentUser();
     if (!user) {
       throw new Error('User not authenticated');
     }
 
-    const { data, error } = await supabase
+    // Verify user owns the shop
+    const { data: shop, error: shopError } = await supabase
       .from('shops')
-      .select(`
-        *,
-        cities!shops_city_id_fkey(id, name, province)
-      `)
-      .eq('owner_id', user.id)
-      .order('created_at', { ascending: false });
+      .select('owner_id')
+      .eq('id', shopId)
+      .single();
 
-    if (error) {
-      console.error('Error fetching user shops:', error);
-      throw error;
+    if (shopError) {
+      throw new Error('Shop not found');
     }
 
-    return (data || []) as Shop[];
+    if (shop.owner_id !== user.id) {
+      throw new Error('You can only delete your own shops');
+    }
+
+    const { error } = await supabase
+      .from('shops')
+      .delete()
+      .eq('id', shopId);
+
+    if (error) {
+      console.error('Shop deletion error:', error);
+      throw new Error(`Failed to delete shop: ${error.message}`);
+    }
   } catch (error) {
-    console.error('Error in getShopsByOwner:', error);
+    console.error('Error in deleteShop:', error);
     throw error;
   }
 };
-
-export const getAllShops = async (): Promise<Shop[]> => {
-  try {
-    const { data, error } = await supabase
-      .from('shops')
-      .select(`
-        *,
-        cities!shops_city_id_fkey(id, name, province),
-        company_profiles!shops_owner_id_fkey(*)
-      `)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching all shops:', error);
-      throw error;
-    }
-
-    return (data || []) as Shop[];
-  } catch (error) {
-    console.error('Error in getAllShops:', error);
-    return [];
-  }
-};
-
-// Export uploadImage from storage
-export { uploadImage };

@@ -1,55 +1,123 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import LoadingSpinner from '@/components/ui/loading-spinner';
-import ProductCard from '@/components/products/ProductCard';
-import { getShopById, getProductsByShopPublic } from '@/lib/marketplace';
 import { Shop, Product } from '@/lib/types';
-import { Store, Package, MapPin, Phone, ArrowLeft, Star } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, Store, MapPin, Phone, Package, Star, Users, ShoppingCart } from 'lucide-react';
+import ProductCard from '@/components/products/ProductCard';
+import LoadingSpinner from '@/components/ui/loading-spinner';
 
 const ShopDetails: React.FC = () => {
   const { shopId } = useParams<{ shopId: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [shop, setShop] = useState<Shop | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(true);
 
-  useEffect(() => {
-    if (shopId) {
-      fetchShopDetails();
-    }
-  }, [shopId]);
-
-  const fetchShopDetails = async () => {
+  const fetchShop = async () => {
     if (!shopId) return;
     
     try {
-      setLoading(true);
-      setProductsLoading(true);
-      
-      const [shopData, productsData] = await Promise.all([
-        getShopById(shopId),
-        getProductsByShopPublic(shopId)
-      ]);
-      
-      setShop(shopData);
-      setProducts(productsData);
-    } catch (error) {
-      console.error('Failed to fetch shop details:', error);
+      const { data, error } = await supabase
+        .from('shops')
+        .select(`
+          *,
+          cities!shops_city_id_fkey (
+            id,
+            name,
+            province
+          )
+        `)
+        .eq('id', shopId)
+        .single();
+
+      if (error) throw error;
+      setShop(data);
+    } catch (error: any) {
+      console.error('Failed to fetch shop:', error);
+      toast({
+        title: "Error loading shop",
+        description: error.message || "Failed to load shop details.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchProducts = async () => {
+    if (!shopId) return;
+    
+    try {
+      setProductsLoading(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          shops!products_shop_id_fkey (
+            id,
+            name,
+            contact,
+            address,
+            postal_code,
+            logo,
+            owner_id,
+            cities!shops_city_id_fkey (
+              id,
+              name,
+              province
+            )
+          ),
+          categories!products_category_id_fkey (
+            id,
+            name,
+            description
+          )
+        `)
+        .eq('shop_id', shopId)
+        .eq('is_active', true)
+        .eq('verification_status', 'approved')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      console.log('Fetched products for shop:', data);
+      setProducts(data || []);
+    } catch (error: any) {
+      console.error('Failed to fetch products:', error);
+      toast({
+        title: "Error loading products",
+        description: error.message || "Failed to load shop products.",
+        variant: "destructive"
+      });
+    } finally {
       setProductsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchShop();
+    fetchProducts();
+  }, [shopId]);
+
+  const getShopImageSrc = (logo?: string) => {
+    if (logo && !logo.includes('placeholder.svg')) {
+      return logo;
+    }
+    return `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop&auto=format`;
   };
 
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-64">
+        <div className="flex justify-center items-center py-12">
           <LoadingSpinner size="lg" text="Loading shop details..." />
         </div>
       </DashboardLayout>
@@ -60,15 +128,12 @@ const ShopDetails: React.FC = () => {
     return (
       <DashboardLayout>
         <div className="text-center py-12">
-          <Store className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-foreground mb-2 font-poppins">Shop not found</h2>
-          <p className="text-muted-foreground font-poppins">The shop you're looking for doesn't exist or has been removed.</p>
-          <Link to="/dashboard/browse-shops">
-            <Button className="mt-4 bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Shops
-            </Button>
-          </Link>
+          <h2 className="text-2xl font-bold text-gray-700 mb-4">Shop Not Found</h2>
+          <p className="text-gray-600 mb-6">The shop you're looking for doesn't exist.</p>
+          <Button onClick={() => navigate('/dashboard/browse-shops')} className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Browse Shops
+          </Button>
         </div>
       </DashboardLayout>
     );
@@ -78,107 +143,109 @@ const ShopDetails: React.FC = () => {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Back Button */}
-        <Link to="/dashboard/browse-shops">
-          <Button variant="ghost" className="text-pakistani_green-600 hover:text-pakistani_green-700 font-poppins">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Shops
-          </Button>
-        </Link>
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/dashboard/browse-shops')}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Browse Shops
+        </Button>
 
         {/* Shop Header */}
         <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-pakistani_green-500 to-pakistani_green-600 text-white p-8">
-            <div className="flex items-start gap-6">
-              <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-white/20 flex-shrink-0">
-                {shop.logo ? (
-                  <img 
-                    src={shop.logo} 
-                    alt={shop.name} 
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <Store className="h-10 w-10 text-white" />
-                  </div>
-                )}
+          <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200">
+            <img 
+              src={getShopImageSrc(shop.logo)} 
+              alt={shop.name} 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-4 left-4">
+              <Badge className="bg-white/90 text-gray-800 shadow-sm">
+                <Store className="h-3 w-3 mr-1" />
+                Verified Shop
+              </Badge>
+            </div>
+            <div className="absolute top-4 right-4">
+              <Badge className="bg-pakistani_green-600 text-white shadow-sm">
+                <Star className="h-3 w-3 mr-1" />
+                4.8
+              </Badge>
+            </div>
+          </div>
+          
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-gray-900 font-poppins">
+              {shop.name}
+            </CardTitle>
+          </CardHeader>
+          
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center text-gray-600">
+                <Phone className="h-5 w-5 mr-3 text-pakistani_green-600" />
+                <span className="font-poppins">{shop.contact}</span>
               </div>
               
-              <div className="flex-1">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h1 className="text-3xl font-bold font-poppins mb-2">{shop.name}</h1>
-                    <div className="flex items-center gap-4 text-white/90">
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
-                        <span className="font-poppins">{shop.contact}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        <span className="font-poppins">{shop.address}</span>
-                      </div>
+              <div className="flex items-start text-gray-600">
+                <MapPin className="h-5 w-5 mr-3 mt-0.5 text-pakistani_green-600" />
+                <div className="font-poppins">
+                  <div>{shop.address}</div>
+                  {shop.cities && (
+                    <div className="text-sm text-pakistani_green-600 font-medium mt-1">
+                      {shop.cities.name}, {shop.cities.province}
                     </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <Badge variant="secondary" className="bg-white/20 text-white border-white/30 font-poppins">
-                      Verified Supplier
-                    </Badge>
-                    {shop.avg_rating > 0 && (
-                      <div className="flex items-center mt-2 text-white/90">
-                        <Star className="h-4 w-4 fill-current mr-1" />
-                        <span className="font-poppins">{shop.avg_rating.toFixed(1)}</span>
-                        <span className="ml-1 text-sm">({shop.total_reviews} reviews)</span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
+            
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div className="flex items-center text-sm text-gray-500">
+                <Package className="h-4 w-4 mr-2" />
+                <span>{products.length} Products</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-500">
+                <Users className="h-4 w-4 mr-2" />
+                <span>200+ Orders</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-500">
+                <span>Commission: {shop.commission_rate || 5}%</span>
+              </div>
+            </div>
+          </CardContent>
         </Card>
 
         {/* Products Section */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-foreground font-poppins">
-              Products from {shop.name}
-            </h2>
-            <Badge variant="outline" className="font-poppins">
-              {products.length} {products.length === 1 ? 'Product' : 'Products'}
-            </Badge>
-          </div>
-
-          {productsLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-gray-200 rounded-lg h-48 mb-4"></div>
-                  <div className="space-y-2">
-                    <div className="bg-gray-200 h-4 rounded"></div>
-                    <div className="bg-gray-200 h-4 rounded w-3/4"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : products.length === 0 ? (
-            <Card className="p-12 text-center">
-              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-foreground mb-2 font-poppins">No products available</h3>
-              <p className="text-muted-foreground font-poppins">
-                This shop doesn't have any products listed at the moment.
-              </p>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl font-semibold text-gray-900 font-poppins flex items-center">
+              <Package className="h-5 w-5 mr-2 text-pakistani_green-600" />
+              Products ({products.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {productsLoading ? (
+              <div className="flex justify-center items-center py-8">
+                <LoadingSpinner text="Loading products..." />
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-8">
+                <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">No Products Available</h3>
+                <p className="text-gray-600 font-poppins">
+                  This shop doesn't have any products listed yet.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   );

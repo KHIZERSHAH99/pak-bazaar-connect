@@ -1,184 +1,102 @@
-
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContextFixed';
-import { LoadingScreen } from '@/contexts/AuthContextFixed';
+import { Routes, Route } from 'react-router-dom';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+
+// Import all existing pages
 import Index from '@/pages/Index';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
 import Dashboard from '@/pages/Dashboard';
-import Products from '@/pages/Products';
-import Sellers from '@/pages/Sellers';
-import Features from '@/pages/Features';
 import Profile from '@/pages/Profile';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import TermsOfService from '@/pages/TermsOfService';
-import RefundPolicy from '@/pages/RefundPolicy';
-import ShippingPolicy from '@/pages/ShippingPolicy';
-import Favorites from '@/pages/Favorites';
-import Messages from '@/pages/Messages';
-import Analytics from '@/pages/Analytics';
-import AdminPanel from '@/pages/admin/AdminPanel';
-import BrowseShops from '@/components/dashboard/BrowseShops';
+import Products from '@/pages/Products';
+import ProductDetail from '@/pages/ProductDetail';
+import Chat from '@/pages/Chat';
+import NotFound from '@/pages/NotFound';
+import Stats from '@/pages/Stats';
 
 // Dashboard pages
-import DashboardChat from '@/pages/dashboard/DashboardChat';
-import DashboardAds from '@/pages/dashboard/DashboardAds';
+import DashboardSellerDashboard from '@/pages/dashboard/DashboardSellerDashboard';
 import DashboardShops from '@/pages/dashboard/DashboardShops';
 import DashboardProducts from '@/pages/dashboard/DashboardProducts';
-import DashboardAdApprovals from '@/pages/dashboard/DashboardAdApprovals';
+import DashboardOrders from '@/pages/dashboard/DashboardOrders';
 import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrders';
 import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
+import DashboardAds from '@/pages/dashboard/DashboardAds';
+import DashboardAdApprovals from '@/pages/dashboard/DashboardAdApprovals';
+import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
 import DashboardAnalytics from '@/pages/dashboard/DashboardAnalytics';
+import DashboardChat from '@/pages/dashboard/DashboardChat';
+import DashboardBrowseShops from '@/pages/dashboard/DashboardBrowseShops';
+
+// Seller pages
+import SellerOrders from '@/pages/seller/SellerOrders';
+import BrowseShops from '@/pages/seller/BrowseShops';
+import ShopDetails from '@/pages/seller/ShopDetails';
+import ShopProducts from '@/pages/seller/ShopProducts';
+
+// Wholesaler pages
+import WholesalerOrders from '@/pages/wholesaler/WholesalerOrders';
+import Shops from '@/pages/wholesaler/Shops';
+import WholesalerProducts from '@/pages/wholesaler/Products';
+import Advertisements from '@/pages/wholesaler/Advertisements';
+
+// Admin pages
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import AdminPanel from '@/pages/admin/AdminPanel';
+import AdApprovals from '@/pages/admin/AdApprovals';
 
 const AppRoutes: React.FC = () => {
-  const { loading, user, profile } = useAuth();
-
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<Index />} />
-      <Route path="/products" element={<Products />} />
-      <Route path="/sellers" element={<Sellers />} />
-      <Route path="/features" element={<Features />} />
-      
-      {/* Legal Pages */}
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      <Route path="/terms-of-service" element={<TermsOfService />} />
-      <Route path="/refund-policy" element={<RefundPolicy />} />
-      <Route path="/shipping-policy" element={<ShippingPolicy />} />
-      
-      {/* Auth Routes */}
-      <Route 
-        path="/login" 
-        element={user ? <Navigate to="/dashboard" replace /> : <Login />} 
-      />
-      <Route 
-        path="/signup" 
-        element={user ? <Navigate to="/dashboard" replace /> : <Signup />} 
-      />
-      
-      {/* Protected Routes */}
-      <Route 
-        path="/dashboard" 
-        element={user ? <Dashboard /> : <Navigate to="/login" replace />} 
-      />
-      <Route 
-        path="/profile" 
-        element={user ? <Profile /> : <Navigate to="/login" replace />} 
-      />
-      <Route 
-        path="/favorites" 
-        element={user ? <Favorites /> : <Navigate to="/login" replace />} 
-      />
-      <Route 
-        path="/messages" 
-        element={user ? <Messages /> : <Navigate to="/login" replace />} 
-      />
-      <Route 
-        path="/analytics" 
-        element={
-          user && (profile?.role === 'wholesaler' || profile?.role === 'admin') ? 
-          <Analytics /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      
-      {/* Dashboard Sub-routes */}
-      <Route 
-        path="/dashboard/browse-shops" 
-        element={user ? <BrowseShops /> : <Navigate to="/login" replace />} 
-      />
-      <Route 
-        path="/dashboard/browse-shops/:shopId" 
-        element={user ? <BrowseShops /> : <Navigate to="/login" replace />} 
-      />
-      <Route 
-        path="/dashboard/chat" 
-        element={user ? <DashboardChat /> : <Navigate to="/login" replace />} 
-      />
-      <Route 
-        path="/dashboard/ads" 
-        element={
-          user && profile?.role === 'wholesaler' ? 
-          <DashboardAds /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      <Route 
-        path="/dashboard/shops" 
-        element={
-          user && profile?.role === 'wholesaler' ? 
-          <DashboardShops /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      <Route 
-        path="/dashboard/products" 
-        element={
-          user && profile?.role === 'wholesaler' ? 
-          <DashboardProducts /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      <Route 
-        path="/dashboard/ad-approvals" 
-        element={
-          user && profile?.role === 'admin' ? 
-          <DashboardAdApprovals /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      <Route 
-        path="/dashboard/wholesaler-orders" 
-        element={
-          user && profile?.role === 'wholesaler' ? 
-          <DashboardWholesalerOrders /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      <Route 
-        path="/dashboard/seller-orders" 
-        element={
-          user && profile?.role === 'seller' ? 
-          <DashboardSellerOrders /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      <Route 
-        path="/dashboard/seller-dashboard" 
-        element={
-          user && profile?.role === 'seller' ? 
-          <DashboardSellerOrders /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      <Route 
-        path="/dashboard/analytics" 
-        element={
-          user && (profile?.role === 'wholesaler' || profile?.role === 'admin') ? 
-          <DashboardAnalytics /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      
-      {/* Admin Routes */}
-      <Route 
-        path="/admin" 
-        element={
-          user && profile?.role === 'admin' ? 
-          <AdminPanel /> : 
-          <Navigate to="/dashboard" replace />
-        } 
-      />
-      
-      {/* Catch all route */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <ErrorBoundary>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/stats" element={<Stats />} />
+
+        {/* Protected routes */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
+
+        {/* Dashboard routes */}
+        <Route path="/dashboard/seller-dashboard" element={<DashboardSellerDashboard />} />
+        <Route path="/dashboard/shops" element={<DashboardShops />} />
+        <Route path="/dashboard/products" element={<DashboardProducts />} />
+        <Route path="/dashboard/orders" element={<DashboardOrders />} />
+        <Route path="/dashboard/wholesaler-orders" element={<DashboardWholesalerOrders />} />
+        <Route path="/dashboard/seller-orders" element={<DashboardSellerOrders />} />
+        <Route path="/dashboard/ads" element={<DashboardAds />} />
+        <Route path="/dashboard/ad-approvals" element={<DashboardAdApprovals />} />
+        <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+        <Route path="/dashboard/analytics" element={<DashboardAnalytics />} />
+        <Route path="/dashboard/chat" element={<DashboardChat />} />
+        <Route path="/dashboard/browse-shops" element={<DashboardBrowseShops />} />
+
+        {/* Seller routes */}
+        <Route path="/seller/orders" element={<SellerOrders />} />
+        <Route path="/seller/browse-shops" element={<BrowseShops />} />
+        <Route path="/seller/shop/:shopId" element={<ShopDetails />} />
+        <Route path="/seller/shop/:shopId/products" element={<ShopProducts />} />
+
+        {/* Wholesaler routes */}
+        <Route path="/wholesaler/orders" element={<WholesalerOrders />} />
+        <Route path="/wholesaler/shops" element={<Shops />} />
+        <Route path="/wholesaler/products" element={<WholesalerProducts />} />
+        <Route path="/wholesaler/advertisements" element={<Advertisements />} />
+
+        {/* Admin routes */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/panel" element={<AdminPanel />} />
+        <Route path="/admin/ad-approvals" element={<AdApprovals />} />
+
+        {/* 404 route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </ErrorBoundary>
   );
 };
 

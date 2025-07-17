@@ -20,6 +20,8 @@ const BrowseShops: React.FC = () => {
   const fetchShops = async () => {
     try {
       setLoading(true);
+      console.log('Fetching shops for browse...');
+      
       const { data, error } = await supabase
         .from('shops')
         .select(`
@@ -32,7 +34,12 @@ const BrowseShops: React.FC = () => {
         `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching shops:', error);
+        throw error;
+      }
+      
+      console.log('Fetched shops:', data);
       setShops(data || []);
     } catch (error: any) {
       console.error('Failed to fetch shops:', error);
@@ -52,11 +59,13 @@ const BrowseShops: React.FC = () => {
 
   const filteredShops = shops.filter(shop => 
     shop.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    shop.address.toLowerCase().includes(searchTerm.toLowerCase())
+    shop.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    shop.contact.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleViewProducts = (shopId: string) => {
-    navigate(`/dashboard/browse-shops/${shopId}`);
+  const handleViewShop = (shopId: string) => {
+    console.log('Navigating to shop:', shopId);
+    navigate(`/seller/shop/${shopId}`);
   };
 
   const getShopImageSrc = (logo?: string) => {
@@ -99,7 +108,7 @@ const BrowseShops: React.FC = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search shops by name or location..."
+              placeholder="Search shops by name, location, or contact..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-gray-50 border-gray-200 focus:border-pakistani_green-500 font-poppins"
@@ -121,19 +130,28 @@ const BrowseShops: React.FC = () => {
           {filteredShops.map((shop) => (
             <Card 
               key={shop.id} 
-              className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer"
-              onClick={() => handleViewProducts(shop.id)}
+              className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer border-gray-200 hover:border-pakistani_green-300"
+              onClick={() => handleViewShop(shop.id)}
             >
               <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
                 <img 
                   src={getShopImageSrc(shop.logo)} 
                   alt={shop.name} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    e.currentTarget.src = `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop&auto=format`;
+                  }}
                 />
                 <div className="absolute top-3 left-3">
                   <Badge className="bg-white/90 text-gray-800 shadow-sm">
                     <Store className="h-3 w-3 mr-1" />
                     Verified
+                  </Badge>
+                </div>
+                <div className="absolute top-3 right-3">
+                  <Badge className="bg-pakistani_green-600 text-white shadow-sm">
+                    <Star className="h-3 w-3 mr-1" />
+                    4.8
                   </Badge>
                 </div>
               </div>
@@ -165,23 +183,34 @@ const BrowseShops: React.FC = () => {
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div className="flex items-center text-xs text-gray-500">
                     <Package className="h-3 w-3 mr-1" />
-                    <span>50+ Products</span>
+                    <span>Products</span>
                   </div>
                   <div className="flex items-center text-xs text-gray-500">
                     <Users className="h-3 w-3 mr-1" />
                     <span>200+ Orders</span>
                   </div>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <Clock className="h-3 w-3 mr-1" />
+                    <span>Active</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-sm text-gray-600 font-poppins">Commission Rate</span>
+                  <Badge variant="outline" className="text-pakistani_green-600 border-pakistani_green-200">
+                    {shop.commission_rate || 5}%
+                  </Badge>
                 </div>
 
                 <Button 
                   className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins mt-4"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleViewProducts(shop.id);
+                    handleViewShop(shop.id);
                   }}
                 >
                   <Package className="h-4 w-4 mr-2" />
-                  Browse Products
+                  View Shop & Products
                 </Button>
               </CardContent>
             </Card>

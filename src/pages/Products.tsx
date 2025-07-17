@@ -2,33 +2,37 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Product } from '@/lib/types';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import ProductsHeader from '@/components/products/ProductsHeader';
 import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
-import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
-import SidebarAdBanner from '@/components/ads/SidebarAdBanner';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import LoadingSpinner from '@/components/ui/loading-spinner';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [cities, setCities] = useState<any[]>([]);
+  const [categories, setCategories] = useState([]);
+  const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedCity, setSelectedCity] = useState<string>('all');
-  const [selectedRating, setSelectedRating] = useState<string>('all');
-  const [minPrice, setMinPrice] = useState<string>('');
-  const [maxPrice, setMaxPrice] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCity, setSelectedCity] = useState('all');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+
   const { toast } = useToast();
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      console.log('Fetching products...');
+      console.log('Fetching products with filters:', {
+        searchTerm,
+        selectedCategory,
+        selectedCity,
+        minPrice,
+        maxPrice
+      });
       
-      // First, try to get all products without filters to debug
       let query = supabase
         .from('products')
         .select(`
@@ -39,9 +43,8 @@ const Products: React.FC = () => {
             contact,
             address,
             postal_code,
-            owner_id,
-            city_id,
             logo,
+            owner_id,
             commission_rate,
             created_at,
             cities!shops_city_id_fkey (
@@ -53,11 +56,12 @@ const Products: React.FC = () => {
           categories!products_category_id_fkey (
             id,
             name,
-            description,
-            created_at
+            description
           )
         `)
-        .eq('is_active', true);
+        .eq('is_active', true)
+        .eq('verification_status', 'approved')
+        .order('created_at', { ascending: false });
 
       // Apply search filter
       if (searchTerm) {
@@ -69,23 +73,15 @@ const Products: React.FC = () => {
         query = query.eq('category_id', selectedCategory);
       }
 
-      // Apply city filter through shops
-      if (selectedCity !== 'all') {
-        query = query.eq('shops.city_id', selectedCity);
-      }
-
       // Apply price filters
       if (minPrice) {
         query = query.gte('price', parseFloat(minPrice));
       }
-
       if (maxPrice) {
         query = query.lte('price', parseFloat(maxPrice));
       }
 
-      const { data, error } = await query
-        .order('created_at', { ascending: false })
-        .limit(50);
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching products:', error);
@@ -93,7 +89,16 @@ const Products: React.FC = () => {
       }
 
       console.log('Fetched products:', data);
-      setProducts(data || []);
+      
+      // Filter by city if selected (client-side filtering since it's a nested field)
+      let filteredData = data || [];
+      if (selectedCity !== 'all') {
+        filteredData = filteredData.filter(product => 
+          product.shops?.cities?.id === selectedCity
+        );
+      }
+
+      setProducts(filteredData);
     } catch (error: any) {
       console.error('Failed to fetch products:', error);
       toast({
@@ -116,7 +121,7 @@ const Products: React.FC = () => {
       if (error) throw error;
       setCategories(data || []);
     } catch (error: any) {
-      console.error('Error fetching categories:', error);
+      console.error('Failed to fetch categories:', error);
     }
   };
 
@@ -130,7 +135,7 @@ const Products: React.FC = () => {
       if (error) throw error;
       setCities(data || []);
     } catch (error: any) {
-      console.error('Error fetching cities:', error);
+      console.error('Failed to fetch cities:', error);
     }
   };
 
@@ -141,82 +146,58 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, selectedCity, searchTerm, minPrice, maxPrice]);
+  }, [searchTerm, selectedCategory, selectedCity, minPrice, maxPrice]);
 
-  const handleSearch = () => {
-    fetchProducts();
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+  };
+
+  const handlePriceChange = (min: string, max: string) => {
+    setMinPrice(min);
+    setMaxPrice(max);
   };
 
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedCategory('all');
     setSelectedCity('all');
-    setSelectedRating('all');
     setMinPrice('');
     setMaxPrice('');
   };
 
   return (
     <Layout>
-      <HeaderAdBanner />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ProductsHeader />
+      <div className="container mx-auto px-4 py-8">
+        <ProductsHeader onSearch={handleSearch} searchTerm={searchTerm} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            <ProductsFilters
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              selectedCity={selectedCity}
-              setSelectedCity={setSelectedCity}
-              selectedRating={selectedRating}
-              setSelectedRating={setSelectedRating}
-              minPrice={minPrice}
-              setMinPrice={setMinPrice}
-              maxPrice={maxPrice}
-              setMaxPrice={setMaxPrice}
-              categories={categories}
-              cities={cities}
-              onSearch={handleSearch}
-              onClearFilters={clearFilters}
-            />
+        <ProductsFilters
+          categories={categories}
+          cities={cities}
+          selectedCategory={selectedCategory}
+          selectedCity={selectedCity}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          onCategoryChange={handleCategoryChange}
+          onCityChange={handleCityChange}
+          onPriceChange={handlePriceChange}
+          onClearFilters={clearFilters}
+        />
 
-            <ProductsGrid products={products} loading={loading} />
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <LoadingSpinner size="lg" text="Loading products..." />
           </div>
-          
-          {/* Sidebar with Ad */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-6">
-              <SidebarAdBanner />
-              
-              {/* Additional sidebar content */}
-              <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-                <h3 className="font-semibold text-green-800 mb-2 font-poppins">
-                  🌟 Featured Suppliers
-                </h3>
-                <p className="text-sm text-green-700 font-poppins">
-                  Connect with verified wholesalers offering premium products at competitive prices.
-                </p>
-              </div>
-              
-              <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
-                <h3 className="font-semibold text-blue-800 mb-2 font-poppins">
-                  💡 Buying Tips
-                </h3>
-                <ul className="text-sm text-blue-700 space-y-1 font-poppins">
-                  <li>• Compare prices from multiple suppliers</li>
-                  <li>• Check minimum order quantities</li>
-                  <li>• Verify supplier credentials</li>
-                  <li>• Read product reviews</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+        ) : (
+          <ProductsGrid products={products} />
+        )}
       </div>
     </Layout>
   );

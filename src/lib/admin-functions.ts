@@ -50,20 +50,31 @@ export const getSystemStats = async () => {
       supabase.from('orders').select('status', { count: 'exact' })
     ]);
 
-    return {
+    // Simplify return type to avoid deep instantiation
+    const stats = {
       users: usersResult.count || 0,
       shops: shopsResult.count || 0,
       products: productsResult.count || 0,
       orders: ordersResult.count || 0,
-      userRoles: usersResult.data?.reduce((acc, user) => {
-        acc[user.role] = (acc[user.role] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {},
-      productStatuses: productsResult.data?.reduce((acc, product) => {
-        acc[product.verification_status] = (acc[product.verification_status] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {}
+      userRoles: {} as { [key: string]: number },
+      productStatuses: {} as { [key: string]: number }
     };
+
+    // Process user roles
+    if (usersResult.data) {
+      for (const user of usersResult.data) {
+        stats.userRoles[user.role] = (stats.userRoles[user.role] || 0) + 1;
+      }
+    }
+
+    // Process product statuses
+    if (productsResult.data) {
+      for (const product of productsResult.data) {
+        stats.productStatuses[product.verification_status] = (stats.productStatuses[product.verification_status] || 0) + 1;
+      }
+    }
+
+    return stats;
   } catch (error) {
     await handleError(error, 'getSystemStats');
     throw error;
@@ -77,18 +88,14 @@ export const bulkUpdateVerificationStatus = async (
   ids?: string[]
 ) => {
   try {
-    let query = supabase.from(table).update({ 
-      [table === 'products' ? 'verification_status' : 'status']: status 
-    });
+    const updateField = table === 'products' ? 'verification_status' : 'status';
+    let query = supabase.from(table).update({ [updateField]: status });
 
     if (ids && ids.length > 0) {
       query = query.in('id', ids);
     } else {
       // Update all pending items if no specific IDs provided
-      query = query.eq(
-        table === 'products' ? 'verification_status' : 'status',
-        'pending'
-      );
+      query = query.eq(updateField, 'pending');
     }
 
     const { data, error } = await query.select();

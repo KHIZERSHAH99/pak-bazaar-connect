@@ -88,7 +88,7 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
         logoUrl = await uploadImage(logoFile, 'shop_images');
       }
 
-      // Fix: Pass only the required 2 arguments
+      // Fix: Pass the correct arguments to updateShop
       await updateShop(shop.id, {
         name: formData.name,
         contact: formData.contact,

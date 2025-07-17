@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Product } from '@/lib/types';
@@ -32,13 +31,13 @@ const Products: React.FC = () => {
         .from('products')
         .select(`
           *,
-          shops (
+          shops!fk_products_shop_id (
             id,
             name,
             address,
             city_id
           ),
-          categories (
+          categories!fk_products_category_id (
             id,
             name
           )

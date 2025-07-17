@@ -34,12 +34,20 @@ const Products: React.FC = () => {
           shops!fk_products_shop_id (
             id,
             name,
+            contact,
             address,
-            city_id
+            postal_code,
+            owner_id,
+            city_id,
+            logo,
+            commission_rate,
+            created_at
           ),
           categories!fk_products_category_id (
             id,
-            name
+            name,
+            description,
+            created_at
           )
         `)
         .eq('is_active', true)

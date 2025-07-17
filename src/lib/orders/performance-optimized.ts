@@ -27,7 +27,7 @@ export const getOptimizedSellerOrders = async (): Promise<any[]> => {
       rejected_at,
       wholesaler_notes,
       commission_id,
-      shops!inner(id, name, contact, address, postal_code, owner_id)
+      shops!shop_id(id, name, contact, address, postal_code, owner_id)
     `)
     .eq('buyer_id', user.id)
     .order('created_at', { ascending: false })
@@ -78,8 +78,8 @@ export const getOptimizedWholesalerOrders = async (): Promise<any[]> => {
       rejected_at,
       wholesaler_notes,
       commission_id,
-      shops!inner(id, name, contact, address, postal_code, owner_id),
-      profiles!inner(id, email, business_name)
+      shops!shop_id(id, name, contact, address, postal_code, owner_id),
+      profiles!buyer_id(id, email, business_name)
     `)
     .in('shop_id', shopIds)
     .order('created_at', { ascending: false })
@@ -206,7 +206,7 @@ export const createOptimizedOrder = async (orderData: {
     }])
     .select(`
       *,
-      shops!inner(id, name, contact, address, owner_id)
+      shops!shop_id(id, name, contact, address, owner_id)
     `)
     .single();
   
@@ -238,7 +238,7 @@ export const updateOptimizedOrderStatus = async (
     .from('orders')
     .select(`
       *,
-      shops!inner(owner_id)
+      shops!shop_id(owner_id)
     `)
     .eq('id', orderId)
     .single();
@@ -272,7 +272,7 @@ export const updateOptimizedOrderStatus = async (
     .eq('id', orderId)
     .select(`
       *,
-      shops!inner(id, name, contact, address, owner_id)
+      shops!shop_id(id, name, contact, address, owner_id)
     `)
     .single();
       

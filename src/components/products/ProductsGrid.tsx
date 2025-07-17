@@ -23,39 +23,28 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
   }
 
   if (!products || products.length === 0) {
-    return <EmptyProductsState />;
+    return (
+      <div className="text-center py-12">
+        <div className="bg-gray-50 rounded-lg p-8">
+          <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">No products found</h3>
+          <p className="text-gray-600 font-poppins mb-4">
+            Try adjusting your search criteria or clearing the filters.
+          </p>
+          <p className="text-sm text-gray-500 font-poppins">
+            If you're a wholesaler, you can add products from your dashboard.
+          </p>
+        </div>
+      </div>
+    );
   }
-
-  // Group products by category for better organization
-  const groupedProducts = products.reduce((acc, product) => {
-    const category = product.categories?.name || 'Other';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(product);
-    return acc;
-  }, {} as Record<string, Product[]>);
 
   return (
     <div className="space-y-8">
-      {Object.entries(groupedProducts).map(([category, categoryProducts]) => (
-        <div key={category} className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 font-poppins">
-              {category}
-            </h3>
-            <span className="text-sm text-gray-500 font-poppins">
-              {categoryProducts.length} products
-            </span>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {categoryProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
       
       <div className="text-center py-8">
         <p className="text-gray-600 font-poppins">

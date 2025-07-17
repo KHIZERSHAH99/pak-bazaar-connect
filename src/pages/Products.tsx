@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Product } from '@/lib/types';
@@ -27,11 +28,12 @@ const Products: React.FC = () => {
       setLoading(true);
       console.log('Fetching products...');
       
+      // First, try to get all products without filters to debug
       let query = supabase
         .from('products')
         .select(`
           *,
-          shops!fk_products_shop_id (
+          shops!products_shop_id_fkey (
             id,
             name,
             contact,
@@ -48,7 +50,7 @@ const Products: React.FC = () => {
               province
             )
           ),
-          categories!fk_products_category_id (
+          categories!products_category_id_fkey (
             id,
             name,
             description,
@@ -57,19 +59,22 @@ const Products: React.FC = () => {
         `)
         .eq('is_active', true);
 
-      // Apply filters
-      if (selectedCategory !== 'all') {
-        query = query.eq('category_id', selectedCategory);
-      }
-
-      if (selectedCity !== 'all') {
-        query = query.eq('shops.city_id', selectedCity);
-      }
-
+      // Apply search filter
       if (searchTerm) {
         query = query.ilike('name', `%${searchTerm}%`);
       }
 
+      // Apply category filter
+      if (selectedCategory !== 'all') {
+        query = query.eq('category_id', selectedCategory);
+      }
+
+      // Apply city filter through shops
+      if (selectedCity !== 'all') {
+        query = query.eq('shops.city_id', selectedCity);
+      }
+
+      // Apply price filters
       if (minPrice) {
         query = query.gte('price', parseFloat(minPrice));
       }

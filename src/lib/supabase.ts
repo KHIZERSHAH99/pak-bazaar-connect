@@ -40,6 +40,7 @@ export const {
 
 export const {
   getShopsByOwner,
+  getShopsByWholesaler,
   createShop,
   updateShop,
   getAllShops

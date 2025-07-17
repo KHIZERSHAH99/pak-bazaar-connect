@@ -25,7 +25,7 @@ export const createShop = async (shopData: {
       })
       .select(`
         *,
-        cities(id, name, province)
+        cities!shops_city_id_fkey(id, name, province)
       `)
       .single();
 
@@ -52,7 +52,7 @@ export const getShopsByWholesaler = async (): Promise<Shop[]> => {
       .from('shops')
       .select(`
         *,
-        cities(id, name, province)
+        cities!shops_city_id_fkey(id, name, province)
       `)
       .eq('owner_id', user.id)
       .order('created_at', { ascending: false });
@@ -69,13 +69,16 @@ export const getShopsByWholesaler = async (): Promise<Shop[]> => {
   }
 };
 
+// Alias for backward compatibility
+export const getShopsByOwner = getShopsByWholesaler;
+
 export const getAllShops = async (): Promise<Shop[]> => {
   try {
     const { data, error } = await supabase
       .from('shops')
       .select(`
         *,
-        cities(id, name, province)
+        cities!shops_city_id_fkey(id, name, province)
       `)
       .order('created_at', { ascending: false });
 
@@ -97,7 +100,7 @@ export const getShopById = async (shopId: string): Promise<Shop | null> => {
       .from('shops')
       .select(`
         *,
-        cities(id, name, province)
+        cities!shops_city_id_fkey(id, name, province)
       `)
       .eq('id', shopId)
       .single();
@@ -155,7 +158,7 @@ export const updateShop = async (
       .eq('id', shopId)
       .select(`
         *,
-        cities(id, name, province)
+        cities!shops_city_id_fkey(id, name, province)
       `)
       .single();
 

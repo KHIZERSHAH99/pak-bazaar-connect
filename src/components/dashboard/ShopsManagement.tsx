@@ -17,7 +17,7 @@ const ShopsManagement: React.FC = () => {
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
   const { toast } = useToast();
 
-  const { data: shops = [], isLoading, refetch } = useQuery({
+  const { data: shops = [], isLoading, refetch } = useQuery<Shop[]>({
     queryKey: ['user-shops'],
     queryFn: getShopsByOwner,
   });

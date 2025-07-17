@@ -46,7 +46,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Improved overlay */}
         {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-10 md:hidden backdrop-blur-sm transition-opacity duration-300" onClick={() => setSidebarOpen(false)} aria-hidden="true" />}
 
-        <main className="flex-grow p-4 md:p-6 overflow-auto bg-slate-50">
+        <main className="flex-grow p-4 md:p-6 overflow-auto bg-slate-50/0">
           <div className="container mx-auto max-w-7xl">
             <div className="animate-fadeIn">
               {children}

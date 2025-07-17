@@ -72,7 +72,7 @@ const WholesalerDashboard: React.FC = () => {
           </Tabs>
         </div>
 
-        <div className="space-y-6 bg-green-200">
+        <div className="space-y-6 bg-black/0">
           <NotificationCenter />
         </div>
       </div>

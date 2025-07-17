@@ -145,7 +145,7 @@ const EnhancedUserProfile: React.FC = () => {
 
           {/* Business Details (if applicable) */}
           {(profile.role === 'wholesaler' || profile.role === 'seller') && <div className="space-y-6">
-              <BusinessDetails profile={profile} onUpdate={handleProfileUpdate} />
+              <BusinessDetailsEditor profile={profile} onProfileUpdate={handleProfileUpdate} />
             </div>}
 
           {/* Verification Status */}

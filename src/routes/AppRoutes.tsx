@@ -11,6 +11,10 @@ import Products from '@/pages/Products';
 import Sellers from '@/pages/Sellers';
 import Features from '@/pages/Features';
 import Profile from '@/pages/Profile';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
+import RefundPolicy from '@/pages/RefundPolicy';
+import ShippingPolicy from '@/pages/ShippingPolicy';
 import Favorites from '@/pages/Favorites';
 import Messages from '@/pages/Messages';
 import Analytics from '@/pages/Analytics';
@@ -41,6 +45,12 @@ const AppRoutes: React.FC = () => {
       <Route path="/products" element={<Products />} />
       <Route path="/sellers" element={<Sellers />} />
       <Route path="/features" element={<Features />} />
+      
+      {/* Legal Pages */}
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/refund-policy" element={<RefundPolicy />} />
+      <Route path="/shipping-policy" element={<ShippingPolicy />} />
       
       {/* Auth Routes */}
       <Route 

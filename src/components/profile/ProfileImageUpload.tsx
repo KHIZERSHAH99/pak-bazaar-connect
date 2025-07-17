@@ -53,12 +53,9 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
       // Create unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${profile.id}-${Date.now()}.${fileExt}`;
-      const filePath = `profiles/${fileName}`;
+      const filePath = `${profile.id}/${fileName}`;
 
-      // Create bucket if it doesn't exist (this will fail silently if it exists)
-      await supabase.storage.from('profile-images').list('', { limit: 1 }).catch(() => {});
-
-      // Upload to Supabase Storage
+      // Upload to Supabase Storage with proper path structure
       const { error: uploadError } = await supabase.storage
         .from('profile-images')
         .upload(filePath, file, {
@@ -66,6 +63,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
         });
 
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
@@ -81,6 +79,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
         .eq('id', profile.id);
 
       if (updateError) {
+        console.error('Profile update error:', updateError);
         throw updateError;
       }
 
@@ -108,11 +107,13 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     try {
       // Remove from storage if exists
       if (profile.profile_image) {
-        const fileName = profile.profile_image.split('/').pop();
+        const pathParts = profile.profile_image.split('/');
+        const fileName = pathParts[pathParts.length - 1];
+        const filePath = `${profile.id}/${fileName}`;
         if (fileName) {
           await supabase.storage
             .from('profile-images')
-            .remove([`profiles/${fileName}`]);
+            .remove([filePath]);
         }
       }
 

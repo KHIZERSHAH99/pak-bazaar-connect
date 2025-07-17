@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import ProfileImageUpload from './ProfileImageUpload';
 import ProfileEditor from './ProfileEditor';
-import BusinessDetails from './BusinessDetails';
+import BusinessDetailsEditor from './BusinessDetailsEditor';
 import AccountInfo from './AccountInfo';
 const EnhancedUserProfile: React.FC = () => {
   const {

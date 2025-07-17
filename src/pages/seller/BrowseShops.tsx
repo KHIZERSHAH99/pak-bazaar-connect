@@ -80,13 +80,13 @@ const BrowseShops: React.FC = () => {
           <p className="text-muted-foreground font-poppins">Discover verified wholesale suppliers across Pakistan</p>
         </div>
 
-        <div className="relative">
+        <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Search shops by name, location, or contact..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-background border-border font-poppins"
+            className="pl-10 bg-background border-pakistani_green-200 focus:border-pakistani_green-500 font-poppins"
           />
         </div>
 
@@ -110,51 +110,60 @@ const BrowseShops: React.FC = () => {
             </p>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {filteredShops.map((shop) => (
-              <Card key={shop.id} className="overflow-hidden bg-card border-border hover:shadow-lg transition-all duration-200 group">
-                <div className="p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4 bg-muted">
-                      <img 
-                        src={getShopImageSrc(shop.logo)} 
-                        alt={shop.name} 
-                        className="h-full w-full object-cover opacity-0 transition-opacity duration-300"
-                        onError={handleImageError}
-                        onLoad={handleImageLoad}
-                      />
-                      <div className={`absolute inset-0 flex items-center justify-center ${shop.logo ? 'hidden' : ''}`}>
-                        <Store className="h-6 w-6 text-muted-foreground" />
+              <Card key={shop.id} className="overflow-hidden bg-white dark:bg-gray-800 border-pakistani_green-200 hover:border-pakistani_green-400 hover:shadow-xl transition-all duration-300 group">
+                <div className="relative">
+                  <div className="h-32 bg-gradient-to-br from-pakistani_green-400 to-pakistani_green-600 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-black/10"></div>
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <div className="flex items-center">
+                        <div className="relative h-12 w-12 rounded-full overflow-hidden bg-white shadow-md">
+                          <img 
+                            src={getShopImageSrc(shop.logo)} 
+                            alt={shop.name} 
+                            className="h-full w-full object-cover opacity-0 transition-opacity duration-300"
+                            onError={handleImageError}
+                            onLoad={handleImageLoad}
+                          />
+                          <div className={`absolute inset-0 flex items-center justify-center ${shop.logo ? 'hidden' : ''}`}>
+                            <Store className="h-6 w-6 text-pakistani_green-600" />
+                          </div>
+                        </div>
+                        <div className="ml-3 flex-1">
+                          <h3 className="font-semibold text-lg text-white font-poppins group-hover:text-pakistani_green-100 transition-colors line-clamp-1">
+                            {shop.name}
+                          </h3>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg text-foreground font-poppins group-hover:text-primary transition-colors">
-                        {shop.name}
-                      </h3>
                     </div>
                   </div>
                   
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
-                      <span className="font-poppins truncate">{shop.contact}</span>
-                    </div>
-                    <div className="flex items-start text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4 mr-2 flex-shrink-0 mt-0.5" />
-                      <div className="font-poppins">
-                        <div>{shop.address}</div>
-                        <div className="text-xs mt-1">Postal: {shop.postal_code}</div>
+                  <div className="p-4">
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Phone className="h-4 w-4 mr-2 flex-shrink-0 text-pakistani_green-600" />
+                        <span className="font-poppins truncate">{shop.contact}</span>
+                      </div>
+                      <div className="flex items-start text-sm text-muted-foreground">
+                        <MapPin className="h-4 w-4 mr-2 flex-shrink-0 mt-0.5 text-pakistani_green-600" />
+                        <div className="font-poppins flex-1">
+                          <div className="line-clamp-2">{shop.address}</div>
+                          <div className="text-xs mt-1 text-pakistani_green-600 font-medium">
+                            Postal: {shop.postal_code}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <Button 
-                    onClick={() => handleViewProducts(shop.id)}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins group-hover:scale-105 transition-transform"
-                  >
-                    <Package className="h-4 w-4 mr-2" /> 
-                    Browse Products
-                  </Button>
+                    <Button 
+                      onClick={() => handleViewProducts(shop.id)}
+                      className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins group-hover:shadow-lg transition-all duration-200"
+                    >
+                      <Package className="h-4 w-4 mr-2" /> 
+                      Browse Products
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}

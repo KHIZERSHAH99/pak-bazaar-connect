@@ -34,7 +34,7 @@ const BrowseShops: React.FC = () => {
         .from('shops')
         .select(`
           *,
-          cities (
+          cities!shops_city_id_fkey (
             id,
             name,
             province

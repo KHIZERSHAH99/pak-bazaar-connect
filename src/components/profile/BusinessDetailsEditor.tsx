@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Edit3, Save, X, Building2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -37,12 +37,20 @@ const BusinessDetailsEditor: React.FC<BusinessDetailsEditorProps> = ({ profile, 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { error } = await supabase
+      console.log('Saving business data:', formData);
+      
+      const { data, error } = await supabase
         .from('profiles')
         .update(formData)
-        .eq('id', profile.id);
+        .eq('id', profile.id)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Business details update error:', error);
+        throw error;
+      }
+
+      console.log('Business details updated successfully:', data);
 
       toast({
         title: "Business details updated",

@@ -1,18 +1,19 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import { getMarketplaceProducts, getCategories, getCities } from '@/lib/marketplace';
-import { Product, Category, City } from '@/lib/types';
+import { Product } from '@/lib/types';
 import ProductsHeader from '@/components/products/ProductsHeader';
 import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
 import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
 import SidebarAdBanner from '@/components/ads/SidebarAdBanner';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -20,39 +21,108 @@ const Products: React.FC = () => {
   const [selectedRating, setSelectedRating] = useState<string>('all');
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
+  const { toast } = useToast();
 
-  const fetchData = async () => {
+  const fetchProducts = async () => {
     try {
       setLoading(true);
-      const [productsData, categoriesData, citiesData] = await Promise.all([
-        getMarketplaceProducts({
-          category_id: selectedCategory === 'all' ? undefined : selectedCategory,
-          city_id: selectedCity === 'all' ? undefined : selectedCity,
-          search: searchTerm || undefined,
-          min_price: minPrice ? parseFloat(minPrice) : undefined,
-          max_price: maxPrice ? parseFloat(maxPrice) : undefined,
-          min_rating: selectedRating === 'all' ? undefined : parseInt(selectedRating),
-        }),
-        getCategories(),
-        getCities(),
-      ]);
+      console.log('Fetching products...');
       
-      setProducts(productsData);
-      setCategories(categoriesData);
-      setCities(citiesData);
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
+      let query = supabase
+        .from('products')
+        .select(`
+          *,
+          shops (
+            id,
+            name,
+            address,
+            city_id
+          ),
+          categories (
+            id,
+            name
+          )
+        `)
+        .eq('is_active', true)
+        .eq('verification_status', 'approved');
+
+      // Apply filters
+      if (selectedCategory !== 'all') {
+        query = query.eq('category_id', selectedCategory);
+      }
+
+      if (searchTerm) {
+        query = query.ilike('name', `%${searchTerm}%`);
+      }
+
+      if (minPrice) {
+        query = query.gte('price', parseFloat(minPrice));
+      }
+
+      if (maxPrice) {
+        query = query.lte('price', parseFloat(maxPrice));
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching products:', error);
+        throw error;
+      }
+
+      console.log('Fetched products:', data);
+      setProducts(data || []);
+    } catch (error: any) {
+      console.error('Failed to fetch products:', error);
+      toast({
+        title: "Error loading products",
+        description: error.message || "Failed to load products. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error: any) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchCities = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('cities')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      setCities(data || []);
+    } catch (error: any) {
+      console.error('Error fetching cities:', error);
+    }
+  };
+
   useEffect(() => {
-    fetchData();
-  }, [selectedCategory, selectedCity]);
+    fetchCategories();
+    fetchCities();
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedCategory, selectedCity, searchTerm, minPrice, maxPrice]);
 
   const handleSearch = () => {
-    fetchData();
+    fetchProducts();
   };
 
   const clearFilters = () => {

@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera, Upload, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import ConfirmationDialog from '@/components/ui/confirmation-dialog';
 import EnhancedLoadingSpinner from '@/components/ui/enhanced-loading-spinner';
@@ -20,7 +19,6 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const { toast } = useToast();
-  const { t } = useLanguage();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -29,8 +27,8 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
       toast({
-        title: t('file_too_large'),
-        description: t('file_too_large_desc'),
+        title: "File too large",
+        description: "Please select an image smaller than 2MB",
         variant: "destructive"
       });
       return;
@@ -39,8 +37,8 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
-        title: t('invalid_file_type'),
-        description: t('invalid_file_type_desc'),
+        title: "Invalid file type",
+        description: "Please select a valid image file",
         variant: "destructive"
       });
       return;
@@ -50,15 +48,28 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     setImagePreview(URL.createObjectURL(file));
 
     try {
-      // Create unique filename
+      // Create unique filename with user ID
       const fileExt = file.name.split('.').pop();
       const fileName = `${profile.id}-${Date.now()}.${fileExt}`;
       const filePath = `${profile.id}/${fileName}`;
 
-      // Upload to Supabase Storage with proper path structure
+      console.log('Uploading to path:', filePath);
+
+      // Remove old image if exists
+      if (profile.profile_image) {
+        try {
+          const oldPath = profile.profile_image.split('/').slice(-2).join('/');
+          await supabase.storage.from('profile-images').remove([oldPath]);
+        } catch (error) {
+          console.log('Could not remove old image:', error);
+        }
+      }
+
+      // Upload new image
       const { error: uploadError } = await supabase.storage
         .from('profile-images')
         .upload(filePath, file, {
+          cacheControl: '3600',
           upsert: true
         });
 
@@ -68,14 +79,16 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
       }
 
       // Get public URL
-      const { data } = supabase.storage
+      const { data: urlData } = supabase.storage
         .from('profile-images')
         .getPublicUrl(filePath);
 
-      // Update profile with image URL
+      console.log('Public URL:', urlData.publicUrl);
+
+      // Update profile with new image URL
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ profile_image: data.publicUrl })
+        .update({ profile_image: urlData.publicUrl })
         .eq('id', profile.id);
 
       if (updateError) {
@@ -84,16 +97,16 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
       }
 
       toast({
-        title: t('profile_image_updated'),
-        description: t('profile_image_updated_desc')
+        title: "Profile image updated",
+        description: "Your profile picture has been successfully updated"
       });
 
       onImageUpdate();
     } catch (error: any) {
       console.error('Image upload error:', error);
       toast({
-        title: t('upload_failed'),
-        description: error.message || t('upload_failed_desc'),
+        title: "Upload failed",
+        description: error.message || "Failed to upload image. Please try again.",
         variant: "destructive"
       });
       setImagePreview(null);
@@ -107,16 +120,20 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     try {
       // Remove from storage if exists
       if (profile.profile_image) {
-        const pathParts = profile.profile_image.split('/');
-        const fileName = pathParts[pathParts.length - 1];
-        const filePath = `${profile.id}/${fileName}`;
-        if (fileName) {
+        try {
+          const urlParts = profile.profile_image.split('/');
+          const fileName = urlParts[urlParts.length - 1];
+          const filePath = `${profile.id}/${fileName}`;
+          
           await supabase.storage
             .from('profile-images')
             .remove([filePath]);
+        } catch (error) {
+          console.log('Could not remove from storage:', error);
         }
       }
 
+      // Update profile to remove image URL
       const { error } = await supabase
         .from('profiles')
         .update({ profile_image: null })
@@ -125,8 +142,8 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
       if (error) throw error;
 
       toast({
-        title: t('profile_image_removed'),
-        description: t('profile_image_removed_desc'),
+        title: "Profile image removed",
+        description: "Your profile picture has been removed",
         variant: "default"
       });
 
@@ -136,8 +153,8 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
     } catch (error: any) {
       console.error('Remove image error:', error);
       toast({
-        title: t('remove_failed'),
-        description: error.message || t('remove_failed_desc'),
+        title: "Remove failed",
+        description: error.message || "Failed to remove image. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -152,7 +169,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
           <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
             <EnhancedLoadingSpinner 
               size="lg" 
-              text={t('processing_image')} 
+              text="Processing image..." 
               variant="spinner"
             />
           </div>
@@ -195,7 +212,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
               >
                 <span className="flex items-center gap-2 cursor-pointer">
                   <Upload className="h-4 w-4" />
-                  {uploading ? t('uploading') : t('upload_photo')}
+                  {uploading ? 'Uploading...' : 'Upload Photo'}
                 </span>
               </Button>
             </label>
@@ -210,23 +227,23 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
               className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-poppins"
             >
               <X className="h-4 w-4 mr-2" />
-              {t('remove_photo')}
+              Remove Photo
             </Button>
           )}
         </div>
 
         <p className="text-xs text-gray-500 mt-3 font-poppins">
-          {t('upload_photo_desc')}
+          Max 2MB. Supported formats: JPG, PNG, GIF
         </p>
       </Card>
 
       <ConfirmationDialog
         open={showRemoveDialog}
         onOpenChange={setShowRemoveDialog}
-        title={t('remove_profile_image')}
-        description={t('remove_image_confirm')}
-        confirmText={t('remove_image')}
-        cancelText={t('keep_image')}
+        title="Remove profile image"
+        description="Are you sure you want to remove your profile picture?"
+        confirmText="Remove Image"
+        cancelText="Keep Image"
         variant="destructive"
         onConfirm={handleRemoveConfirm}
         loading={uploading}

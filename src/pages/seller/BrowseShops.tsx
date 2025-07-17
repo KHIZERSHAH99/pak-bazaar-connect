@@ -8,15 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import SkeletonCard from '@/components/ui/skeleton-card';
-import { getAllShops, Shop } from '@/lib/supabase';
+import { Shop } from '@/lib/types';
 import { Store, Package, Search, MapPin, Phone } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const BrowseShops: React.FC = () => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Debounce search term for better performance
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -24,10 +27,27 @@ const BrowseShops: React.FC = () => {
   const fetchShops = async () => {
     try {
       setLoading(true);
-      const data = await getAllShops();
-      setShops(data);
-    } catch (error) {
+      console.log('Fetching shops...');
+      
+      const { data, error } = await supabase
+        .from('shops')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching shops:', error);
+        throw error;
+      }
+
+      console.log('Fetched shops:', data);
+      setShops(data || []);
+    } catch (error: any) {
       console.error('Failed to fetch shops:', error);
+      toast({
+        title: "Error loading shops",
+        description: error.message || "Failed to load shops. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }

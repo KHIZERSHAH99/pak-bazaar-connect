@@ -36,12 +36,20 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onProfileUpdate 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { error } = await supabase
+      console.log('Saving profile data:', formData);
+      
+      const { data, error } = await supabase
         .from('profiles')
         .update(formData)
-        .eq('id', profile.id);
+        .eq('id', profile.id)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Profile update error:', error);
+        throw error;
+      }
+
+      console.log('Profile updated successfully:', data);
 
       toast({
         title: "Profile updated",

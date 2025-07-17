@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Product } from '@/lib/types';
@@ -56,8 +55,7 @@ const Products: React.FC = () => {
             created_at
           )
         `)
-        .eq('is_active', true)
-        .eq('verification_status', 'approved');
+        .eq('is_active', true);
 
       // Apply filters
       if (selectedCategory !== 'all') {

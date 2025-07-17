@@ -22,7 +22,7 @@ export const useOptimizedOrders = ({ userRole, refreshInterval = 30000 }: UseOpt
   } = useQuery({
     queryKey: ['optimized-orders', userRole],
     queryFn: () => userRole === 'seller' ? getOptimizedSellerOrders() : getOptimizedWholesalerOrders(),
-    refetchInterval,
+    refetchInterval: refreshInterval,
     staleTime: 10000, // Data is fresh for 10 seconds
     gcTime: 300000, // Keep in cache for 5 minutes
   });

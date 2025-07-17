@@ -2,7 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 
-// Optimized order queries using the new indexes and foreign key constraints
+// Optimized order queries using indexes and foreign key constraints
 export const getOptimizedSellerOrders = async (): Promise<any[]> => {
   const user = await getCurrentUser();
   if (!user) return [];
@@ -27,7 +27,7 @@ export const getOptimizedSellerOrders = async (): Promise<any[]> => {
       rejected_at,
       wholesaler_notes,
       commission_id,
-      shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id)
+      shops!inner(id, name, contact, address, postal_code, owner_id)
     `)
     .eq('buyer_id', user.id)
     .order('created_at', { ascending: false })
@@ -78,8 +78,8 @@ export const getOptimizedWholesalerOrders = async (): Promise<any[]> => {
       rejected_at,
       wholesaler_notes,
       commission_id,
-      shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id),
-      profiles!fk_orders_buyer_id(id, email, business_name)
+      shops!inner(id, name, contact, address, postal_code, owner_id),
+      profiles!inner(id, email, business_name)
     `)
     .in('shop_id', shopIds)
     .order('created_at', { ascending: false })
@@ -93,7 +93,7 @@ export const getOptimizedWholesalerOrders = async (): Promise<any[]> => {
   return data || [];
 };
 
-// Optimized order stats using the new indexes
+// Optimized order stats using direct queries
 export const getOrderStats = async (userRole: 'seller' | 'wholesaler'): Promise<any> => {
   const user = await getCurrentUser();
   if (!user) return null;
@@ -119,50 +119,31 @@ export const getOrderStats = async (userRole: 'seller' | 'wholesaler'): Promise<
       totalValue: data?.reduce((sum, o) => sum + (o.total_amount || 0), 0) || 0
     };
   } else {
-    // For wholesalers, use shop performance stats materialized view
-    const { data: shopStats, error: statsError } = await supabase
-      .from('shop_performance_stats')
-      .select('*')
-      .eq('owner_id', user.id)
-      .single();
+    // For wholesalers, calculate stats from orders
+    const { data: shops } = await supabase
+      .from('shops')
+      .select('id')
+      .eq('owner_id', user.id);
 
-    if (statsError) {
-      console.error('Error fetching shop performance stats:', statsError);
-      // Fallback to regular query if materialized view not ready
-      const { data: shops } = await supabase
-        .from('shops')
-        .select('id')
-        .eq('owner_id', user.id);
+    if (shops?.length) {
+      const shopIds = shops.map(s => s.id);
+      const { data, error } = await supabase
+        .from('orders')
+        .select('status, total_amount')
+        .in('shop_id', shopIds);
 
-      if (shops?.length) {
-        const shopIds = shops.map(s => s.id);
-        const { data, error } = await supabase
-          .from('orders')
-          .select('status, total_amount')
-          .in('shop_id', shopIds);
-
-        if (!error && data) {
-          return {
-            total: data.length,
-            pending: data.filter(o => o.status === 'pending').length,
-            confirmed: data.filter(o => o.status === 'confirmed').length,
-            completed: data.filter(o => o.status === 'completed').length,
-            rejected: data.filter(o => o.status === 'rejected').length,
-            totalValue: data.reduce((sum, o) => sum + (o.total_amount || 0), 0)
-          };
-        }
+      if (!error && data) {
+        return {
+          total: data.length,
+          pending: data.filter(o => o.status === 'pending').length,
+          confirmed: data.filter(o => o.status === 'confirmed').length,
+          completed: data.filter(o => o.status === 'completed').length,
+          rejected: data.filter(o => o.status === 'rejected').length,
+          totalValue: data.reduce((sum, o) => sum + (o.total_amount || 0), 0)
+        };
       }
-      return null;
     }
-
-    return {
-      total: shopStats?.total_orders || 0,
-      pending: 0, // Need to calculate from recent orders
-      confirmed: 0,
-      completed: shopStats?.completed_orders || 0,
-      rejected: 0,
-      totalValue: shopStats?.total_sales || 0
-    };
+    return null;
   }
 };
 
@@ -225,7 +206,7 @@ export const createOptimizedOrder = async (orderData: {
     }])
     .select(`
       *,
-      shops!fk_orders_shop_id(id, name, contact, address, owner_id)
+      shops!inner(id, name, contact, address, owner_id)
     `)
     .single();
   
@@ -257,7 +238,7 @@ export const updateOptimizedOrderStatus = async (
     .from('orders')
     .select(`
       *,
-      shops!fk_orders_shop_id(owner_id)
+      shops!inner(owner_id)
     `)
     .eq('id', orderId)
     .single();
@@ -291,7 +272,7 @@ export const updateOptimizedOrderStatus = async (
     .eq('id', orderId)
     .select(`
       *,
-      shops!fk_orders_shop_id(id, name, contact, address, owner_id)
+      shops!inner(id, name, contact, address, owner_id)
     `)
     .single();
       
@@ -303,11 +284,33 @@ export const updateOptimizedOrderStatus = async (
   return data;
 };
 
-// Function to refresh performance stats (to be called periodically)
-export const refreshPerformanceStats = async (): Promise<void> => {
-  const { error } = await supabase.rpc('refresh_shop_performance_stats');
-  
+// Simplified performance analytics function
+export const getShopPerformanceStats = async (shopIds: string[]): Promise<any> => {
+  const { data: orders, error } = await supabase
+    .from('orders')
+    .select('shop_id, status, total_amount, created_at')
+    .in('shop_id', shopIds);
+
   if (error) {
-    console.error('Error refreshing performance stats:', error);
+    console.error('Error fetching shop performance stats:', error);
+    return null;
   }
+
+  // Calculate stats client-side
+  const stats = shopIds.map(shopId => {
+    const shopOrders = orders?.filter(o => o.shop_id === shopId) || [];
+    return {
+      shop_id: shopId,
+      total_orders: shopOrders.length,
+      completed_orders: shopOrders.filter(o => o.status === 'completed').length,
+      total_sales: shopOrders
+        .filter(o => o.status === 'completed')
+        .reduce((sum, o) => sum + (o.total_amount || 0), 0),
+      avg_order_value: shopOrders.length > 0 
+        ? shopOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0) / shopOrders.length 
+        : 0
+    };
+  });
+
+  return stats;
 };

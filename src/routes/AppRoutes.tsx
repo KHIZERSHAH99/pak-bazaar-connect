@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -13,6 +14,12 @@ import ProductDetail from '@/pages/ProductDetail';
 import Chat from '@/pages/Chat';
 import NotFound from '@/pages/NotFound';
 import Stats from '@/pages/Stats';
+import Sellers from '@/pages/Sellers';
+import Features from '@/pages/Features';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
+import RefundPolicy from '@/pages/RefundPolicy';
+import ShippingPolicy from '@/pages/ShippingPolicy';
 
 // Dashboard pages
 import DashboardSellerDashboard from '@/pages/dashboard/DashboardSellerDashboard';
@@ -55,8 +62,16 @@ const AppRoutes: React.FC = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/sellers" element={<Sellers />} />
+        <Route path="/features" element={<Features />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/stats" element={<Stats />} />
+        
+        {/* Legal pages */}
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/shipping-policy" element={<ShippingPolicy />} />
 
         {/* Protected routes */}
         <Route path="/dashboard" element={<Dashboard />} />

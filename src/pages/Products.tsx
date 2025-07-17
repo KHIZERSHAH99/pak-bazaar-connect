@@ -7,6 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import ProductsHeader from '@/components/products/ProductsHeader';
 import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
+import { Button } from '@/components/ui/button';
+import { ArrowUp } from 'lucide-react';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,6 +21,10 @@ const Products: React.FC = () => {
   const [maxPrice, setMaxPrice] = useState('');
 
   const { toast } = useToast();
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const fetchProducts = async () => {
     try {
@@ -161,7 +167,10 @@ const Products: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <Layout 
+      title="Products - Pak Bazaar Connect"
+      description="Browse quality products from verified wholesalers across Pakistan"
+    >
       <div className="container mx-auto px-4 py-8">
         <ProductsHeader />
         
@@ -179,6 +188,17 @@ const Products: React.FC = () => {
         />
 
         <ProductsGrid products={products} loading={loading} />
+
+        {/* Back to Top Button - Fixed Position */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <Button 
+            onClick={scrollToTop}
+            className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+            size="icon"
+          >
+            <ArrowUp className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
     </Layout>
   );

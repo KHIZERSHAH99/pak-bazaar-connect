@@ -1,13 +1,16 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
+import { ArrowUp, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 
 const Footer = () => {
-  const { t, language } = useLanguage();
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <footer className="bg-card border-t border-border mt-16" dir={language === "ur" ? "rtl" : "ltr"}>
+    <footer className="bg-card border-t border-border mt-16">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
@@ -19,90 +22,145 @@ const Footer = () => {
                 Pak Bazaar Connect
               </span>
             </div>
-            <p className="text-muted-foreground text-sm font-poppins max-w-md">
+            <p className="text-muted-foreground text-sm font-poppins max-w-md mb-6">
               Pakistan's leading B2B marketplace connecting wholesalers and sellers. 
               Trade with confidence on our secure platform.
             </p>
-            <div className="mt-6 space-y-2">
-              <p className="text-sm text-muted-foreground font-poppins">
-                <strong>Email:</strong>{' '}
-                <a href="mailto:khizercoding.com" className="text-pakistani_green-600 hover:text-pakistani_green-700">
+
+            {/* Contact Information */}
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center gap-3">
+                <Mail className="w-4 h-4 text-pakistani_green-600" />
+                <a 
+                  href="mailto:khizercoding.com" 
+                  className="text-sm text-muted-foreground hover:text-pakistani_green-600 transition-colors font-poppins"
+                >
                   khizercoding.com
                 </a>
-              </p>
-              <p className="text-sm text-muted-foreground font-poppins">
-                <strong>Phone:</strong>{' '}
-                <a href="tel:+923149388513" className="text-pakistani_green-600 hover:text-pakistani_green-700">
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-pakistani_green-600" />
+                <a 
+                  href="tel:+923149388513" 
+                  className="text-sm text-muted-foreground hover:text-pakistani_green-600 transition-colors font-poppins"
+                >
                   +92 3149388513
                 </a>
-              </p>
-              <p className="text-sm text-muted-foreground font-poppins">
-                <strong>Address:</strong> Mardan, Pakistan
-              </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 text-pakistani_green-600" />
+                <span className="text-sm text-muted-foreground font-poppins">
+                  Mardan, Pakistan
+                </span>
+              </div>
+            </div>
+
+            {/* Social Media Buttons */}
+            <div className="flex gap-2">
+              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50">
+                <Facebook className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50">
+                <Twitter className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50">
+                <Linkedin className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50">
+                <Instagram className="w-4 h-4" />
+              </Button>
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase font-poppins">
+            <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase font-poppins mb-4">
               Quick Links
             </h3>
-            <ul className="mt-4 space-y-2">
+            <ul className="space-y-3">
               <li>
-                <Link to="/products" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
-                  Browse Products
-                </Link>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/products" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Browse Products
+                  </Link>
+                </Button>
               </li>
               <li>
-                <Link to="/sellers" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
-                  Find Suppliers
-                </Link>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/sellers" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Find Suppliers
+                  </Link>
+                </Button>
               </li>
               <li>
-                <Link to="/features" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
-                  Features
-                </Link>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/features" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Features
+                  </Link>
+                </Button>
               </li>
               <li>
-                <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
-                  Dashboard
-                </Link>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Dashboard
+                  </Link>
+                </Button>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase font-poppins">
+            <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase font-poppins mb-4">
               Legal
             </h3>
-            <ul className="mt-4 space-y-2">
+            <ul className="space-y-3">
               <li>
-                <Link to="/privacy-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
-                  Privacy Policy
-                </Link>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/privacy-policy" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Privacy Policy
+                  </Link>
+                </Button>
               </li>
               <li>
-                <Link to="/terms-of-service" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
-                  Terms of Service
-                </Link>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/terms-of-service" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Terms of Service
+                  </Link>
+                </Button>
               </li>
               <li>
-                <Link to="/refund-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
-                  Refund Policy
-                </Link>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/refund-policy" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Refund Policy
+                  </Link>
+                </Button>
               </li>
               <li>
-                <Link to="/shipping-policy" className="text-sm text-muted-foreground hover:text-foreground font-poppins transition-colors">
-                  Shipping Policy
-                </Link>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/shipping-policy" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Shipping Policy
+                  </Link>
+                </Button>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-border">
+        {/* Footer Bottom Section */}
+        <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-center text-sm text-muted-foreground font-poppins">
             © 2024 Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.
           </p>
+          
+          {/* Back to Top Button */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={scrollToTop}
+            className="flex items-center gap-2 hover:bg-pakistani_green-50"
+          >
+            <ArrowUp className="w-4 h-4" />
+            Back to Top
+          </Button>
         </div>
       </div>
     </footer>

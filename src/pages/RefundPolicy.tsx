@@ -1,12 +1,28 @@
+
 import React from 'react';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const RefundPolicy = () => {
   return (
-    <Layout>
+    <Layout 
+      title="Refund Policy - Pak Bazaar Connect"
+      description="Refund policy for Pakistan's leading B2B marketplace"
+    >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
+          <div className="flex items-center gap-4">
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Home
+              </Link>
+            </Button>
+          </div>
+
           <div className="text-center">
             <h1 className="text-3xl font-bold text-foreground mb-4 font-poppins">
               Refund Policy
@@ -19,60 +35,39 @@ const RefundPolicy = () => {
           <Card className="p-8">
             <div className="prose prose-lg max-w-none font-poppins">
               <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
-                General Refund Policy
+                Refund Eligibility
               </h2>
               <p className="mb-6 text-foreground">
-                At Pak Bazaar Connect, we facilitate B2B transactions between wholesalers and sellers. Refunds are handled directly between the buyer and seller according to their agreement.
+                Refunds are available for orders that meet specific criteria within our return window.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
-                Platform Service Fees
-              </h2>
-              <p className="mb-4 text-foreground">
-                Service fees charged by Pak Bazaar Connect are generally non-refundable. However, we may consider refunds in the following cases:
-              </p>
+              <h3 className="text-xl font-semibold text-pakistani_green-600 mb-3">
+                Eligible Items
+              </h3>
               <ul className="list-disc pl-6 mb-6 text-foreground">
-                <li>Technical errors that prevented service delivery</li>
-                <li>Duplicate charges due to system errors</li>
-                <li>Services not delivered due to platform issues</li>
+                <li>Products not as described</li>
+                <li>Damaged items upon delivery</li>
+                <li>Orders not fulfilled by wholesaler</li>
+                <li>Quality issues with products</li>
               </ul>
 
               <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
-                Transaction Disputes
+                Refund Process
               </h2>
               <p className="mb-6 text-foreground">
-                For disputes related to product quality, delivery, or other transaction issues, please contact the seller directly. If resolution cannot be reached, our support team may assist in mediation.
+                To request a refund, contact our support team with your order details and reason for return.
               </p>
-
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
-                How to Request a Refund
-              </h2>
-              <p className="mb-4 text-foreground">
-                To request a refund for platform services:
-              </p>
-              <ol className="list-decimal pl-6 mb-6 text-foreground">
-                <li>Contact our support team within 7 days of the charge</li>
-                <li>Provide your transaction details and reason for refund</li>
-                <li>Allow 5-10 business days for review and processing</li>
-              </ol>
 
               <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
                 Processing Time
               </h2>
               <p className="mb-6 text-foreground">
-                Approved refunds will be processed within 7-14 business days and will appear in your original payment method.
+                Refunds are typically processed within 5-7 business days after approval.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
-                Contact for Refunds
-              </h2>
-              <p className="mb-4 text-foreground">
-                For refund requests or questions, please contact us:
-              </p>
-              <div className="p-4 bg-pakistani_green-50 rounded-lg">
-                <p className="text-foreground"><strong>Email:</strong> khizercoding.com</p>
+              <div className="mt-4 p-4 bg-pakistani_green-50 rounded-lg">
+                <p className="text-foreground"><strong>Support Email:</strong> khizercoding.com</p>
                 <p className="text-foreground"><strong>Phone:</strong> +92 3149388513</p>
-                <p className="text-foreground"><strong>Address:</strong> Mardan, Pakistan</p>
               </div>
             </div>
           </Card>

@@ -85,10 +85,13 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
 
       console.log('Public URL:', urlData.publicUrl);
 
-      // Update profile with new image URL
+      // Update profile with new image URL - using only the fields that exist
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ profile_image: urlData.publicUrl })
+        .update({ 
+          profile_image: urlData.publicUrl,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', profile.id);
 
       if (updateError) {
@@ -136,7 +139,10 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
       // Update profile to remove image URL
       const { error } = await supabase
         .from('profiles')
-        .update({ profile_image: null })
+        .update({ 
+          profile_image: null,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', profile.id);
 
       if (error) throw error;

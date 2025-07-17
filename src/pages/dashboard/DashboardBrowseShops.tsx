@@ -7,7 +7,10 @@ import BrowseShops from '@/components/dashboard/BrowseShops';
 const DashboardBrowseShops: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={['seller']}>
-      <DashboardLayout>
+      <DashboardLayout
+        title="Browse Shops - Pak Bazaar Connect"
+        description="Discover and connect with verified wholesalers across Pakistan"
+      >
         <BrowseShops />
       </DashboardLayout>
     </ProtectedRoute>

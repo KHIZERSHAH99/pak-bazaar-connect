@@ -991,6 +991,7 @@ export type Database = {
           role: string
           role_switch_count: number | null
           selfie_image: string | null
+          status: string | null
           strn_number: string | null
           suspended_until: string | null
           suspension_reason: string | null
@@ -1027,6 +1028,7 @@ export type Database = {
           role?: string
           role_switch_count?: number | null
           selfie_image?: string | null
+          status?: string | null
           strn_number?: string | null
           suspended_until?: string | null
           suspension_reason?: string | null
@@ -1063,6 +1065,7 @@ export type Database = {
           role?: string
           role_switch_count?: number | null
           selfie_image?: string | null
+          status?: string | null
           strn_number?: string | null
           suspended_until?: string | null
           suspension_reason?: string | null

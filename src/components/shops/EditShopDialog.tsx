@@ -88,32 +88,22 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
         logoUrl = await uploadImage(logoFile, 'shop_images');
       }
 
-      // Create updates object that matches the updateShop function signature
-      const updates: {
-        name?: string;
-        contact?: string;
-        address?: string;
-        postal_code?: string;
-        city_id?: string;
-        logo?: string;
-      } = {
+      // Create the updates object with proper structure
+      const updateData = {
         name: formData.name,
         contact: formData.contact,
         address: formData.address,
         postal_code: formData.postal_code,
+        city_id: formData.city_id || undefined,
+        logo: logoUrl || undefined
       };
 
-      // Only add optional fields if they have values
-      if (formData.city_id) {
-        updates.city_id = formData.city_id;
-      }
-      
-      if (logoUrl) {
-        updates.logo = logoUrl;
-      }
+      // Remove undefined values to match the function signature
+      const cleanedUpdates = Object.fromEntries(
+        Object.entries(updateData).filter(([_, value]) => value !== undefined)
+      );
 
-      // Call updateShop with exactly 2 arguments as defined in the function signature
-      await updateShop(shop.id, updates);
+      await updateShop(shop.id, cleanedUpdates);
 
       toast({
         title: "Shop updated",

@@ -70,6 +70,11 @@ const EnhancedProducts: React.FC = () => {
     setSearchTerm(query);
   };
 
+  const handlePriceChange = (min: string, max: string) => {
+    setMinPrice(min);
+    setMaxPrice(max);
+  };
+
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedCategory('all');
@@ -99,21 +104,15 @@ const EnhancedProducts: React.FC = () => {
 
         {/* Filters */}
         <ProductsFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          selectedCity={selectedCity}
-          setSelectedCity={setSelectedCity}
-          selectedRating={selectedRating}
-          setSelectedRating={setSelectedRating}
-          minPrice={minPrice}
-          setMinPrice={setMinPrice}
-          maxPrice={maxPrice}
-          setMaxPrice={setMaxPrice}
           categories={categories}
           cities={cities}
-          onSearch={() => {}} // Search is handled by enhanced search
+          selectedCategory={selectedCategory}
+          selectedCity={selectedCity}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          onCategoryChange={setSelectedCategory}
+          onCityChange={setSelectedCity}
+          onPriceChange={handlePriceChange}
           onClearFilters={clearFilters}
         />
 

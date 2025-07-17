@@ -55,6 +55,11 @@ const WholesalerProducts: React.FC = () => {
     fetchData();
   };
 
+  const handlePriceChange = (min: string, max: string) => {
+    setMinPrice(min);
+    setMaxPrice(max);
+  };
+
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedCategory('all');
@@ -73,21 +78,15 @@ const WholesalerProducts: React.FC = () => {
         </div>
         
         <ProductsFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          selectedCity={selectedCity}
-          setSelectedCity={setSelectedCity}
-          selectedRating={selectedRating}
-          setSelectedRating={setSelectedRating}
-          minPrice={minPrice}
-          setMinPrice={setMinPrice}
-          maxPrice={maxPrice}
-          setMaxPrice={setMaxPrice}
           categories={categories}
           cities={cities}
-          onSearch={handleSearch}
+          selectedCategory={selectedCategory}
+          selectedCity={selectedCity}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          onCategoryChange={setSelectedCategory}
+          onCityChange={setSelectedCity}
+          onPriceChange={handlePriceChange}
           onClearFilters={clearFilters}
         />
 

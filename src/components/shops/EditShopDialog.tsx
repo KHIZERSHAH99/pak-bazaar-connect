@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Shop, City } from '@/lib/types';
 import { updateShop } from '@/lib/shops';
-import { getCities } from '@/lib/marketplace';
+import { supabase } from '@/integrations/supabase/client';
 import { uploadImage } from '@/lib/storage';
 
 interface EditShopDialogProps {
@@ -44,8 +44,17 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
     // Fetch cities directly from Supabase
     const fetchCities = async () => {
       try {
-        const citiesData = await getCities();
-        setCities(citiesData);
+        const { data, error } = await supabase
+          .from('cities')
+          .select('*')
+          .order('name', { ascending: true });
+        
+        if (error) {
+          console.error('Error fetching cities:', error);
+          setCities([]);
+        } else {
+          setCities(data || []);
+        }
       } catch (error) {
         console.error('Error fetching cities:', error);
         setCities([]);

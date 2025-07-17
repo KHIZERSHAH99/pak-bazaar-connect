@@ -88,15 +88,17 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
         logoUrl = await uploadImage(logoFile, 'shop_images');
       }
 
-      // Fix: Pass the correct arguments to updateShop
-      await updateShop(shop.id, {
+      // Create updates object with proper typing
+      const updates = {
         name: formData.name,
         contact: formData.contact,
         address: formData.address,
         postal_code: formData.postal_code,
-        city_id: formData.city_id || undefined,
-        logo: logoUrl || undefined
-      });
+        ...(formData.city_id && { city_id: formData.city_id }),
+        ...(logoUrl && { logo: logoUrl })
+      };
+
+      await updateShop(shop.id, updates);
 
       toast({
         title: "Shop updated",

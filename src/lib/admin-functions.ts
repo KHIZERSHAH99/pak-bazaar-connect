@@ -81,28 +81,38 @@ export const getSystemStats = async () => {
   }
 };
 
-// Admin function to bulk update verification status
+// Admin function to bulk update verification status - simplified to avoid type issues
 export const bulkUpdateVerificationStatus = async (
   table: 'products' | 'ads',
   status: string,
   ids?: string[]
 ) => {
   try {
-    const updateField = table === 'products' ? 'verification_status' : 'status';
-    let query = supabase.from(table).update({ [updateField]: status });
-
-    if (ids && ids.length > 0) {
-      query = query.in('id', ids);
+    if (table === 'products') {
+      let query = supabase.from('products').update({ verification_status: status });
+      
+      if (ids && ids.length > 0) {
+        query = query.in('id', ids);
+      } else {
+        query = query.eq('verification_status', 'pending');
+      }
+      
+      const { data, error } = await query.select();
+      if (error) throw error;
+      return data;
     } else {
-      // Update all pending items if no specific IDs provided
-      query = query.eq(updateField, 'pending');
+      let query = supabase.from('ads').update({ status: status });
+      
+      if (ids && ids.length > 0) {
+        query = query.in('id', ids);
+      } else {
+        query = query.eq('status', 'pending');
+      }
+      
+      const { data, error } = await query.select();
+      if (error) throw error;
+      return data;
     }
-
-    const { data, error } = await query.select();
-    
-    if (error) throw error;
-
-    return data;
   } catch (error) {
     await handleError(error, 'bulkUpdateVerificationStatus');
     throw error;

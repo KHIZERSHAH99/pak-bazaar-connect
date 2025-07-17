@@ -1,66 +1,104 @@
-
 import React from 'react';
 import Layout from '@/components/Layout';
+import { Card } from '@/components/ui/card';
 
-const ShippingPolicy: React.FC = () => {
+const ShippingPolicy = () => {
   return (
     <Layout>
-      <div className="container mx-auto py-8 px-4 max-w-4xl">
-        <h1 className="text-3xl font-bold text-pakistani_green-800 mb-6 font-poppins">Shipping & Delivery Policy</h1>
-        
-        <div className="prose max-w-none space-y-6 font-poppins">
-          <p className="text-gray-600">Last updated: {new Date().toLocaleDateString()}</p>
-          
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Order Processing</h2>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Standard order processing time is 1-3 business days.</li>
-              <li>Processing times may vary for bulk or custom orders. You will be notified of any significant delays.</li>
-              <li>Orders are processed Monday through Saturday, excluding public holidays in Pakistan.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Shipping Methods & Costs</h2>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>We partner with various local courier services to ensure reliable delivery across Pakistan.</li>
-              <li>Shipping costs are calculated at checkout based on order weight, dimensions, and delivery location.</li>
-              <li>Estimated delivery times are typically 3-7 business days after dispatch, depending on the destination.</li>
-              <li>Expedited shipping options may be available at an additional cost for select areas.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Shipment Tracking</h2>
-            <p className="text-gray-700">
-              Once your order is dispatched, you will receive a shipping confirmation email with a tracking number and a link to the courier's website to monitor your shipment's progress.
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-foreground mb-4 font-poppins">
+              Shipping Policy
+            </h1>
+            <p className="text-muted-foreground font-poppins">
+              Last updated: {new Date().toLocaleDateString()}
             </p>
-          </section>
-          
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">International Shipping</h2>
-            <p className="text-gray-700">
-              Currently, Pak Bazaar Connect primarily facilitates domestic B2B transactions within Pakistan. We do not offer international shipping as a standard service. Wholesalers and sellers may arrange international shipping independently.
-            </p>
-          </section>
+          </div>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Incorrect Address & Undeliverable Packages</h2>
-            <p className="text-gray-700">
-              Please ensure your shipping address is complete and accurate. Pak Bazaar Connect is not responsible for orders shipped to incorrect addresses provided by the buyer. If a package is returned as undeliverable, additional shipping fees may apply for re-shipment.
-            </p>
-          </section>
+          <Card className="p-8">
+            <div className="prose prose-lg max-w-none font-poppins">
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Shipping Overview
+              </h2>
+              <p className="mb-6 text-foreground">
+                Pak Bazaar Connect is a B2B marketplace platform. All shipping arrangements are made directly between wholesalers and buyers. We do not handle physical shipping of products.
+              </p>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contact Information</h2>
-            <p className="text-gray-700">
-              If you have any questions or concerns regarding our Shipping & Delivery Policy, please contact us at{' '}
-              <a href="mailto:khizercoding.com" className="text-pakistani_green-600 hover:text-pakistani_green-700">
-                khizercoding.com
-              </a>{' '}
-              or call us at +92 3149388513.
-            </p>
-          </section>
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Shipping Arrangements
+              </h2>
+              <p className="mb-4 text-foreground">
+                When placing an order through our platform:
+              </p>
+              <ul className="list-disc pl-6 mb-6 text-foreground">
+                <li>Shipping terms are agreed upon between buyer and seller</li>
+                <li>Shipping costs are determined by the wholesaler</li>
+                <li>Delivery timeframes are set by individual suppliers</li>
+                <li>Shipping methods vary by supplier and location</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Common Shipping Methods in Pakistan
+              </h2>
+              <p className="mb-4 text-foreground">
+                Most suppliers on our platform use these shipping methods:
+              </p>
+              <ul className="list-disc pl-6 mb-6 text-foreground">
+                <li><strong>TCS:</strong> Nationwide courier service</li>
+                <li><strong>Leopards:</strong> Fast courier and cargo service</li>
+                <li><strong>Pakistan Post:</strong> Government postal service</li>
+                <li><strong>M&P Express:</strong> Express delivery service</li>
+                <li><strong>Local Transport:</strong> For bulk orders within cities</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Delivery Timeframes
+              </h2>
+              <p className="mb-4 text-foreground">
+                Typical delivery times within Pakistan:
+              </p>
+              <ul className="list-disc pl-6 mb-6 text-foreground">
+                <li><strong>Same City:</strong> 1-2 business days</li>
+                <li><strong>Major Cities:</strong> 2-3 business days</li>
+                <li><strong>Other Cities:</strong> 3-5 business days</li>
+                <li><strong>Remote Areas:</strong> 5-7 business days</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Shipping Costs
+              </h2>
+              <p className="mb-6 text-foreground">
+                Shipping costs vary based on product weight, dimensions, destination, and chosen courier service. Most suppliers provide shipping cost estimates before order confirmation.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Order Tracking
+              </h2>
+              <p className="mb-6 text-foreground">
+                Once your order is shipped, the supplier will provide tracking information. You can monitor your order status through our platform or directly with the courier service.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Shipping Issues
+              </h2>
+              <p className="mb-6 text-foreground">
+                For any shipping-related issues, please contact the supplier directly. If you need assistance resolving shipping disputes, our support team can help facilitate communication.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Contact Us
+              </h2>
+              <p className="mb-4 text-foreground">
+                For questions about shipping policies or order-related issues:
+              </p>
+              <div className="p-4 bg-pakistani_green-50 rounded-lg">
+                <p className="text-foreground"><strong>Email:</strong> khizercoding.com</p>
+                <p className="text-foreground"><strong>Phone:</strong> +92 3149388513</p>
+                <p className="text-foreground"><strong>Address:</strong> Mardan, Pakistan</p>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </Layout>

@@ -94,6 +94,10 @@ const AppRoutes: React.FC = () => {
         element={user ? <BrowseShops /> : <Navigate to="/login" replace />} 
       />
       <Route 
+        path="/dashboard/browse-shops/:shopId" 
+        element={user ? <BrowseShops /> : <Navigate to="/login" replace />} 
+      />
+      <Route 
         path="/dashboard/chat" 
         element={user ? <DashboardChat /> : <Navigate to="/login" replace />} 
       />

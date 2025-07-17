@@ -1,70 +1,81 @@
-
 import React from 'react';
 import Layout from '@/components/Layout';
+import { Card } from '@/components/ui/card';
 
-const RefundPolicy: React.FC = () => {
+const RefundPolicy = () => {
   return (
     <Layout>
-      <div className="container mx-auto py-8 px-4 max-w-4xl">
-        <h1 className="text-3xl font-bold text-pakistani_green-800 mb-6 font-poppins">Cancellation, Return & Refund Policy</h1>
-        
-        <div className="prose max-w-none space-y-6 font-poppins">
-          <p className="text-gray-600">Last updated: {new Date().toLocaleDateString()}</p>
-          
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Order Cancellation</h2>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Orders can be cancelled within 24 hours of placement</li>
-              <li>Cancellation after dispatch is subject to return policy</li>
-              <li>Custom or personalized orders cannot be cancelled</li>
-              <li>Bulk orders may have different cancellation terms</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Return Policy</h2>
-            <p className="text-gray-700 mb-4">Returns are accepted under the following conditions:</p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Items must be returned within 7 days of delivery</li>
-              <li>Products must be in original condition and packaging</li>
-              <li>Return shipping costs are borne by the buyer unless the item is defective</li>
-              <li>Perishable goods and custom orders are not returnable</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Refund Process</h2>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Refunds are processed within 7-14 business days</li>
-              <li>Refunds are made to the original payment method</li>
-              <li>Shipping charges are non-refundable except for defective items</li>
-              <li>Platform commission (2.5%) is deducted from refunds</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Dispute Resolution</h2>
-            <p className="text-gray-700 mb-4">
-              In case of disputes between buyers and sellers:
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-foreground mb-4 font-poppins">
+              Refund Policy
+            </h1>
+            <p className="text-muted-foreground font-poppins">
+              Last updated: {new Date().toLocaleDateString()}
             </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Contact our support team within 48 hours</li>
-              <li>Provide order details and evidence of the issue</li>
-              <li>Our team will mediate to reach a fair resolution</li>
-              <li>Final decisions are at the discretion of Pak Bazaar Connect</li>
-            </ul>
-          </section>
+          </div>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Contact for Returns</h2>
-            <p className="text-gray-700">
-              For return requests, contact us at{' '}
-              <a href="mailto:khizercoding.com" className="text-pakistani_green-600 hover:text-pakistani_green-700">
-                khizercoding.com
-              </a>{' '}
-              with your order number and reason for return.
-            </p>
-          </section>
+          <Card className="p-8">
+            <div className="prose prose-lg max-w-none font-poppins">
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                General Refund Policy
+              </h2>
+              <p className="mb-6 text-foreground">
+                At Pak Bazaar Connect, we facilitate B2B transactions between wholesalers and sellers. Refunds are handled directly between the buyer and seller according to their agreement.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Platform Service Fees
+              </h2>
+              <p className="mb-4 text-foreground">
+                Service fees charged by Pak Bazaar Connect are generally non-refundable. However, we may consider refunds in the following cases:
+              </p>
+              <ul className="list-disc pl-6 mb-6 text-foreground">
+                <li>Technical errors that prevented service delivery</li>
+                <li>Duplicate charges due to system errors</li>
+                <li>Services not delivered due to platform issues</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Transaction Disputes
+              </h2>
+              <p className="mb-6 text-foreground">
+                For disputes related to product quality, delivery, or other transaction issues, please contact the seller directly. If resolution cannot be reached, our support team may assist in mediation.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                How to Request a Refund
+              </h2>
+              <p className="mb-4 text-foreground">
+                To request a refund for platform services:
+              </p>
+              <ol className="list-decimal pl-6 mb-6 text-foreground">
+                <li>Contact our support team within 7 days of the charge</li>
+                <li>Provide your transaction details and reason for refund</li>
+                <li>Allow 5-10 business days for review and processing</li>
+              </ol>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Processing Time
+              </h2>
+              <p className="mb-6 text-foreground">
+                Approved refunds will be processed within 7-14 business days and will appear in your original payment method.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+                Contact for Refunds
+              </h2>
+              <p className="mb-4 text-foreground">
+                For refund requests or questions, please contact us:
+              </p>
+              <div className="p-4 bg-pakistani_green-50 rounded-lg">
+                <p className="text-foreground"><strong>Email:</strong> khizercoding.com</p>
+                <p className="text-foreground"><strong>Phone:</strong> +92 3149388513</p>
+                <p className="text-foreground"><strong>Address:</strong> Mardan, Pakistan</p>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </Layout>

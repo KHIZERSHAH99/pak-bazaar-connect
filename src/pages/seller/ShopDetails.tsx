@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -12,33 +11,34 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Store, MapPin, Phone, Package, Star, Users, ShoppingCart } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import LoadingSpinner from '@/components/ui/loading-spinner';
-
 const ShopDetails: React.FC = () => {
-  const { shopId } = useParams<{ shopId: string }>();
+  const {
+    shopId
+  } = useParams<{
+    shopId: string;
+  }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [shop, setShop] = useState<Shop | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(true);
-
   const fetchShop = async () => {
     if (!shopId) return;
-    
     try {
-      const { data, error } = await supabase
-        .from('shops')
-        .select(`
+      const {
+        data,
+        error
+      } = await supabase.from('shops').select(`
           *,
           cities!shops_city_id_fkey (
             id,
             name,
             province
           )
-        `)
-        .eq('id', shopId)
-        .single();
-
+        `).eq('id', shopId).single();
       if (error) throw error;
       setShop(data);
     } catch (error: any) {
@@ -52,15 +52,14 @@ const ShopDetails: React.FC = () => {
       setLoading(false);
     }
   };
-
   const fetchProducts = async () => {
     if (!shopId) return;
-    
     try {
       setProductsLoading(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select(`
+      const {
+        data,
+        error
+      } = await supabase.from('products').select(`
           *,
           shops!products_shop_id_fkey (
             id,
@@ -81,12 +80,9 @@ const ShopDetails: React.FC = () => {
             name,
             description
           )
-        `)
-        .eq('shop_id', shopId)
-        .eq('is_active', true)
-        .eq('verification_status', 'approved')
-        .order('created_at', { ascending: false });
-
+        `).eq('shop_id', shopId).eq('is_active', true).eq('verification_status', 'approved').order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
       console.log('Fetched products for shop:', data);
       setProducts(data || []);
@@ -101,32 +97,25 @@ const ShopDetails: React.FC = () => {
       setProductsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchShop();
     fetchProducts();
   }, [shopId]);
-
   const getShopImageSrc = (logo?: string) => {
     if (logo && !logo.includes('placeholder.svg')) {
       return logo;
     }
     return `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop&auto=format`;
   };
-
   if (loading) {
-    return (
-      <DashboardLayout>
+    return <DashboardLayout>
         <div className="flex justify-center items-center py-12">
           <LoadingSpinner size="lg" text="Loading shop details..." />
         </div>
-      </DashboardLayout>
-    );
+      </DashboardLayout>;
   }
-
   if (!shop) {
-    return (
-      <DashboardLayout>
+    return <DashboardLayout>
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Shop Not Found</h2>
           <p className="text-gray-600 mb-6">The shop you're looking for doesn't exist.</p>
@@ -135,19 +124,12 @@ const ShopDetails: React.FC = () => {
             Back to Browse Shops
           </Button>
         </div>
-      </DashboardLayout>
-    );
+      </DashboardLayout>;
   }
-
-  return (
-    <DashboardLayout>
+  return <DashboardLayout>
       <div className="space-y-6">
         {/* Back Button */}
-        <Button 
-          variant="outline" 
-          onClick={() => navigate('/dashboard/browse-shops')}
-          className="mb-4"
-        >
+        <Button variant="outline" onClick={() => navigate('/dashboard/browse-shops')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Browse Shops
         </Button>
@@ -155,11 +137,7 @@ const ShopDetails: React.FC = () => {
         {/* Shop Header */}
         <Card className="overflow-hidden">
           <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200">
-            <img 
-              src={getShopImageSrc(shop.logo)} 
-              alt={shop.name} 
-              className="w-full h-full object-cover"
-            />
+            <img src={getShopImageSrc(shop.logo)} alt={shop.name} className="w-full h-full object-cover" />
             <div className="absolute top-4 left-4">
               <Badge className="bg-white/90 text-gray-800 shadow-sm">
                 <Store className="h-3 w-3 mr-1" />
@@ -191,11 +169,9 @@ const ShopDetails: React.FC = () => {
                 <MapPin className="h-5 w-5 mr-3 mt-0.5 text-pakistani_green-600" />
                 <div className="font-poppins">
                   <div>{shop.address}</div>
-                  {shop.cities && (
-                    <div className="text-sm text-pakistani_green-600 font-medium mt-1">
+                  {shop.cities && <div className="text-sm text-pakistani_green-600 font-medium mt-1">
                       {shop.cities.name}, {shop.cities.province}
-                    </div>
-                  )}
+                    </div>}
                 </div>
               </div>
             </div>
@@ -210,7 +186,7 @@ const ShopDetails: React.FC = () => {
                 <span>200+ Orders</span>
               </div>
               <div className="flex items-center text-sm text-gray-500">
-                <span>Commission: {shop.commission_rate || 5}%</span>
+                
               </div>
             </div>
           </CardContent>
@@ -225,36 +201,23 @@ const ShopDetails: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {productsLoading ? (
-              <div className="flex justify-center items-center py-8">
+            {productsLoading ? <div className="flex justify-center items-center py-8">
                 <LoadingSpinner text="Loading products..." />
-              </div>
-            ) : products.length === 0 ? (
-              <div className="text-center py-8">
+              </div> : products.length === 0 ? <div className="text-center py-8">
                 <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">No Products Available</h3>
                 <p className="text-gray-600 font-poppins">
                   This shop doesn't have any products listed yet.
                 </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
+              </div> : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {products.map(product => <ProductCard key={product.id} product={product} />)}
+              </div>}
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
-  );
+    </DashboardLayout>;
 };
-
-const ShopDetailsWithAuth = () => (
-  <ProtectedRoute allowedRoles={['seller']}>
+const ShopDetailsWithAuth = () => <ProtectedRoute allowedRoles={['seller']}>
     <ShopDetails />
-  </ProtectedRoute>
-);
-
+  </ProtectedRoute>;
 export default ShopDetailsWithAuth;

@@ -69,10 +69,10 @@ const Features: React.FC = () => {
               Everything you need to grow your B2B business in Pakistan
             </p>
             <div className="flex justify-center gap-4">
-              <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+              <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700" onClick={() => window.location.href = '/signup'}>
                 Get Started Free
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => window.location.href = '/products'}>
                 Watch Demo
               </Button>
             </div>
@@ -159,10 +159,10 @@ const Features: React.FC = () => {
                 Join Pakistan's fastest-growing B2B marketplace today
               </p>
               <div className="flex justify-center gap-4">
-                <Button variant="secondary" size="lg">
+                <Button variant="secondary" size="lg" onClick={() => window.location.href = '/signup'}>
                   Start Free Trial
                 </Button>
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-pakistani_green-600">
+                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-pakistani_green-600" onClick={() => window.location.href = '/contact'}>
                   Contact Sales
                 </Button>
               </div>

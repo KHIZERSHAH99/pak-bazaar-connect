@@ -84,9 +84,11 @@ const WholesalerProducts: React.FC = () => {
           selectedCity={selectedCity}
           minPrice={minPrice}
           maxPrice={maxPrice}
+          searchTerm={searchTerm}
           onCategoryChange={setSelectedCategory}
           onCityChange={setSelectedCity}
           onPriceChange={handlePriceChange}
+          onSearchChange={setSearchTerm}
           onClearFilters={clearFilters}
         />
 

@@ -147,7 +147,7 @@ const ShopDetails: React.FC = () => {
             <div className="absolute top-4 right-4">
               <Badge className="bg-pakistani_green-600 text-white shadow-sm">
                 <Star className="h-3 w-3 mr-1" />
-                4.8
+                New
               </Badge>
             </div>
           </div>
@@ -183,7 +183,7 @@ const ShopDetails: React.FC = () => {
               </div>
               <div className="flex items-center text-sm text-gray-500">
                 <Users className="h-4 w-4 mr-2" />
-                <span>200+ Orders</span>
+                <span>Fresh Start</span>
               </div>
               <div className="flex items-center text-sm text-gray-500">
                 

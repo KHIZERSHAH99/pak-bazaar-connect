@@ -56,7 +56,7 @@ export const createProduct = async (productData: {
       .insert({
         ...productData,
         is_active: true,
-        verification_status: 'pending',
+        verification_status: 'approved',
         moq: productData.moq || 1
       })
       .select(`
@@ -236,7 +236,6 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
         categories!fk_products_category_id(id, name, description)
       `)
       .eq('is_active', true)
-      .eq('verification_status', 'approved')
       .order('created_at', { ascending: false })
       .limit(limit);
 

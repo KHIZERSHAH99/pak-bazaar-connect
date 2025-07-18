@@ -19,6 +19,7 @@ const Products: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState('all');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { toast } = useToast();
 
@@ -164,6 +165,7 @@ const Products: React.FC = () => {
     setSelectedCity('all');
     setMinPrice('');
     setMaxPrice('');
+    setSearchTerm('');
   };
 
   return (
@@ -181,9 +183,11 @@ const Products: React.FC = () => {
           selectedCity={selectedCity}
           minPrice={minPrice}
           maxPrice={maxPrice}
+          searchTerm={searchTerm}
           onCategoryChange={handleCategoryChange}
           onCityChange={handleCityChange}
           onPriceChange={handlePriceChange}
+          onSearchChange={setSearchTerm}
           onClearFilters={clearFilters}
         />
 

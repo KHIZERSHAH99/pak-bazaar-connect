@@ -164,7 +164,7 @@ export interface Review {
   updated_at: string;
 }
 
-export type AdStatus = 'pending' | 'approved' | 'active' | 'rejected' | 'paused';
+export type AdStatus = 'pending' | 'approved' | 'active' | 'rejected';
 export type OrderStatus = 'pending' | 'confirmed' | 'completed' | 'rejected' | 'cancelled';
 export type RoleRequestStatus = 'pending' | 'approved' | 'rejected';
 export type PaymentMethod = 'bank_transfer' | 'jazzcash' | 'easypaisa';

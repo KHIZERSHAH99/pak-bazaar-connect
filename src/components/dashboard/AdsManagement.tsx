@@ -1,29 +1,21 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Plus, Target, BarChart3 } from 'lucide-react';
 import EnhancedCreateAdDialog from '@/components/ads/EnhancedCreateAdDialog';
-
 const AdsManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-
   const handleAdCreated = () => {
     // Refresh ads list if needed
     console.log('Ad created successfully');
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 font-poppins">Advertisement Campaigns</h1>
           <p className="text-gray-600 mt-1 font-poppins">Create and manage Cost Per Order (CPO) campaigns</p>
         </div>
-        <Button 
-          className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
-          onClick={() => setIsCreateDialogOpen(true)}
-        >
+        <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins" onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Create Campaign
         </Button>
@@ -96,17 +88,17 @@ const AdsManagement: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-poppins">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-center p-4 rounded-lg bg-blue-50/[0.11]">
               <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">1</div>
               <h3 className="font-medium mb-1">Choose Product</h3>
               <p className="text-sm text-gray-600">Select a product from your shop to promote</p>
             </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-center p-4 rounded-lg bg-blue-50/[0.14]">
               <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">2</div>
               <h3 className="font-medium mb-1">Set Budget</h3>
               <p className="text-sm text-gray-600">Define your budget cap and campaign duration</p>
             </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
+            <div className="text-center p-4 rounded-lg bg-blue-50/[0.17]">
               <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">3</div>
               <h3 className="font-medium mb-1">Track Results</h3>
               <p className="text-sm text-gray-600">Monitor performance and optimize campaigns</p>
@@ -127,13 +119,7 @@ const AdsManagement: React.FC = () => {
         </div>
       </div>
 
-      <EnhancedCreateAdDialog
-        isOpen={isCreateDialogOpen}
-        onClose={() => setIsCreateDialogOpen(false)}
-        onAdCreated={handleAdCreated}
-      />
-    </div>
-  );
+      <EnhancedCreateAdDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} onAdCreated={handleAdCreated} />
+    </div>;
 };
-
 export default AdsManagement;

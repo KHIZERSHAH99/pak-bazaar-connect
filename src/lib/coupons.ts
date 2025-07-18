@@ -70,13 +70,7 @@ export const getWholesalerCoupons = async (): Promise<Coupon[]> => {
 
     const { data, error } = await supabase
       .from('coupons')
-      .select(`
-        *,
-        profiles:wholesaler_id (
-          contact_name,
-          business_name
-        )
-      `)
+      .select('*')
       .eq('wholesaler_id', user.id)
       .order('created_at', { ascending: false });
 

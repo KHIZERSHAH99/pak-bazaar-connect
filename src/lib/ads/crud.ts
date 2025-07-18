@@ -165,3 +165,16 @@ export const deleteAd = async (adId: string): Promise<void> => {
     throw error;
   }
 };
+
+// Alias for AdManagementDashboard compatibility
+export const getAdsByWholesaler = getWholesalerAds;
+
+// Pause ad (set to paused status)
+export const pauseAd = async (adId: string): Promise<Ad> => {
+  return updateAdStatus(adId, 'rejected'); // Using rejected as paused for now
+};
+
+// Resume ad (set to active status)
+export const resumeAd = async (adId: string): Promise<Ad> => {
+  return updateAdStatus(adId, 'active');
+};

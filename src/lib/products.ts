@@ -258,7 +258,10 @@ export const getProductById = async (productId: string): Promise<Product | null>
       .select(`
         *,
         shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
-        categories!fk_products_category_id(id, name, description)
+        categories!fk_products_category_id(id, name, description),
+        product_specifications(*),
+        product_images(*),
+        product_pricing_tiers(*)
       `)
       .eq('id', productId)
       .single();

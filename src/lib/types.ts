@@ -66,6 +66,33 @@ export interface Shop {
   is_verified?: boolean;
 }
 
+export interface ProductImage {
+  id: string;
+  product_id: string;
+  image_url: string;
+  alt_text?: string;
+  is_primary?: boolean;
+  sort_order?: number;
+  created_at?: string;
+}
+
+export interface ProductSpecification {
+  id: string;
+  product_id: string;
+  spec_name: string;
+  spec_value: string;
+  created_at?: string;
+}
+
+export interface ProductPricingTier {
+  id: string;
+  product_id: string;
+  min_quantity: number;
+  max_quantity?: number;
+  unit_price: number;
+  created_at?: string;
+}
+
 export interface Product {
   id: string;
   shop_id: string;
@@ -77,10 +104,15 @@ export interface Product {
   category_id?: string;
   moq?: number;
   verification_status: string;
+  sample_available?: boolean;
+  sample_price?: number;
   created_at?: string;
   // Joined data
   categories?: Category;
   shops?: Shop;
+  product_images?: ProductImage[];
+  product_specifications?: ProductSpecification[];
+  product_pricing_tiers?: ProductPricingTier[];
   // Review data
   avg_rating?: number;
   total_reviews?: number;

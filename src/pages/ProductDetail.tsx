@@ -1,28 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, MessageCircle, Star, MapPin, Package } from 'lucide-react';
+import { Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import Layout from '@/components/Layout';
-import { getProductById, DemoProduct } from '@/data/demoProducts';
-import { useToast } from '@/hooks/use-toast';
-import ProductPricingTable from '@/components/products/ProductPricingTable';
-import VariationPicker from '@/components/products/VariationPicker';
-import ProductImageGallery from '@/components/products/ProductImageGallery';
-import ProductSpecificationsTable from '@/components/products/ProductSpecificationsTable';
-import VerifiedBadge from '@/components/reviews/VerifiedBadge';
+import { getProductById } from '@/lib/products';
+import { Product } from '@/lib/types';
+import EnhancedProductDetail from '@/components/products/EnhancedProductDetail';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [product, setProduct] = useState<DemoProduct | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedVariation, setSelectedVariation] = useState<any>(null);
-
-  // Move quantity state here (before any calculation logic)
-  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     console.log('ProductDetail - Product ID from params:', id);
@@ -33,219 +22,74 @@ const ProductDetail: React.FC = () => {
       return;
     }
 
-    // Get product from demo data
-    const foundProduct = getProductById(id);
-    console.log('Found product:', foundProduct);
-    
-    setProduct(foundProduct || null);
+    const fetchProduct = async () => {
+      try {
+        const foundProduct = await getProductById(id);
+        console.log('Found product:', foundProduct);
+        
+        setProduct(foundProduct);
 
-    // Set minOrder as initial quantity if product found
-    if (foundProduct && foundProduct.minOrder) {
-      setQuantity(foundProduct.minOrder);
-    }
-    setLoading(false);
+        // Set MOQ as initial quantity if product found
+        if (foundProduct && foundProduct.moq) {
+          console.log('Product MOQ:', foundProduct.moq);
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
   const handleBackToProducts = () => {
     navigate('/products');
   };
 
-  const handleInquiry = () => {
-    toast({
-      title: "Inquiry Sent",
-      description: "Your inquiry has been sent to the wholesaler. They will contact you soon.",
-    });
-  };
-
-  const handleAddToCart = () => {
-    toast({
-      title: "Added to Cart",
-      description: `${product?.name} has been added to your cart.`,
-    });
-  };
-
-  let productContent: React.ReactNode;
   if (loading) {
-    productContent = (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="h-96 bg-gray-200 rounded"></div>
-            <div className="space-y-4">
-              <div className="h-8 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              <div className="h-20 bg-gray-200 rounded"></div>
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-muted rounded w-1/3 mb-6"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="h-96 bg-muted rounded"></div>
+              <div className="space-y-4">
+                <div className="h-8 bg-muted rounded"></div>
+                <div className="h-4 bg-muted rounded w-2/3"></div>
+                <div className="h-20 bg-muted rounded"></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Layout>
     );
-  } else if (!product) {
-    productContent = (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-16">
-          <Package className="h-24 w-24 text-gray-400 mx-auto mb-6" />
-          <h1 className="text-2xl font-bold text-gray-800 mb-4 font-poppins">Product not found</h1>
-          <p className="text-gray-600 mb-8 font-poppins">
-            The product you're looking for doesn't exist or has been removed.
-          </p>
-          <Button
-            onClick={handleBackToProducts}
-            className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Products
-          </Button>
-        </div>
-      </div>
-    );
-  } else {
-    // Alibaba style: find final price based on selected variation and tier
-    const showPricingTiers = !!product.pricingTiers && product.pricingTiers.length > 0;
-    let displayPrice = product.price;
-    if (showPricingTiers) {
-      const tier = product.pricingTiers!.find(t =>
-        quantity >= t.minQty && (!t.maxQty || quantity <= t.maxQty)
-      );
-      if (tier) displayPrice = tier.price;
-    }
-    const galleryImages = [product.image]
-      // Add images from variations if available
-      .concat(
-        product.variations?.map(v => v.image).filter(Boolean) as string[] || []
-      );
+  }
 
-    productContent = (
-      <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="outline"
-          onClick={handleBackToProducts}
-          className="mb-6 font-poppins"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Products
-        </Button>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          {/* Product Image Gallery */}
-          <div className="space-y-4">
-            <ProductImageGallery images={galleryImages} alt={product.name} />
-          </div>
-
-          {/* Product Details */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Badge variant="secondary" className="font-poppins">
-                {product.category}
-              </Badge>
-              {/* Show Verified Badge if approved wholesaler */}
-              <VerifiedBadge isVerified={true} size="sm" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 font-poppins">
-              {product.name}
-            </h1>
-            <div className="flex items-center gap-2 text-gray-600 mb-4">
-              <MapPin className="h-4 w-4" />
-              <span className="font-poppins">{product.location}</span>
-            </div>
-
-            {showPricingTiers && (
-              <ProductPricingTable tiers={product.pricingTiers!} />
-            )}
-
-            <div className="text-2xl md:text-3xl font-bold text-pakistani_green-600 font-poppins flex items-center gap-2">
-              Rs. {displayPrice.toLocaleString()}
-              {product.sampleAvailable && product.samplePrice && (
-                <span className="ml-4 text-xs md:text-sm text-gray-500 bg-gray-50 border px-2 py-1 rounded-lg">
-                  Sample: Rs. {product.samplePrice.toLocaleString()}
-                </span>
-              )}
-            </div>
-
-            <ProductSpecificationsTable product={product} />
-
-            {/* Variation Picker */}
-            {product.variations && product.variations.length > 0 && (
-              <VariationPicker
-                variations={product.variations}
-                selected={selectedVariation}
-                onSelect={setSelectedVariation}
-              />
-            )}
-
-            {/* Quantity Selector */}
-            <div className="flex items-center gap-2 mb-4">
-              <span className="font-medium font-poppins">Quantity:</span>
-              <input
-                type="number"
-                min={product.minOrder || 1}
-                value={quantity}
-                onChange={e => setQuantity(Number(e.target.value))}
-                className="w-24 border px-2 py-1 rounded"
-              />
-            </div>
-
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold font-poppins">Description</h3>
-              <p className="text-gray-700 font-poppins">{product.description}</p>
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                onClick={handleAddToCart}
-                disabled={!product.inStock}
-                className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
-              >
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Add to Cart
-              </Button>
-              <Button
-                onClick={handleInquiry}
-                variant="outline"
-                className="flex-1 font-poppins"
-              >
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Send Inquiry
-              </Button>
-            </div>
+  if (!product) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center py-16">
+            <Package className="h-24 w-24 text-muted-foreground mx-auto mb-6" />
+            <h1 className="text-2xl font-bold mb-4 font-poppins">Product not found</h1>
+            <p className="text-muted-foreground mb-8 font-poppins">
+              The product you're looking for doesn't exist or has been removed.
+            </p>
+            <Button onClick={handleBackToProducts} className="font-poppins">
+              Back to Products
+            </Button>
           </div>
         </div>
-        {/* Additional Information */}
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold mb-4 font-poppins">Wholesaler Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2 font-poppins">Business Name</h4>
-                <p className="text-gray-600 font-poppins">{product.wholesaler}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2 font-poppins">Location</h4>
-                <p className="text-gray-600 font-poppins">{product.location}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2 font-poppins">Rating</h4>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                  <span className="text-sm text-gray-600 ml-2 font-poppins">(4.8/5)</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      </Layout>
     );
   }
 
   return (
     <Layout>
-      {productContent}
+      <EnhancedProductDetail product={product} onBack={handleBackToProducts} />
     </Layout>
   );
 };

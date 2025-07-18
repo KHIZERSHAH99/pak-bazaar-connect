@@ -6,9 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, BarChart3, PauseCircle, PlayCircle, TrendingUp, DollarSign } from 'lucide-react';
-import { getAdsByWholesaler } from '@/lib/ads';
+import { getAdsByWholesaler, type Ad } from '@/lib/ads';
 import { useToast } from '@/hooks/use-toast';
-import type { Ad } from '@/lib/types';
 
 const AdManagementDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');

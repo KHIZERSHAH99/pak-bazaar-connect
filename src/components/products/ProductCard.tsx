@@ -31,12 +31,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
 
     addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image || '',
+      productId: product.id,
+      productName: product.name,
+      productImage: product.image || '',
       shopId: product.shop_id,
       shopName: product.shops?.name || 'Unknown Shop',
+      price: product.price,
       moq: product.moq || 1,
       quantity: product.moq || 1
     });

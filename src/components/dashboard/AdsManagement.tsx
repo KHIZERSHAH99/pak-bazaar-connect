@@ -88,18 +88,18 @@ const AdsManagement: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-poppins">
-            <div className="text-center p-4 rounded-lg bg-blue-50/[0.11]">
+            <div className="text-center p-4 rounded-lg bg-sky-300">
               <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">1</div>
               <h3 className="font-medium mb-1">Choose Product</h3>
               <p className="text-sm text-gray-600">Select a product from your shop to promote</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-blue-50/[0.14]">
+            <div className="text-center p-4 rounded-lg bg-emerald-200">
               <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">2</div>
               <h3 className="font-medium mb-1">Set Budget</h3>
               <p className="text-sm text-gray-600">Define your budget cap and campaign duration</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-blue-50/[0.17]">
-              <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">3</div>
+            <div className="text-center p-4 rounded-lg bg-fuchsia-300">
+              <div className="w-8 h-8 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold bg-red-800">3</div>
               <h3 className="font-medium mb-1">Track Results</h3>
               <p className="text-sm text-gray-600">Monitor performance and optimize campaigns</p>
             </div>

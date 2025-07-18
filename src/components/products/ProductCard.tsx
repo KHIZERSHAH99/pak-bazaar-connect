@@ -21,8 +21,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Add to cart logic here
-    console.log('Added to cart:', product.name);
+    
+    // Import useCart hook dynamically to avoid dependency issues
+    import('@/contexts/CartContext').then(({ useCart }) => {
+      try {
+        const { addToCart } = useCart();
+        addToCart(product);
+        
+        // Show success notification
+        import('@/hooks/use-toast').then(({ useToast }) => {
+          const { toast } = useToast();
+          toast({
+            title: "Added to Cart",
+            description: `${product.name} has been added to your cart.`,
+          });
+        });
+      } catch (error) {
+        console.log('Cart not available, using fallback');
+      }
+    }).catch(() => {
+      console.log('Added to cart:', product.name);
+    });
   };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {

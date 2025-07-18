@@ -234,7 +234,7 @@ const EnhancedCreateAdDialog: React.FC<EnhancedCreateAdDialogProps> = ({
     }
   };
   return <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto backdrop-blur-md border-emerald-200 dark:border-emerald-700 bg-[#62f50d]/[0.26]">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto backdrop-blur-md border-pakistani_green-200 dark:border-pakistani_green-700 bg-white dark:bg-gray-900">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-pakistani_green-800 dark:text-emerald-100">
             Create Enhanced Advertisement

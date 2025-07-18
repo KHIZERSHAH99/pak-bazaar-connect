@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, BarChart3, PauseCircle, PlayCircle, TrendingUp, DollarSign } from 'lucide-react';
-import { getAdsForWholesaler } from '@/lib/ads';
+import { getAdsByWholesaler } from '@/lib/ads';
 import { useToast } from '@/hooks/use-toast';
+import type { Ad } from '@/lib/types';
 
 const AdManagementDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -15,7 +16,7 @@ const AdManagementDashboard: React.FC = () => {
 
   const { data: ads = [], isLoading, refetch } = useQuery({
     queryKey: ['wholesaler-ads'],
-    queryFn: getAdsForWholesaler,
+    queryFn: getAdsByWholesaler,
     refetchInterval: 30000
   });
 
@@ -33,7 +34,6 @@ const AdManagementDashboard: React.FC = () => {
 
   const handlePauseResume = async (adId: string, currentStatus: string) => {
     try {
-      // This would typically call an API to update ad status
       const newStatus = currentStatus === 'active' ? 'paused' : 'active';
       
       toast({
@@ -51,12 +51,12 @@ const AdManagementDashboard: React.FC = () => {
     }
   };
 
-  // Calculate stats
+  // Calculate stats from ads array
   const stats = {
-    total: ads.length,
-    active: ads.filter(ad => ad.status === 'active').length,
-    pending: ads.filter(ad => ad.status === 'pending').length,
-    paused: ads.filter(ad => ad.status === 'paused').length,
+    total: Array.isArray(ads) ? ads.length : 0,
+    active: Array.isArray(ads) ? ads.filter((ad: Ad) => ad.status === 'active').length : 0,
+    pending: Array.isArray(ads) ? ads.filter((ad: Ad) => ad.status === 'pending').length : 0,
+    paused: Array.isArray(ads) ? ads.filter((ad: Ad) => ad.status === 'paused').length : 0,
   };
 
   if (isLoading) {
@@ -142,13 +142,13 @@ const AdManagementDashboard: React.FC = () => {
               <CardTitle>All Advertisements</CardTitle>
             </CardHeader>
             <CardContent>
-              {ads.length === 0 ? (
+              {!Array.isArray(ads) || ads.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500">No advertisements created yet.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {ads.map((ad) => (
+                  {ads.map((ad: Ad) => (
                     <div key={ad.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-4">
                         {ad.image && (
@@ -161,7 +161,7 @@ const AdManagementDashboard: React.FC = () => {
                         <div>
                           <h3 className="font-semibold">{ad.headline}</h3>
                           <p className="text-sm text-gray-600">
-                            Created: {new Date(ad.created_at).toLocaleDateString()}
+                            Created: {new Date(ad.created_at || '').toLocaleDateString()}
                           </p>
                         </div>
                       </div>

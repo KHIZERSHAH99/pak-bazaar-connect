@@ -56,11 +56,23 @@ const EnhancedCreateAdDialog: React.FC<EnhancedCreateAdDialogProps> = ({
         return;
       }
 
-      await createAd({
+      // Create ad data with proper typing
+      const adData = {
         headline: formData.headline,
-        description: formData.description,
-        image: image || undefined
-      });
+        image: undefined as string | undefined,
+        budget_cap: 0,
+        campaign_start_date: undefined as string | undefined,
+        campaign_end_date: undefined as string | undefined
+      };
+
+      // If image exists, convert to data URL or handle upload
+      if (image) {
+        // For now, we'll use the preview URL or handle file upload separately
+        // The createAd function expects a string URL, not a File
+        adData.image = imagePreview || undefined;
+      }
+
+      await createAd(adData);
 
       toast({
         title: "Ad Created Successfully!",

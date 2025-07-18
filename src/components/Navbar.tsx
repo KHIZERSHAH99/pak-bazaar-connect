@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import CartSidebar from '@/components/cart/CartSidebar';
-import { useCart } from '@/hooks/useCart';
 
 interface UserProfile {
   id: string;
@@ -16,7 +14,6 @@ const Navbar: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
   const navigate = useNavigate();
-  const { state } = useCart();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -74,33 +71,27 @@ const Navbar: React.FC = () => {
 
           <div className="flex items-center space-x-4">
             {user ? (
-              <>
-                {(userProfile?.role === 'seller' || userProfile?.role === 'admin') && (
-                  <CartSidebar />
-                )}
-                
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-700 font-poppins">
-                    {userProfile?.email}
-                  </span>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => navigate('/dashboard')}
-                    className="font-poppins"
-                  >
-                    Dashboard
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={handleLogout}
-                    className="font-poppins"
-                  >
-                    Logout
-                  </Button>
-                </div>
-              </>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-700 font-poppins">
+                  {userProfile?.email}
+                </span>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate('/dashboard')}
+                  className="font-poppins"
+                >
+                  Dashboard
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleLogout}
+                  className="font-poppins"
+                >
+                  Logout
+                </Button>
+              </div>
             ) : (
               <div className="flex items-center space-x-2">
                 <Button 

@@ -7,10 +7,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { getShopsByOwner, createProduct, uploadImage } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { Shop } from '@/lib/types';
-import { Loader2, Upload } from 'lucide-react';
+import { Loader2, Upload, Package, Info, Image, DollarSign, Settings } from 'lucide-react';
+import ProductSpecificationFields from './ProductSpecificationFields';
+import ProductCategorySelector from './ProductCategorySelector';
+import MultipleImageUpload from './MultipleImageUpload';
 
 interface CreateProductDialogProps {
   isOpen: boolean;
@@ -27,15 +32,37 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    // Basic Info
     name: '',
     description: '',
     price: '',
     moq: '1',
     shop_id: '',
     is_active: true,
+    category_id: '',
+    
+    // Product Details
+    brand: '',
+    model_number: '',
+    origin_country: '',
+    package_weight: '',
+    package_dimensions: '',
+    lead_time_days: '',
+    stock_quantity: '',
+    warranty_info: '',
+    certifications: [] as string[],
+    customization_available: false,
+    colors_available: [] as string[],
+    packaging_type: '',
+    units_per_package: '1',
+    
+    // Sample Info
+    sample_available: false,
+    sample_price: '',
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
+  const [specifications, setSpecifications] = useState<Array<{id: string; name: string; value: string}>>([]);
+  const [images, setImages] = useState<Array<{id: string; file: File; preview: string; isPrimary: boolean}>>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
   const { toast } = useToast();
@@ -113,26 +140,8 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 100 * 1024) {
-      toast({
-        title: 'File too large',
-        description: 'Product image must be less than 100KB',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setImageFile(file);
-    
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+  const handleArrayFieldChange = (field: string, values: string[]) => {
+    setFormData(prev => ({ ...prev, [field]: values }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -145,10 +154,12 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
     try {
       setIsSubmitting(true);
       
+      // Upload primary image
       let imageUrl;
-      if (imageFile) {
-        const fileName = `product_${Date.now()}_${imageFile.name}`;
-        imageUrl = await uploadImage('product_images', fileName, imageFile);
+      if (images.length > 0) {
+        const primaryImage = images.find(img => img.isPrimary) || images[0];
+        const fileName = `product_${Date.now()}_${primaryImage.file.name}`;
+        imageUrl = await uploadImage('product_images', fileName, primaryImage.file);
       }
 
       const productData = {
@@ -160,9 +171,40 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
         image: imageUrl,
         is_active: formData.is_active,
         verification_status: 'pending' as const,
+        category_id: formData.category_id || null,
+        brand: formData.brand || null,
+        model_number: formData.model_number || null,
+        origin_country: formData.origin_country || null,
+        package_weight: formData.package_weight ? parseFloat(formData.package_weight) : null,
+        package_dimensions: formData.package_dimensions || null,
+        lead_time_days: formData.lead_time_days ? parseInt(formData.lead_time_days) : null,
+        stock_quantity: formData.stock_quantity ? parseInt(formData.stock_quantity) : null,
+        warranty_info: formData.warranty_info || null,
+        certifications: formData.certifications.length > 0 ? formData.certifications : null,
+        customization_available: formData.customization_available,
+        colors_available: formData.colors_available.length > 0 ? formData.colors_available : null,
+        packaging_type: formData.packaging_type || null,
+        units_per_package: parseInt(formData.units_per_package),
+        sample_available: formData.sample_available,
+        sample_price: formData.sample_price ? parseFloat(formData.sample_price) : null,
       };
 
-      await createProduct(productData);
+      const result = await createProduct(productData);
+      
+      // Save specifications if any
+      if (specifications.length > 0) {
+        for (const spec of specifications) {
+          if (spec.name && spec.value) {
+            await supabase
+              .from('product_specifications')
+              .insert({
+                product_id: result.id,
+                spec_name: spec.name,
+                spec_value: spec.value
+              });
+          }
+        }
+      }
       
       toast({
         title: 'Success',
@@ -192,9 +234,25 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
       moq: '1',
       shop_id: shops.length === 1 ? shops[0].id : '',
       is_active: true,
+      category_id: '',
+      brand: '',
+      model_number: '',
+      origin_country: '',
+      package_weight: '',
+      package_dimensions: '',
+      lead_time_days: '',
+      stock_quantity: '',
+      warranty_info: '',
+      certifications: [],
+      customization_available: false,
+      colors_available: [],
+      packaging_type: '',
+      units_per_package: '1',
+      sample_available: false,
+      sample_price: '',
     });
-    setImageFile(null);
-    setImagePreview(null);
+    setSpecifications([]);
+    setImages([]);
     setErrors({});
   };
 
@@ -244,128 +302,333 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Product</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name">Product Name *</Label>
-            <Input
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              placeholder="Enter product name"
-              disabled={isSubmitting}
-            />
-            {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Tabs defaultValue="basic" className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="basic" className="flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                Basic
+              </TabsTrigger>
+              <TabsTrigger value="details" className="flex items-center gap-2">
+                <Package className="w-4 h-4" />
+                Details
+              </TabsTrigger>
+              <TabsTrigger value="specifications" className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                Specs
+              </TabsTrigger>
+              <TabsTrigger value="images" className="flex items-center gap-2">
+                <Image className="w-4 h-4" />
+                Images
+              </TabsTrigger>
+              <TabsTrigger value="pricing" className="flex items-center gap-2">
+                <DollarSign className="w-4 h-4" />
+                Pricing
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="basic" className="space-y-4">
+              <div>
+                <Label htmlFor="name">Product Name *</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter product name"
+                  disabled={isSubmitting}
+                />
+                {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
+              </div>
 
-          <div>
-            <Label htmlFor="shop_id">Shop *</Label>
-            <Select 
-              value={formData.shop_id} 
-              onValueChange={(value) => {
-                setFormData(prev => ({ ...prev, shop_id: value }));
-                if (errors.shop_id) {
-                  setErrors(prev => ({ ...prev, shop_id: '' }));
-                }
-              }}
-              disabled={isSubmitting}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select shop" />
-              </SelectTrigger>
-              <SelectContent>
-                {shops.map(shop => (
-                  <SelectItem key={shop.id} value={shop.id}>
-                    {shop.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.shop_id && <p className="text-sm text-destructive mt-1">{errors.shop_id}</p>}
-          </div>
-          
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Enter product description (optional)"
-              disabled={isSubmitting}
-              rows={3}
-            />
-            {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
-          </div>
+              <div>
+                <Label htmlFor="shop_id">Shop *</Label>
+                <Select 
+                  value={formData.shop_id} 
+                  onValueChange={(value) => {
+                    setFormData(prev => ({ ...prev, shop_id: value }));
+                    if (errors.shop_id) {
+                      setErrors(prev => ({ ...prev, shop_id: '' }));
+                    }
+                  }}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select shop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {shops.map(shop => (
+                      <SelectItem key={shop.id} value={shop.id}>
+                        {shop.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.shop_id && <p className="text-sm text-destructive mt-1">{errors.shop_id}</p>}
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="price">Price (PKR) *</Label>
-              <Input
-                id="price"
-                name="price"
-                type="number"
-                step="0.01"
-                min="0"
-                value={formData.price}
-                onChange={handleInputChange}
-                placeholder="0.00"
+              <ProductCategorySelector
+                value={formData.category_id}
+                onChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
                 disabled={isSubmitting}
               />
-              {errors.price && <p className="text-sm text-destructive mt-1">{errors.price}</p>}
-            </div>
+              
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Enter product description (optional)"
+                  disabled={isSubmitting}
+                  rows={4}
+                />
+                {errors.description && <p className="text-sm text-destructive mt-1">{errors.description}</p>}
+              </div>
 
-            <div>
-              <Label htmlFor="moq">MOQ</Label>
-              <Input
-                id="moq"
-                name="moq"
-                type="number"
-                min="1"
-                value={formData.moq}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-              />
-              {errors.moq && <p className="text-sm text-destructive mt-1">{errors.moq}</p>}
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="is_active"
-              checked={formData.is_active}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
-              disabled={isSubmitting}
-            />
-            <Label htmlFor="is_active">Active product (visible to buyers)</Label>
-          </div>
-          
-          <div>
-            <Label htmlFor="image">Product Image (optional, max 100KB)</Label>
-            <div className="mt-1">
-              <Input
-                id="image"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                disabled={isSubmitting}
-              />
-            </div>
-            {imagePreview && (
-              <div className="mt-2">
-                <img 
-                  src={imagePreview} 
-                  alt="Product Preview" 
-                  className="h-32 w-auto object-contain rounded-md border"
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="is_active"
+                  checked={formData.is_active}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                  disabled={isSubmitting}
+                />
+                <Label htmlFor="is_active">Active product (visible to buyers)</Label>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="details" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="brand">Brand</Label>
+                  <Input
+                    id="brand"
+                    name="brand"
+                    value={formData.brand}
+                    onChange={handleInputChange}
+                    placeholder="Enter brand name"
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="model_number">Model Number</Label>
+                  <Input
+                    id="model_number"
+                    name="model_number"
+                    value={formData.model_number}
+                    onChange={handleInputChange}
+                    placeholder="Enter model number"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="origin_country">Origin Country</Label>
+                  <Input
+                    id="origin_country"
+                    name="origin_country"
+                    value={formData.origin_country}
+                    onChange={handleInputChange}
+                    placeholder="e.g., Pakistan"
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="lead_time_days">Lead Time (Days)</Label>
+                  <Input
+                    id="lead_time_days"
+                    name="lead_time_days"
+                    type="number"
+                    min="1"
+                    value={formData.lead_time_days}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 7"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="stock_quantity">Stock Quantity</Label>
+                  <Input
+                    id="stock_quantity"
+                    name="stock_quantity"
+                    type="number"
+                    min="0"
+                    value={formData.stock_quantity}
+                    onChange={handleInputChange}
+                    placeholder="Available quantity"
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="units_per_package">Units per Package</Label>
+                  <Input
+                    id="units_per_package"
+                    name="units_per_package"
+                    type="number"
+                    min="1"
+                    value={formData.units_per_package}
+                    onChange={handleInputChange}
+                    placeholder="1"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="warranty_info">Warranty Information</Label>
+                <Textarea
+                  id="warranty_info"
+                  name="warranty_info"
+                  value={formData.warranty_info}
+                  onChange={handleInputChange}
+                  placeholder="Enter warranty details"
+                  disabled={isSubmitting}
+                  rows={3}
                 />
               </div>
-            )}
-          </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="customization_available"
+                  checked={formData.customization_available}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, customization_available: checked }))}
+                  disabled={isSubmitting}
+                />
+                <Label htmlFor="customization_available">Customization available</Label>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="specifications" className="space-y-4">
+              <ProductSpecificationFields
+                specifications={specifications}
+                onChange={setSpecifications}
+                disabled={isSubmitting}
+              />
+            </TabsContent>
+            
+            <TabsContent value="images" className="space-y-4">
+              <MultipleImageUpload
+                images={images}
+                onChange={setImages}
+                disabled={isSubmitting}
+                maxImages={5}
+              />
+            </TabsContent>
+            
+            <TabsContent value="pricing" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="price">Price (PKR) *</Label>
+                  <Input
+                    id="price"
+                    name="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    placeholder="0.00"
+                    disabled={isSubmitting}
+                  />
+                  {errors.price && <p className="text-sm text-destructive mt-1">{errors.price}</p>}
+                </div>
+
+                <div>
+                  <Label htmlFor="moq">Minimum Order Quantity (MOQ)</Label>
+                  <Input
+                    id="moq"
+                    name="moq"
+                    type="number"
+                    min="1"
+                    value={formData.moq}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                  />
+                  {errors.moq && <p className="text-sm text-destructive mt-1">{errors.moq}</p>}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="sample_available"
+                    checked={formData.sample_available}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, sample_available: checked }))}
+                    disabled={isSubmitting}
+                  />
+                  <Label htmlFor="sample_available">Sample available</Label>
+                </div>
+
+                {formData.sample_available && (
+                  <div>
+                    <Label htmlFor="sample_price">Sample Price (PKR)</Label>
+                    <Input
+                      id="sample_price"
+                      name="sample_price"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formData.sample_price}
+                      onChange={handleInputChange}
+                      placeholder="0.00"
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="package_weight">Package Weight (kg)</Label>
+                  <Input
+                    id="package_weight"
+                    name="package_weight"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={formData.package_weight}
+                    onChange={handleInputChange}
+                    placeholder="0.0"
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="packaging_type">Packaging Type</Label>
+                  <Input
+                    id="packaging_type"
+                    name="packaging_type"
+                    value={formData.packaging_type}
+                    onChange={handleInputChange}
+                    placeholder="e.g., Box, Bag, Carton"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="package_dimensions">Package Dimensions (L x W x H)</Label>
+                <Input
+                  id="package_dimensions"
+                  name="package_dimensions"
+                  value={formData.package_dimensions}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 30cm x 20cm x 10cm"
+                  disabled={isSubmitting}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
           
           <DialogFooter>
             <Button

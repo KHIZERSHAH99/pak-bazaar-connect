@@ -999,49 +999,88 @@ export type Database = {
       }
       products: {
         Row: {
+          brand: string | null
           category_id: string | null
+          certifications: string[] | null
+          colors_available: string[] | null
           created_at: string | null
+          customization_available: boolean | null
           description: string | null
           id: string
           image: string | null
           is_active: boolean
+          lead_time_days: number | null
+          model_number: string | null
           moq: number | null
           name: string
+          origin_country: string | null
+          package_dimensions: string | null
+          package_weight: number | null
+          packaging_type: string | null
           price: number
           sample_available: boolean | null
           sample_price: number | null
           shop_id: string
+          stock_quantity: number | null
+          units_per_package: number | null
           verification_status: string
+          warranty_info: string | null
         }
         Insert: {
+          brand?: string | null
           category_id?: string | null
+          certifications?: string[] | null
+          colors_available?: string[] | null
           created_at?: string | null
+          customization_available?: boolean | null
           description?: string | null
           id?: string
           image?: string | null
           is_active?: boolean
+          lead_time_days?: number | null
+          model_number?: string | null
           moq?: number | null
           name: string
+          origin_country?: string | null
+          package_dimensions?: string | null
+          package_weight?: number | null
+          packaging_type?: string | null
           price: number
           sample_available?: boolean | null
           sample_price?: number | null
           shop_id: string
+          stock_quantity?: number | null
+          units_per_package?: number | null
           verification_status?: string
+          warranty_info?: string | null
         }
         Update: {
+          brand?: string | null
           category_id?: string | null
+          certifications?: string[] | null
+          colors_available?: string[] | null
           created_at?: string | null
+          customization_available?: boolean | null
           description?: string | null
           id?: string
           image?: string | null
           is_active?: boolean
+          lead_time_days?: number | null
+          model_number?: string | null
           moq?: number | null
           name?: string
+          origin_country?: string | null
+          package_dimensions?: string | null
+          package_weight?: number | null
+          packaging_type?: string | null
           price?: number
           sample_available?: boolean | null
           sample_price?: number | null
           shop_id?: string
+          stock_quantity?: number | null
+          units_per_package?: number | null
           verification_status?: string
+          warranty_info?: string | null
         }
         Relationships: [
           {

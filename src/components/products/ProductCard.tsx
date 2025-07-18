@@ -1,173 +1,167 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, Package, Heart, ShoppingCart, Eye, Verified } from 'lucide-react';
-import { Product } from '@/lib/types';
+import { Badge } from '@/components/ui/badge';
+import { ShoppingCart, Eye, Heart } from 'lucide-react';
+import { useCart } from '@/hooks/useCart';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image?: string;
+  moq: number;
+  shop_id: string;
+  description?: string;
+  brand?: string;
+  verification_status: string;
+  shops?: {
+    id: string;
+    name: string;
+    owner_id: string;
+  };
+}
 
 interface ProductCardProps {
   product: Product;
-  showAddToCart?: boolean;
-  showFavorite?: boolean;
+  currentUserId?: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ 
-  product, 
-  showAddToCart = true, 
-  showFavorite = true 
-}) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, currentUserId }) => {
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
     e.stopPropagation();
-    // Add to cart logic here
-    console.log('Added to cart:', product.name);
-  };
-
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Toggle favorite logic here
-    console.log('Toggled favorite:', product.name);
-  };
-
-  const getProductImageSrc = (image?: string) => {
-    if (image && !image.includes('placeholder.svg')) {
-      return image;
+    
+    if (!currentUserId) {
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to add items to cart.",
+        variant: "destructive"
+      });
+      return;
     }
-    // Use a more appropriate placeholder for products
-    return `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&auto=format`;
+
+    if (product.shops?.owner_id === currentUserId) {
+      toast({
+        title: "Cannot add own product",
+        description: "You cannot add your own products to cart.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!product.shops) {
+      toast({
+        title: "Shop information missing",
+        description: "Unable to add product to cart.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    addToCart({
+      productId: product.id,
+      productName: product.name,
+      productImage: product.image,
+      shopId: product.shop_id,
+      shopName: product.shops.name,
+      price: product.price,
+      quantity: product.moq,
+      moq: product.moq
+    });
   };
+
+  const handleViewProduct = () => {
+    navigate(`/products/${product.id}`);
+  };
+
+  const isOwnProduct = product.shops?.owner_id === currentUserId;
 
   return (
-    <Link to={`/product/${product.id}`} className="block">
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-pakistani_green-200/50 h-full bg-white">
-        {/* Product Image */}
-        <div className="relative overflow-hidden">
-          <img 
-            src={getProductImageSrc(product.image)} 
-            alt={product.name} 
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              e.currentTarget.src = `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&auto=format`;
-            }}
-          />
+    <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer" onClick={handleViewProduct}>
+      <CardContent className="p-4">
+        <div className="aspect-square relative mb-4 bg-gray-100 rounded-lg overflow-hidden">
+          {product.image ? (
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              No Image
+            </div>
+          )}
           
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              className="opacity-0 group-hover:opacity-100 transition-opacity font-poppins bg-white/90 text-gray-900 hover:bg-white"
-            >
-              <Eye className="w-4 h-4 mr-1" />
-              Quick View
-            </Button>
-          </div>
-
-          {/* Top badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-1">
-            {product.categories && (
-              <Badge className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white shadow-sm font-poppins text-xs">
-                {product.categories.name}
-              </Badge>
-            )}
-            {product.verification_status === 'approved' && (
-              <Badge className="bg-green-100 text-green-800 shadow-sm">
-                <Verified className="w-3 h-3 mr-1" />
-                Verified
-              </Badge>
-            )}
-            {product.verification_status === 'pending' && (
-              <Badge className="bg-yellow-100 text-yellow-800 shadow-sm">
-                Pending
-              </Badge>
-            )}
-          </div>
-
-          {/* Favorite Button */}
-          {showFavorite && (
-            <button
-              onClick={handleToggleFavorite}
-              className="absolute top-3 right-3 bg-white/90 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
-            >
-              <Heart className="w-4 h-4 text-gray-600" />
-            </button>
+          {product.verification_status === 'approved' && (
+            <Badge variant="default" className="absolute top-2 right-2 bg-green-600">
+              Verified
+            </Badge>
           )}
         </div>
 
-        {/* Product Details */}
-        <div className="p-4 space-y-3 flex-1 flex flex-col">
-          {/* Product Name */}
-          <h3 className="font-semibold text-lg text-gray-900 group-hover:text-pakistani_green-600 transition-colors font-poppins line-clamp-2 flex-shrink-0">
-            {product.name}
-          </h3>
+        <div className="space-y-2">
+          <h3 className="font-semibold text-lg line-clamp-2">{product.name}</h3>
           
-          {/* Price */}
-          <div className="flex items-center justify-between flex-shrink-0">
-            <span className="text-2xl font-bold text-pakistani_green-600 font-poppins">
-              PKR {product.price.toLocaleString()}
+          {product.brand && (
+            <p className="text-sm text-gray-600">Brand: {product.brand}</p>
+          )}
+          
+          <div className="flex justify-between items-center">
+            <span className="text-xl font-bold text-pakistani_green-700">
+              Rs. {product.price.toLocaleString()}
             </span>
-            {product.moq && product.moq > 1 && (
-              <Badge variant="outline" className="text-xs text-gray-600 border-gray-300">
-                MOQ: {product.moq}
-              </Badge>
-            )}
+            <span className="text-sm text-gray-600">
+              MOQ: {product.moq}
+            </span>
           </div>
 
-          {/* Supplier Info */}
-          <div className="space-y-2 flex-grow">
-            {product.shops && (
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-700 font-poppins">
-                  {product.shops.name}
-                </p>
-                <div className="flex items-center text-xs text-yellow-500">
-                  <Star className="w-3 h-3 mr-1 fill-current" />
-                  <span>4.8</span>
-                </div>
-              </div>
-            )}
-            
-            {product.shops?.cities && (
-              <div className="flex items-center text-xs text-gray-500">
-                <MapPin className="w-3 h-3 mr-1" />
-                <span className="font-poppins">{product.shops.cities.name}, {product.shops.cities.province}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Description */}
-          {product.description && (
-            <p className="text-sm text-gray-600 font-poppins line-clamp-2 flex-shrink-0">
-              {product.description}
+          {product.shops && (
+            <p className="text-sm text-gray-600">
+              Shop: {product.shops.name}
             </p>
           )}
 
-          {/* Action Buttons */}
-          {showAddToCart && (
-            <div className="flex gap-2 mt-auto pt-3 flex-shrink-0">
-              <Button 
-                onClick={handleAddToCart}
-                className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins"
-                size="sm"
-              >
-                <ShoppingCart className="w-4 h-4 mr-1" />
-                Add to Cart
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="px-3 border-pakistani_green-200 text-pakistani_green-600 hover:bg-pakistani_green-50"
-              >
-                <Package className="w-4 h-4" />
-              </Button>
-            </div>
+          {product.description && (
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {product.description}
+            </p>
           )}
         </div>
-      </Card>
-    </Link>
+      </CardContent>
+
+      <CardFooter className="p-4 pt-0 flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleViewProduct();
+          }}
+        >
+          <Eye className="h-4 w-4 mr-2" />
+          View Details
+        </Button>
+
+        {!isOwnProduct && (
+          <Button
+            size="sm"
+            className="flex-1 bg-pakistani_green-700 hover:bg-pakistani_green-800"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            Add to Cart
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
   );
 };
 

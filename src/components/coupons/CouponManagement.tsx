@@ -1,319 +1,276 @@
 
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
-import { 
-  Plus, 
-  Copy, 
-  Eye, 
-  ToggleLeft, 
-  ToggleRight, 
-  TrendingUp
-} from 'lucide-react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus, Ticket, Calendar, Users, DollarSign } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  getWholesalerCoupons, 
-  createCoupon, 
-  updateCouponStatus,
-  getCouponUsageStats,
-  type Coupon 
-} from '@/lib/coupons';
+import CreateCouponDialog from './CreateCouponDialog';
 
 const CouponManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [isUsageDialogOpen, setIsUsageDialogOpen] = useState(false);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const { data: coupons = [], isLoading } = useQuery({
+  const { data: coupons = [], isLoading, refetch } = useQuery({
     queryKey: ['wholesaler-coupons'],
-    queryFn: getWholesalerCoupons,
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('wholesaler_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+    refetchInterval: 30000
   });
 
-  const createMutation = useMutation({
-    mutationFn: createCoupon,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wholesaler-coupons'] });
-      setIsCreateDialogOpen(false);
-      toast({
-        title: "Coupon created",
-        description: "Your coupon has been created successfully.",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create coupon",
-        variant: "destructive",
-      });
-    },
-  });
+  const handleCouponCreated = () => {
+    refetch();
+    setIsCreateDialogOpen(false);
+  };
 
-  const toggleStatusMutation = useMutation({
-    mutationFn: ({ couponId, isActive }: { couponId: string; isActive: boolean }) =>
-      updateCouponStatus(couponId, isActive),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wholesaler-coupons'] });
-      toast({
-        title: "Coupon updated",
-        description: "Coupon status has been updated successfully.",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update coupon",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleCreateCoupon = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const getStatusBadge = (coupon: any) => {
+    const now = new Date();
+    const validFrom = new Date(coupon.valid_from);
+    const validUntil = new Date(coupon.valid_until);
     
-    const couponData = {
-      code: (formData.get('code') as string).toUpperCase(),
-      discount_type: formData.get('discount_type') as 'percentage' | 'fixed',
-      discount_value: parseFloat(formData.get('discount_value') as string),
-      usage_limit: formData.get('usage_limit') ? parseInt(formData.get('usage_limit') as string) : undefined,
-      min_order_amount: formData.get('min_order_amount') ? parseFloat(formData.get('min_order_amount') as string) : undefined,
-      valid_from: formData.get('valid_from') as string,
-      valid_until: formData.get('valid_until') as string,
-      is_active: true,
-      wholesaler_id: '', // This will be set by the function
-    };
-
-    createMutation.mutate(couponData);
+    if (!coupon.is_active) {
+      return <Badge variant="secondary">Inactive</Badge>;
+    } else if (now < validFrom) {
+      return <Badge variant="outline">Scheduled</Badge>;
+    } else if (now > validUntil) {
+      return <Badge variant="destructive">Expired</Badge>;
+    } else {
+      return <Badge variant="default">Active</Badge>;
+    }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied!",
-      description: "Coupon code copied to clipboard",
-    });
-  };
+  const activeCoupons = coupons.filter(c => {
+    const now = new Date();
+    const validFrom = new Date(c.valid_from);
+    const validUntil = new Date(c.valid_until);
+    return c.is_active && now >= validFrom && now <= validUntil;
+  });
 
-  const formatDiscount = (coupon: Coupon) => {
-    return coupon.discount_type === 'percentage' 
-      ? `${coupon.discount_value}%` 
-      : `Rs. ${coupon.discount_value}`;
-  };
+  const expiredCoupons = coupons.filter(c => {
+    const now = new Date();
+    const validUntil = new Date(c.valid_until);
+    return now > validUntil;
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Coupon Management</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-gray-200 h-24 rounded"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="font-poppins">Coupon Management</CardTitle>
-              <p className="text-sm text-muted-foreground font-poppins">
-                Create and manage discount coupons for your customers
-              </p>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold font-poppins">Coupon Management</h2>
+        <Button
+          onClick={() => setIsCreateDialogOpen(true)}
+          className="bg-pakistani_green-700 hover:bg-pakistani_green-800"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Create Coupon
+        </Button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <Ticket className="h-8 w-8 text-blue-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Coupons</p>
+                <p className="text-2xl font-bold">{coupons.length}</p>
+              </div>
             </div>
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Coupon
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="font-poppins">Create New Coupon</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleCreateCoupon} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="code" className="font-poppins">Coupon Code</Label>
-                    <Input
-                      id="code"
-                      name="code"
-                      placeholder="e.g., SAVE20"
-                      required
-                      className="font-poppins uppercase"
-                    />
-                  </div>
+          </CardContent>
+        </Card>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="discount_type" className="font-poppins">Discount Type</Label>
-                    <Select name="discount_type" required>
-                      <SelectTrigger className="font-poppins">
-                        <SelectValue placeholder="Select discount type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="percentage">Percentage</SelectItem>
-                        <SelectItem value="fixed">Fixed Amount</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <Calendar className="h-8 w-8 text-green-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Active</p>
+                <p className="text-2xl font-bold">{activeCoupons.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="discount_value" className="font-poppins">Discount Value</Label>
-                    <Input
-                      id="discount_value"
-                      name="discount_value"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="e.g., 20 or 500"
-                      required
-                      className="font-poppins"
-                    />
-                  </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <Users className="h-8 w-8 text-purple-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Uses</p>
+                <p className="text-2xl font-bold">
+                  {coupons.reduce((sum, coupon) => sum + (coupon.used_count || 0), 0)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="valid_from" className="font-poppins">Valid From</Label>
-                      <Input
-                        id="valid_from"
-                        name="valid_from"
-                        type="datetime-local"
-                        required
-                        className="font-poppins"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="valid_until" className="font-poppins">Valid Until</Label>
-                      <Input
-                        id="valid_until"
-                        name="valid_until"
-                        type="datetime-local"
-                        required
-                        className="font-poppins"
-                      />
-                    </div>
-                  </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <DollarSign className="h-8 w-8 text-yellow-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Avg. Discount</p>
+                <p className="text-2xl font-bold">
+                  {coupons.length > 0 
+                    ? Math.round(coupons.reduce((sum, c) => sum + c.discount_value, 0) / coupons.length)
+                    : 0}%
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="usage_limit" className="font-poppins">Usage Limit (Optional)</Label>
-                    <Input
-                      id="usage_limit"
-                      name="usage_limit"
-                      type="number"
-                      min="1"
-                      placeholder="Leave empty for unlimited"
-                      className="font-poppins"
-                    />
-                  </div>
+      <Tabs defaultValue="all" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="all">All Coupons</TabsTrigger>
+          <TabsTrigger value="active">Active ({activeCoupons.length})</TabsTrigger>
+          <TabsTrigger value="expired">Expired ({expiredCoupons.length})</TabsTrigger>
+        </TabsList>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="min_order_amount" className="font-poppins">Minimum Order Amount (Optional)</Label>
-                    <Input
-                      id="min_order_amount"
-                      name="min_order_amount"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="e.g., 1000"
-                      className="font-poppins"
-                    />
-                  </div>
-
+        <TabsContent value="all">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Coupons</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {coupons.length === 0 ? (
+                <div className="text-center py-8">
+                  <Ticket className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No coupons created yet.</p>
                   <Button 
-                    type="submit" 
-                    className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
-                    disabled={createMutation.isPending}
+                    onClick={() => setIsCreateDialogOpen(true)}
+                    className="mt-4 bg-pakistani_green-700 hover:bg-pakistani_green-800"
                   >
-                    {createMutation.isPending ? 'Creating...' : 'Create Coupon'}
+                    Create Your First Coupon
                   </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse bg-gray-200 h-20 rounded"></div>
-              ))}
-            </div>
-          ) : coupons.length === 0 ? (
-            <div className="text-center py-8">
-              <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 font-poppins">No coupons created yet</p>
-              <p className="text-sm text-gray-400 font-poppins">Create your first coupon to start offering discounts</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {coupons.map((coupon) => (
-                <Card key={coupon.id} className="border-l-4 border-l-pakistani_green-500">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <code className="bg-gray-100 px-3 py-1 rounded font-mono text-lg font-bold">
-                            {coupon.code}
-                          </code>
-                          <Badge variant={coupon.is_active ? 'default' : 'secondary'}>
-                            {coupon.is_active ? 'Active' : 'Inactive'}
-                          </Badge>
-                          <Badge variant="outline">
-                            {formatDiscount(coupon)} OFF
-                          </Badge>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {coupons.map((coupon) => (
+                    <div key={coupon.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-semibold text-lg">{coupon.code}</h3>
+                          {getStatusBadge(coupon)}
                         </div>
-                        
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
-                          <div>
-                            <p className="font-medium">Used</p>
-                            <p>{coupon.used_count}{coupon.usage_limit ? `/${coupon.usage_limit}` : ''}</p>
-                          </div>
-                          <div>
-                            <p className="font-medium">Valid Until</p>
-                            <p>{new Date(coupon.valid_until).toLocaleDateString()}</p>
-                          </div>
-                          {coupon.min_order_amount && (
-                            <div>
-                              <p className="font-medium">Min. Order</p>
-                              <p>Rs. {coupon.min_order_amount}</p>
-                            </div>
-                          )}
-                        </div>
+                        <p className="text-gray-600">
+                          {coupon.discount_type === 'percentage' ? `${coupon.discount_value}% off` : `Rs. ${coupon.discount_value} off`}
+                          {coupon.min_order_amount && ` (Min. order Rs. ${coupon.min_order_amount})`}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Valid: {new Date(coupon.valid_from).toLocaleDateString()} - {new Date(coupon.valid_until).toLocaleDateString()}
+                        </p>
                       </div>
                       
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(coupon.code)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => 
-                            toggleStatusMutation.mutate({
-                              couponId: coupon.id,
-                              isActive: !coupon.is_active
-                            })
-                          }
-                          disabled={toggleStatusMutation.isPending}
-                        >
-                          {coupon.is_active ? 
-                            <ToggleRight className="h-4 w-4 text-green-600" /> : 
-                            <ToggleLeft className="h-4 w-4 text-gray-400" />
-                          }
-                        </Button>
+                      <div className="text-right">
+                        <p className="font-semibold">
+                          Used: {coupon.used_count || 0}
+                          {coupon.usage_limit && ` / ${coupon.usage_limit}`}
+                        </p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="active">
+          <Card>
+            <CardHeader>
+              <CardTitle>Active Coupons</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {activeCoupons.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No active coupons.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {activeCoupons.map((coupon) => (
+                    <div key={coupon.id} className="flex items-center justify-between p-4 border rounded-lg border-green-200 bg-green-50">
+                      <div>
+                        <h3 className="font-semibold text-lg">{coupon.code}</h3>
+                        <p className="text-gray-600">
+                          {coupon.discount_type === 'percentage' ? `${coupon.discount_value}% off` : `Rs. ${coupon.discount_value} off`}
+                        </p>
+                      </div>
+                      <Badge variant="default">Active</Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="expired">
+          <Card>
+            <CardHeader>
+              <CardTitle>Expired Coupons</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {expiredCoupons.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No expired coupons.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {expiredCoupons.map((coupon) => (
+                    <div key={coupon.id} className="flex items-center justify-between p-4 border rounded-lg border-red-200 bg-red-50">
+                      <div>
+                        <h3 className="font-semibold text-lg">{coupon.code}</h3>
+                        <p className="text-gray-600">
+                          {coupon.discount_type === 'percentage' ? `${coupon.discount_value}% off` : `Rs. ${coupon.discount_value} off`}
+                        </p>
+                      </div>
+                      <Badge variant="destructive">Expired</Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <CreateCouponDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        onCouponCreated={handleCouponCreated}
+      />
     </div>
   );
 };

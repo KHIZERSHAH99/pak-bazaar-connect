@@ -79,7 +79,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ email, role, onLogout, getRoleBadge
         </DropdownMenuItem>
         {role === 'wholesaler' && (
           <DropdownMenuItem asChild>
-            <Link to="/analytics" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
+            <Link to="/dashboard/analytics" className="cursor-pointer flex items-center gap-3 font-poppins text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300">
               <BarChart className="h-4 w-4" />
               Analytics
             </Link>

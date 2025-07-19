@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,15 @@ import { Heart, Search, Package, Store, Filter, Grid, List } from 'lucide-react'
 const Favorites: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const navigate = useNavigate();
+
+  const handleBrowseProducts = () => {
+    navigate('/products');
+  };
+
+  const handleBrowseShops = () => {
+    navigate('/dashboard/browse-shops');
+  };
 
   return (
     <ProtectedRoute>
@@ -78,11 +88,17 @@ const Favorites: React.FC = () => {
                       </p>
                     </div>
                     <div className="flex justify-center gap-3">
-                      <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+                      <Button 
+                        className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                        onClick={handleBrowseProducts}
+                      >
                         <Package className="w-4 h-4 mr-2" />
                         Browse Products
                       </Button>
-                      <Button variant="outline">
+                      <Button 
+                        variant="outline"
+                        onClick={handleBrowseShops}
+                      >
                         <Store className="w-4 h-4 mr-2" />
                         Browse Shops
                       </Button>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -24,6 +23,7 @@ import ShippingPolicy from '@/pages/ShippingPolicy';
 import Checkout from '@/pages/Checkout';
 import Favorites from '@/pages/Favorites';
 import Messages from '@/pages/Messages';
+import Analytics from '@/pages/Analytics';
 
 // Dashboard pages
 import DashboardSellerDashboard from '@/pages/dashboard/DashboardSellerDashboard';
@@ -82,6 +82,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/analytics" element={<Analytics />} />
 
         {/* Protected routes */}
         <Route path="/dashboard" element={<Dashboard />} />

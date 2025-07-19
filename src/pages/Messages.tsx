@@ -22,6 +22,7 @@ import {
 const Messages: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const [newMessage, setNewMessage] = useState('');
 
   // Mock conversations for demonstration
   const conversations = [
@@ -44,6 +45,13 @@ const Messages: React.FC = () => {
       type: 'supplier'
     }
   ];
+
+  const handleSendMessage = () => {
+    if (newMessage.trim()) {
+      console.log('Sending message:', newMessage);
+      setNewMessage('');
+    }
+  };
 
   return (
     <ProtectedRoute>
@@ -140,7 +148,7 @@ const Messages: React.FC = () => {
             </Card>
 
             {/* Chat Area */}
-            <Card className="lg:col-span-2">
+            <Card className="lg:col-span-2 flex flex-col">
               {selectedChat ? (
                 <>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
@@ -166,8 +174,10 @@ const Messages: React.FC = () => {
                     </div>
                   </CardHeader>
                   <Separator />
-                  <CardContent className="flex-1 p-4">
-                    <div className="space-y-4 mb-4">
+                  
+                  {/* Messages area - flex-1 to take remaining space */}
+                  <CardContent className="flex-1 flex flex-col p-4">
+                    <div className="flex-1 space-y-4 mb-4 overflow-y-auto">
                       {/* Sample messages */}
                       <div className="flex justify-start">
                         <div className="bg-muted p-3 rounded-lg max-w-xs">
@@ -188,11 +198,24 @@ const Messages: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 pt-4 border-t">
-                      <Input placeholder="Type a message..." className="flex-1" />
-                      <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
-                        Send
-                      </Button>
+                    
+                    {/* Input area - fixed at bottom */}
+                    <div className="border-t pt-4">
+                      <div className="flex items-center gap-2">
+                        <Input 
+                          placeholder="Type a message..." 
+                          className="flex-1" 
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                        />
+                        <Button 
+                          className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                          onClick={handleSendMessage}
+                        >
+                          Send
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </>

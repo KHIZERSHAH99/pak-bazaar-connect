@@ -86,7 +86,7 @@ const EnhancedUserProfile: React.FC = () => {
 
             {/* Quick Stats Cards */}
             <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="text-center">
+              <Card className="text-center py-[50px] mx-0 px-0 my-0">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-center mb-4">
                     <div className="bg-blue-100 dark:bg-blue-800/50 p-3 rounded-full">
@@ -100,7 +100,7 @@ const EnhancedUserProfile: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card className="text-center">
+              <Card className="text-center py-[50px]">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-center mb-4">
                     <div className="bg-green-100 dark:bg-green-800/50 p-3 rounded-full">
@@ -114,7 +114,7 @@ const EnhancedUserProfile: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card className="text-center">
+              <Card className="text-center mx-0 my-0 py-[50px]">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-center mb-4">
                     <div className="bg-orange-100 dark:bg-orange-800/50 p-3 rounded-full">

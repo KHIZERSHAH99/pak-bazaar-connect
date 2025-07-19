@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Store, Package, CreditCard, MessageSquare, BarChart3, Ticket } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import ShopsManagement from './ShopsManagement';
 import ProductsManagement from './ProductsManagement';
 import AdsManagement from './AdsManagement';
@@ -9,9 +11,17 @@ import WholesalerOrders from './WholesalerOrders';
 import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
 import CouponManagement from '@/components/coupons/CouponManagement';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
+
 const WholesalerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('shops');
-  return <div className="space-y-6">
+  const navigate = useNavigate();
+
+  const handleAdsClick = () => {
+    navigate('/dashboard/ads');
+  };
+
+  return (
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 font-poppins">Wholesaler Dashboard</h1>
       </div>
@@ -32,7 +42,11 @@ const WholesalerDashboard: React.FC = () => {
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Orders
               </TabsTrigger>
-              <TabsTrigger value="ads" className="font-poppins">
+              <TabsTrigger 
+                value="ads" 
+                className="font-poppins"
+                onClick={handleAdsClick}
+              >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Ads
               </TabsTrigger>
@@ -76,6 +90,8 @@ const WholesalerDashboard: React.FC = () => {
           <NotificationCenter />
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default WholesalerDashboard;

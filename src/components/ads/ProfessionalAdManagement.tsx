@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -408,7 +407,7 @@ const ProfessionalAdManagement: React.FC = () => {
       <EnhancedCreateAdDialog 
         isOpen={showCreateDialog}
         onClose={() => setShowCreateDialog(false)}
-        onSuccess={() => {
+        onAdCreated={() => {
           setShowCreateDialog(false);
           refetch();
         }}

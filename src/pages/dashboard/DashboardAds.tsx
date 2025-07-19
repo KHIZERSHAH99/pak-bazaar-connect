@@ -2,13 +2,13 @@
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import AdsManagement from '@/components/dashboard/AdsManagement';
+import AdManagementDashboard from '@/components/ads/AdManagementDashboard';
 
 const DashboardAds: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={['wholesaler']}>
       <DashboardLayout>
-        <AdsManagement />
+        <AdManagementDashboard />
       </DashboardLayout>
     </ProtectedRoute>
   );

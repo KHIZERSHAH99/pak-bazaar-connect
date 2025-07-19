@@ -22,6 +22,8 @@ import TermsOfService from '@/pages/TermsOfService';
 import RefundPolicy from '@/pages/RefundPolicy';
 import ShippingPolicy from '@/pages/ShippingPolicy';
 import Checkout from '@/pages/Checkout';
+import Favorites from '@/pages/Favorites';
+import Messages from '@/pages/Messages';
 
 // Dashboard pages
 import DashboardSellerDashboard from '@/pages/dashboard/DashboardSellerDashboard';
@@ -77,8 +79,8 @@ const AppRoutes: React.FC = () => {
         <Route path="/shipping-policy" element={<ShippingPolicy />} />
         
         {/* Additional routes */}
-        <Route path="/favorites" element={<div className="p-8 text-center"><h1 className="text-2xl font-bold">Favorites</h1><p>Your favorite products will appear here.</p></div>} />
-        <Route path="/messages" element={<div className="p-8 text-center"><h1 className="text-2xl font-bold">Messages</h1><p>Your messages will appear here.</p></div>} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/messages" element={<Messages />} />
         <Route path="/checkout" element={<Checkout />} />
 
         {/* Protected routes */}

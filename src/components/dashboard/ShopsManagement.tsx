@@ -46,7 +46,7 @@ const ShopsManagement: React.FC = () => {
   }
   return <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 font-poppins">My Shops</h1>
+        <h1 className="text-3xl font-bold font-poppins text-gray-900">My Shops</h1>
         <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins" onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Create Shop

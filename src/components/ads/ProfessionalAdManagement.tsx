@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { 
-  getAdsByWholesaler, 
+  getWholesalerAds, 
   pauseAd, 
   resumeAd,
   type Ad 
@@ -27,15 +27,20 @@ import {
   Filter,
   Download
 } from 'lucide-react';
+import EnhancedCreateAdDialog from './EnhancedCreateAdDialog';
+import AdAnalyticsDashboard from './AdAnalyticsDashboard';
 
 const ProfessionalAdManagement: React.FC = () => {
   const { toast } = useToast();
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   const { data: ads = [], isLoading, refetch } = useQuery({
     queryKey: ['wholesaler-ads'],
-    queryFn: getAdsByWholesaler,
+    queryFn: getWholesalerAds,
   });
 
   const handlePauseAd = async (adId: string) => {
@@ -78,6 +83,30 @@ const ProfessionalAdManagement: React.FC = () => {
     }
   };
 
+  const handleExport = () => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + "Campaign,Status,Spend,Orders,Created\n"
+      + ads.map(ad => `${ad.headline},${ad.status},${ad.current_spend || 0},${ad.total_orders || 0},${new Date(ad.created_at).toLocaleDateString()}`).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "ad_campaigns.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Export Complete",
+      description: "Your campaign data has been exported successfully.",
+    });
+  };
+
+  const handleViewDetails = (ad: Ad) => {
+    setSelectedAd(ad);
+    setShowAnalytics(true);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800 border-green-200';
@@ -86,6 +115,12 @@ const ProfessionalAdManagement: React.FC = () => {
       case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const getImageUrl = (imagePath: string | undefined) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `https://sxzxyuxtqqflahzncfre.supabase.co/storage/v1/object/public/ad_images/${imagePath}`;
   };
 
   // Calculate summary stats
@@ -124,15 +159,18 @@ const ProfessionalAdManagement: React.FC = () => {
           <p className="text-gray-600 font-poppins">Monitor and optimize your advertising campaigns</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => toast({ title: "Filter", description: "Filtering functionality coming soon!" })}>
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+          <Button 
+            className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+            onClick={() => setShowCreateDialog(true)}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Create Campaign
           </Button>
@@ -232,7 +270,10 @@ const ProfessionalAdManagement: React.FC = () => {
               <Target className="h-16 w-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-700 font-poppins mb-2">No campaigns yet</h3>
               <p className="text-gray-500 font-poppins mb-6">Create your first advertising campaign to start promoting your products</p>
-              <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+              <Button 
+                className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                onClick={() => setShowCreateDialog(true)}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Campaign
               </Button>
@@ -247,9 +288,12 @@ const ProfessionalAdManagement: React.FC = () => {
                         {ad.image && (
                           <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
                             <img 
-                              src={ad.image} 
+                              src={getImageUrl(ad.image)} 
                               alt={ad.headline}
                               className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = "https://via.placeholder.com/64x64?text=AD";
+                              }}
                             />
                           </div>
                         )}
@@ -336,6 +380,7 @@ const ProfessionalAdManagement: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         className="text-pakistani_green-600 hover:text-pakistani_green-700"
+                        onClick={() => handleViewDetails(ad)}
                       >
                         <Eye className="h-4 w-4 mr-1" />
                         View Details
@@ -345,6 +390,7 @@ const ProfessionalAdManagement: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         className="text-gray-600 hover:text-gray-700"
+                        onClick={() => toast({ title: "Settings", description: "Campaign settings coming soon!" })}
                       >
                         <Settings className="h-4 w-4 mr-1" />
                         Settings
@@ -357,6 +403,23 @@ const ProfessionalAdManagement: React.FC = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Create Ad Dialog */}
+      <EnhancedCreateAdDialog 
+        isOpen={showCreateDialog}
+        onClose={() => setShowCreateDialog(false)}
+        onSuccess={() => {
+          setShowCreateDialog(false);
+          refetch();
+        }}
+      />
+
+      {/* Analytics Dashboard */}
+      <AdAnalyticsDashboard 
+        isOpen={showAnalytics}
+        onClose={() => setShowAnalytics(false)}
+        ad={selectedAd}
+      />
     </div>
   );
 };

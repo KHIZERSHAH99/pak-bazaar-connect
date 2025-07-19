@@ -28,7 +28,7 @@ export const createAd = async (adData: AdCreateRequest): Promise<Ad> => {
         throw new Error('Failed to upload ad image');
       }
 
-      imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/ad_images/${fileName}`;
+      imageUrl = fileName; // Store just the filename, not the full URL
     }
 
     // Create ad record
@@ -39,7 +39,11 @@ export const createAd = async (adData: AdCreateRequest): Promise<Ad> => {
           wholesaler_id: user.id,
           headline: adData.headline,
           image: imageUrl,
-          status: 'pending'
+          status: 'pending',
+          current_spend: 0,
+          total_orders: 0,
+          campaign_start_date: new Date().toISOString(),
+          is_auto_stopped: false
         }
       ])
       .select()
@@ -101,7 +105,7 @@ export const getActiveAds = async (limit = 10): Promise<Ad[]> => {
   }
 };
 
-export const updateAdStatus = async (adId: string, status: 'approved' | 'rejected' | 'active'): Promise<Ad> => {
+export const updateAdStatus = async (adId: string, status: 'approved' | 'rejected' | 'active' | 'paused'): Promise<Ad> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
 
@@ -171,7 +175,7 @@ export const getAdsByWholesaler = getWholesalerAds;
 
 // Pause ad (set to paused status)
 export const pauseAd = async (adId: string): Promise<Ad> => {
-  return updateAdStatus(adId, 'rejected'); // Using rejected as paused for now
+  return updateAdStatus(adId, 'paused');
 };
 
 // Resume ad (set to active status)

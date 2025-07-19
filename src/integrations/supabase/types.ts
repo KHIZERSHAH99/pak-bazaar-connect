@@ -16,27 +16,45 @@ export type Database = {
     Tables: {
       ads: {
         Row: {
+          budget_cap: number | null
+          campaign_end_date: string | null
+          campaign_start_date: string | null
           created_at: string | null
+          current_spend: number | null
           headline: string
           id: string
           image: string | null
+          is_auto_stopped: boolean | null
           status: string
+          total_orders: number | null
           wholesaler_id: string
         }
         Insert: {
+          budget_cap?: number | null
+          campaign_end_date?: string | null
+          campaign_start_date?: string | null
           created_at?: string | null
+          current_spend?: number | null
           headline: string
           id?: string
           image?: string | null
+          is_auto_stopped?: boolean | null
           status?: string
+          total_orders?: number | null
           wholesaler_id: string
         }
         Update: {
+          budget_cap?: number | null
+          campaign_end_date?: string | null
+          campaign_start_date?: string | null
           created_at?: string | null
+          current_spend?: number | null
           headline?: string
           id?: string
           image?: string | null
+          is_auto_stopped?: boolean | null
           status?: string
+          total_orders?: number | null
           wholesaler_id?: string
         }
         Relationships: []
@@ -1247,42 +1265,6 @@ export type Database = {
           id?: string
           requested_role?: string
           status?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      role_switch_history: {
-        Row: {
-          approved_at: string | null
-          approved_by: string | null
-          from_role: string
-          id: string
-          notes: string | null
-          requires_approval: boolean | null
-          switched_at: string | null
-          to_role: string
-          user_id: string
-        }
-        Insert: {
-          approved_at?: string | null
-          approved_by?: string | null
-          from_role: string
-          id?: string
-          notes?: string | null
-          requires_approval?: boolean | null
-          switched_at?: string | null
-          to_role: string
-          user_id: string
-        }
-        Update: {
-          approved_at?: string | null
-          approved_by?: string | null
-          from_role?: string
-          id?: string
-          notes?: string | null
-          requires_approval?: boolean | null
-          switched_at?: string | null
-          to_role?: string
           user_id?: string
         }
         Relationships: []

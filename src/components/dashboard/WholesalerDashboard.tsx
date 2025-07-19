@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Store, Package, CreditCard, MessageSquare, BarChart3, Ticket } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import ShopsManagement from './ShopsManagement';
 import ProductsManagement from './ProductsManagement';
 import AdsManagement from './AdsManagement';
@@ -14,11 +13,6 @@ import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const WholesalerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('shops');
-  const navigate = useNavigate();
-
-  const handleAdsClick = () => {
-    navigate('/dashboard/ads');
-  };
 
   return (
     <div className="space-y-6">
@@ -42,11 +36,7 @@ const WholesalerDashboard: React.FC = () => {
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Orders
               </TabsTrigger>
-              <TabsTrigger 
-                value="ads" 
-                className="font-poppins"
-                onClick={handleAdsClick}
-              >
+              <TabsTrigger value="ads" className="font-poppins">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Ads
               </TabsTrigger>

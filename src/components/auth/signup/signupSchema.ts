@@ -9,9 +9,7 @@ export const formSchema = z.object({
   businessType: z.enum(['Manufacturer', 'Wholesaler', 'Distributor', 'Retailer', 'Other']),
   address: z.string().min(10, 'Please enter your complete business address'),
   city: z.string().min(2, 'Please enter a valid city name'),
-  postalCode: z.string().regex(/^\d{5}$/, 'Postal code must be exactly 5 digits'),
   industry: z.string().optional(),
-  yearsInBusiness: z.enum(['Less than 1 year', '1-3 years', '3-5 years', '5+ years']).optional(),
   contactName: z.string().min(3, 'Contact name must be at least 3 characters'),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",

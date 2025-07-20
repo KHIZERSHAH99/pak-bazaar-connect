@@ -165,27 +165,40 @@ const CouponManagement: React.FC = () => {
   };
 
   const getStatusBadge = (coupon: Coupon) => {
-    const now = new Date();
-    const validFrom = new Date(coupon.valid_from);
-    const validUntil = new Date(coupon.valid_until);
-    
     if (!coupon.is_active) {
       return <Badge variant="destructive">Deleted</Badge>;
     }
     
-    if (now < validFrom) {
-      return <Badge variant="secondary">Scheduled</Badge>;
+    if (!coupon.valid_from || !coupon.valid_until) {
+      return <Badge variant="outline">Invalid Dates</Badge>;
     }
-    
-    if (now > validUntil) {
-      return <Badge variant="outline">Expired</Badge>;
+
+    try {
+      const now = new Date();
+      const validFrom = new Date(coupon.valid_from);
+      const validUntil = new Date(coupon.valid_until);
+      
+      if (isNaN(validFrom.getTime()) || isNaN(validUntil.getTime())) {
+        return <Badge variant="outline">Invalid Dates</Badge>;
+      }
+      
+      if (now < validFrom) {
+        return <Badge variant="secondary">Scheduled</Badge>;
+      }
+      
+      if (now > validUntil) {
+        return <Badge variant="outline">Expired</Badge>;
+      }
+      
+      if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
+        return <Badge variant="outline">Used Up</Badge>;
+      }
+      
+      return <Badge className="bg-green-100 text-green-800">Active</Badge>;
+    } catch (error) {
+      console.error('Error parsing coupon dates:', error);
+      return <Badge variant="outline">Error</Badge>;
     }
-    
-    if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
-      return <Badge variant="outline">Used Up</Badge>;
-    }
-    
-    return <Badge className="bg-green-100 text-green-800">Active</Badge>;
   };
 
   const activeCoupons = coupons.filter(c => c.is_active);
@@ -441,18 +454,18 @@ const CouponManagement: React.FC = () => {
                               {coupon.min_order_amount ? `₨${coupon.min_order_amount}` : 'None'}
                             </p>
                           </div>
-                          <div>
-                            <p className="text-sm text-gray-600 font-poppins">Valid From</p>
-                            <p className="text-lg font-semibold text-gray-900 font-poppins">
-                              {format(new Date(coupon.valid_from), 'MMM dd')}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-600 font-poppins">Expires</p>
-                            <p className="text-lg font-semibold text-gray-900 font-poppins">
-                              {format(new Date(coupon.valid_until), 'MMM dd')}
-                            </p>
-                          </div>
+                           <div>
+                             <p className="text-sm text-gray-600 font-poppins">Valid From</p>
+                             <p className="text-lg font-semibold text-gray-900 font-poppins">
+                               {coupon.valid_from ? format(new Date(coupon.valid_from), 'MMM dd') : 'N/A'}
+                             </p>
+                           </div>
+                           <div>
+                             <p className="text-sm text-gray-600 font-poppins">Expires</p>
+                             <p className="text-lg font-semibold text-gray-900 font-poppins">
+                               {coupon.valid_until ? format(new Date(coupon.valid_until), 'MMM dd') : 'N/A'}
+                             </p>
+                           </div>
                         </div>
                       </div>
                       

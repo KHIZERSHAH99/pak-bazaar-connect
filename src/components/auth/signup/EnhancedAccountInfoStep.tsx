@@ -40,20 +40,57 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
 
       try {
         setPhoneStatus('checking');
-        // For now, assume phone is available (simplified validation)
-        setPhoneStatus('available');
-        onPhoneBlocked?.(false);
-        form.clearErrors('phoneNumber');
+        const exists = await checkPhoneExists(debouncedPhone);
+        
+        if (exists) {
+          setPhoneStatus('blocked');
+          onPhoneBlocked?.(true);
+          form.setError('phoneNumber', {
+            type: 'manual',
+            message: 'This phone number is already registered. Please use a different phone number.'
+          });
+        } else {
+          setPhoneStatus('available');
+          onPhoneBlocked?.(false);
+          form.clearErrors('phoneNumber');
+        }
       } catch (error) {
         console.error('Phone check error:', error);
         setPhoneStatus('error');
         onPhoneBlocked?.(false);
+        // Don't show error to user, just continue
       }
     };
 
     checkPhone();
   }, [debouncedPhone, form, onPhoneBlocked]);
 
+  // Password strength validation
+  const getPasswordStrength = (password: string) => {
+    if (!password) return { strength: 0, message: '' };
+    
+    let strength = 0;
+    let issues = [];
+    
+    if (password.length >= 8) strength++;
+    else issues.push('at least 8 characters');
+    
+    if (/[A-Z]/.test(password)) strength++;
+    else issues.push('uppercase letter');
+    
+    if (/[a-z]/.test(password)) strength++;
+    else issues.push('lowercase letter');
+    
+    if (/\d/.test(password)) strength++;
+    else issues.push('number');
+    
+    return {
+      strength,
+      message: issues.length > 0 ? `Missing: ${issues.join(', ')}` : 'Strong password'
+    };
+  };
+
+  const passwordStrength = getPasswordStrength(password || '');
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
 
   return (
@@ -138,7 +175,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
               <div className="relative">
                 <Input 
                   type={showPassword ? "text" : "password"} 
-                  placeholder="Create a password (minimum 6 characters)" 
+                  placeholder="Create a strong password" 
                   disabled={isLoading} 
                   className="font-poppins pr-10 bg-background"
                   {...field} 
@@ -157,10 +194,31 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
                 </button>
               </div>
             </FormControl>
-            {password && password.length < 6 && (
-              <p className="text-xs text-red-600 font-poppins">
-                Password must be at least 6 characters long
-              </p>
+            {password && (
+              <div className="text-xs font-poppins">
+                <div className="flex gap-1 mb-1">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className={`h-1 w-full rounded ${
+                        i <= passwordStrength.strength
+                          ? passwordStrength.strength <= 2
+                            ? 'bg-red-500'
+                            : passwordStrength.strength === 3
+                            ? 'bg-yellow-500'
+                            : 'bg-green-500'
+                          : 'bg-gray-200'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <p className={`${
+                  passwordStrength.strength <= 2 ? 'text-red-600' :
+                  passwordStrength.strength === 3 ? 'text-yellow-600' : 'text-green-600'
+                }`}>
+                  {passwordStrength.message}
+                </p>
+              </div>
             )}
             <FormMessage />
           </FormItem>

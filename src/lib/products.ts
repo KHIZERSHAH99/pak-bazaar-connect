@@ -92,7 +92,6 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
         categories!fk_products_category_id(id, name, description)
       `)
       .eq('shop_id', shopId)
-      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -114,23 +113,6 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
       throw new Error('User not authenticated');
     }
 
-    // Get user's shops first
-    const { data: userShops, error: shopsError } = await supabase
-      .from('shops')
-      .select('id')
-      .eq('owner_id', user.id);
-
-    if (shopsError) {
-      console.error('Error fetching user shops:', shopsError);
-      throw shopsError;
-    }
-
-    if (!userShops || userShops.length === 0) {
-      return [];
-    }
-
-    const shopIds = userShops.map(shop => shop.id);
-
     const { data, error } = await supabase
       .from('products')
       .select(`
@@ -138,8 +120,7 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
         shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
         categories!fk_products_category_id(id, name, description)
       `)
-      .in('shop_id', shopIds)
-      .eq('is_active', true)
+      .eq('shops.owner_id', user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -255,7 +236,6 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
         categories!fk_products_category_id(id, name, description)
       `)
       .eq('is_active', true)
-      .eq('verification_status', 'approved')
       .order('created_at', { ascending: false })
       .limit(limit);
 

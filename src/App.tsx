@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContextFixed";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ThemeProvider } from "next-themes";
 import AppErrorBoundary from "@/components/ui/AppErrorBoundary";
 import AuthErrorBoundary from "@/components/auth/AuthErrorBoundary";
 import AppRoutes from "@/routes/AppRoutes";
@@ -31,7 +31,13 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
+      <ThemeProvider 
+        attribute="class" 
+        defaultTheme="light" 
+        enableSystem
+        disableTransitionOnChange={false}
+        storageKey="pak-bazaar-theme"
+      >
         <LanguageProvider>
           <TooltipProvider>
             <AppErrorBoundary>

@@ -27,7 +27,9 @@ export const usePhoneSignupForm = () => {
       businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
       address: '',
       city: '',
+      postalCode: '',
       industry: '',
+      yearsInBusiness: '1-3 years',
       contactName: '',
     }
   });
@@ -48,7 +50,7 @@ export const usePhoneSignupForm = () => {
     const stepFields = {
       1: [],
       2: ['phoneNumber', 'password', 'confirmPassword'],
-      3: ['businessName', 'businessType', 'address', 'city', 'contactName'],
+      3: ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName'],
       4: []
     };
     
@@ -78,6 +80,7 @@ export const usePhoneSignupForm = () => {
   const nextStep = async () => {
     console.log('NextStep called, current step:', currentStep, 'selected role:', selectedRole);
     
+    // Block progression if phone is blocked
     if (currentStep === 2 && isPhoneBlocked) {
       toast({
         title: 'Phone Number Already Registered',
@@ -88,15 +91,18 @@ export const usePhoneSignupForm = () => {
       return;
     }
     
+    // Validate current step
     const isValid = await validateCurrentStep();
     if (!isValid) return;
     
+    // If we're on the final step, proceed to submission
     if (currentStep === totalSteps) {
       console.log('On final step, triggering form submission');
       await onSubmit(form.getValues());
       return;
     }
     
+    // Otherwise, move to next step
     if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
       setErrorMessage(null);
@@ -176,6 +182,7 @@ export const usePhoneSignupForm = () => {
         description: 'Please wait while we set up your account...',
       });
       
+      // Create a temporary email using phone number for Supabase auth
       const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
       
       const { data, error } = await supabase.auth.signUp({
@@ -190,7 +197,9 @@ export const usePhoneSignupForm = () => {
             business_name: values.businessName,
             address: values.address,
             city: values.city,
+            postal_code: values.postalCode,
             industry: values.industry || '',
+            years_in_business: values.yearsInBusiness || '',
             business_type: values.businessType
           }
         }

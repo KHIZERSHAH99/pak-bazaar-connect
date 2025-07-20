@@ -21,25 +21,6 @@ const EnhancedBusinessInfoStep: React.FC<EnhancedBusinessInfoStepProps> = ({ for
         <p className="text-gray-600 font-poppins mt-2">Tell us about your wholesale business</p>
       </div>
 
-      <FormField
-        control={form.control}
-        name="contactName"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="font-poppins">Contact Person Name *</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Full name of primary contact person"
-                disabled={isLoading}
-                className="font-poppins"
-                {...field}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
           control={form.control}
@@ -105,45 +86,112 @@ const EnhancedBusinessInfoStep: React.FC<EnhancedBusinessInfoStepProps> = ({ for
         )}
       />
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="city"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-poppins">City *</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="e.g. Karachi, Lahore, Islamabad"
+                  disabled={isLoading}
+                  className="font-poppins"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="postalCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-poppins">Postal Code *</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="e.g. 75500"
+                  disabled={isLoading}
+                  className="font-poppins"
+                  maxLength={5}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="industry"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-poppins">Industry</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                <FormControl>
+                  <SelectTrigger className="font-poppins">
+                    <SelectValue placeholder="Select your industry" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {industries.map((industry) => (
+                    <SelectItem key={industry} value={industry}>
+                      {industry}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="yearsInBusiness"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="font-poppins">Years in Business</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                <FormControl>
+                  <SelectTrigger className="font-poppins">
+                    <SelectValue placeholder="Select experience" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Less than 1 year">Less than 1 year</SelectItem>
+                  <SelectItem value="1-3 years">1-3 years</SelectItem>
+                  <SelectItem value="3-5 years">3-5 years</SelectItem>
+                  <SelectItem value="5+ years">5+ years</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
       <FormField
         control={form.control}
-        name="city"
+        name="contactName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="font-poppins">City *</FormLabel>
+            <FormLabel className="font-poppins">Contact Person Name *</FormLabel>
             <FormControl>
               <Input
-                placeholder="e.g. Karachi, Lahore, Islamabad"
+                placeholder="Full name of primary contact person"
                 disabled={isLoading}
                 className="font-poppins"
                 {...field}
               />
             </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name="industry"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="font-poppins">Industry</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
-              <FormControl>
-                <SelectTrigger className="font-poppins">
-                  <SelectValue placeholder="Select your industry" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {industries.map((industry) => (
-                  <SelectItem key={industry} value={industry}>
-                    {industry}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
             <FormMessage />
           </FormItem>
         )}

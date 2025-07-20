@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,9 +25,7 @@ export const useSignupForm = () => {
       businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
       address: '',
       city: '',
-      postalCode: '',
       industry: '',
-      yearsInBusiness: '1-3 years',
       contactName: '',
     }
   });
@@ -48,13 +45,12 @@ export const useSignupForm = () => {
   const nextStep = async () => {
     console.log('NextStep called, current step:', currentStep, 'selected role:', selectedRole);
     
-    // Define required fields for each step based on role
     const stepFields = {
       1: [],
       2: ['phoneNumber', 'password', 'confirmPassword'],
       3: selectedRole === 'seller' 
-        ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName']
-        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName'],
+        ? ['businessName', 'businessType', 'address', 'city', 'contactName']
+        : ['businessName', 'businessType', 'address', 'city', 'contactName'],
       4: []
     };
     
@@ -69,7 +65,6 @@ export const useSignupForm = () => {
         const errors = form.formState.errors;
         console.log('Validation errors:', errors);
         
-        // Show validation error toast
         const errorFields = Object.keys(errors);
         toast({
           title: 'Validation Error',
@@ -82,14 +77,12 @@ export const useSignupForm = () => {
       }
     }
     
-    // If we're on the final step, proceed to submission
     if (currentStep === totalSteps) {
       console.log('On final step, triggering form submission');
       form.handleSubmit(onSubmit)();
       return;
     }
     
-    // Otherwise, move to next step
     if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
       setErrorMessage(null);
@@ -109,7 +102,6 @@ export const useSignupForm = () => {
   const handleRoleSelect = (role: UserRole) => {
     console.log('Role selected:', role);
     setSelectedRole(role);
-    // Update business type default based on role
     const defaultBusinessType = role === 'seller' ? 'Retailer' : 'Wholesaler';
     form.setValue('businessType', defaultBusinessType as any);
     console.log('Set default business type to:', defaultBusinessType);
@@ -119,7 +111,6 @@ export const useSignupForm = () => {
     console.log('Form submission started for role:', selectedRole);
     console.log('Form values:', values);
     
-    // Validate we're on the final step
     if (currentStep !== totalSteps) {
       console.log('Not on final step, current:', currentStep, 'total:', totalSteps);
       toast({
@@ -136,13 +127,11 @@ export const useSignupForm = () => {
     try {
       console.log('Calling signUp with:', values.phoneNumber, selectedRole);
       
-      // Show loading toast
       toast({
         title: 'Creating Account',
         description: 'Please wait while we set up your account...',
       });
       
-      // Create a temporary email using phone number for Supabase auth
       const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
       
       await signUp(tempEmail, values.password, selectedRole);

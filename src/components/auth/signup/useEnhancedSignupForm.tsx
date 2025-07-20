@@ -27,9 +27,7 @@ export const useEnhancedSignupForm = () => {
       businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
       address: '',
       city: '',
-      postalCode: '',
       industry: '',
-      yearsInBusiness: '1-3 years',
       contactName: '',
     }
   });
@@ -51,8 +49,8 @@ export const useEnhancedSignupForm = () => {
       1: [],
       2: ['phoneNumber', 'password', 'confirmPassword'],
       3: selectedRole === 'seller' 
-        ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName']
-        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'industry'],
+        ? ['businessName', 'businessType', 'address', 'city', 'contactName']
+        : ['businessName', 'businessType', 'address', 'city', 'contactName', 'industry'],
       4: []
     };
     
@@ -82,7 +80,6 @@ export const useEnhancedSignupForm = () => {
   const nextStep = async () => {
     console.log('NextStep called, current step:', currentStep, 'selected role:', selectedRole);
     
-    // Block progression if phone is blocked
     if (currentStep === 2 && isPhoneBlocked) {
       toast({
         title: 'Phone Already Registered',
@@ -93,18 +90,15 @@ export const useEnhancedSignupForm = () => {
       return;
     }
     
-    // Validate current step
     const isValid = await validateCurrentStep();
     if (!isValid) return;
     
-    // If we're on the final step, proceed to submission
     if (currentStep === totalSteps) {
       console.log('On final step, triggering form submission');
       await onSubmit(form.getValues());
       return;
     }
     
-    // Otherwise, move to next step
     if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
       setErrorMessage(null);
@@ -142,7 +136,6 @@ export const useEnhancedSignupForm = () => {
     console.log('Form submission started for role:', selectedRole);
     console.log('Form values:', values);
     
-    // Final validation checks
     if (isPhoneBlocked) {
       toast({
         title: 'Cannot Register',
@@ -162,7 +155,6 @@ export const useEnhancedSignupForm = () => {
       return;
     }
     
-    // Final form validation
     const isFormValid = await form.trigger();
     if (!isFormValid) {
       const errors = form.formState.errors;
@@ -186,10 +178,8 @@ export const useEnhancedSignupForm = () => {
         description: 'Please wait while we set up your account...',
       });
       
-      // Create a temporary email using phone number for Supabase auth
       const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
       
-      // Call enhanced signup with form data
       await enhancedSignUp(tempEmail, values.password, selectedRole, values);
       
       toast({
@@ -200,7 +190,6 @@ export const useEnhancedSignupForm = () => {
       
       console.log('Registration successful, navigating to dashboard');
       
-      // Force navigation with page reload for clean state
       setTimeout(() => {
         window.location.href = '/dashboard';
       }, 1500);
@@ -216,7 +205,7 @@ export const useEnhancedSignupForm = () => {
         } else if (error.message.includes('Invalid phone')) {
           errorMsg = 'Please enter a valid phone number.';
         } else if (error.message.includes('Password')) {
-          errorMsg = 'Password must be at least 8 characters long.';
+          errorMsg = 'Password must be at least 6 characters long.';
         } else if (error.message.includes('network') || error.message.includes('fetch')) {
           errorMsg = 'Network error. Please check your connection.';
         } else {
@@ -232,7 +221,6 @@ export const useEnhancedSignupForm = () => {
         variant: 'destructive',
       });
       
-      // If it's a phone error, go back to step 2
       if (errorMsg.includes('phone') && currentStep > 2) {
         setCurrentStep(2);
       }

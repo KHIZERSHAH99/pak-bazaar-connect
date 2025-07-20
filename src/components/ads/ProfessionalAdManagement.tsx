@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -48,7 +47,11 @@ const ProfessionalAdManagement: React.FC = () => {
         throw error;
       }
 
-      return data || [];
+      // Type cast the status field to match our interface
+      return (data || []).map(ad => ({
+        ...ad,
+        status: ad.status as 'pending' | 'approved' | 'active' | 'paused' | 'rejected'
+      }));
     },
   });
 

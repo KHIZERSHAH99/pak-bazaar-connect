@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,7 +54,12 @@ const CouponManagement: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      // Type cast the discount_type field to match our interface
+      return (data || []).map(coupon => ({
+        ...coupon,
+        discount_type: coupon.discount_type as 'percentage' | 'fixed'
+      }));
     },
   });
 

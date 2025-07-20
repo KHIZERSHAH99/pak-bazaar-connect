@@ -13,7 +13,7 @@ import ProductDetail from '@/pages/ProductDetail';
 import Chat from '@/pages/Chat';
 import NotFound from '@/pages/NotFound';
 import Stats from '@/pages/Stats';
-import Sellers from '@/pages/Sellers';
+
 import Features from '@/pages/Features';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import Contact from '@/pages/Contact';
@@ -66,7 +66,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/sellers" element={<Sellers />} />
+        
         <Route path="/features" element={<Features />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/stats" element={<Stats />} />

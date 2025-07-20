@@ -13,13 +13,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 const ProductsList: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [showInactive, setShowInactive] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: products = [], isLoading, error } = useQuery({
+  const { data: allProducts = [], isLoading, error } = useQuery({
     queryKey: ['wholesaler-products'],
     queryFn: getProductsByWholesaler,
   });
+
+  // Filter products based on active/inactive status
+  const products = showInactive 
+    ? allProducts 
+    : allProducts.filter(product => product.is_active);
 
   const toggleProductStatus = useMutation({
     mutationFn: ({ productId, isActive }: { productId: string; isActive: boolean }) =>
@@ -129,6 +135,21 @@ const ProductsList: React.FC = () => {
   return (
     <>
       <div className="space-y-4">
+        <div className="flex justify-between items-center mb-4">
+          <Button
+            variant="outline"
+            onClick={() => setShowInactive(!showInactive)}
+            className="text-sm"
+          >
+            {showInactive ? 'Hide Inactive Products' : 'Show Inactive Products'}
+            {!showInactive && allProducts.filter(p => !p.is_active).length > 0 && (
+              <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+                {allProducts.filter(p => !p.is_active).length}
+              </span>
+            )}
+          </Button>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
             <Card key={product.id} className="overflow-hidden">

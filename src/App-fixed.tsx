@@ -17,7 +17,7 @@ import Profile from '@/pages/Profile';
 import Stats from '@/pages/Stats';
 import Chat from '@/pages/Chat';
 import Products from '@/pages/Products';
-import Sellers from '@/pages/Sellers';
+
 import Features from '@/pages/Features';
 import WholesalerProducts from '@/pages/WholesalerProducts';
 import ProductDetail from '@/pages/ProductDetail';
@@ -139,7 +139,7 @@ const App = () => {
                       
                       {/* Marketplace Pages */}
                       <Route path="/products" element={<Products />} />
-                      <Route path="/sellers" element={<Sellers />} />
+                      
                       <Route path="/features" element={<Features />} />
                       <Route path="/wholesaler-products" element={<WholesalerProducts />} />
                       <Route path="/product/:id" element={<ProductDetail />} />

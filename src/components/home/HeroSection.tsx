@@ -1,7 +1,9 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Users, ShieldCheck, TrendingUp } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContextFixed';
 const HeroSection: React.FC = () => {
+  const { user } = useAuth();
   return <div className="relative bg-gradient-to-br from-pakistani_green-600 via-pakistani_green-700 to-pakistani_green-800 text-white py-24 overflow-hidden">
       {/* Modern Background Pattern */}
       <div className="absolute inset-0">
@@ -33,13 +35,22 @@ const HeroSection: React.FC = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-white text-pakistani_green-700 hover:bg-gray-100 font-poppins" onClick={() => window.location.href = '/signup'}>
-                Start Selling
+              <Button 
+                size="lg" 
+                className="bg-white text-pakistani_green-700 hover:bg-gray-100 font-poppins" 
+                onClick={() => window.location.href = user ? '/dashboard' : '/signup'}
+              >
+                {user ? 'Dashboard' : 'Signup'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-pakistani_green-700 font-poppins" onClick={() => window.location.href = '/products'}>
-                Browse Products
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-white text-white hover:bg-white hover:text-pakistani_green-700 font-poppins" 
+                onClick={() => window.location.href = user ? '/products' : '/login'}
+              >
+                {user ? 'Browse Products' : 'Login'}
               </Button>
             </div>
             

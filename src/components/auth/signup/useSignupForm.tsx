@@ -26,9 +26,9 @@ export const useSignupForm = () => {
       businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
       address: '',
       city: '',
-      postalCode: '',
+      
       industry: '',
-      yearsInBusiness: '1-3 years',
+      
       contactName: '',
     }
   });

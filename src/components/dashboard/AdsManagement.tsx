@@ -3,10 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Plus, Target, BarChart3 } from 'lucide-react';
 import EnhancedCreateAdDialog from '@/components/ads/EnhancedCreateAdDialog';
+import { useQuery } from '@tanstack/react-query';
+import { getAdsByWholesaler } from '@/lib/ads';
+import { Badge } from '@/components/ui/badge';
 const AdsManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  
+  const { data: ads = [], isLoading, refetch } = useQuery({
+    queryKey: ['wholesaler-ads'],
+    queryFn: getAdsByWholesaler,
+  });
+  
   const handleAdCreated = () => {
-    // Refresh ads list if needed
+    refetch();
     console.log('Ad created successfully');
   };
   return <div className="space-y-6">
@@ -118,6 +127,72 @@ const AdsManagement: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Active Campaigns Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 font-poppins">
+            <Target className="w-5 h-5" />
+            Your Active Campaigns
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="animate-pulse bg-gray-200 h-20 rounded"></div>
+              ))}
+            </div>
+          ) : ads.length === 0 ? (
+            <div className="text-center py-8">
+              <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 font-poppins">No campaigns created yet</p>
+              <p className="text-sm text-gray-400 font-poppins">Create your first campaign to start advertising</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {ads.map((ad) => (
+                <Card key={ad.id} className="border-l-4 border-l-pakistani_green-500">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="font-semibold font-poppins">{ad.headline}</h4>
+                          <Badge variant={
+                            ad.status === 'active' ? 'default' : 
+                            ad.status === 'pending' ? 'secondary' : 'destructive'
+                          }>
+                            {ad.status}
+                          </Badge>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                          <div>
+                            <p className="font-medium">Current Spend</p>
+                            <p>Rs. {ad.current_spend || 0}</p>
+                          </div>
+                          <div>
+                            <p className="font-medium">Total Orders</p>
+                            <p>{ad.total_orders || 0}</p>
+                          </div>
+                          <div>
+                            <p className="font-medium">Budget Cap</p>
+                            <p>{ad.budget_cap ? `Rs. ${ad.budget_cap}` : 'No limit'}</p>
+                          </div>
+                          <div>
+                            <p className="font-medium">Created</p>
+                            <p>{new Date(ad.created_at).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <EnhancedCreateAdDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} onAdCreated={handleAdCreated} />
     </div>;

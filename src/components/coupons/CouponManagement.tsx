@@ -14,7 +14,8 @@ import {
   Eye, 
   ToggleLeft, 
   ToggleRight, 
-  TrendingUp
+  TrendingUp,
+  Trash2
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
@@ -25,6 +26,7 @@ import {
   getCouponUsageStats,
   type Coupon 
 } from '@/lib/coupons';
+import { supabase } from '@/integrations/supabase/client';
 
 const CouponManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -76,6 +78,30 @@ const CouponManagement: React.FC = () => {
     },
   });
 
+  const deleteCouponMutation = useMutation({
+    mutationFn: async (couponId: string) => {
+      const { error } = await supabase
+        .from('coupons')
+        .delete()
+        .eq('id', couponId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wholesaler-coupons'] });
+      toast({
+        title: "Coupon deleted",
+        description: "Coupon has been deleted successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete coupon",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCreateCoupon = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -101,6 +127,12 @@ const CouponManagement: React.FC = () => {
       title: "Copied!",
       description: "Coupon code copied to clipboard",
     });
+  };
+
+  const handleDeleteCoupon = (couponId: string) => {
+    if (window.confirm('Are you sure you want to delete this coupon? This action cannot be undone.')) {
+      deleteCouponMutation.mutate(couponId);
+    }
   };
 
   const formatDiscount = (coupon: Coupon) => {
@@ -304,6 +336,16 @@ const CouponManagement: React.FC = () => {
                             <ToggleRight className="h-4 w-4 text-green-600" /> : 
                             <ToggleLeft className="h-4 w-4 text-gray-400" />
                           }
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteCoupon(coupon.id)}
+                          disabled={deleteCouponMutation.isPending}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>

@@ -232,6 +232,21 @@ export const updateCouponStatus = async (couponId: string, isActive: boolean): P
   }
 };
 
+// Delete coupon
+export const deleteCoupon = async (couponId: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('coupons')
+      .delete()
+      .eq('id', couponId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error deleting coupon:', error);
+    throw error;
+  }
+};
+
 // Get coupon usage statistics
 export const getCouponUsageStats = async (couponId: string) => {
   try {

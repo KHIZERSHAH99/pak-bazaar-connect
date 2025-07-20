@@ -23,30 +23,30 @@ const WholesalerDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="shops" className="font-poppins">
-                <Store className="h-4 w-4 mr-2" />
-                Shops
+            <TabsList className="grid w-full grid-cols-6 h-auto">
+              <TabsTrigger value="shops" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+                <Store className="h-4 w-4" />
+                <span className="hidden sm:inline">Shops</span>
               </TabsTrigger>
-              <TabsTrigger value="products" className="font-poppins">
-                <Package className="h-4 w-4 mr-2" />
-                Products
+              <TabsTrigger value="products" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+                <Package className="h-4 w-4" />
+                <span className="hidden sm:inline">Products</span>
               </TabsTrigger>
-              <TabsTrigger value="orders" className="font-poppins">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Orders
+              <TabsTrigger value="orders" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+                <BarChart3 className="h-4 w-4" />
+                <span className="hidden sm:inline">Orders</span>
               </TabsTrigger>
-              <TabsTrigger value="ads" className="font-poppins">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Ads
+              <TabsTrigger value="ads" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+                <MessageSquare className="h-4 w-4" />
+                <span className="hidden sm:inline">Ads</span>
               </TabsTrigger>
-              <TabsTrigger value="coupons" className="font-poppins">
-                <Ticket className="h-4 w-4 mr-2" />
-                Coupons
+              <TabsTrigger value="coupons" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+                <Ticket className="h-4 w-4" />
+                <span className="hidden sm:inline">Coupons</span>
               </TabsTrigger>
-              <TabsTrigger value="payment" className="font-poppins">
-                <CreditCard className="h-4 w-4 mr-2" />
-                Payment
+              <TabsTrigger value="payment" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+                <CreditCard className="h-4 w-4" />
+                <span className="hidden sm:inline">Payment</span>
               </TabsTrigger>
             </TabsList>
 

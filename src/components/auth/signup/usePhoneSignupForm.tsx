@@ -27,9 +27,7 @@ export const usePhoneSignupForm = () => {
       businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
       address: '',
       city: '',
-      postalCode: '',
       industry: '',
-      yearsInBusiness: '1-3 years',
       contactName: '',
     }
   });
@@ -197,9 +195,7 @@ export const usePhoneSignupForm = () => {
             business_name: values.businessName,
             address: values.address,
             city: values.city,
-            postal_code: values.postalCode,
             industry: values.industry || '',
-            years_in_business: values.yearsInBusiness || '',
             business_type: values.businessType
           }
         }

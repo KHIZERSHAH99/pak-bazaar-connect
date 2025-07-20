@@ -65,27 +65,6 @@ const AddressFields: React.FC<AddressFieldsProps> = ({ form, isLoading }) => {
           )}
         />
         
-        <FormField
-          control={form.control}
-          name="postalCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex items-center text-gray-700 font-poppins">
-                <MapPin className="h-4 w-4 mr-1 text-pakistani_green-700" />
-                Postal Code
-              </FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Enter postal code" 
-                  disabled={isLoading} 
-                  className="font-poppins"
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
       </div>
     </>
   );

@@ -53,29 +53,15 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
     checkPhone();
   }, [debouncedPhone, form, onPhoneBlocked]);
 
-  // Password strength validation
+  // Simplified password validation - just check length
   const getPasswordStrength = (password: string) => {
     if (!password) return { strength: 0, message: '' };
     
-    let strength = 0;
-    let issues = [];
+    if (password.length >= 6) {
+      return { strength: 4, message: 'Good password' };
+    }
     
-    if (password.length >= 8) strength++;
-    else issues.push('at least 8 characters');
-    
-    if (/[A-Z]/.test(password)) strength++;
-    else issues.push('uppercase letter');
-    
-    if (/[a-z]/.test(password)) strength++;
-    else issues.push('lowercase letter');
-    
-    if (/\d/.test(password)) strength++;
-    else issues.push('number');
-    
-    return {
-      strength,
-      message: issues.length > 0 ? `Missing: ${issues.join(', ')}` : 'Strong password'
-    };
+    return { strength: 1, message: 'Password too short' };
   };
 
   const passwordStrength = getPasswordStrength(password || '');

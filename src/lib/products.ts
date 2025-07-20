@@ -113,6 +113,24 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
       throw new Error('User not authenticated');
     }
 
+    // First get shops owned by the wholesaler
+    const { data: shops, error: shopsError } = await supabase
+      .from('shops')
+      .select('id')
+      .eq('owner_id', user.id);
+
+    if (shopsError) {
+      console.error('Error fetching wholesaler shops:', shopsError);
+      throw shopsError;
+    }
+
+    if (!shops || shops.length === 0) {
+      return [];
+    }
+
+    const shopIds = shops.map(shop => shop.id);
+
+    // Then get products only from those shops
     const { data, error } = await supabase
       .from('products')
       .select(`
@@ -120,7 +138,7 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
         shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
         categories!fk_products_category_id(id, name, description)
       `)
-      .eq('shops.owner_id', user.id)
+      .in('shop_id', shopIds)
       .order('created_at', { ascending: false });
 
     if (error) {

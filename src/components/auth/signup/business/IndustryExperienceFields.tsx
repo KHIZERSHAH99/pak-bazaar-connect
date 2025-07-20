@@ -58,36 +58,6 @@ const IndustryExperienceFields: React.FC<IndustryExperienceFieldsProps> = ({ for
         )}
       />
       
-      <FormField
-        control={form.control}
-        name="yearsInBusiness"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <Calendar className="h-4 w-4 mr-1 text-pakistani_green-700" />
-              Years in Business
-            </FormLabel>
-            <Select 
-              onValueChange={field.onChange} 
-              defaultValue={field.value} 
-              disabled={isLoading}
-            >
-              <FormControl>
-                <SelectTrigger className="font-poppins">
-                  <SelectValue placeholder="Select experience" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="Less than 1 year">Less than 1 year</SelectItem>
-                <SelectItem value="1-3 years">1-3 years</SelectItem>
-                <SelectItem value="3-5 years">3-5 years</SelectItem>
-                <SelectItem value="5+ years">5+ years</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
     </div>
   );
 };

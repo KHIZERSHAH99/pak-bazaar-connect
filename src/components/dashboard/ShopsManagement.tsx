@@ -44,7 +44,7 @@ const ShopsManagement: React.FC = () => {
         {[...Array(2)].map((_, i) => <div key={i} className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>)}
       </div>;
   }
-  return <div className="space-y-6">
+  return <div className="space-y-6 py-0 my-[34px]">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold font-poppins text-gray-900">My Shops</h1>
         <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins" onClick={() => setIsCreateDialogOpen(true)}>

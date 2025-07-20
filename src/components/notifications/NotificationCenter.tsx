@@ -106,7 +106,7 @@ const NotificationCenter: React.FC = () => {
       </Card>;
   }
   return <Card>
-      <CardHeader className="bg-green-300">
+      <CardHeader className="bg-[#ccffdd]/[0.74] rounded-xl">
         <CardTitle className="flex items-center justify-between font-poppins">
           <div className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
@@ -122,8 +122,8 @@ const NotificationCenter: React.FC = () => {
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="bg-green-100">
-        {notifications.length === 0 ? <div className="text-center py-8 rounded-md bg-green-100">
+      <CardContent className="bg-green-100/0">
+        {notifications.length === 0 ? <div className="text-center py-8 rounded-md bg-green-100/0">
             <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500 font-poppins">No notifications yet</p>
           </div> : <div className="space-y-3">

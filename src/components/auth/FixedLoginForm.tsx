@@ -1,124 +1,130 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContextFixed';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { AlertCircle, Mail, Key, Eye, EyeOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { enhancedSignIn } from '@/lib/auth-enhanced';
 
 const FixedLoginForm: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
   const navigate = useNavigate();
-  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    
-    if (!email || !password) {
-      setError('Please enter both email and password');
-      return;
-    }
-    
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
+      const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
       
-      if (error) {
-        throw new Error(error);
+      if (cleanPhone.length < 10) {
+        throw new Error('Please enter a valid phone number');
       }
 
-      // Redirect to dashboard on successful login
+      const tempEmail = `${cleanPhone}@temp-phone-auth.com`;
+      
+      await enhancedSignIn(tempEmail, password);
+
+      toast({
+        title: 'Welcome back!',
+        description: 'You have successfully logged in.',
+      });
+
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Login error:', error);
-      setError(error.message || 'Login failed. Please check your credentials.');
+      
+      let errorMessage = 'Login failed. Please check your credentials.';
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        errorMessage = 'Invalid phone number or password. Please try again.';
+      }
+
+      toast({
+        title: 'Login Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto border-none shadow-lg">
-      <CardContent className="pt-6">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 font-poppins">Welcome Back</h1>
-          <p className="text-gray-600 mt-2 font-poppins">Sign in to your account</p>
-        </div>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 rounded-lg flex items-center text-red-600 text-sm border border-red-100">
-            <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
+    <Card className="w-full max-w-md mx-auto shadow-lg">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold text-pakistani_green-700 font-poppins">
+          Welcome Back
+        </CardTitle>
+        <CardDescription className="font-poppins">
+          Enter your phone number and password to access your account
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 flex items-center font-poppins">
-              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700" />
-              Email Address
-            </label>
+            <Label htmlFor="phoneNumber" className="flex items-center font-poppins">
+              <Phone className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              Phone Number
+            </Label>
             <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-pakistani_green-500 focus:border-pakistani_green-500 font-poppins"
+              id="phoneNumber"
+              type="tel"
+              placeholder="03XX XXXXXXX"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               disabled={isLoading}
-              autoComplete="email"
+              className="font-poppins"
               required
             />
           </div>
-          
+
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 flex items-center font-poppins">
-              <Key className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <Label htmlFor="password" className="flex items-center font-poppins">
+              <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
               Password
-            </label>
+            </Label>
             <div className="relative">
               <Input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="w-full p-3 pr-10 border border-gray-300 rounded-md focus:ring-pakistani_green-500 focus:border-pakistani_green-500 font-poppins"
                 disabled={isLoading}
-                autoComplete="current-password"
+                className="font-poppins pr-10"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
                 disabled={isLoading}
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                  <Eye className="h-5 w-5" />
+                  <Eye className="h-4 w-4 text-muted-foreground" />
                 )}
               </button>
             </div>
           </div>
-          
+
           <Button
             type="submit"
-            className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-colors font-poppins"
+            className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
             disabled={isLoading}
           >
             {isLoading ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 Signing In...
               </>
             ) : (
@@ -126,16 +132,19 @@ const FixedLoginForm: React.FC = () => {
             )}
           </Button>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-muted-foreground font-poppins">
+            Don't have an account?{' '}
+            <a 
+              href="/signup" 
+              className="text-pakistani_green-600 hover:text-pakistani_green-700 font-medium"
+            >
+              Sign up here
+            </a>
+          </p>
+        </div>
       </CardContent>
-      
-      <CardFooter className="border-t border-gray-200 bg-gray-50 flex justify-center p-4">
-        <p className="text-sm text-gray-600 font-poppins">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-pakistani_green-700 hover:text-pakistani_green-800 font-medium">
-            Sign Up Here
-          </Link>
-        </p>
-      </CardFooter>
     </Card>
   );
 };

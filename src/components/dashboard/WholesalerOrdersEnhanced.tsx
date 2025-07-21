@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { getWholesalerOrders } from '@/lib/orders-enhanced';
+import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 import PartialOrderView from '@/components/orders/PartialOrderView';
 import OrderConfirmationActions from '@/components/orders/OrderConfirmationActions';
@@ -78,7 +79,9 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const orderData = await getWholesalerOrders();
+        const user = await getCurrentUser();
+        if (!user) throw new Error('User not authenticated');
+        const orderData = await getWholesalerOrders(user.id);
         console.log('Raw order data:', orderData);
         
         // Safely process and validate the raw data into proper Order objects
@@ -116,7 +119,9 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   const handleViewFullDetails = async (order: Order) => {
     try {
       // Fetch full order details if needed
-      const fullOrders = await getWholesalerOrders();
+      const user = await getCurrentUser();
+      if (!user) throw new Error('User not authenticated');
+      const fullOrders = await getWholesalerOrders(user.id);
       const fullOrderRaw = Array.isArray(fullOrders) ? fullOrders.find((o: any) => o && o.id === order.id) : null;
         
       if (!fullOrderRaw) {

@@ -119,7 +119,7 @@ const ShopDetails: React.FC = () => {
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Shop Not Found</h2>
           <p className="text-gray-600 mb-6">The shop you're looking for doesn't exist.</p>
-          <Button onClick={() => navigate('/dashboard/browse-shops')} className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+          <Button onClick={() => navigate('/dashboard/browse-shops')} className="bg-primary hover:bg-primary/90">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Browse Shops
           </Button>
@@ -145,7 +145,7 @@ const ShopDetails: React.FC = () => {
               </Badge>
             </div>
             <div className="absolute top-4 right-4">
-              <Badge className="bg-pakistani_green-600 text-white shadow-sm">
+              <Badge className="bg-primary text-white shadow-sm">
                 <Star className="h-3 w-3 mr-1" />
                 New
               </Badge>
@@ -161,15 +161,15 @@ const ShopDetails: React.FC = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center text-gray-600">
-                <Phone className="h-5 w-5 mr-3 text-pakistani_green-600" />
+                <Phone className="h-5 w-5 mr-3 text-primary" />
                 <span className="font-poppins">{shop.contact}</span>
               </div>
               
               <div className="flex items-start text-gray-600">
-                <MapPin className="h-5 w-5 mr-3 mt-0.5 text-pakistani_green-600" />
+                <MapPin className="h-5 w-5 mr-3 mt-0.5 text-primary" />
                 <div className="font-poppins">
                   <div>{shop.address}</div>
-                  {shop.cities && <div className="text-sm text-pakistani_green-600 font-medium mt-1">
+                  {shop.cities && <div className="text-sm text-primary font-medium mt-1">
                       {shop.cities.name}, {shop.cities.province}
                     </div>}
                 </div>
@@ -196,7 +196,7 @@ const ShopDetails: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-900 font-poppins flex items-center">
-              <Package className="h-5 w-5 mr-2 text-pakistani_green-600" />
+              <Package className="h-5 w-5 mr-2 text-primary" />
               Products ({products.length})
             </CardTitle>
           </CardHeader>

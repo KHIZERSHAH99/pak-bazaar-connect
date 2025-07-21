@@ -19,7 +19,7 @@ const ProductsManagement: React.FC = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 font-poppins">Products</h1>
         <Button 
-          className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
+          className="bg-primary hover:bg-primary/90 font-poppins"
           onClick={() => setIsCreateDialogOpen(true)}
         >
           <Plus className="w-4 h-4 mr-2" />

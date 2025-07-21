@@ -61,7 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Link to={`/product/${product.id}`} className="block">
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-pakistani_green-200/50 h-full bg-white">
+      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-primary/20 h-full bg-white">
         {/* Product Image */}
         <div className="relative overflow-hidden">
           <img 
@@ -88,7 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Top badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1">
             {product.categories && (
-              <Badge className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white shadow-sm font-poppins text-xs">
+              <Badge className="bg-primary hover:bg-primary/90 text-white shadow-sm font-poppins text-xs">
                 {product.categories.name}
               </Badge>
             )}
@@ -119,13 +119,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Product Details */}
         <div className="p-4 space-y-3 flex-1 flex flex-col">
           {/* Product Name */}
-          <h3 className="font-semibold text-lg text-gray-900 group-hover:text-pakistani_green-600 transition-colors font-poppins line-clamp-2 flex-shrink-0">
+          <h3 className="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors font-poppins line-clamp-2 flex-shrink-0">
             {product.name}
           </h3>
           
           {/* Price */}
           <div className="flex items-center justify-between flex-shrink-0">
-            <span className="text-2xl font-bold text-pakistani_green-600 font-poppins">
+            <span className="text-2xl font-bold text-primary font-poppins">
               PKR {product.price.toLocaleString()}
             </span>
             {product.moq && product.moq > 1 && (
@@ -169,7 +169,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="flex gap-2 mt-auto pt-3 flex-shrink-0">
               <Button 
                 onClick={handleAddToCart}
-                className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins"
+                className="flex-1 bg-primary hover:bg-primary/90 text-white font-poppins"
                 size="sm"
               >
                 <ShoppingCart className="w-4 h-4 mr-1" />
@@ -178,7 +178,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <Button 
                 variant="outline" 
                 size="sm"
-                className="px-3 border-pakistani_green-200 text-pakistani_green-600 hover:bg-pakistani_green-50"
+                className="px-3 border-primary/30 text-primary hover:bg-primary/10"
               >
                 <Package className="w-4 h-4" />
               </Button>

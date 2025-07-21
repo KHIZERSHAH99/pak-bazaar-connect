@@ -95,7 +95,7 @@ const FixedSignupForm: React.FC = () => {
   return (
     <Card className="w-full max-w-md mx-auto shadow-lg">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold text-pakistani_green-700 font-poppins">
+        <CardTitle className="text-2xl font-bold text-primary font-poppins">
           Create Account
         </CardTitle>
         <CardDescription className="font-poppins">
@@ -119,7 +119,7 @@ const FixedSignupForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="contactName" className="flex items-center font-poppins">
-              <User className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              <User className="h-4 w-4 mr-2 text-primary" />
               Contact Person Name
             </Label>
             <Input
@@ -136,7 +136,7 @@ const FixedSignupForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="businessName" className="flex items-center font-poppins">
-              <Building className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              <Building className="h-4 w-4 mr-2 text-primary" />
               Business Name
             </Label>
             <Input
@@ -153,7 +153,7 @@ const FixedSignupForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="phoneNumber" className="flex items-center font-poppins">
-              <Phone className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              <Phone className="h-4 w-4 mr-2 text-primary" />
               Phone Number
             </Label>
             <Input
@@ -170,7 +170,7 @@ const FixedSignupForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="password" className="flex items-center font-poppins">
-              <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              <Lock className="h-4 w-4 mr-2 text-primary" />
               Password
             </Label>
             <div className="relative">
@@ -201,7 +201,7 @@ const FixedSignupForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="confirmPassword" className="flex items-center font-poppins">
-              <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              <Lock className="h-4 w-4 mr-2 text-primary" />
               Confirm Password
             </Label>
             <div className="relative">
@@ -232,7 +232,7 @@ const FixedSignupForm: React.FC = () => {
 
           <Button
             type="submit"
-            className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+            className="w-full bg-primary hover:bg-primary/90 font-poppins"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -251,7 +251,7 @@ const FixedSignupForm: React.FC = () => {
             Already have an account?{' '}
             <a 
               href="/login" 
-              className="text-pakistani_green-600 hover:text-pakistani_green-700 font-medium"
+              className="text-primary hover:text-primary/90 font-medium"
             >
               Sign in here
             </a>

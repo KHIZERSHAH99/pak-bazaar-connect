@@ -23,30 +23,30 @@ const WholesalerDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-6 h-auto">
-              <TabsTrigger value="shops" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 h-auto gap-1 p-1">
+              <TabsTrigger value="shops" className="font-poppins flex flex-col items-center gap-1 h-auto py-2 px-2 text-xs sm:text-sm">
                 <Store className="h-4 w-4" />
-                <span className="hidden sm:inline">Shops</span>
+                <span>Shops</span>
               </TabsTrigger>
-              <TabsTrigger value="products" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+              <TabsTrigger value="products" className="font-poppins flex flex-col items-center gap-1 h-auto py-2 px-2 text-xs sm:text-sm">
                 <Package className="h-4 w-4" />
-                <span className="hidden sm:inline">Products</span>
+                <span>Products</span>
               </TabsTrigger>
-              <TabsTrigger value="orders" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+              <TabsTrigger value="orders" className="font-poppins flex flex-col items-center gap-1 h-auto py-2 px-2 text-xs sm:text-sm">
                 <BarChart3 className="h-4 w-4" />
-                <span className="hidden sm:inline">Orders</span>
+                <span>Orders</span>
               </TabsTrigger>
-              <TabsTrigger value="ads" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+              <TabsTrigger value="ads" className="font-poppins flex flex-col items-center gap-1 h-auto py-2 px-2 text-xs sm:text-sm">
                 <MessageSquare className="h-4 w-4" />
-                <span className="hidden sm:inline">Ads</span>
+                <span>Ads</span>
               </TabsTrigger>
-              <TabsTrigger value="coupons" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+              <TabsTrigger value="coupons" className="font-poppins flex flex-col items-center gap-1 h-auto py-2 px-2 text-xs sm:text-sm">
                 <Ticket className="h-4 w-4" />
-                <span className="hidden sm:inline">Coupons</span>
+                <span>Coupons</span>
               </TabsTrigger>
-              <TabsTrigger value="payment" className="font-poppins flex-col gap-1 h-auto py-2 px-1 text-xs md:text-sm md:flex-row md:py-3 md:px-4">
+              <TabsTrigger value="payment" className="font-poppins flex flex-col items-center gap-1 h-auto py-2 px-2 text-xs sm:text-sm">
                 <CreditCard className="h-4 w-4" />
-                <span className="hidden sm:inline">Payment</span>
+                <span>Payment</span>
               </TabsTrigger>
             </TabsList>
 

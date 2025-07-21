@@ -114,7 +114,7 @@ const BrowseShops: React.FC = () => {
                   placeholder="Search shops by name, location, or contact..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-gray-50 border-gray-200 focus:border-pakistani_green-500 font-poppins"
+                  className="pl-10 bg-gray-50 border-gray-200 focus:border-primary font-poppins"
                 />
               </div>
               <Button 
@@ -148,7 +148,7 @@ const BrowseShops: React.FC = () => {
             {filteredShops.map((shop) => (
               <Card 
                 key={shop.id} 
-                className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer border-gray-200 hover:border-pakistani_green-300"
+                className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer border-gray-200 hover:border-primary/30"
                 onClick={() => handleViewProducts(shop.id)}
               >
                 {/* Shop Image */}
@@ -168,7 +168,7 @@ const BrowseShops: React.FC = () => {
                     </Badge>
                   </div>
                   <div className="absolute top-3 right-3">
-                    <Badge className="bg-pakistani_green-600 text-white shadow-sm">
+                    <Badge className="bg-primary text-white shadow-sm">
                       <Star className="h-3 w-3 mr-1" />
                       4.8
                     </Badge>
@@ -177,7 +177,7 @@ const BrowseShops: React.FC = () => {
 
                 {/* Shop Details */}
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-semibold text-gray-900 font-poppins group-hover:text-pakistani_green-600 transition-colors">
+                  <CardTitle className="text-lg font-semibold text-gray-900 font-poppins group-hover:text-primary transition-colors">
                     {shop.name}
                   </CardTitle>
                 </CardHeader>
@@ -185,17 +185,17 @@ const BrowseShops: React.FC = () => {
                 <CardContent className="space-y-3">
                   {/* Contact Info */}
                   <div className="flex items-center text-sm text-gray-600">
-                    <Phone className="h-4 w-4 mr-2 text-pakistani_green-600" />
+                    <Phone className="h-4 w-4 mr-2 text-primary" />
                     <span className="font-poppins">{shop.contact}</span>
                   </div>
 
                   {/* Location */}
                   <div className="flex items-start text-sm text-gray-600">
-                    <MapPin className="h-4 w-4 mr-2 mt-0.5 text-pakistani_green-600" />
+                    <MapPin className="h-4 w-4 mr-2 mt-0.5 text-primary" />
                     <div className="font-poppins">
                       <div className="line-clamp-2">{shop.address}</div>
                       {shop.cities && (
-                        <div className="text-xs text-pakistani_green-600 font-medium mt-1">
+                        <div className="text-xs text-primary font-medium mt-1">
                           {shop.cities.name}, {shop.cities.province}
                         </div>
                       )}
@@ -221,14 +221,14 @@ const BrowseShops: React.FC = () => {
                   {/* Commission Rate */}
                   <div className="flex items-center justify-between pt-2">
                     <span className="text-sm text-gray-600 font-poppins">Commission Rate</span>
-                    <Badge variant="outline" className="text-pakistani_green-600 border-pakistani_green-200">
+                    <Badge variant="outline" className="text-primary border-primary/30">
                       {shop.commission_rate || 5}%
                     </Badge>
                   </div>
 
                   {/* Browse Button */}
                   <Button 
-                    className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins mt-4"
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-poppins mt-4"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleViewProducts(shop.id);

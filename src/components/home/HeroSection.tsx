@@ -2,8 +2,10 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Users, ShieldCheck, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContextFixed';
+import { useNavigate } from 'react-router-dom';
 const HeroSection: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   return <div className="relative bg-gradient-to-br from-pakistani_green-600 via-pakistani_green-700 to-pakistani_green-800 text-white py-24 overflow-hidden">
       {/* Modern Background Pattern */}
       <div className="absolute inset-0">
@@ -37,8 +39,8 @@ const HeroSection: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg" 
-                className="bg-white text-pakistani_green-700 hover:bg-gray-100 font-poppins" 
-                onClick={() => window.location.href = user ? '/dashboard' : '/signup'}
+                className="bg-white text-primary hover:bg-gray-100 font-poppins" 
+                onClick={() => navigate(user ? '/dashboard' : '/signup')}
               >
                 {user ? 'Dashboard' : 'Signup'}
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -47,8 +49,8 @@ const HeroSection: React.FC = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-pakistani_green-700 font-poppins" 
-                onClick={() => window.location.href = user ? '/products' : '/login'}
+                className="border-white text-white hover:bg-white hover:text-primary font-poppins" 
+                onClick={() => navigate(user ? '/products' : '/login')}
               >
                 {user ? 'Browse Products' : 'Login'}
               </Button>
@@ -76,7 +78,7 @@ const HeroSection: React.FC = () => {
             <div className="group bg-white/10 backdrop-blur-md rounded-3xl p-7 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10">
               <div className="flex items-start space-x-5">
                 <div className="p-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl shadow-lg group-hover:shadow-yellow-400/30 transition-shadow duration-300">
-                  <Users className="h-7 w-7 text-pakistani_green-800" />
+                  <Users className="h-7 w-7 text-primary" />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold font-poppins group-hover:text-yellow-100 transition-colors">Verified Network</h3>
@@ -90,7 +92,7 @@ const HeroSection: React.FC = () => {
             <div className="group bg-white/10 backdrop-blur-md rounded-3xl p-7 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10">
               <div className="flex items-start space-x-5">
                 <div className="p-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl shadow-lg group-hover:shadow-yellow-400/30 transition-shadow duration-300">
-                  <ShieldCheck className="h-7 w-7 text-pakistani_green-800" />
+                  <ShieldCheck className="h-7 w-7 text-primary" />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold font-poppins group-hover:text-yellow-100 transition-colors">Secure Transactions</h3>
@@ -104,7 +106,7 @@ const HeroSection: React.FC = () => {
             <div className="group bg-white/10 backdrop-blur-md rounded-3xl p-7 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10">
               <div className="flex items-start space-x-5">
                 <div className="p-4 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-2xl shadow-lg group-hover:shadow-yellow-400/30 transition-shadow duration-300">
-                  <TrendingUp className="h-7 w-7 text-pakistani_green-800" />
+                  <TrendingUp className="h-7 w-7 text-primary" />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold font-poppins group-hover:text-yellow-100 transition-colors">Business Growth</h3>

@@ -4,8 +4,8 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 // Import all existing pages
 import Index from '@/pages/Index';
-import Login from '@/pages/Login';
-import Signup from '@/pages/Signup';
+import FixedLogin from '@/pages/FixedLogin';
+import FixedSignup from '@/pages/FixedSignup';
 import Dashboard from '@/pages/Dashboard';
 import Profile from '@/pages/Profile';
 import Products from '@/pages/Products';
@@ -62,8 +62,8 @@ const AppRoutes: React.FC = () => {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<FixedLogin />} />
+        <Route path="/signup" element={<FixedSignup />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         

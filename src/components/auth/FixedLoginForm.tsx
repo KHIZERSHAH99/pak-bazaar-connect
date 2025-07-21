@@ -60,7 +60,7 @@ const FixedLoginForm: React.FC = () => {
   return (
     <Card className="w-full max-w-md mx-auto shadow-lg">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold text-pakistani_green-700 font-poppins">
+        <CardTitle className="text-2xl font-bold text-primary font-poppins">
           Welcome Back
         </CardTitle>
         <CardDescription className="font-poppins">
@@ -71,7 +71,7 @@ const FixedLoginForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="phoneNumber" className="flex items-center font-poppins">
-              <Phone className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              <Phone className="h-4 w-4 mr-2 text-primary" />
               Phone Number
             </Label>
             <Input
@@ -88,7 +88,7 @@ const FixedLoginForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="password" className="flex items-center font-poppins">
-              <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
+              <Lock className="h-4 w-4 mr-2 text-primary" />
               Password
             </Label>
             <div className="relative">
@@ -119,7 +119,7 @@ const FixedLoginForm: React.FC = () => {
 
           <Button
             type="submit"
-            className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+            className="w-full bg-primary hover:bg-primary/90 font-poppins"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -138,7 +138,7 @@ const FixedLoginForm: React.FC = () => {
             Don't have an account?{' '}
             <a 
               href="/signup" 
-              className="text-pakistani_green-600 hover:text-pakistani_green-700 font-medium"
+              className="text-primary hover:text-primary/90 font-medium"
             >
               Sign up here
             </a>

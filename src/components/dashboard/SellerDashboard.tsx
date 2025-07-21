@@ -15,7 +15,7 @@ const SellerDashboard: React.FC = () => {
         <h1 className="text-3xl font-bold text-gray-900 font-poppins">Seller Dashboard</h1>
         <Button
           onClick={() => window.location.href = '/products'}
-          className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+          className="bg-primary hover:bg-primary/90 font-poppins"
         >
           <Package className="h-4 w-4 mr-2" />
           Browse Products

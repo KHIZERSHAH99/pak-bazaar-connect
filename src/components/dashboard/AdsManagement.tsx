@@ -24,7 +24,7 @@ const AdsManagement: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 font-poppins">Advertisement Campaigns</h1>
           <p className="text-gray-600 mt-1 font-poppins">Create and manage Cost Per Order (CPO) campaigns</p>
         </div>
-        <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins" onClick={() => setIsCreateDialogOpen(true)}>
+        <Button className="bg-primary hover:bg-primary/90 font-poppins" onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Create Campaign
         </Button>
@@ -152,7 +152,7 @@ const AdsManagement: React.FC = () => {
           ) : (
             <div className="space-y-4">
               {ads.map((ad) => (
-                <Card key={ad.id} className="border-l-4 border-l-pakistani_green-500">
+                <Card key={ad.id} className="border-l-4 border-l-primary">
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">

@@ -42,7 +42,9 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
   useEffect(() => {
     const fetchPaymentMethods = async () => {
+      console.log('Fetching payment methods for shop:', shopId);
       const methods = await getPaymentMethodsForShop(shopId);
+      console.log('Payment methods response:', methods);
       setPaymentMethods(methods);
     };
     fetchPaymentMethods();
@@ -207,39 +209,51 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           {/* Payment Method Selection */}
           <div className="space-y-4">
             <h3 className="font-semibold font-poppins">Payment Method</h3>
-            <Select value={selectedMethod} onValueChange={(value: PaymentMethod) => setSelectedMethod(value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select payment method" />
-              </SelectTrigger>
-              <SelectContent>
-                {paymentMethods?.bank_name && (
-                  <SelectItem value="bank_transfer">
-                    <div className="flex items-center gap-2">
-                      {getPaymentIcon('bank_transfer')}
-                      Bank Transfer
-                    </div>
-                  </SelectItem>
-                )}
-                {paymentMethods?.jazzcash_number && (
-                  <SelectItem value="jazzcash">
-                    <div className="flex items-center gap-2">
-                      {getPaymentIcon('jazzcash')}
-                      JazzCash
-                    </div>
-                  </SelectItem>
-                )}
-                {paymentMethods?.easypaisa_number && (
-                  <SelectItem value="easypaisa">
-                    <div className="flex items-center gap-2">
-                      {getPaymentIcon('easypaisa')}
-                      EasyPaisa
-                    </div>
-                  </SelectItem>
-                )}
-              </SelectContent>
-            </Select>
+            
+            {paymentMethods ? (
+              <>
+                <Select value={selectedMethod} onValueChange={(value: PaymentMethod) => setSelectedMethod(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {paymentMethods?.bank_name && (
+                      <SelectItem value="bank_transfer">
+                        <div className="flex items-center gap-2">
+                          {getPaymentIcon('bank_transfer')}
+                          Bank Transfer
+                        </div>
+                      </SelectItem>
+                    )}
+                    {paymentMethods?.jazzcash_number && (
+                      <SelectItem value="jazzcash">
+                        <div className="flex items-center gap-2">
+                          {getPaymentIcon('jazzcash')}
+                          JazzCash
+                        </div>
+                      </SelectItem>
+                    )}
+                    {paymentMethods?.easypaisa_number && (
+                      <SelectItem value="easypaisa">
+                        <div className="flex items-center gap-2">
+                          {getPaymentIcon('easypaisa')}
+                          EasyPaisa
+                        </div>
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
 
-            {getPaymentDetails()}
+                {getPaymentDetails()}
+              </>
+            ) : (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center gap-2">
+                <span className="text-yellow-600">⚠️</span>
+                <span className="text-sm text-yellow-700">
+                  No payment methods available for this shop. Please contact the wholesaler to set up payment methods.
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Payment Screenshot Upload */}

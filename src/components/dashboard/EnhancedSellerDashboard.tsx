@@ -11,6 +11,7 @@ import OrderManagementCompact from '@/components/orders/OrderManagementCompact';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { useQuery } from '@tanstack/react-query';
 import { getSellerOrders } from '@/lib/orders-enhanced';
+import { getCurrentUser } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +23,11 @@ const EnhancedSellerDashboard: React.FC = () => {
   // Fetch seller orders for stats
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['seller-orders'],
-    queryFn: getSellerOrders,
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      if (!user) throw new Error('User not authenticated');
+      return getSellerOrders(user.id);
+    },
   });
 
   // Calculate stats

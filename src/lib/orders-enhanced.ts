@@ -178,3 +178,162 @@ export const updateOrderStatus = async (
   console.log('Order status updated successfully:', data);
   return data;
 };
+
+export const getSellerOrders = async (sellerId: string) => {
+  console.log('Fetching orders for seller:', sellerId);
+  
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      shops (
+        id,
+        name,
+        contact,
+        address,
+        owner_id
+      )
+    `)
+    .eq('buyer_id', sellerId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching seller orders:', error);
+    throw error;
+  }
+
+  console.log('Seller orders fetched:', data);
+  return data;
+};
+
+export const getWholesalerOrders = async (wholesalerId: string) => {
+  console.log('Fetching orders for wholesaler:', wholesalerId);
+  
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      profiles (
+        id,
+        email,
+        contact_name,
+        phone_number
+      ),
+      shops!inner (
+        id,
+        name,
+        owner_id
+      )
+    `)
+    .eq('shops.owner_id', wholesalerId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching wholesaler orders:', error);
+    throw error;
+  }
+
+  console.log('Wholesaler orders fetched:', data);
+  return data;
+};
+
+export const confirmOrder = async (orderId: string, notes?: string) => {
+  return updateOrderStatus(orderId, 'confirmed', notes);
+};
+
+export const rejectOrder = async (orderId: string, notes?: string) => {
+  return updateOrderStatus(orderId, 'rejected', notes);
+};
+
+export const reusePreviousOrder = async (orderId: string) => {
+  console.log('Reusing previous order:', orderId);
+  
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('id', orderId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching order for reuse:', error);
+    throw error;
+  }
+
+  // Create a new order based on the previous one
+  const newOrderData = {
+    buyer_id: order.buyer_id,
+    shop_id: order.shop_id,
+    total_amount: order.total_amount,
+    payment_method: order.payment_method,
+    buyer_name: order.buyer_name,
+    buyer_phone: order.buyer_phone,
+    buyer_address: order.buyer_address,
+    status: 'pending'
+  };
+
+  const { data: newOrder, error: createError } = await supabase
+    .from('orders')
+    .insert([newOrderData])
+    .select()
+    .single();
+
+  if (createError) {
+    console.error('Error creating reused order:', createError);
+    throw createError;
+  }
+
+  console.log('Order reused successfully:', newOrder);
+  return newOrder;
+};
+
+export const getOrderMessages = async (orderId: string) => {
+  console.log('Fetching messages for order:', orderId);
+  
+  const { data, error } = await supabase
+    .from('order_messages')
+    .select(`
+      *,
+      profiles (
+        email,
+        contact_name,
+        business_name
+      )
+    `)
+    .eq('order_id', orderId)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching order messages:', error);
+    throw error;
+  }
+
+  console.log('Order messages fetched:', data);
+  return data;
+};
+
+export const sendOrderMessage = async (orderId: string, message: string) => {
+  console.log('Sending message for order:', orderId, message);
+  
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) {
+    throw new Error('User not authenticated');
+  }
+
+  const { data, error } = await supabase
+    .from('order_messages')
+    .insert([{
+      order_id: orderId,
+      sender_id: user.user.id,
+      message: message
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error sending order message:', error);
+    throw error;
+  }
+
+  console.log('Order message sent successfully:', data);
+  return data;
+};

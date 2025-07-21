@@ -337,3 +337,16 @@ export const sendOrderMessage = async (orderId: string, message: string) => {
   console.log('Order message sent successfully:', data);
   return data;
 };
+
+// Add simplified auth-aware wrappers for components that need them
+export const getWholesalerOrdersWithAuth = async () => {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('User not authenticated');
+  return getWholesalerOrders(user.id);
+};
+
+export const getSellerOrdersWithAuth = async () => {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('User not authenticated');
+  return getSellerOrders(user.id);
+};

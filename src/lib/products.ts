@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { getCurrentUser } from '@/lib/auth';
 import { Product } from '@/lib/types';
 
 export const getProducts = async (limit: number = 10) => {
@@ -212,4 +213,11 @@ export const uploadImage = async (file: File, bucket: string = 'product_images')
 
   console.log('Image uploaded successfully:', publicUrlData.publicUrl);
   return publicUrlData.publicUrl;
+};
+
+// Add auth-aware wrapper for components
+export const getProductsByWholesalerWithAuth = async () => {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('User not authenticated');
+  return getProductsByWholesaler(user.id);
 };

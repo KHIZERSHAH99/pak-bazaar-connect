@@ -193,7 +193,7 @@ const EnhancedSellerDashboard: React.FC = () => {
                       {orders.slice(0, 3).map((order) => (
                         <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                           <div>
-                            <p className="font-medium">{order.shops?.name || 'Unknown Shop'}</p>
+                            <p className="font-medium">{(order as any)?.shops?.name || (order as any)?.shop?.name || 'Unknown Shop'}</p>
                             <p className="text-sm text-gray-600">Rs. {order.total_amount?.toLocaleString()}</p>
                           </div>
                           <Badge variant={

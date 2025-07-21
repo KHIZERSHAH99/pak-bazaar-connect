@@ -98,8 +98,7 @@ const CreateAdDialog: React.FC<CreateAdDialogProps> = ({
 
       let imageUrl;
       if (imageFile) {
-        const fileName = `ad_${Date.now()}_${imageFile.name}`;
-        imageUrl = await uploadImage('ad_images', fileName, imageFile);
+        imageUrl = await uploadImage(imageFile, 'ad_images');
       }
 
       const { data, error } = await supabase

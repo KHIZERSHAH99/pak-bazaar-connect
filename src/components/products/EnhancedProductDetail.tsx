@@ -38,6 +38,9 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
 
   const totalAmount = quantity * product.price;
 
+  console.log('EnhancedProductDetail - Product data:', product);
+  console.log('EnhancedProductDetail - Shop data:', product.shops);
+
   const handleQuantityChange = (value: string) => {
     const newQuantity = parseInt(value) || 1;
     const minQuantity = product.moq || 1;
@@ -61,6 +64,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
         description: "Please login to place an order",
         variant: "destructive"
       });
+      navigate('/login');
       return;
     }
 
@@ -73,10 +77,18 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
       return;
     }
 
+    console.log('Opening order form with:', {
+      productId: product.id,
+      shopId: product.shop_id,
+      shopName: product.shops?.name,
+      totalAmount
+    });
+
     setShowOrderForm(true);
   };
 
   const handleOrderCreated = (orderId: string) => {
+    console.log('Order created with ID:', orderId);
     setShowOrderForm(false);
     toast({
       title: "Order Created",
@@ -168,9 +180,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                   <span>{product.shops?.name || 'Unknown Shop'}</span>
                 </div>
               </div>
-              <FavoriteButton
-                productId={product.id}
-              />
+              <FavoriteButton productId={product.id} />
             </div>
 
             <div className="space-y-4">

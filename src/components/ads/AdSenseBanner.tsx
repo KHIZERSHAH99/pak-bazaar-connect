@@ -15,17 +15,37 @@ const AdSenseBanner: React.FC<AdSenseBannerProps> = ({
   className = ''
 }) => {
   const adRef = useRef<HTMLDivElement>(null);
+  const adInitialized = useRef(false);
 
   useEffect(() => {
-    try {
-      // Check if adsbygoogle is available
-      if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+    // Prevent double initialization
+    if (adInitialized.current) return;
+
+    const initializeAd = () => {
+      try {
+        // Check if adsbygoogle is available and the ad element exists
+        if (
+          typeof window !== 'undefined' && 
+          (window as any).adsbygoogle && 
+          adRef.current &&
+          adRef.current.querySelector('.adsbygoogle')
+        ) {
+          console.log(`Initializing AdSense ad for slot: ${adSlot}`);
+          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+          adInitialized.current = true;
+        }
+      } catch (error) {
+        console.error('AdSense initialization error for slot', adSlot, ':', error);
       }
-    } catch (error) {
-      console.error('AdSense error:', error);
-    }
-  }, []);
+    };
+
+    // Wait a bit for the DOM to be ready
+    const timer = setTimeout(initializeAd, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [adSlot]);
 
   return (
     <div className={`adsense-container ${className}`} ref={adRef}>
@@ -36,6 +56,7 @@ const AdSenseBanner: React.FC<AdSenseBannerProps> = ({
         data-ad-slot={adSlot}
         data-ad-format={adFormat}
         data-full-width-responsive="true"
+        data-ad-test={process.env.NODE_ENV === 'development' ? 'on' : undefined}
       />
     </div>
   );

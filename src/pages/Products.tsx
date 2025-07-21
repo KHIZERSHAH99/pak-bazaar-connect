@@ -197,7 +197,7 @@ const Products: React.FC = () => {
         <div className="fixed bottom-6 right-6 z-50">
           <Button 
             onClick={scrollToTop}
-            className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200"
             size="icon"
           >
             <ArrowUp className="w-5 h-5" />

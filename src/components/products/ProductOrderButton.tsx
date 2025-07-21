@@ -11,11 +11,17 @@ import EnhancedOrderForm from '@/components/orders/EnhancedOrderForm';
 
 interface ProductOrderButtonProps {
   product: Product;
+  quantity?: number;
+  className?: string;
 }
 
-const ProductOrderButton: React.FC<ProductOrderButtonProps> = ({ product }) => {
+const ProductOrderButton: React.FC<ProductOrderButtonProps> = ({ 
+  product, 
+  quantity: initialQuantity, 
+  className 
+}) => {
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
-  const [quantity, setQuantity] = useState(product.moq || 1);
+  const [quantity, setQuantity] = useState(initialQuantity || product.moq || 1);
   const { user, profile } = useAuth();
   const { toast } = useToast();
 
@@ -62,61 +68,15 @@ const ProductOrderButton: React.FC<ProductOrderButtonProps> = ({ product }) => {
 
   return (
     <>
-      <div className="space-y-3">
-        {/* Quantity Selector */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Quantity</Label>
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleQuantityChange(quantity - 1)}
-              disabled={quantity <= (product.moq || 1)}
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
-            <Input
-              type="number"
-              value={quantity}
-              onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
-              className="w-20 text-center"
-              min={product.moq || 1}
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleQuantityChange(quantity + 1)}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-          {product.moq && product.moq > 1 && (
-            <p className="text-xs text-gray-600">
-              Minimum order: {product.moq} units
-            </p>
-          )}
-        </div>
-
-        {/* Total Amount */}
-        <div className="p-3 bg-gray-50 rounded-lg">
-          <div className="flex justify-between items-center">
-            <span className="font-medium">Total Amount:</span>
-            <span className="text-lg font-bold text-primary">
-              Rs. {totalAmount.toLocaleString()}
-            </span>
-          </div>
-        </div>
-
-        {/* Order Button */}
-        <Button
-          onClick={handleOrderClick}
-          disabled={!canOrder}
-          className="w-full bg-primary hover:bg-primary/90"
-        >
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          {canOrder ? 'Place Order' : 'Sign in to Order'}
-        </Button>
-      </div>
+      {/* Simple Order Button for Product Detail */}
+      <Button
+        onClick={handleOrderClick}
+        disabled={!canOrder}
+        className={`bg-primary hover:bg-primary/90 font-poppins ${className || 'w-full'}`}
+      >
+        <ShoppingCart className="h-4 w-4 mr-2" />
+        {canOrder ? 'Place Order' : 'Sign in to Order'}
+      </Button>
 
       {/* Order Dialog */}
       <Dialog open={isOrderDialogOpen} onOpenChange={setIsOrderDialogOpen}>

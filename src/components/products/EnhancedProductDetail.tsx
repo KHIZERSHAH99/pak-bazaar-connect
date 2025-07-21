@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Product } from '@/lib/types';
 import ProductImageGallery from './ProductImageGallery';
 import VerifiedBadge from '@/components/reviews/VerifiedBadge';
+import ProductOrderButton from './ProductOrderButton';
 
 interface EnhancedProductDetailProps {
   product: Product;
@@ -103,17 +104,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
           <div className="space-y-4">
             <ProductImageGallery images={allImages.length > 0 ? allImages : ['/placeholder.svg']} alt={product.name} />
             
-            {/* Product Stats */}
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Eye className="h-4 w-4" />
-                <span>1,234 views</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Heart className="h-4 w-4" />
-                <span>89 favorites</span>
-              </div>
-            </div>
+            {/* Remove fake stats */}
           </div>
 
           {/* Product Information */}
@@ -200,13 +191,11 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 </div>
 
                 <div className="flex gap-3">
-                  <Button
-                    onClick={handleAddToCart}
-                    className="flex-1 bg-primary hover:bg-primary/90 font-poppins"
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
-                  </Button>
+                  <ProductOrderButton
+                    product={product}
+                    quantity={quantity}
+                    className="flex-1"
+                  />
                   <Button
                     onClick={handleInquiry}
                     variant="outline"
@@ -288,14 +277,8 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                           <Phone className="h-4 w-4 text-primary" />
                           <span className="font-poppins">{product.shops?.contact || 'N/A'}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                            />
-                          ))}
-                          <span className="text-sm text-muted-foreground ml-2 font-poppins">New Seller</span>
+                        <div className="text-sm text-muted-foreground font-poppins">
+                          New Seller
                         </div>
                       </div>
                     </div>

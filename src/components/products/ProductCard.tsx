@@ -61,7 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Link to={`/product/${product.id}`} className="block">
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-primary/20 h-full bg-white">
+      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-primary/20 h-full bg-card dark:bg-card">
         {/* Product Image */}
         <div className="relative overflow-hidden">
           <img 
@@ -78,7 +78,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Button 
               variant="secondary" 
               size="sm" 
-              className="opacity-0 group-hover:opacity-100 transition-opacity font-poppins bg-white/90 text-gray-900 hover:bg-white"
+              className="opacity-0 group-hover:opacity-100 transition-opacity font-poppins bg-background/90 hover:bg-background"
             >
               <Eye className="w-4 h-4 mr-1" />
               Quick View
@@ -88,18 +88,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Top badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1">
             {product.categories && (
-              <Badge className="bg-primary hover:bg-primary/90 text-white shadow-sm font-poppins text-xs">
+              <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm font-poppins text-xs">
                 {product.categories.name}
               </Badge>
             )}
             {product.verification_status === 'approved' && (
-              <Badge className="bg-green-100 text-green-800 shadow-sm">
+              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 shadow-sm">
                 <Verified className="w-3 h-3 mr-1" />
                 Verified
               </Badge>
             )}
             {product.verification_status === 'pending' && (
-              <Badge className="bg-yellow-100 text-yellow-800 shadow-sm">
+              <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100 shadow-sm">
                 Pending
               </Badge>
             )}
@@ -109,9 +109,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {showFavorite && (
             <button
               onClick={handleToggleFavorite}
-              className="absolute top-3 right-3 bg-white/90 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+              className="absolute top-3 right-3 bg-background/90 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
             >
-              <Heart className="w-4 h-4 text-gray-600" />
+              <Heart className="w-4 h-4 text-muted-foreground" />
             </button>
           )}
         </div>
@@ -119,7 +119,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Product Details */}
         <div className="p-4 space-y-3 flex-1 flex flex-col">
           {/* Product Name */}
-          <h3 className="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors font-poppins line-clamp-2 flex-shrink-0">
+          <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors font-poppins line-clamp-2 flex-shrink-0">
             {product.name}
           </h3>
           
@@ -129,7 +129,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               PKR {product.price.toLocaleString()}
             </span>
             {product.moq && product.moq > 1 && (
-              <Badge variant="outline" className="text-xs text-gray-600 border-gray-300">
+              <Badge variant="outline" className="text-xs text-muted-foreground border-border">
                 MOQ: {product.moq}
               </Badge>
             )}
@@ -139,18 +139,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="space-y-2 flex-grow">
             {product.shops && (
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-700 font-poppins">
+                <p className="text-sm font-medium text-foreground font-poppins">
                   {product.shops.name}
                 </p>
-                <div className="flex items-center text-xs text-yellow-500">
-                  <Star className="w-3 h-3 mr-1 fill-current" />
-                  <span>4.8</span>
-                </div>
+                <p className="text-xs text-muted-foreground font-poppins">
+                  New Seller
+                </p>
               </div>
             )}
             
             {product.shops?.cities && (
-              <div className="flex items-center text-xs text-gray-500">
+              <div className="flex items-center text-xs text-muted-foreground">
                 <MapPin className="w-3 h-3 mr-1" />
                 <span className="font-poppins">{product.shops.cities.name}, {product.shops.cities.province}</span>
               </div>
@@ -159,26 +158,31 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           {/* Description */}
           {product.description && (
-            <p className="text-sm text-gray-600 font-poppins line-clamp-2 flex-shrink-0">
+            <p className="text-sm text-muted-foreground font-poppins line-clamp-2 flex-shrink-0">
               {product.description}
             </p>
           )}
 
-          {/* Action Buttons */}
+          {/* Order Button - Replace Add to Cart */}
           {showAddToCart && (
             <div className="flex gap-2 mt-auto pt-3 flex-shrink-0">
-              <Button 
-                onClick={handleAddToCart}
-                className="flex-1 bg-primary hover:bg-primary/90 text-white font-poppins"
-                size="sm"
-              >
-                <ShoppingCart className="w-4 h-4 mr-1" />
-                Add to Cart
-              </Button>
+              <Link to={`/product/${product.id}`} className="flex-1">
+                <Button 
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins"
+                  size="sm"
+                >
+                  <ShoppingCart className="w-4 h-4 mr-1" />
+                  View Product
+                </Button>
+              </Link>
               <Button 
                 variant="outline" 
                 size="sm"
-                className="px-3 border-primary/30 text-primary hover:bg-primary/10"
+                className="px-3 border-border hover:bg-accent"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
               >
                 <Package className="w-4 h-4" />
               </Button>

@@ -7,7 +7,7 @@ import {
   ShoppingCart, Package, Store, MessageSquare, Bell, 
   TrendingUp, DollarSign, Clock, CheckCircle 
 } from 'lucide-react';
-import SellerOrders from './SellerOrders';
+import OrderManagementCompact from '@/components/orders/OrderManagementCompact';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { useQuery } from '@tanstack/react-query';
 import { getSellerOrders } from '@/lib/orders-enhanced';
@@ -233,7 +233,7 @@ const EnhancedSellerDashboard: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="orders">
-              <SellerOrders />
+              <OrderManagementCompact userRole="seller" />
             </TabsContent>
 
             <TabsContent value="browse">

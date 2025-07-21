@@ -2,6 +2,7 @@
 import React from 'react';
 import { Form } from '@/components/ui/form';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 import EnhancedAccountInfoStep from './signup/EnhancedAccountInfoStep';
 import EnhancedBusinessInfoStep from './signup/EnhancedBusinessInfoStep';
 import SellerInfoStep from './SellerInfoStep';
@@ -93,9 +94,9 @@ const EnhancedSignupForm = () => {
       <CardFooter className="border-t border-border bg-muted/30 dark:bg-muted/50 flex justify-center p-4">
         <p className="text-sm text-muted-foreground font-poppins">
           Already have an account?{' '}
-          <a href="/login" className="text-pakistani_green-600 dark:text-pakistani_green-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-100 font-medium">
+          <Link to="/login" className="text-pakistani_green-600 dark:text-pakistani_green-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-100 font-medium">
             Login Here
-          </a>
+          </Link>
         </p>
       </CardFooter>
     </Card>

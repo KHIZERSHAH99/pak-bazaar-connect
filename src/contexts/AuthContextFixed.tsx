@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { enhancedSignIn, enhancedSignUp, enhancedSignOut, UserRole } from '@/lib/auth-enhanced';
 
 export interface Profile {
   id: string;
@@ -168,14 +169,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      const result = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (result.error) {
-        return { error: result.error.message };
-      }
+      // Use enhanced sign in for better error handling
+      await enhancedSignIn(email, password);
 
       toast({
         title: "Sign in successful",
@@ -187,11 +182,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error: any) {
       console.error('Sign in error:', error);
       const errorMessage = error.message || 'An unexpected error occurred';
-      toast({
-        title: "Sign in failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
       return { error: errorMessage };
     } finally {
       setLoading(false);
@@ -202,19 +192,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      const result = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            role: role
-          }
-        }
-      });
-
-      if (result.error) {
-        return { error: result.error.message };
-      }
+      // Use enhanced sign up for better error handling
+      await enhancedSignUp(email, password, role as UserRole);
 
       toast({
         title: "Account created successfully",
@@ -226,11 +205,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error: any) {
       console.error('Sign up error:', error);
       const errorMessage = error.message || 'An unexpected error occurred';
-      toast({
-        title: "Sign up failed",
-        description: errorMessage,
-        variant: "destructive"
-      });
       return { error: errorMessage };
     } finally {
       setLoading(false);
@@ -241,8 +215,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      // Use enhanced sign out for better cleanup
+      await enhancedSignOut();
       
       setUser(null);
       setSession(null);

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { enhancedSignIn } from '@/lib/auth-enhanced';
 
 const LoginForm: React.FC = () => {
@@ -146,12 +146,12 @@ const LoginForm: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground font-poppins">
             Don't have an account?{' '}
-            <a 
-              href="/signup" 
+            <Link 
+              to="/signup" 
               className="text-pakistani_green-600 hover:text-pakistani_green-700 font-medium"
             >
               Sign up here
-            </a>
+            </Link>
           </p>
         </div>
 

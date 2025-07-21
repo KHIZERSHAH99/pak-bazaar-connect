@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { enhancedSignIn } from '@/lib/auth-enhanced';
 
 const FixedLoginForm: React.FC = () => {
@@ -16,6 +16,7 @@ const FixedLoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +38,9 @@ const FixedLoginForm: React.FC = () => {
         description: 'You have successfully logged in.',
       });
 
-      navigate('/dashboard');
+      // Navigate to redirect URL or dashboard
+      const redirectTo = searchParams.get('redirect') || '/dashboard';
+      navigate(redirectTo);
     } catch (error: any) {
       console.error('Login error:', error);
       
@@ -136,12 +139,12 @@ const FixedLoginForm: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground font-poppins">
             Don't have an account?{' '}
-            <a 
-              href="/signup" 
+            <Link 
+              to="/signup" 
               className="text-primary hover:text-primary/90 font-medium"
             >
               Sign up here
-            </a>
+            </Link>
           </p>
         </div>
       </CardContent>

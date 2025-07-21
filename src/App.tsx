@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "next-themes";
 import AppErrorBoundary from "@/components/ui/AppErrorBoundary";
 import AuthErrorBoundary from "@/components/auth/AuthErrorBoundary";
+import GlobalErrorBoundary from "@/components/common/GlobalErrorHandler";
 import AppRoutes from "@/routes/AppRoutes";
 import PerformanceMonitor from "@/components/ui/performance-monitor";
 
@@ -40,20 +41,22 @@ const App = () => {
       >
         <LanguageProvider>
           <TooltipProvider>
-            <AppErrorBoundary>
-              <AuthErrorBoundary>
-                <div className="min-h-screen bg-background text-foreground transition-colors duration-200 font-poppins">
-                  <Toaster />
-                  <Sonner />
-                  <BrowserRouter>
-                    <AuthProvider>
-                      <AppRoutes />
-                      <PerformanceMonitor />
-                    </AuthProvider>
-                  </BrowserRouter>
-                </div>
-              </AuthErrorBoundary>
-            </AppErrorBoundary>
+            <GlobalErrorBoundary>
+              <AppErrorBoundary>
+                <AuthErrorBoundary>
+                  <div className="min-h-screen bg-background text-foreground transition-colors duration-200 font-poppins">
+                    <Toaster />
+                    <Sonner />
+                    <BrowserRouter>
+                      <AuthProvider>
+                        <AppRoutes />
+                        <PerformanceMonitor />
+                      </AuthProvider>
+                    </BrowserRouter>
+                  </div>
+                </AuthErrorBoundary>
+              </AppErrorBoundary>
+            </GlobalErrorBoundary>
           </TooltipProvider>
         </LanguageProvider>
       </ThemeProvider>

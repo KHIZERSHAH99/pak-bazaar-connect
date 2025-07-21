@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Phone, Lock, Eye, EyeOff, Loader2, User, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { enhancedSignUp } from '@/lib/auth-enhanced';
 
 const FixedSignupForm: React.FC = () => {
@@ -249,12 +249,12 @@ const FixedSignupForm: React.FC = () => {
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground font-poppins">
             Already have an account?{' '}
-            <a 
-              href="/login" 
+            <Link 
+              to="/login" 
               className="text-primary hover:text-primary/90 font-medium"
             >
               Sign in here
-            </a>
+            </Link>
           </p>
         </div>
       </CardContent>

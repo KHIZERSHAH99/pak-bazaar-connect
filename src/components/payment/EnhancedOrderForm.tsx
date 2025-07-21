@@ -12,6 +12,7 @@ import { createOrderWithPayment } from '@/lib/orders-enhanced';
 import { getPaymentMethodsForShop } from '@/lib/payment-methods';
 import { PaymentMethodInfo, PaymentMethod } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContextFixed';
+import FileUpload from '@/components/common/FileUpload';
 
 interface EnhancedOrderFormProps {
   shopId: string;
@@ -62,19 +63,8 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     }
   }, [profile, shopId]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 100 * 1024) { // 100KB limit
-        toast({
-          title: "File too large",
-          description: "Please upload an image smaller than 100KB",
-          variant: "destructive"
-        });
-        return;
-      }
-      setScreenshot(file);
-    }
+  const handleFileSelect = (file: File) => {
+    setScreenshot(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -210,34 +200,34 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           <div className="space-y-4">
             <h3 className="font-semibold font-poppins">Payment Method</h3>
             
-            {paymentMethods ? (
+            {paymentMethods && (paymentMethods.bank_name || paymentMethods.jazzcash_number || paymentMethods.easypaisa_number) ? (
               <>
                 <Select value={selectedMethod} onValueChange={(value: PaymentMethod) => setSelectedMethod(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select payment method" />
                   </SelectTrigger>
                   <SelectContent>
-                    {paymentMethods?.bank_name && (
+                    {paymentMethods.bank_name && (
                       <SelectItem value="bank_transfer">
                         <div className="flex items-center gap-2">
                           {getPaymentIcon('bank_transfer')}
-                          Bank Transfer
+                          Bank Transfer ({paymentMethods.bank_name})
                         </div>
                       </SelectItem>
                     )}
-                    {paymentMethods?.jazzcash_number && (
+                    {paymentMethods.jazzcash_number && (
                       <SelectItem value="jazzcash">
                         <div className="flex items-center gap-2">
                           {getPaymentIcon('jazzcash')}
-                          JazzCash
+                          JazzCash ({paymentMethods.jazzcash_number})
                         </div>
                       </SelectItem>
                     )}
-                    {paymentMethods?.easypaisa_number && (
+                    {paymentMethods.easypaisa_number && (
                       <SelectItem value="easypaisa">
                         <div className="flex items-center gap-2">
                           {getPaymentIcon('easypaisa')}
-                          EasyPaisa
+                          EasyPaisa ({paymentMethods.easypaisa_number})
                         </div>
                       </SelectItem>
                     )}
@@ -259,27 +249,14 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           {/* Payment Screenshot Upload */}
           <div className="space-y-4">
             <h3 className="font-semibold font-poppins">Payment Screenshot *</h3>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <Label htmlFor="screenshot" className="cursor-pointer">
-                <span className="text-pakistani_green-600 hover:text-pakistani_green-700">
-                  Click to upload payment screenshot
-                </span>
-                <p className="text-sm text-gray-500 mt-1">PNG, JPG up to 100KB</p>
-              </Label>
-              <Input
-                id="screenshot"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              {screenshot && (
-                <p className="mt-2 text-sm text-green-600">
-                  ✓ {screenshot.name} uploaded
-                </p>
-              )}
-            </div>
+            <FileUpload
+              onFileSelect={handleFileSelect}
+              accept="image/*"
+              maxSize={100}
+              currentFile={screenshot}
+              placeholder="Click to upload payment screenshot"
+              disabled={isSubmitting}
+            />
           </div>
 
           {/* Action Buttons */}

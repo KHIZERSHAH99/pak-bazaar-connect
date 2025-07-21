@@ -23,7 +23,7 @@ export const formatPhoneNumber = (phone: string): string => {
 // Enhanced phone-based authentication with better error handling
 export const phoneSignIn = async (phoneNumber: string, password: string) => {
   try {
-    console.log('🔐 Starting enhanced phone sign in process');
+    console.log('🔐 Starting enhanced phone sign in process for:', phoneNumber);
     
     const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
     
@@ -31,23 +31,21 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
       throw new Error('Please enter a valid phone number');
     }
 
-    // Strategy 1: Try to find profile with this phone number first
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, email, phone_number, role')
-      .eq('phone_number', cleanPhone)
-      .maybeSingle();
+    // Strategy 1: Use our new database function to find user by phone
+    const { data: userLookup, error: lookupError } = await supabase
+      .rpc('find_user_by_phone', { phone_input: cleanPhone });
 
-    if (profileError) {
-      console.error('Profile lookup error:', profileError);
+    if (lookupError) {
+      console.error('Phone lookup error:', lookupError);
       throw new Error('Authentication failed');
     }
 
     let loginEmail = '';
     
-    if (profile) {
-      // Found profile, use the associated email
-      loginEmail = profile.email;
+    if (userLookup && userLookup.length > 0) {
+      // Found user via phone number lookup
+      loginEmail = userLookup[0].user_email;
+      console.log('✅ Found user via phone lookup:', loginEmail);
     } else {
       // Strategy 2: Try phone-based email formats as fallback
       const phoneEmailFormats = [
@@ -66,6 +64,7 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
         if (fallbackProfile) {
           foundProfile = fallbackProfile;
           loginEmail = emailFormat;
+          console.log('✅ Found user via email format:', emailFormat);
           break;
         }
       }
@@ -117,19 +116,16 @@ export const phoneSignUp = async (
       throw new Error('Please enter a valid phone number');
     }
 
-    // Check if phone number already exists
-    const { data: existingProfile, error: checkError } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('phone_number', cleanPhone)
-      .maybeSingle();
+    // Check if phone number already exists using our new function
+    const { data: existingUser, error: checkError } = await supabase
+      .rpc('find_user_by_phone', { phone_input: cleanPhone });
 
-    if (checkError && checkError.code !== 'PGRST116') {
+    if (checkError) {
       console.error('Phone check error:', checkError);
       throw new Error('Registration failed');
     }
 
-    if (existingProfile) {
+    if (existingUser && existingUser.length > 0) {
       throw new Error('An account with this phone number already exists');
     }
 

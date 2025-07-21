@@ -3,7 +3,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { enhancedSignIn, enhancedSignUp, enhancedSignOut, UserRole } from '@/lib/auth-enhanced';
+import { phoneSignIn, phoneSignUp } from '@/lib/phone-auth';
+import { UserRole } from '@/lib/types';
 
 export interface Profile {
   id: string;
@@ -31,8 +32,8 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error?: string }>;
-  signUp: (email: string, password: string, role: string) => Promise<{ error?: string }>;
+  signIn: (phoneOrEmail: string, password: string) => Promise<{ error?: string }>;
+  signUp: (phoneOrEmail: string, password: string, role: string, businessData?: Record<string, any>) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -41,7 +42,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const LoadingScreen: React.FC = () => (
   <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pakistani_green-600"></div>
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
   </div>
 );
 
@@ -207,11 +208,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [initializationAttempts]);
 
-  const signIn = async (email: string, password: string): Promise<{ error?: string }> => {
+  const signIn = async (phoneOrEmail: string, password: string): Promise<{ error?: string }> => {
     try {
       setLoading(true);
       
-      await enhancedSignIn(email, password);
+      // Determine if input is phone number or email
+      const isPhoneNumber = /^[\d\s\+\-\(\)]+$/.test(phoneOrEmail.trim());
+      
+      if (isPhoneNumber) {
+        await phoneSignIn(phoneOrEmail, password);
+      } else {
+        // Use email authentication
+        const cleanEmail = phoneOrEmail.toLowerCase().trim();
+        
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password
+        });
+
+        if (error) {
+          console.error('Email sign in error:', error);
+          throw new Error(error.message);
+        }
+      }
 
       toast({
         title: "Sign in successful",
@@ -236,11 +255,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signUp = async (email: string, password: string, role: string): Promise<{ error?: string }> => {
+  const signUp = async (phoneOrEmail: string, password: string, role: string, businessData?: Record<string, any>): Promise<{ error?: string }> => {
     try {
       setLoading(true);
       
-      await enhancedSignUp(email, password, role as UserRole);
+      // Determine if input is phone number or email
+      const isPhoneNumber = /^[\d\s\+\-\(\)]+$/.test(phoneOrEmail.trim());
+      
+      if (isPhoneNumber) {
+        await phoneSignUp(phoneOrEmail, password, role as UserRole, businessData || {});
+      } else {
+        // Use email authentication
+        const cleanEmail = phoneOrEmail.toLowerCase().trim();
+        
+        const { data, error } = await supabase.auth.signUp({
+          email: cleanEmail,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: {
+              role: role,
+              ...businessData
+            }
+          }
+        });
+
+        if (error) {
+          console.error('Email sign up error:', error);
+          throw new Error(error.message);
+        }
+      }
 
       toast({
         title: "Account created successfully",
@@ -269,7 +313,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      await enhancedSignOut();
+      // Clean up auth-related storage
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
+      
+      if (error) {
+        console.error('Sign out error:', error);
+        throw error;
+      }
       
       setUser(null);
       setSession(null);

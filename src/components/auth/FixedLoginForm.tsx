@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { phoneSignIn, validatePhoneNumber } from '@/lib/phone-auth';
+import { useAuth } from '@/contexts/AuthContextFixed';
 
 const FixedLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -15,6 +15,7 @@ const FixedLoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -23,12 +24,13 @@ const FixedLoginForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      if (!validatePhoneNumber(phoneNumber)) {
-        throw new Error('Please enter a valid phone number');
-      }
-
       console.log('🔐 Attempting login with phone:', phoneNumber);
-      await phoneSignIn(phoneNumber, password);
+      
+      const result = await signIn(phoneNumber, password);
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
 
       toast({
         title: 'Welcome back!',
@@ -50,6 +52,19 @@ const FixedLoginForm: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDemoLogin = async (demoPhone: string) => {
+    setPhoneNumber(demoPhone);
+    setPassword('demo123');
+    
+    // Small delay to show the form filled, then auto-submit
+    setTimeout(() => {
+      const form = document.querySelector('form') as HTMLFormElement;
+      if (form) {
+        form.requestSubmit();
+      }
+    }, 500);
   };
 
   return (
@@ -140,11 +155,41 @@ const FixedLoginForm: React.FC = () => {
           </p>
         </div>
 
-        <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-          <h4 className="font-medium text-green-800 mb-2 font-poppins">Demo Accounts:</h4>
-          <div className="text-sm text-green-700 space-y-1 font-poppins">
-            <p><strong>Wholesaler:</strong> 03001234567 | password: demo123</p>
-            <p><strong>Seller:</strong> 03004567890 | password: demo123</p>
+        <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+          <h4 className="font-medium text-green-800 mb-3 font-poppins">Demo Accounts:</h4>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between p-2 bg-white rounded border">
+              <div className="text-sm text-green-700 font-poppins">
+                <p><strong>Wholesaler:</strong> 03001234567</p>
+                <p className="text-xs text-green-600">Password: demo123</p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => handleDemoLogin('03001234567')}
+                disabled={isLoading}
+                className="text-xs"
+              >
+                Use
+              </Button>
+            </div>
+            <div className="flex items-center justify-between p-2 bg-white rounded border">
+              <div className="text-sm text-green-700 font-poppins">
+                <p><strong>Seller:</strong> 03004567890</p>
+                <p className="text-xs text-green-600">Password: demo123</p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => handleDemoLogin('03004567890')}
+                disabled={isLoading}
+                className="text-xs"
+              >
+                Use
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>

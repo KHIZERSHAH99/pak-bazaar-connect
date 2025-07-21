@@ -488,6 +488,27 @@ export type Database = {
         }
         Relationships: []
       }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       inquiries: {
         Row: {
           buyer_email: string | null
@@ -1265,6 +1286,27 @@ export type Database = {
           id?: string
           requested_role?: string
           status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      shop_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          shop_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          shop_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          shop_id?: string
           user_id?: string
         }
         Relationships: []

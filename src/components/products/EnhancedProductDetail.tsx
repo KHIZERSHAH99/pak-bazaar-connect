@@ -116,7 +116,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
     return (
       <EnhancedOrderForm
         shopId={product.shop_id}
-        shopName={product.shop?.name || 'Unknown Shop'}
+        shopName={product.shops?.name || 'Unknown Shop'}
         totalAmount={totalAmount}
         productId={product.id}
         onOrderCreated={handleOrderCreated}
@@ -165,12 +165,11 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 <h1 className="text-3xl font-bold font-poppins mb-2">{product.name}</h1>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                   <MapPin className="h-4 w-4" />
-                  <span>{product.shop?.name || 'Unknown Shop'}</span>
+                  <span>{product.shops?.name || 'Unknown Shop'}</span>
                 </div>
               </div>
               <FavoriteButton
                 productId={product.id}
-                className="ml-4"
               />
             </div>
 

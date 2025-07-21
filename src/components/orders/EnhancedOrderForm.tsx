@@ -60,7 +60,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           const product = await getProductById(productId);
           if (product) {
             resolvedShopId = product.shop_id;
-            resolvedShopName = product.shop?.name || shopName;
+            resolvedShopName = product.shops?.name || shopName;
             console.log('Resolved shop:', { resolvedShopId, resolvedShopName });
           }
         }

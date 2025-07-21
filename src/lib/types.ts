@@ -106,6 +106,19 @@ export interface Product {
   verification_status: string;
   sample_available?: boolean;
   sample_price?: number;
+  package_weight?: number;
+  lead_time_days?: number;
+  stock_quantity?: number;
+  customization_available?: boolean;
+  units_per_package?: number;
+  brand?: string;
+  model_number?: string;
+  origin_country?: string;
+  package_dimensions?: string;
+  warranty_info?: string;
+  certifications?: string[];
+  colors_available?: string[];
+  packaging_type?: string;
   created_at?: string;
   // Joined data
   categories?: Category;

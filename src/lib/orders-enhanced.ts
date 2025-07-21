@@ -518,7 +518,12 @@ export const createOrderWithPayment = async (
   shopId: string,
   totalAmount: number,
   paymentMethod: string,
-  paymentScreenshot: File
+  paymentScreenshot: File,
+  buyerInfo?: {
+    buyer_name: string;
+    buyer_phone: string;
+    buyer_address: string;
+  }
 ): Promise<Order | null> => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -544,7 +549,10 @@ export const createOrderWithPayment = async (
       payment_method: paymentMethod,
       payment_screenshot: screenshotPath,
       screenshot_uploaded_at: new Date().toISOString(),
-      status: 'pending'
+      status: 'pending',
+      buyer_name: buyerInfo?.buyer_name || 'Unknown',
+      buyer_phone: buyerInfo?.buyer_phone || '',
+      buyer_address: buyerInfo?.buyer_address || ''
     };
 
     const order = await createOrderWithValidation(orderData);
@@ -555,7 +563,7 @@ export const createOrderWithPayment = async (
     return order;
   } catch (error) {
     console.error('Error in createOrderWithPayment:', error);
-    return null;
+    throw error;
   }
 };
 

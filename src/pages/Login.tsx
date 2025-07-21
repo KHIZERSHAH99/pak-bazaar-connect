@@ -11,13 +11,13 @@ const Login: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-poppins mb-2">
+            <h1 className="text-3xl font-bold text-foreground font-poppins mb-2">
               {showSignup ? 'Create Account' : 'Welcome Back'}
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 font-poppins">
+            <p className="text-muted-foreground font-poppins">
               {showSignup 
                 ? 'Sign up to start your business journey' 
                 : 'Sign in to your account'
@@ -34,7 +34,7 @@ const Login: React.FC = () => {
               <Button
                 variant="link"
                 onClick={() => setShowSignup(!showSignup)}
-                className="text-pakistani_green-600 hover:text-pakistani_green-700 font-poppins"
+                className="text-primary hover:text-primary/80 font-poppins"
               >
                 {showSignup 
                   ? 'Already have an account? Sign in' 
@@ -46,7 +46,7 @@ const Login: React.FC = () => {
             <div className="mt-6 text-center">
               <Link
                 to="/"
-                className="text-sm text-gray-600 dark:text-gray-300 hover:text-pakistani_green-600 font-poppins"
+                className="text-sm text-muted-foreground hover:text-primary font-poppins"
               >
                 ← Back to Home
               </Link>

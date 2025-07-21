@@ -30,6 +30,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodInfo | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('bank_transfer');
   const [screenshot, setScreenshot] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [buyerInfo, setBuyerInfo] = useState({
     name: '',
     phone: '',
@@ -58,7 +59,22 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
         return;
       }
       setScreenshot(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setScreenshotPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  const removeScreenshot = () => {
+    setScreenshot(null);
+    setScreenshotPreview(null);
+    // Reset file input
+    const input = document.getElementById('screenshot') as HTMLInputElement;
+    if (input) input.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,7 +100,15 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const order = await createOrderWithPayment(shopId, totalAmount, selectedMethod, screenshot);
+      const order = await createOrderWithPayment(shopId, totalAmount, selectedMethod, screenshot, {
+        buyer_name: buyerInfo.name,
+        buyer_phone: buyerInfo.phone,
+        buyer_address: buyerInfo.address
+      });
+
+      if (!order) {
+        throw new Error('Failed to create order');
+      }
 
       toast({
         title: "Order Created Successfully",
@@ -119,25 +143,25 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     switch (selectedMethod) {
       case 'bank_transfer':
         return paymentMethods.bank_name && paymentMethods.account_number ? (
-          <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
-            <p className="font-medium">Bank Transfer Details:</p>
-            <p>Bank: {paymentMethods.bank_name}</p>
-            <p>Account: {paymentMethods.account_number}</p>
-            <p>Title: {paymentMethods.account_title}</p>
+          <div className="space-y-2 p-3 bg-muted rounded-lg">
+            <p className="font-medium text-foreground">Bank Transfer Details:</p>
+            <p className="text-foreground">Bank: {paymentMethods.bank_name}</p>
+            <p className="text-foreground">Account: {paymentMethods.account_number}</p>
+            <p className="text-foreground">Title: {paymentMethods.account_title}</p>
           </div>
         ) : null;
       case 'jazzcash':
         return paymentMethods.jazzcash_number ? (
-          <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
-            <p className="font-medium">JazzCash Details:</p>
-            <p>Number: {paymentMethods.jazzcash_number}</p>
+          <div className="space-y-2 p-3 bg-muted rounded-lg">
+            <p className="font-medium text-foreground">JazzCash Details:</p>
+            <p className="text-foreground">Number: {paymentMethods.jazzcash_number}</p>
           </div>
         ) : null;
       case 'easypaisa':
         return paymentMethods.easypaisa_number ? (
-          <div className="space-y-2 p-3 bg-gray-50 rounded-lg">
-            <p className="font-medium">EasyPaisa Details:</p>
-            <p>Number: {paymentMethods.easypaisa_number}</p>
+          <div className="space-y-2 p-3 bg-muted rounded-lg">
+            <p className="font-medium text-foreground">EasyPaisa Details:</p>
+            <p className="text-foreground">Number: {paymentMethods.easypaisa_number}</p>
           </div>
         ) : null;
     }
@@ -147,7 +171,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="font-poppins">Create Order - {shopName}</CardTitle>
-        <p className="text-lg font-semibold text-pakistani_green-600">
+        <p className="text-lg font-semibold text-primary">
           Total Amount: PKR {totalAmount.toLocaleString()}
         </p>
       </CardHeader>
@@ -241,27 +265,48 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           {/* Payment Screenshot Upload */}
           <div className="space-y-4">
             <h3 className="font-semibold font-poppins">Payment Screenshot *</h3>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <Label htmlFor="screenshot" className="cursor-pointer">
-                <span className="text-pakistani_green-600 hover:text-pakistani_green-700">
-                  Click to upload payment screenshot
-                </span>
-                <p className="text-sm text-gray-500 mt-1">PNG, JPG up to 100KB</p>
-              </Label>
-              <Input
-                id="screenshot"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              {screenshot && (
-                <p className="mt-2 text-sm text-green-600">
-                  ✓ {screenshot.name} uploaded
-                </p>
-              )}
-            </div>
+            {!screenshot ? (
+              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
+                <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <Label htmlFor="screenshot" className="cursor-pointer">
+                  <span className="text-primary hover:text-primary/80">
+                    Click to upload payment screenshot
+                  </span>
+                  <p className="text-sm text-muted-foreground mt-1">PNG, JPG up to 100KB</p>
+                </Label>
+                <Input
+                  id="screenshot"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </div>
+            ) : (
+              <div className="border border-border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-medium text-foreground">✓ Payment screenshot uploaded</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={removeScreenshot}
+                  >
+                    Remove
+                  </Button>
+                </div>
+                {screenshotPreview && (
+                  <div className="mt-3">
+                    <img 
+                      src={screenshotPreview} 
+                      alt="Payment screenshot preview"
+                      className="max-w-full h-auto max-h-48 mx-auto rounded border"
+                    />
+                  </div>
+                )}
+                <p className="text-sm text-muted-foreground mt-2">{screenshot.name}</p>
+              </div>
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -277,7 +322,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700"
+              className="flex-1"
             >
               {isSubmitting ? 'Creating Order...' : 'Create Order'}
             </Button>

@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { enhancedSignIn } from '@/lib/auth-enhanced';
+import { phoneSignIn, validatePhoneNumber } from '@/lib/phone-auth';
 
 const FixedLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -23,15 +23,11 @@ const FixedLoginForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
-      
-      if (cleanPhone.length < 10) {
+      if (!validatePhoneNumber(phoneNumber)) {
         throw new Error('Please enter a valid phone number');
       }
 
-      const tempEmail = `${cleanPhone}@temp-phone-auth.com`;
-      
-      await enhancedSignIn(tempEmail, password);
+      await phoneSignIn(phoneNumber, password);
 
       toast({
         title: 'Welcome back!',
@@ -44,15 +40,9 @@ const FixedLoginForm: React.FC = () => {
     } catch (error: any) {
       console.error('Login error:', error);
       
-      let errorMessage = 'Login failed. Please check your credentials.';
-      
-      if (error.message?.includes('Invalid login credentials')) {
-        errorMessage = 'Invalid phone number or password. Please try again.';
-      }
-
       toast({
         title: 'Login Failed',
-        description: errorMessage,
+        description: error.message || 'Invalid phone number or password',
         variant: 'destructive',
       });
     } finally {
@@ -146,6 +136,14 @@ const FixedLoginForm: React.FC = () => {
               Sign up here
             </Link>
           </p>
+        </div>
+
+        <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+          <h4 className="font-medium text-green-800 mb-2 font-poppins">Demo Accounts:</h4>
+          <div className="text-sm text-green-700 space-y-1 font-poppins">
+            <p><strong>Wholesaler:</strong> 03001234567 | password: demo123</p>
+            <p><strong>Seller:</strong> 03004567890 | password: demo123</p>
+          </div>
         </div>
       </CardContent>
     </Card>

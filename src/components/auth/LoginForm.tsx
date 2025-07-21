@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import { enhancedSignIn } from '@/lib/auth-enhanced';
+import { phoneSignIn, validatePhoneNumber } from '@/lib/phone-auth';
 
 const LoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -22,17 +22,11 @@ const LoginForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Clean phone number
-      const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
-      
-      if (cleanPhone.length < 10) {
+      if (!validatePhoneNumber(phoneNumber)) {
         throw new Error('Please enter a valid phone number');
       }
 
-      // Convert phone to temp email format
-      const tempEmail = `${cleanPhone}@temp-phone-auth.com`;
-      
-      await enhancedSignIn(tempEmail, password);
+      await phoneSignIn(phoneNumber, password);
 
       toast({
         title: 'Welcome back!',
@@ -47,19 +41,9 @@ const LoginForm: React.FC = () => {
     } catch (error: any) {
       console.error('Login error:', error);
       
-      let errorMessage = 'Login failed. Please check your credentials.';
-      
-      if (error.message?.includes('Invalid login credentials')) {
-        errorMessage = 'Invalid phone number or password. Please try again.';
-      } else if (error.message?.includes('Email not confirmed')) {
-        errorMessage = 'Please verify your account before logging in.';
-      } else if (error.message?.includes('Too many requests')) {
-        errorMessage = 'Too many login attempts. Please wait a moment and try again.';
-      }
-
       toast({
         title: 'Login Failed',
-        description: errorMessage,
+        description: error.message || 'Invalid phone number or password',
         variant: 'destructive',
       });
     } finally {

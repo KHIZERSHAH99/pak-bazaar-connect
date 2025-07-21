@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formSchema, FormValues } from './signupSchema';
 import { UserRole } from '@/lib/types';
+import { phoneSignUp, validatePhoneNumber } from '@/lib/phone-auth';
 
 export const usePhoneSignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -169,39 +170,37 @@ export const usePhoneSignupForm = () => {
       return;
     }
     
+    if (!validatePhoneNumber(values.phoneNumber)) {
+      toast({
+        title: 'Invalid Phone Number',
+        description: 'Please enter a valid phone number',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setIsLoading(true);
     setErrorMessage(null);
     
     try {
-      console.log('Calling signUp with phone:', values.phoneNumber, selectedRole);
+      console.log('Calling phoneSignUp with phone:', values.phoneNumber, selectedRole);
       
       toast({
         title: 'Creating Account',
         description: 'Please wait while we set up your account...',
       });
       
-      // Create a temporary email using phone number for Supabase auth
-      const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
+      const businessData = {
+        contact_name: values.contactName,
+        business_name: values.businessName,
+        address: values.address,
+        city: values.city,
+        industry: values.industry || '',
+        business_type: values.businessType,
+        postal_code: values.postalCode || ''
+      };
       
-      const { data, error } = await supabase.auth.signUp({
-        email: tempEmail,
-        password: values.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-          data: {
-            role: selectedRole,
-            phone_number: values.phoneNumber,
-            contact_name: values.contactName,
-            business_name: values.businessName,
-            address: values.address,
-            city: values.city,
-            industry: values.industry || '',
-            business_type: values.businessType
-          }
-        }
-      });
-
-      if (error) throw error;
+      await phoneSignUp(values.phoneNumber, values.password, selectedRole, businessData);
       
       toast({
         title: 'Account Created Successfully!',
@@ -225,15 +224,7 @@ export const usePhoneSignupForm = () => {
       let errorMsg = 'Failed to create account. Please try again.';
       
       if (error.message) {
-        if (error.message.includes('User already registered') || error.message.includes('already exists')) {
-          errorMsg = `This phone number is already registered. Please try logging in or use a different phone number.`;
-        } else if (error.message.includes('Password')) {
-          errorMsg = 'Password does not meet requirements. Please choose a stronger password.';
-        } else if (error.message.includes('network') || error.message.includes('fetch')) {
-          errorMsg = 'Network error. Please check your connection and try again.';
-        } else {
-          errorMsg = error.message;
-        }
+        errorMsg = error.message;
       }
       
       setErrorMessage(errorMsg);

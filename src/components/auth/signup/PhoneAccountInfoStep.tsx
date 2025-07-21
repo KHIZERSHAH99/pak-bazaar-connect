@@ -1,241 +1,276 @@
 
-import React, { useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import React, { useEffect, useState } from 'react';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Eye, EyeOff, Phone, Lock, AlertCircle, CheckCircle, X, Loader2 } from 'lucide-react';
-import { useDebounce } from '@/hooks/useDebounce';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Eye, EyeOff, Phone, Lock, CheckCircle, XCircle } from 'lucide-react';
+import { UseFormReturn } from 'react-hook-form';
+import { FormValues } from './signupSchema';
+import { UserRole } from '@/lib/types';
+import { supabase } from '@/integrations/supabase/client';
+import { validatePhoneNumber } from '@/lib/phone-auth';
 
 interface PhoneAccountInfoStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<FormValues>;
   isLoading: boolean;
-  selectedRole?: string;
-  onPhoneBlocked?: (blocked: boolean) => void;
+  selectedRole: UserRole;
+  onPhoneBlocked: (blocked: boolean) => void;
 }
 
-const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({ 
-  form, 
-  isLoading, 
-  selectedRole = 'wholesaler',
-  onPhoneBlocked 
+const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
+  form,
+  isLoading,
+  selectedRole,
+  onPhoneBlocked
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [phoneStatus, setPhoneStatus] = useState<'checking' | 'available' | 'taken' | 'blocked' | 'error' | null>(null);
+  const [phoneCheckState, setPhoneCheckState] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   
   const phoneNumber = form.watch('phoneNumber');
   const password = form.watch('password');
   const confirmPassword = form.watch('confirmPassword');
-  const debouncedPhone = useDebounce(phoneNumber, 800);
 
-  React.useEffect(() => {
-    const checkPhone = async () => {
-      if (!debouncedPhone || debouncedPhone.length < 10) {
-        setPhoneStatus(null);
-        onPhoneBlocked?.(false);
+  // Check if phone number is available
+  useEffect(() => {
+    const checkPhoneAvailability = async () => {
+      if (!phoneNumber || phoneNumber.length < 10) {
+        setPhoneCheckState('idle');
+        onPhoneBlocked(false);
         return;
       }
 
+      if (!validatePhoneNumber(phoneNumber)) {
+        setPhoneCheckState('idle');
+        onPhoneBlocked(false);
+        return;
+      }
+
+      setPhoneCheckState('checking');
+
       try {
-        setPhoneStatus('checking');
-        // For now, assume phone is available (you can add actual check later)
-        setPhoneStatus('available');
-        onPhoneBlocked?.(false);
-        form.clearErrors('phoneNumber');
+        const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
+        
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('phone_number', cleanPhone)
+          .maybeSingle();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Phone check error:', error);
+          setPhoneCheckState('idle');
+          onPhoneBlocked(false);
+          return;
+        }
+
+        if (data) {
+          setPhoneCheckState('taken');
+          onPhoneBlocked(true);
+        } else {
+          setPhoneCheckState('available');
+          onPhoneBlocked(false);
+        }
       } catch (error) {
-        console.error('Phone check error:', error);
-        setPhoneStatus('error');
-        onPhoneBlocked?.(false);
+        console.error('Phone availability check failed:', error);
+        setPhoneCheckState('idle');
+        onPhoneBlocked(false);
       }
     };
 
-    checkPhone();
-  }, [debouncedPhone, form, onPhoneBlocked]);
+    const timeoutId = setTimeout(checkPhoneAvailability, 500);
+    return () => clearTimeout(timeoutId);
+  }, [phoneNumber, onPhoneBlocked]);
 
-  // Simplified password validation - just check length
   const getPasswordStrength = (password: string) => {
-    if (!password) return { strength: 0, message: '' };
+    if (!password) return { score: 0, text: '' };
     
-    if (password.length >= 6) {
-      return { strength: 4, message: 'Good password' };
-    }
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
     
-    return { strength: 1, message: 'Password too short' };
+    const strengthTexts = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+    return { score, text: strengthTexts[score] || 'Very Weak' };
   };
 
-  const passwordStrength = getPasswordStrength(password || '');
-  const passwordsMatch = password && confirmPassword && password === confirmPassword;
+  const passwordStrength = getPasswordStrength(password);
 
   return (
-    <div className="space-y-4 animate-fadeIn">
+    <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-foreground mb-2 font-poppins">Account Information</h3>
-        <p className="text-muted-foreground font-poppins text-sm">Create your {selectedRole} account with phone number</p>
+        <h3 className="text-lg font-semibold text-card-foreground mb-2 font-poppins">
+          Create Your Account
+        </h3>
+        <p className="text-sm text-muted-foreground font-poppins">
+          Enter your phone number and create a secure password for your {selectedRole} account
+        </p>
       </div>
 
-      {phoneStatus === 'blocked' && (
-        <Alert variant="destructive" className="mb-4">
-          <X className="h-4 w-4" />
-          <AlertDescription className="font-poppins">
-            This phone number is already registered. Please use a different phone number to continue.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <FormField
-        control={form.control}
-        name="phoneNumber"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="flex items-center text-foreground font-poppins">
-              <Phone className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
-              Phone Number
-            </FormLabel>
-            <FormControl>
-              <div className="relative">
-                <Input 
-                  type="tel" 
-                  placeholder="03XX XXXXXXX or +92XXX XXXXXXX" 
-                  disabled={isLoading || phoneStatus === 'blocked'} 
-                  className={`font-poppins pr-10 bg-background ${
-                    phoneStatus === 'blocked' ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : 
-                    phoneStatus === 'available' ? 'border-green-500' : ''
-                  }`}
-                  {...field} 
-                />
-                {phoneStatus === 'checking' && (
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <Loader2 className="h-4 w-4 animate-spin text-pakistani_green-700 dark:text-pakistani_green-400" />
-                  </div>
-                )}
-                {phoneStatus === 'available' && (
-                  <CheckCircle className="absolute inset-y-0 right-0 flex items-center pr-3 h-4 w-4 text-green-500 mr-3 mt-3" />
-                )}
-                {phoneStatus === 'blocked' && (
-                  <X className="absolute inset-y-0 right-0 flex items-center pr-3 h-4 w-4 text-red-500 mr-3 mt-3" />
-                )}
-              </div>
-            </FormControl>
-            {phoneStatus === 'available' && (
-              <p className="text-sm text-green-600 dark:text-green-400 font-poppins">
-                ✓ Phone number is available for {selectedRole} registration!
-              </p>
-            )}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name="password"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="flex items-center text-foreground font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
-              Password
-            </FormLabel>
-            <FormControl>
-              <div className="relative">
-                <Input 
-                  type={showPassword ? "text" : "password"} 
-                  placeholder="Create a strong password" 
-                  disabled={isLoading} 
-                  className="font-poppins pr-10 bg-background"
-                  {...field} 
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
-                  disabled={isLoading}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+      <div className="space-y-4">
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center font-poppins">
+                <Phone className="h-4 w-4 mr-2 text-pakistani_green-600" />
+                Phone Number
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    placeholder="03XX XXXXXXX"
+                    type="tel"
+                    disabled={isLoading}
+                    className="font-poppins pr-10"
+                  />
+                  {phoneCheckState === 'checking' && (
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-pakistani_green-600 border-t-transparent"></div>
+                    </div>
                   )}
-                </button>
-              </div>
-            </FormControl>
-            {password && (
-              <div className="text-xs font-poppins">
-                <div className="flex gap-1 mb-1">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className={`h-1 w-full rounded ${
-                        i <= passwordStrength.strength
-                          ? passwordStrength.strength <= 2
-                            ? 'bg-red-500'
-                            : passwordStrength.strength === 3
-                            ? 'bg-yellow-500'
-                            : 'bg-green-500'
-                          : 'bg-gray-200'
-                      }`}
-                    />
-                  ))}
+                  {phoneCheckState === 'available' && (
+                    <CheckCircle className="absolute inset-y-0 right-0 flex items-center pr-3 h-4 w-4 text-green-600" />
+                  )}
+                  {phoneCheckState === 'taken' && (
+                    <XCircle className="absolute inset-y-0 right-0 flex items-center pr-3 h-4 w-4 text-red-600" />
+                  )}
                 </div>
-                <p className={`${
-                  passwordStrength.strength <= 2 ? 'text-red-600' :
-                  passwordStrength.strength === 3 ? 'text-yellow-600' : 'text-green-600'
-                }`}>
-                  {passwordStrength.message}
+              </FormControl>
+              {phoneCheckState === 'taken' && (
+                <p className="text-sm text-red-600 font-poppins">
+                  This phone number is already registered. Please use a different number.
                 </p>
-              </div>
-            )}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+              )}
+              {phoneCheckState === 'available' && (
+                <p className="text-sm text-green-600 font-poppins">
+                  Phone number is available!
+                </p>
+              )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <FormField
-        control={form.control}
-        name="confirmPassword"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="flex items-center text-foreground font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
-              Confirm Password
-            </FormLabel>
-            <FormControl>
-              <div className="relative">
-                <Input 
-                  type={showConfirmPassword ? "text" : "password"} 
-                  placeholder="Confirm your password" 
-                  disabled={isLoading} 
-                  className={`font-poppins pr-10 bg-background ${
-                    confirmPassword && passwordsMatch ? 'border-green-500' :
-                    confirmPassword && !passwordsMatch ? 'border-red-500' : ''
-                  }`}
-                  {...field} 
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
-                  disabled={isLoading}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </button>
-              </div>
-            </FormControl>
-            {confirmPassword && (
-              <p className={`text-xs font-poppins ${
-                passwordsMatch ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {passwordsMatch ? '✓ Passwords match' : '✗ Passwords do not match'}
-              </p>
-            )}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center font-poppins">
+                <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
+                Password
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Create a strong password"
+                    disabled={isLoading}
+                    className="font-poppins pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute inset-y-0 right-0 px-3 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
+              </FormControl>
+              {password && (
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <div className="flex-1 bg-muted rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          passwordStrength.score <= 1 ? 'bg-red-500' :
+                          passwordStrength.score <= 2 ? 'bg-yellow-500' :
+                          passwordStrength.score <= 3 ? 'bg-blue-500' :
+                          'bg-green-500'
+                        }`}
+                        style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-muted-foreground font-poppins">
+                      {passwordStrength.text}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground font-poppins">
+                    Use 8+ characters with a mix of letters, numbers & symbols
+                  </p>
+                </div>
+              )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center font-poppins">
+                <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
+                Confirm Password
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="Confirm your password"
+                    disabled={isLoading}
+                    className="font-poppins pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute inset-y-0 right-0 px-3 hover:bg-transparent"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={isLoading}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
+              </FormControl>
+              {confirmPassword && password && confirmPassword !== password && (
+                <p className="text-sm text-red-600 font-poppins">
+                  Passwords do not match
+                </p>
+              )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h4 className="font-medium text-blue-800 mb-2 font-poppins">Account Security</h4>
+        <ul className="text-sm text-blue-700 space-y-1 font-poppins">
+          <li>• Your phone number will be used for account verification</li>
+          <li>• Keep your password secure and don't share it with others</li>
+          <li>• You can change your password anytime from your profile</li>
+        </ul>
+      </div>
     </div>
   );
 };

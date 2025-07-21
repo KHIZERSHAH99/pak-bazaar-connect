@@ -10,6 +10,7 @@ export const formSchema = z.object({
   businessType: z.enum(['Manufacturer', 'Wholesaler', 'Distributor', 'Retailer', 'Other']),
   address: z.string().min(10, 'Please enter your complete business address'),
   city: z.string().min(2, 'Please enter a valid city name'),
+  postalCode: z.string().optional(),
   industry: z.string().optional(),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",

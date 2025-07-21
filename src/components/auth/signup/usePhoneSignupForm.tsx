@@ -28,6 +28,7 @@ export const usePhoneSignupForm = () => {
       businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
       address: '',
       city: '',
+      postalCode: '',
       industry: '',
       contactName: '',
     }
@@ -49,7 +50,7 @@ export const usePhoneSignupForm = () => {
     const stepFields = {
       1: [],
       2: ['phoneNumber', 'password', 'confirmPassword'],
-      3: ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName'],
+      3: ['businessName', 'businessType', 'address', 'city', 'contactName'],
       4: []
     };
     

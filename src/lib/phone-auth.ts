@@ -31,9 +31,12 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
       throw new Error('Please enter a valid phone number');
     }
 
-    // Strategy 1: Use our new database function to find user by phone
-    const { data: userLookup, error: lookupError } = await supabase
-      .rpc('find_user_by_phone', { phone_input: cleanPhone });
+    // Strategy 1: Direct query to find user by phone number
+    const { data: userProfile, error: lookupError } = await supabase
+      .from('profiles')
+      .select('id, email, phone_number, role')
+      .eq('phone_number', cleanPhone)
+      .maybeSingle();
 
     if (lookupError) {
       console.error('Phone lookup error:', lookupError);
@@ -42,9 +45,9 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
 
     let loginEmail = '';
     
-    if (userLookup && userLookup.length > 0) {
+    if (userProfile) {
       // Found user via phone number lookup
-      loginEmail = userLookup[0].user_email;
+      loginEmail = userProfile.email;
       console.log('✅ Found user via phone lookup:', loginEmail);
     } else {
       // Strategy 2: Try phone-based email formats as fallback
@@ -116,16 +119,19 @@ export const phoneSignUp = async (
       throw new Error('Please enter a valid phone number');
     }
 
-    // Check if phone number already exists using our new function
+    // Check if phone number already exists using direct query
     const { data: existingUser, error: checkError } = await supabase
-      .rpc('find_user_by_phone', { phone_input: cleanPhone });
+      .from('profiles')
+      .select('id, phone_number')
+      .eq('phone_number', cleanPhone)
+      .maybeSingle();
 
-    if (checkError) {
+    if (checkError && checkError.code !== 'PGRST116') {
       console.error('Phone check error:', checkError);
       throw new Error('Registration failed');
     }
 
-    if (existingUser && existingUser.length > 0) {
+    if (existingUser) {
       throw new Error('An account with this phone number already exists');
     }
 

@@ -68,16 +68,15 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
   console.log('getPaymentMethodsForShop called with shopId:', shopId);
   
   if (!shopId) {
-    console.error('No shop ID provided to getPaymentMethodsForShop');
+    console.error('No shop ID provided');
     return null;
   }
 
   try {
     // First get the shop to find the owner
-    console.log('Fetching shop details for ID:', shopId);
     const { data: shop, error: shopError } = await supabase
       .from('shops')
-      .select('owner_id, name, contact, address')
+      .select('owner_id, name')
       .eq('id', shopId)
       .single();
 
@@ -88,13 +87,12 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
 
     console.log('Shop found:', shop);
 
-    if (!shop || !shop.owner_id) {
-      console.error('Shop not found or missing owner_id:', shop);
+    if (!shop) {
+      console.error('Shop not found');
       return null;
     }
 
     // Then get the payment methods for the shop owner
-    console.log('Fetching payment methods for wholesaler:', shop.owner_id);
     const { data: paymentMethods, error: paymentError } = await supabase
       .from('payment_methods')
       .select('*')
@@ -108,12 +106,6 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
     }
 
     console.log('Payment methods found:', paymentMethods);
-    
-    if (!paymentMethods) {
-      console.log('No payment methods found for wholesaler:', shop.owner_id);
-      return null;
-    }
-
     return paymentMethods;
   } catch (error) {
     console.error('Unexpected error in getPaymentMethodsForShop:', error);
@@ -124,12 +116,7 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
 // Get own payment methods (for wholesaler)
 export const getMyPaymentMethods = async (): Promise<PaymentMethodInfo | null> => {
   const user = await getCurrentUser();
-  if (!user) {
-    console.log('No user found in getMyPaymentMethods');
-    return null;
-  }
-
-  console.log('Fetching payment methods for current user:', user.id);
+  if (!user) return null;
 
   const { data, error } = await supabase
     .from('payment_methods')
@@ -143,13 +130,5 @@ export const getMyPaymentMethods = async (): Promise<PaymentMethodInfo | null> =
     return null;
   }
 
-  console.log('My payment methods:', data);
   return data || null;
-};
-
-// Helper function to validate payment methods
-export const validatePaymentMethods = (methods: PaymentMethodInfo | null): boolean => {
-  if (!methods) return false;
-  
-  return !!(methods.bank_name || methods.jazzcash_number || methods.easypaisa_number);
 };

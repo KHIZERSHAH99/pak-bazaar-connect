@@ -11,7 +11,6 @@ import OrderManagementCompact from '@/components/orders/OrderManagementCompact';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { useQuery } from '@tanstack/react-query';
 import { getSellerOrders } from '@/lib/orders-enhanced';
-import { getCurrentUser } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,11 +22,7 @@ const EnhancedSellerDashboard: React.FC = () => {
   // Fetch seller orders for stats
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['seller-orders'],
-    queryFn: async () => {
-      const user = await getCurrentUser();
-      if (!user) throw new Error('User not authenticated');
-      return getSellerOrders(user.id);
-    },
+    queryFn: getSellerOrders,
   });
 
   // Calculate stats
@@ -193,7 +188,7 @@ const EnhancedSellerDashboard: React.FC = () => {
                       {orders.slice(0, 3).map((order) => (
                         <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                           <div>
-                            <p className="font-medium">{(order as any)?.shops?.name || (order as any)?.shop?.name || 'Unknown Shop'}</p>
+                            <p className="font-medium">{order.shops?.name || 'Unknown Shop'}</p>
                             <p className="text-sm text-gray-600">Rs. {order.total_amount?.toLocaleString()}</p>
                           </div>
                           <Badge variant={

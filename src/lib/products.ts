@@ -1,223 +1,303 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
+import { uploadImage } from '@/lib/storage';
 import { Product } from '@/lib/types';
 
-export const getProducts = async (limit: number = 10) => {
-  console.log('Fetching products with limit:', limit);
-  
-  const { data, error } = await supabase
-    .from('products')
-    .select(`
-      *,
-      shops (
-        id,
-        name,
-        owner_id,
-        contact,
-        address,
-        logo
-      ),
-      categories (
-        id,
-        name
-      )
-    `)
-    .eq('is_active', true)
-    .eq('verification_status', 'approved')
-    .order('created_at', { ascending: false })
-    .limit(limit);
+export const createProduct = async (productData: {
+  shop_id: string;
+  name: string;
+  description?: string;
+  price: number;
+  image?: string;
+  category_id?: string;
+  moq?: number;
+}): Promise<Product> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
 
-  if (error) {
-    console.error('Error fetching products:', error);
+    // Enhanced validation
+    if (!productData.name?.trim() || !productData.price || !productData.shop_id) {
+      throw new Error('Missing required fields: name, price, and shop_id are required');
+    }
+
+    if (productData.price <= 0) {
+      throw new Error('Price must be greater than 0');
+    }
+
+    if (productData.name.trim().length < 3 || productData.name.trim().length > 100) {
+      throw new Error('Product name must be between 3 and 100 characters');
+    }
+
+    if (productData.moq && productData.moq < 1) {
+      throw new Error('Minimum order quantity must be at least 1');
+    }
+
+    // Verify user owns the shop
+    const { data: shop, error: shopError } = await supabase
+      .from('shops')
+      .select('owner_id')
+      .eq('id', productData.shop_id)
+      .single();
+
+    if (shopError) {
+      throw new Error('Failed to verify shop ownership');
+    }
+
+    if (shop.owner_id !== user.id) {
+      throw new Error('You can only add products to your own shops');
+    }
+
+    const { data, error } = await supabase
+      .from('products')
+      .insert({
+        ...productData,
+        is_active: true,
+        verification_status: 'approved',
+        moq: productData.moq || 1
+      })
+      .select(`
+        *,
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
+      `)
+      .single();
+
+    if (error) {
+      console.error('Product creation error:', error);
+      throw new Error(`Failed to create product: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from product creation');
+    }
+
+    return data as Product;
+  } catch (error) {
+    console.error('Error in createProduct:', error);
     throw error;
   }
-
-  console.log('Products fetched successfully:', data);
-  return data as any[];
 };
 
-export const getProductById = async (id: string): Promise<Product | null> => {
-  console.log('Fetching product by ID:', id);
-  
-  const { data, error } = await supabase
-    .from('products')
-    .select(`
-      *,
-      shops (
-        id,
-        name,
-        owner_id,
-        contact,
-        address,
-        logo
-      ),
-      categories (
-        id,
-        name
-      )
-    `)
-    .eq('id', id)
-    .eq('is_active', true)
-    .maybeSingle();
+export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        *,
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
+      `)
+      .eq('shop_id', shopId)
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching product:', error);
+    if (error) {
+      console.error('Error fetching products by shop:', error);
+      throw error;
+    }
+
+    return (data || []) as Product[];
+  } catch (error) {
+    console.error('Error in getProductsByShop:', error);
     throw error;
   }
-
-  console.log('Product fetched by ID:', data);
-  return data as any;
 };
 
-export const getProductsByShop = async (shopId: string) => {
-  console.log('Fetching products for shop:', shopId);
-  
-  const { data, error } = await supabase
-    .from('products')
-    .select(`
-      *,
-      shops (
-        id,
-        name,
-        owner_id,
-        contact,
-        address,
-        logo
-      ),
-      categories (
-        id,
-        name
-      )
-    `)
-    .eq('shop_id', shopId)
-    .eq('is_active', true)
-    .order('created_at', { ascending: false });
+export const getProductsByWholesaler = async (): Promise<Product[]> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
 
-  if (error) {
-    console.error('Error fetching shop products:', error);
+    // First get shops owned by the wholesaler
+    const { data: shops, error: shopsError } = await supabase
+      .from('shops')
+      .select('id')
+      .eq('owner_id', user.id);
+
+    if (shopsError) {
+      console.error('Error fetching wholesaler shops:', shopsError);
+      throw shopsError;
+    }
+
+    if (!shops || shops.length === 0) {
+      return [];
+    }
+
+    const shopIds = shops.map(shop => shop.id);
+
+    // Then get products only from those shops
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        *,
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
+      `)
+      .in('shop_id', shopIds)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching wholesaler products:', error);
+      throw error;
+    }
+
+    return (data || []) as Product[];
+  } catch (error) {
+    console.error('Error in getProductsByWholesaler:', error);
     throw error;
   }
-
-  console.log('Shop products fetched:', data);
-  return data as any[];
 };
 
-export const getProductsByWholesaler = async (wholesalerId: string) => {
-  console.log('Fetching products for wholesaler:', wholesalerId);
-  
-  const { data, error } = await supabase
-    .from('products')
-    .select(`
-      *,
-      shops!inner (
-        id,
-        name,
-        owner_id,
-        contact,
-        address,
-        logo
-      ),
-      categories (
-        id,
-        name
-      )
-    `)
-    .eq('shops.owner_id', wholesalerId)
-    .order('created_at', { ascending: false });
+export const updateProduct = async (
+  productId: string,
+  updates: Partial<Omit<Product, 'id' | 'created_at' | 'shops' | 'categories'>>
+): Promise<Product> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
 
-  if (error) {
-    console.error('Error fetching wholesaler products:', error);
+    // Verify user owns the product through shop ownership
+    const { data: product, error: productError } = await supabase
+      .from('products')
+      .select(`
+        *,
+        shops!fk_products_shop_id(owner_id)
+      `)
+      .eq('id', productId)
+      .single();
+
+    if (productError) {
+      throw new Error('Product not found');
+    }
+
+    if (product.shops.owner_id !== user.id) {
+      throw new Error('You can only update your own products');
+    }
+
+    const { data, error } = await supabase
+      .from('products')
+      .update(updates)
+      .eq('id', productId)
+      .select(`
+        *,
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
+      `)
+      .single();
+
+    if (error) {
+      console.error('Product update error:', error);
+      throw new Error(`Failed to update product: ${error.message}`);
+    }
+
+    return data as Product;
+  } catch (error) {
+    console.error('Error in updateProduct:', error);
     throw error;
   }
-
-  console.log('Wholesaler products fetched:', data);
-  return data as any[];
 };
 
-export const createProduct = async (productData: any) => {
-  console.log('Creating product:', productData);
-  
-  const { data, error } = await supabase
-    .from('products')
-    .insert([productData])
-    .select()
-    .single();
+export const deleteProduct = async (productId: string): Promise<void> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
 
-  if (error) {
-    console.error('Error creating product:', error);
+    // Verify user owns the product through shop ownership
+    const { data: product, error: productError } = await supabase
+      .from('products')
+      .select(`
+        *,
+        shops!fk_products_shop_id(owner_id)
+      `)
+      .eq('id', productId)
+      .single();
+
+    if (productError) {
+      throw new Error('Product not found');
+    }
+
+    if (product.shops.owner_id !== user.id) {
+      throw new Error('You can only delete your own products');
+    }
+
+    const { error } = await supabase
+      .from('products')
+      .update({ is_active: false })
+      .eq('id', productId);
+
+    if (error) {
+      console.error('Product deletion error:', error);
+      throw new Error(`Failed to delete product: ${error.message}`);
+    }
+  } catch (error) {
+    console.error('Error in deleteProduct:', error);
     throw error;
   }
-
-  console.log('Product created successfully:', data);
-  return data;
 };
 
-export const updateProduct = async (id: string, updates: any) => {
-  console.log('Updating product:', id, updates);
-  
-  const { data, error } = await supabase
-    .from('products')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
+export const getActiveProducts = async (limit: number = 20): Promise<Product[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        *,
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description)
+      `)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(limit);
 
-  if (error) {
-    console.error('Error updating product:', error);
-    throw error;
+    if (error) {
+      console.error('Error fetching active products:', error);
+      throw error;
+    }
+
+    return (data || []) as Product[];
+  } catch (error) {
+    console.error('Error in getActiveProducts:', error);
+    return [];
   }
-
-  console.log('Product updated successfully:', data);
-  return data;
 };
 
-export const deleteProduct = async (id: string) => {
-  console.log('Deleting product:', id);
-  
-  const { error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', id);
+export const getProductById = async (productId: string): Promise<Product | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        *,
+        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!fk_products_category_id(id, name, description),
+        product_specifications(*),
+        product_images(*),
+        product_pricing_tiers(*)
+      `)
+      .eq('id', productId)
+      .single();
 
-  if (error) {
-    console.error('Error deleting product:', error);
-    throw error;
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // Product not found
+      }
+      console.error('Error fetching product by ID:', error);
+      throw error;
+    }
+
+    return data as Product;
+  } catch (error) {
+    console.error('Error in getProductById:', error);
+    return null;
   }
-
-  console.log('Product deleted successfully');
-  return true;
 };
 
-export const uploadImage = async (file: File, bucket: string = 'product_images') => {
-  console.log('Uploading image to bucket:', bucket);
-  
-  const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${file.name.split('.').pop()}`;
-  
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(fileName, file, {
-      cacheControl: '3600',
-      upsert: false
-    });
-
-  if (error) {
-    console.error('Error uploading image:', error);
-    throw error;
-  }
-
-  // Get the public URL for the uploaded image
-  const { data: publicUrlData } = supabase.storage
-    .from(bucket)
-    .getPublicUrl(data.path);
-
-  console.log('Image uploaded successfully:', publicUrlData.publicUrl);
-  return publicUrlData.publicUrl;
-};
-
-// Add auth-aware wrapper for components
-export const getProductsByWholesalerWithAuth = async () => {
-  const user = await getCurrentUser();
-  if (!user) throw new Error('User not authenticated');
-  return getProductsByWholesaler(user.id);
-};
+// Export uploadImage from storage
+export { uploadImage };

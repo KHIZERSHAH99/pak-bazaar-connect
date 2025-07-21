@@ -105,7 +105,8 @@ const Shops: React.FC = () => {
       
       let logoUrl;
       if (logoFile) {
-        logoUrl = await uploadImage(logoFile, 'shop_images');
+        const fileName = `shop_${Date.now()}_${logoFile.name}`;
+        logoUrl = await uploadImage('shop_images', fileName, logoFile);
       }
 
       const shopData = {
@@ -151,7 +152,8 @@ const Shops: React.FC = () => {
       
       let logoUrl = editingShop.logo;
       if (logoFile) {
-        logoUrl = await uploadImage(logoFile, 'shop_images');
+        const fileName = `shop_${Date.now()}_${logoFile.name}`;
+        logoUrl = await uploadImage('shop_images', fileName, logoFile);
       }
 
       const { error } = await supabase

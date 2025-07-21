@@ -5,7 +5,6 @@ import * as shopsModule from './shops';
 import * as productsModule from './products';
 import * as adsModule from './ads';
 import * as ordersModule from './orders';
-import * as ordersEnhancedModule from './orders-enhanced';
 import * as chatModule from './chat';
 import * as storageModule from './storage';
 import * as marketplaceModule from './marketplace';
@@ -49,11 +48,9 @@ export const {
 
 export const {
   getProductsByShop,
-  getProductsByWholesaler,
   createProduct,
   updateProduct,
-  deleteProduct,
-  uploadImage
+  deleteProduct
 } = productsModule;
 
 export const {
@@ -73,27 +70,13 @@ export const {
   getOrderById
 } = ordersModule;
 
-// Enhanced orders functions
-export const {
-  createOrderWithPayment,
-  getOrdersByBuyer,
-  getOrdersByShop,
-  getSellerOrders,
-  getWholesalerOrders,
-  confirmOrder,
-  rejectOrder,
-  reusePreviousOrder,
-  getOrderMessages,
-  sendOrderMessage
-} = ordersEnhancedModule;
-
 export const {
   saveChat,
   getChatHistory
 } = chatModule;
 
 export const {
-  uploadImage: uploadToStorage
+  uploadImage
 } = storageModule;
 
 // New marketplace functions

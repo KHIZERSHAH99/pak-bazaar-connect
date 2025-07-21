@@ -158,7 +158,8 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
       let imageUrl;
       if (images.length > 0) {
         const primaryImage = images.find(img => img.isPrimary) || images[0];
-        imageUrl = await uploadImage(primaryImage.file, 'product_images');
+        const fileName = `product_${Date.now()}_${primaryImage.file.name}`;
+        imageUrl = await uploadImage('product_images', fileName, primaryImage.file);
       }
 
       const productData = {

@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { getSellerOrders } from '@/lib/orders-enhanced';
-import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 import EnhancedOrderForm from '@/components/payment/EnhancedOrderForm';
 import DeliveryConfirmation from '@/components/orders/DeliveryConfirmation';
@@ -39,10 +38,8 @@ const SellerOrdersEnhanced: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await getCurrentUser();
-        if (!user) throw new Error('User not authenticated');
         const [orderData, suspended] = await Promise.all([
-          getSellerOrders(user.id),
+          getSellerOrders(),
           checkAccountSuspension()
         ]);
         

@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Upload, X, Package, DollarSign } from 'lucide-react';
 import { getProductsByWholesaler } from '@/lib/products';
-import { getCurrentUser } from '@/lib/auth';
 import { createAd } from '@/lib/ads';
 import { supabase } from '@/integrations/supabase/client';
 interface Product {
@@ -66,9 +65,7 @@ const EnhancedCreateAdDialog: React.FC<EnhancedCreateAdDialogProps> = ({
   const fetchProducts = async () => {
     setProductsLoading(true);
     try {
-      const user = await getCurrentUser();
-      if (!user) throw new Error('User not authenticated');
-      const data = await getProductsByWholesaler(user.id);
+      const data = await getProductsByWholesaler();
       setProducts(data);
     } catch (error: any) {
       console.error('Error fetching products:', error);

@@ -7,7 +7,6 @@ import { Edit, Trash2, Eye, EyeOff, Package } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { getProductsByWholesaler, updateProduct, deleteProduct } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
-import { getCurrentUser } from '@/lib/auth';
 import EditProductDialog from '@/components/products/EditProductDialog';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -20,11 +19,7 @@ const ProductsList: React.FC = () => {
 
   const { data: allProducts = [], isLoading, error } = useQuery({
     queryKey: ['wholesaler-products'],
-    queryFn: async () => {
-      const user = await getCurrentUser();
-      if (!user) throw new Error('User not authenticated');
-      return getProductsByWholesaler(user.id);
-    },
+    queryFn: getProductsByWholesaler,
   });
 
   // Filter products based on active/inactive status

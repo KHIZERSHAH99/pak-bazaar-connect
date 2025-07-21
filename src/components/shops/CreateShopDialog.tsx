@@ -117,7 +117,8 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
       
       let logoUrl;
       if (logoFile) {
-        logoUrl = await uploadImage(logoFile, 'shop_images');
+        const fileName = `shop_${Date.now()}_${logoFile.name}`;
+        logoUrl = await uploadImage('shop_images', fileName, logoFile);
       }
 
       const shopData = {

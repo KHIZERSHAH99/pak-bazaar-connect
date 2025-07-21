@@ -8,18 +8,13 @@ import EnhancedCreateAdDialog from '@/components/ads/EnhancedCreateAdDialog';
 import AdManagementDashboard from '@/components/ads/AdManagementDashboard';
 import { useQuery } from '@tanstack/react-query';
 import { getProductsByWholesaler } from '@/lib/products';
-import { getCurrentUser } from '@/lib/auth';
 
 const Advertisements: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const { data: products = [] } = useQuery({
     queryKey: ['wholesaler-products'],
-    queryFn: async () => {
-      const user = await getCurrentUser();
-      if (!user) throw new Error('User not authenticated');
-      return getProductsByWholesaler(user.id);
-    },
+    queryFn: getProductsByWholesaler,
   });
 
   const handleCreateClick = () => setIsDialogOpen(true);

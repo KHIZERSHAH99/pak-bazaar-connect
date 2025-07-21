@@ -122,9 +122,7 @@ const BackendValidator: React.FC = () => {
       // Test 4: Products
       addResult({ name: 'Product Management', status: 'pending', message: 'Testing...' });
       try {
-        const user = await getCurrentUser();
-        if (!user) throw new Error('User not authenticated');
-        const products = await getProductsByWholesaler(user.id);
+        const products = await getProductsByWholesaler();
         addResult({ 
           name: 'Product Management', 
           status: 'success', 
@@ -133,6 +131,7 @@ const BackendValidator: React.FC = () => {
         });
 
         // Test product creation (if user has shops)
+        const user = await getCurrentUser();
         if (user) {
           const shops = await getShopsByOwner(user.id);
           if (shops.length > 0) {
@@ -171,9 +170,7 @@ const BackendValidator: React.FC = () => {
       // Test 5: Orders
       addResult({ name: 'Order Management', status: 'pending', message: 'Testing...' });
       try {
-        const user = await getCurrentUser();
-        if (!user) throw new Error('User not authenticated');
-        const orders = await getWholesalerOrders(user.id);
+        const orders = await getWholesalerOrders();
         addResult({ 
           name: 'Order Management', 
           status: 'success', 
@@ -193,10 +190,8 @@ const BackendValidator: React.FC = () => {
       addResult({ name: 'Security Policies', status: 'pending', message: 'Testing...' });
       try {
         // Test if user can only see their own data
-        const user = await getCurrentUser();
-        if (!user) throw new Error('User not authenticated');
-        const products = await getProductsByWholesaler(user.id);
-        const orders = await getWholesalerOrders(user.id);
+        const products = await getProductsByWholesaler();
+        const orders = await getWholesalerOrders();
         
         addResult({ 
           name: 'Security Policies', 

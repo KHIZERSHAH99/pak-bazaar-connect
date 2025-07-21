@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { getSellerOrders, reusePreviousOrder } from '@/lib/orders-enhanced';
-import { getCurrentUser } from '@/lib/auth';
 import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 import EnhancedOrderDetails from '@/components/orders/EnhancedOrderDetails';
 import EnhancedOrderForm from '@/components/orders/EnhancedOrderForm';
@@ -42,9 +41,7 @@ const SellerOrders: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const user = await getCurrentUser();
-        if (!user) throw new Error('User not authenticated');
-        const orderData = await getSellerOrders(user.id);
+        const orderData = await getSellerOrders();
         // Cast and ensure proper typing
         const typedOrders: Order[] = orderData.map((order: any) => ({
           ...order,

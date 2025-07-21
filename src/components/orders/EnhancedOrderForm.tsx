@@ -19,7 +19,7 @@ interface EnhancedOrderFormProps {
   totalAmount: number;
   onOrderCreated: (orderId: string) => void;
   onCancel: () => void;
-  productId?: string;
+  productId?: string; // Add optional product ID prop
 }
 
 const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
@@ -41,64 +41,38 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingPaymentMethods, setIsLoadingPaymentMethods] = useState(true);
-  const [resolvedShopId, setResolvedShopId] = useState<string>('');
-  const [resolvedShopName, setResolvedShopName] = useState<string>('');
-  const [debugInfo, setDebugInfo] = useState<any>({});
+  const [actualShopId, setActualShopId] = useState<string>('');
+  const [actualShopName, setActualShopName] = useState<string>('');
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchPaymentMethods = async () => {
       try {
         setIsLoadingPaymentMethods(true);
-        let finalShopId = shopId;
-        let finalShopName = shopName;
+        let resolvedShopId = shopId;
+        let resolvedShopName = shopName;
 
-        console.log('EnhancedOrderForm - Initial props:', { 
-          shopId, 
-          shopName, 
-          productId, 
-          totalAmount 
-        });
+        console.log('Initial props:', { shopId, shopName, productId });
 
-        // If we have a product ID, resolve it to get accurate shop info
+        // If we have a product ID, resolve it to get the shop ID
         if (productId) {
-          console.log('Resolving product to shop for product ID:', productId);
+          console.log('Resolving product to shop...', productId);
           const product = await getProductById(productId);
-          console.log('Product resolved:', product);
-          
           if (product) {
-            finalShopId = product.shop_id;
-            finalShopName = product.shops?.name || shopName;
-            console.log('Resolved shop info from product:', { 
-              finalShopId, 
-              finalShopName,
-              productShopData: product.shops
-            });
-          } else {
-            console.error('Product not found for ID:', productId);
+            resolvedShopId = product.shop_id;
+            resolvedShopName = product.shops?.name || shopName;
+            console.log('Resolved shop:', { resolvedShopId, resolvedShopName });
           }
         }
 
-        setResolvedShopId(finalShopId);
-        setResolvedShopName(finalShopName);
+        setActualShopId(resolvedShopId);
+        setActualShopName(resolvedShopName);
 
-        console.log('Fetching payment methods for shop:', finalShopId);
-        const methods = await getPaymentMethodsForShop(finalShopId);
+        console.log('Fetching payment methods for shop:', resolvedShopId);
+        const methods = await getPaymentMethodsForShop(resolvedShopId);
         console.log('Payment methods response:', methods);
         
         setPaymentMethods(methods);
-        setDebugInfo({
-          shopId: finalShopId,
-          shopName: finalShopName,
-          paymentMethods: methods,
-          productId,
-          hasPaymentMethods: !!methods,
-          availableMethods: methods ? {
-            bank: !!methods.bank_name,
-            jazzcash: !!methods.jazzcash_number,
-            easypaisa: !!methods.easypaisa_number
-          } : null
-        });
 
         // Set default payment method if available
         if (methods) {
@@ -112,7 +86,6 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
         }
       } catch (error) {
         console.error('Error fetching payment methods:', error);
-        setDebugInfo(prev => ({ ...prev, error: error.message }));
         toast({
           title: "Error",
           description: "Failed to load payment methods. Please try again.",
@@ -159,15 +132,6 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('Form submission started with data:', {
-      resolvedShopId,
-      totalAmount,
-      selectedMethod,
-      buyerInfo,
-      hasScreenshot: !!screenshot,
-      paymentMethods
-    });
-    
     if (!screenshot) {
       toast({
         title: "Payment Screenshot Required",
@@ -188,13 +152,11 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const order = await createOrderWithPayment(resolvedShopId, totalAmount, selectedMethod, screenshot, {
+      const order = await createOrderWithPayment(actualShopId, totalAmount, selectedMethod, screenshot, {
         buyer_name: buyerInfo.name,
         buyer_phone: buyerInfo.phone,
         buyer_address: buyerInfo.address
       });
-
-      console.log('Order created successfully:', order);
 
       if (!order) {
         throw new Error('Failed to create order');
@@ -202,7 +164,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
       toast({
         title: "Order Created Successfully",
-        description: `Your order has been submitted and is pending approval from ${resolvedShopName}`,
+        description: `Your order has been submitted and is pending approval from ${actualShopName}`,
         variant: "default"
       });
 
@@ -266,16 +228,10 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="font-poppins">Create Order - {resolvedShopName}</CardTitle>
+        <CardTitle className="font-poppins">Create Order - {actualShopName}</CardTitle>
         <p className="text-lg font-semibold text-primary">
           Total Amount: PKR {totalAmount.toLocaleString()}
         </p>
-        {process.env.NODE_ENV === 'development' && (
-          <details className="mt-4 p-2 bg-gray-100 rounded text-xs">
-            <summary className="cursor-pointer">Debug Info</summary>
-            <pre className="mt-2 whitespace-pre-wrap">{JSON.stringify(debugInfo, null, 2)}</pre>
-          </details>
-        )}
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">

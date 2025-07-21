@@ -154,7 +154,8 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       const newImages = images.filter(img => img.id !== 'existing');
       if (newImages.length > 0) {
         const primaryImage = newImages.find(img => img.isPrimary) || newImages[0];
-        imageUrl = await uploadImage(primaryImage.file, 'product_images');
+        const fileName = `product_${Date.now()}_${primaryImage.file.name}`;
+        imageUrl = await uploadImage('product_images', fileName, primaryImage.file);
       }
 
       const price = parseFloat(formData.price);

@@ -27,6 +27,7 @@ const FixedLoginForm: React.FC = () => {
         throw new Error('Please enter a valid phone number');
       }
 
+      console.log('🔐 Attempting login with phone:', phoneNumber);
       await phoneSignIn(phoneNumber, password);
 
       toast({
@@ -36,7 +37,8 @@ const FixedLoginForm: React.FC = () => {
 
       // Navigate to redirect URL or dashboard
       const redirectTo = searchParams.get('redirect') || '/dashboard';
-      navigate(redirectTo);
+      console.log('🔄 Redirecting to:', redirectTo);
+      navigate(redirectTo, { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
       

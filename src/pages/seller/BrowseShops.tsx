@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { Shop } from '@/lib/types';
-import { Store, Package, Search, MapPin, Phone, Star, Users, Clock } from 'lucide-react';
+import { Store, Package, Search, MapPin, Phone, Star, Users, Clock, Heart } from 'lucide-react';
+import ShopFavoriteButton from '@/components/shops/ShopFavoriteButton';
 import { useDebounce } from '@/hooks/useDebounce';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -168,10 +169,10 @@ const BrowseShops: React.FC = () => {
                     </Badge>
                   </div>
                   <div className="absolute top-3 right-3">
-                    <Badge className="bg-primary text-white shadow-sm">
-                      <Star className="h-3 w-3 mr-1" />
-                      4.8
-                    </Badge>
+                    <ShopFavoriteButton 
+                      shopId={shop.id}
+                      className="bg-white/90 hover:bg-white"
+                    />
                   </div>
                 </div>
 
@@ -202,19 +203,11 @@ const BrowseShops: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Stats */}
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Package className="h-3 w-3 mr-1" />
-                      <span>50+ Products</span>
-                    </div>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Users className="h-3 w-3 mr-1" />
-                      <span>200+ Orders</span>
-                    </div>
-                    <div className="flex items-center text-xs text-gray-500">
+                  {/* Location only - removed fake stats */}
+                  <div className="pt-3 border-t border-gray-100">
+                    <div className="flex items-center text-xs text-muted-foreground">
                       <Clock className="h-3 w-3 mr-1" />
-                      <span>Active</span>
+                      <span>Established Shop</span>
                     </div>
                   </div>
 

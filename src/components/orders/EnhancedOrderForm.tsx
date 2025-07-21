@@ -193,39 +193,49 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           {/* Payment Method Selection */}
           <div className="space-y-4">
             <h3 className="font-semibold font-poppins">Payment Method</h3>
-            <Select value={selectedMethod} onValueChange={(value: PaymentMethod) => setSelectedMethod(value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select payment method" />
-              </SelectTrigger>
-              <SelectContent>
-                {paymentMethods?.bank_name && (
-                  <SelectItem value="bank_transfer">
-                    <div className="flex items-center gap-2">
-                      {getPaymentIcon('bank_transfer')}
-                      Bank Transfer
-                    </div>
-                  </SelectItem>
-                )}
-                {paymentMethods?.jazzcash_number && (
-                  <SelectItem value="jazzcash">
-                    <div className="flex items-center gap-2">
-                      {getPaymentIcon('jazzcash')}
-                      JazzCash
-                    </div>
-                  </SelectItem>
-                )}
-                {paymentMethods?.easypaisa_number && (
-                  <SelectItem value="easypaisa">
-                    <div className="flex items-center gap-2">
-                      {getPaymentIcon('easypaisa')}
-                      EasyPaisa
-                    </div>
-                  </SelectItem>
-                )}
-              </SelectContent>
-            </Select>
+            {!paymentMethods ? (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800 font-poppins">
+                  No payment methods available for this shop. Please contact the wholesaler.
+                </p>
+              </div>
+            ) : (
+              <>
+                <Select value={selectedMethod} onValueChange={(value: PaymentMethod) => setSelectedMethod(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {paymentMethods?.bank_name && (
+                      <SelectItem value="bank_transfer">
+                        <div className="flex items-center gap-2">
+                          {getPaymentIcon('bank_transfer')}
+                          Bank Transfer
+                        </div>
+                      </SelectItem>
+                    )}
+                    {paymentMethods?.jazzcash_number && (
+                      <SelectItem value="jazzcash">
+                        <div className="flex items-center gap-2">
+                          {getPaymentIcon('jazzcash')}
+                          JazzCash
+                        </div>
+                      </SelectItem>
+                    )}
+                    {paymentMethods?.easypaisa_number && (
+                      <SelectItem value="easypaisa">
+                        <div className="flex items-center gap-2">
+                          {getPaymentIcon('easypaisa')}
+                          EasyPaisa
+                        </div>
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
 
-            {getPaymentDetails()}
+                {getPaymentDetails()}
+              </>
+            )}
           </div>
 
           {/* Payment Screenshot Upload */}

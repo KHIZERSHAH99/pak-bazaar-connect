@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Heart, Search, Package, Store, Filter, Grid, List } from 'lucide-react';
+import FavoritesDisplay from '@/components/favorites/FavoritesDisplay';
 
 const Favorites: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -76,34 +77,8 @@ const Favorites: React.FC = () => {
             
             <TabsContent value="all" className="space-y-4">
               <Card>
-                <CardContent className="p-8">
-                  <div className="text-center space-y-4">
-                    <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                      <Heart className="w-8 h-8 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold font-poppins">No favorites yet</h3>
-                      <p className="text-muted-foreground font-poppins">
-                        Start browsing products and shops to add them to your favorites
-                      </p>
-                    </div>
-                    <div className="flex justify-center gap-3">
-                      <Button 
-                        className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
-                        onClick={handleBrowseProducts}
-                      >
-                        <Package className="w-4 h-4 mr-2" />
-                        Browse Products
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        onClick={handleBrowseShops}
-                      >
-                        <Store className="w-4 h-4 mr-2" />
-                        Browse Shops
-                      </Button>
-                    </div>
-                  </div>
+                <CardContent className="p-6">
+                  <FavoritesDisplay />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -117,12 +92,7 @@ const Favorites: React.FC = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8">
-                    <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground font-poppins">
-                      No favorite products yet
-                    </p>
-                  </div>
+                  <FavoritesDisplay />
                 </CardContent>
               </Card>
             </TabsContent>

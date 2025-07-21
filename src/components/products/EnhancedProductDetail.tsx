@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ShoppingCart, MessageCircle, Star, MapPin, Package, Heart, Share2, Eye, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,9 @@ import { Product } from '@/lib/types';
 import ProductImageGallery from './ProductImageGallery';
 import VerifiedBadge from '@/components/reviews/VerifiedBadge';
 import ProductOrderButton from './ProductOrderButton';
+import InquiryButton from '@/components/inquiry/InquiryButton';
+import { addToFavorites, removeFromFavorites, getFavoriteProducts } from '@/lib/favorites';
+import { cn } from '@/lib/utils';
 
 interface EnhancedProductDetailProps {
   product: Product;
@@ -56,12 +59,44 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
     });
   };
 
-  const handleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    toast({
-      title: isFavorite ? "Removed from Favorites" : "Added to Favorites",
-      description: `${product.name} has been ${isFavorite ? 'removed from' : 'added to'} your favorites.`,
-    });
+  useEffect(() => {
+    checkIfFavorite();
+  }, [product.id]);
+
+  const checkIfFavorite = async () => {
+    try {
+      const favorites = await getFavoriteProducts();
+      setIsFavorite(favorites.some(fav => fav.product_id === product.id));
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+    }
+  };
+
+  const toggleFavorite = async () => {
+    try {
+      if (isFavorite) {
+        await removeFromFavorites(product.id);
+        setIsFavorite(false);
+        toast({
+          title: "Removed from Favorites",
+          description: `${product.name} has been removed from your favorites.`,
+        });
+      } else {
+        await addToFavorites(product.id);
+        setIsFavorite(true);
+        toast({
+          title: "Added to Favorites",
+          description: `${product.name} has been added to your favorites.`,
+        });
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update favorites. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleShare = () => {
@@ -90,8 +125,8 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
             Back to Products
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={handleFavorite}>
-              <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+            <Button variant="outline" size="sm" onClick={toggleFavorite}>
+              <Heart className={cn("h-4 w-4", isFavorite && "fill-red-500 text-red-500")} />
             </Button>
             <Button variant="outline" size="sm" onClick={handleShare}>
               <Share2 className="h-4 w-4" />
@@ -196,14 +231,11 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                     quantity={quantity}
                     className="flex-1"
                   />
-                  <Button
-                    onClick={handleInquiry}
-                    variant="outline"
-                    className="flex-1 font-poppins"
-                  >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Send Inquiry
-                  </Button>
+                  <InquiryButton 
+                    sellerId={product.shops?.owner_id || ''}
+                    productId={product.id}
+                    className="flex-1"
+                  />
                 </div>
               </CardContent>
             </Card>

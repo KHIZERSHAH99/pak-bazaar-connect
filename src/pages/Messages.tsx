@@ -64,7 +64,10 @@ const Messages: React.FC = () => {
                 Communicate with suppliers and customers
               </p>
             </div>
-            <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+            <Button 
+              className="bg-primary hover:bg-primary/90"
+              onClick={() => console.log('Open new message modal')}
+            >
               <Plus className="w-4 h-4 mr-2" />
               New Message
             </Button>

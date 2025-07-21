@@ -90,13 +90,13 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
       isMinimized && "h-16",
       className
     )}>
-      <CardHeader className="border-b bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 text-white p-4">
+      <CardHeader className="border-b bg-gradient-to-r from-primary to-primary/80 text-white p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="/placeholder-avatar.png" />
-                <AvatarFallback className="bg-white text-pakistani_green-700">
+                <AvatarFallback className="bg-white text-primary">
                   <Bot className="h-4 w-4" />
                 </AvatarFallback>
               </Avatar>
@@ -139,7 +139,7 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
           <ScrollArea className="flex-1 p-4">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pakistani_green-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 <span className="ml-2 text-sm text-muted-foreground font-poppins">Loading chat history...</span>
               </div>
             ) : chatHistory.length === 0 ? (
@@ -164,7 +164,7 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                       onClick={() => setMessage(question)}
                       className="block w-full text-left p-2 text-xs bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors font-poppins"
                     >
-                      <HelpCircle className="h-3 w-3 inline mr-2 text-pakistani_green-600" />
+                      <HelpCircle className="h-3 w-3 inline mr-2 text-primary" />
                       {question}
                     </button>
                   ))}
@@ -177,7 +177,7 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                     {/* User Message */}
                     <div className="flex justify-end">
                       <div className="flex items-start space-x-2 max-w-[80%]">
-                        <div className="bg-pakistani_green-600 text-white rounded-lg px-3 py-2">
+                        <div className="bg-primary text-white rounded-lg px-3 py-2">
                           <p className="text-sm font-poppins">{chat.message}</p>
                           <div className="flex items-center justify-end mt-1 space-x-1">
                             <Clock className="h-3 w-3 opacity-70" />
@@ -187,7 +187,7 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                           </div>
                         </div>
                         <Avatar className="h-6 w-6">
-                          <AvatarFallback className="bg-pakistani_green-100 text-pakistani_green-700 text-xs">
+                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
                             <User className="h-3 w-3" />
                           </AvatarFallback>
                         </Avatar>
@@ -267,7 +267,7 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
               <Button 
                 onClick={handleSend}
                 disabled={!message.trim() || sending}
-                className="bg-pakistani_green-600 hover:bg-pakistani_green-700 px-3"
+                className="bg-primary hover:bg-primary/90 px-3"
               >
                 {sending ? (
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

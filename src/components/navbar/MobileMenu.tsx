@@ -58,13 +58,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             </Button>
           </Link>
           
-          <Link to="/sellers" onClick={handleLinkClick}>
+          <Link to="/dashboard/browse-shops" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins"
             >
               <Users className="w-4 h-4 mr-3" />
-              Sellers
+              Shops
             </Button>
           </Link>
           

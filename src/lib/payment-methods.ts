@@ -81,14 +81,14 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
     .select('*')
     .eq('wholesaler_id', shop.owner_id)
     .eq('is_active', true)
-    .single();
+    .maybeSingle(); // Use maybeSingle() instead of single() to handle no results
 
   if (error) {
     console.error('Error fetching payment methods:', error);
     return null;
   }
 
-  return data;
+  return data || null;
 };
 
 // Get own payment methods (for wholesaler)

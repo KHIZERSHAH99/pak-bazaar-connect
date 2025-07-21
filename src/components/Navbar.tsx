@@ -79,10 +79,10 @@ const Navbar = () => {
                     Products
                   </Button>
                 </Link>
-                <Link to="/sellers">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
+                <Link to="/dashboard/browse-shops">
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins transition-all duration-200">
                     <Users className="w-4 h-4 mr-2" />
-                    Sellers
+                    Shops
                   </Button>
                 </Link>
                 <Link to="/features">

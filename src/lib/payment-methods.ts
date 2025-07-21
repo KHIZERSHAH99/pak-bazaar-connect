@@ -65,30 +65,52 @@ export const upsertPaymentMethods = async (paymentData: {
 
 // Get payment methods for a wholesaler (public - for sellers to see)
 export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentMethodInfo | null> => {
-  const { data: shop, error: shopError } = await supabase
-    .from('shops')
-    .select('owner_id')
-    .eq('id', shopId)
-    .single();
-
-  if (shopError) {
-    console.error('Error fetching shop:', shopError);
+  console.log('getPaymentMethodsForShop called with shopId:', shopId);
+  
+  if (!shopId) {
+    console.error('No shop ID provided');
     return null;
   }
 
-  const { data, error } = await supabase
-    .from('payment_methods')
-    .select('*')
-    .eq('wholesaler_id', shop.owner_id)
-    .eq('is_active', true)
-    .maybeSingle(); // Use maybeSingle() instead of single() to handle no results
+  try {
+    // First get the shop to find the owner
+    const { data: shop, error: shopError } = await supabase
+      .from('shops')
+      .select('owner_id, name')
+      .eq('id', shopId)
+      .single();
 
-  if (error) {
-    console.error('Error fetching payment methods:', error);
+    if (shopError) {
+      console.error('Error fetching shop:', shopError);
+      return null;
+    }
+
+    console.log('Shop found:', shop);
+
+    if (!shop) {
+      console.error('Shop not found');
+      return null;
+    }
+
+    // Then get the payment methods for the shop owner
+    const { data: paymentMethods, error: paymentError } = await supabase
+      .from('payment_methods')
+      .select('*')
+      .eq('wholesaler_id', shop.owner_id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (paymentError) {
+      console.error('Error fetching payment methods:', paymentError);
+      return null;
+    }
+
+    console.log('Payment methods found:', paymentMethods);
+    return paymentMethods;
+  } catch (error) {
+    console.error('Unexpected error in getPaymentMethodsForShop:', error);
     return null;
   }
-
-  return data || null;
 };
 
 // Get own payment methods (for wholesaler)
@@ -101,7 +123,7 @@ export const getMyPaymentMethods = async (): Promise<PaymentMethodInfo | null> =
     .select('*')
     .eq('wholesaler_id', user.id)
     .eq('is_active', true)
-    .single();
+    .maybeSingle();
 
   if (error && error.code !== 'PGRST116') {
     console.error('Error fetching my payment methods:', error);

@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, CreditCard, Smartphone, Building } from 'lucide-react';
+import { Upload, CreditCard, Smartphone, Building, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createOrderWithPayment } from '@/lib/orders-enhanced';
 import { getPaymentMethodsForShop } from '@/lib/payment-methods';
+import { getProductById } from '@/lib/products';
 import { PaymentMethodInfo, PaymentMethod } from '@/lib/types';
 
 interface EnhancedOrderFormProps {
@@ -18,6 +19,7 @@ interface EnhancedOrderFormProps {
   totalAmount: number;
   onOrderCreated: (orderId: string) => void;
   onCancel: () => void;
+  productId?: string; // Add optional product ID prop
 }
 
 const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
@@ -25,7 +27,8 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   shopName,
   totalAmount,
   onOrderCreated,
-  onCancel
+  onCancel,
+  productId
 }) => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodInfo | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('bank_transfer');
@@ -37,15 +40,64 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     address: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingPaymentMethods, setIsLoadingPaymentMethods] = useState(true);
+  const [actualShopId, setActualShopId] = useState<string>('');
+  const [actualShopName, setActualShopName] = useState<string>('');
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchPaymentMethods = async () => {
-      const methods = await getPaymentMethodsForShop(shopId);
-      setPaymentMethods(methods);
+      try {
+        setIsLoadingPaymentMethods(true);
+        let resolvedShopId = shopId;
+        let resolvedShopName = shopName;
+
+        console.log('Initial props:', { shopId, shopName, productId });
+
+        // If we have a product ID, resolve it to get the shop ID
+        if (productId) {
+          console.log('Resolving product to shop...', productId);
+          const product = await getProductById(productId);
+          if (product) {
+            resolvedShopId = product.shop_id;
+            resolvedShopName = product.shop?.name || shopName;
+            console.log('Resolved shop:', { resolvedShopId, resolvedShopName });
+          }
+        }
+
+        setActualShopId(resolvedShopId);
+        setActualShopName(resolvedShopName);
+
+        console.log('Fetching payment methods for shop:', resolvedShopId);
+        const methods = await getPaymentMethodsForShop(resolvedShopId);
+        console.log('Payment methods response:', methods);
+        
+        setPaymentMethods(methods);
+
+        // Set default payment method if available
+        if (methods) {
+          if (methods.bank_name) {
+            setSelectedMethod('bank_transfer');
+          } else if (methods.jazzcash_number) {
+            setSelectedMethod('jazzcash');
+          } else if (methods.easypaisa_number) {
+            setSelectedMethod('easypaisa');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching payment methods:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load payment methods. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoadingPaymentMethods(false);
+      }
     };
+
     fetchPaymentMethods();
-  }, [shopId]);
+  }, [shopId, shopName, productId, toast]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -100,7 +152,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const order = await createOrderWithPayment(shopId, totalAmount, selectedMethod, screenshot, {
+      const order = await createOrderWithPayment(actualShopId, totalAmount, selectedMethod, screenshot, {
         buyer_name: buyerInfo.name,
         buyer_phone: buyerInfo.phone,
         buyer_address: buyerInfo.address
@@ -112,7 +164,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
       toast({
         title: "Order Created Successfully",
-        description: `Your order has been submitted and is pending approval from ${shopName}`,
+        description: `Your order has been submitted and is pending approval from ${actualShopName}`,
         variant: "default"
       });
 
@@ -167,10 +219,16 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     }
   };
 
+  const hasAnyPaymentMethod = paymentMethods && (
+    paymentMethods.bank_name || 
+    paymentMethods.jazzcash_number || 
+    paymentMethods.easypaisa_number
+  );
+
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="font-poppins">Create Order - {shopName}</CardTitle>
+        <CardTitle className="font-poppins">Create Order - {actualShopName}</CardTitle>
         <p className="text-lg font-semibold text-primary">
           Total Amount: PKR {totalAmount.toLocaleString()}
         </p>
@@ -217,11 +275,21 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           {/* Payment Method Selection */}
           <div className="space-y-4">
             <h3 className="font-semibold font-poppins">Payment Method</h3>
-            {!paymentMethods ? (
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800 font-poppins">
-                  No payment methods available for this shop. Please contact the wholesaler.
+            
+            {isLoadingPaymentMethods ? (
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground font-poppins">
+                  Loading payment methods...
                 </p>
+              </div>
+            ) : !hasAnyPaymentMethod ? (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-yellow-600" />
+                  <p className="text-sm text-yellow-800 font-poppins">
+                    No payment methods available for this shop. Please contact the wholesaler to set up payment methods.
+                  </p>
+                </div>
               </div>
             ) : (
               <>
@@ -321,7 +389,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !hasAnyPaymentMethod}
               className="flex-1"
             >
               {isSubmitting ? 'Creating Order...' : 'Create Order'}

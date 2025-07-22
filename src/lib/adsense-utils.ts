@@ -1,3 +1,4 @@
+import React from 'react';
 
 // Utility functions for AdSense management
 export const AdSenseUtils = {
@@ -51,6 +52,10 @@ export const AdSenseUtils = {
     } catch (error) {
       console.error('Error refreshing AdSense ads:', error);
     }
+  },
+
+  isLoaded: () => {
+    return false;
   }
 };
 
@@ -60,7 +65,7 @@ export const useAdSense = () => {
 
   React.useEffect(() => {
     const checkAdSense = () => {
-      setIsLoaded(AdSenseUtils.isAdSenseLoaded());
+      setIsLoaded(AdSenseUtils.isLoaded());
     };
 
     // Check immediately

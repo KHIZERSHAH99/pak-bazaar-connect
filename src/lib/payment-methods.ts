@@ -82,14 +82,13 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
 
     if (shopError) {
       console.error('Error fetching shop:', shopError);
-      return null;
+      throw new Error(`Shop not found: ${shopError.message}`);
     }
 
     console.log('Shop found:', shop);
 
     if (!shop) {
-      console.error('Shop not found');
-      return null;
+      throw new Error('Shop not found');
     }
 
     // Then get the payment methods for the shop owner
@@ -98,11 +97,16 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
       .select('*')
       .eq('wholesaler_id', shop.owner_id)
       .eq('is_active', true)
-      .maybeSingle();
+      .single();
 
     if (paymentError) {
+      if (paymentError.code === 'PGRST116') {
+        // No payment methods found
+        console.log('No payment methods found for wholesaler:', shop.owner_id);
+        return null;
+      }
       console.error('Error fetching payment methods:', paymentError);
-      return null;
+      throw new Error(`Failed to fetch payment methods: ${paymentError.message}`);
     }
 
     console.log('Payment methods found:', paymentMethods);

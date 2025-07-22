@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, CreditCard, Smartphone, Building, AlertCircle } from 'lucide-react';
+import { Upload, CreditCard, Smartphone, Building, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createOrderWithPayment } from '@/lib/orders-enhanced';
 import { getPaymentMethodsForShop } from '@/lib/payment-methods';
@@ -19,7 +18,7 @@ interface EnhancedOrderFormProps {
   totalAmount: number;
   onOrderCreated: (orderId: string) => void;
   onCancel: () => void;
-  productId?: string; // Add optional product ID prop
+  productId?: string;
 }
 
 const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
@@ -41,6 +40,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingPaymentMethods, setIsLoadingPaymentMethods] = useState(true);
+  const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
   const [actualShopId, setActualShopId] = useState<string>('');
   const [actualShopName, setActualShopName] = useState<string>('');
   const { toast } = useToast();
@@ -49,6 +49,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     const fetchPaymentMethods = async () => {
       try {
         setIsLoadingPaymentMethods(true);
+        setPaymentMethodsError(null);
         let resolvedShopId = shopId;
         let resolvedShopName = shopName;
 
@@ -84,8 +85,9 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             setSelectedMethod('easypaisa');
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching payment methods:', error);
+        setPaymentMethodsError(error.message || 'Failed to load payment methods');
         toast({
           title: "Error",
           description: "Failed to load payment methods. Please try again.",
@@ -195,25 +197,45 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     switch (selectedMethod) {
       case 'bank_transfer':
         return paymentMethods.bank_name && paymentMethods.account_number ? (
-          <div className="space-y-2 p-3 bg-muted rounded-lg">
-            <p className="font-medium text-foreground">Bank Transfer Details:</p>
-            <p className="text-foreground">Bank: {paymentMethods.bank_name}</p>
-            <p className="text-foreground">Account: {paymentMethods.account_number}</p>
-            <p className="text-foreground">Title: {paymentMethods.account_title}</p>
+          <div className="space-y-2 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              <p className="font-medium text-green-800">Bank Transfer Details:</p>
+            </div>
+            <div className="space-y-1 text-sm">
+              <p><span className="font-medium">Bank:</span> {paymentMethods.bank_name}</p>
+              <p><span className="font-medium">Account Number:</span> {paymentMethods.account_number}</p>
+              <p><span className="font-medium">Account Title:</span> {paymentMethods.account_title}</p>
+            </div>
+            <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+              💡 Transfer the exact amount and upload the payment screenshot below
+            </div>
           </div>
         ) : null;
       case 'jazzcash':
         return paymentMethods.jazzcash_number ? (
-          <div className="space-y-2 p-3 bg-muted rounded-lg">
-            <p className="font-medium text-foreground">JazzCash Details:</p>
-            <p className="text-foreground">Number: {paymentMethods.jazzcash_number}</p>
+          <div className="space-y-2 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <CheckCircle className="h-5 w-5 text-orange-600" />
+              <p className="font-medium text-orange-800">JazzCash Details:</p>
+            </div>
+            <p className="text-sm"><span className="font-medium">Mobile Number:</span> {paymentMethods.jazzcash_number}</p>
+            <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+              💡 Send money to this JazzCash number and upload the payment screenshot
+            </div>
           </div>
         ) : null;
       case 'easypaisa':
         return paymentMethods.easypaisa_number ? (
-          <div className="space-y-2 p-3 bg-muted rounded-lg">
-            <p className="font-medium text-foreground">EasyPaisa Details:</p>
-            <p className="text-foreground">Number: {paymentMethods.easypaisa_number}</p>
+          <div className="space-y-2 p-4 bg-teal-50 border border-teal-200 rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <CheckCircle className="h-5 w-5 text-teal-600" />
+              <p className="font-medium text-teal-800">EasyPaisa Details:</p>
+            </div>
+            <p className="text-sm"><span className="font-medium">Mobile Number:</span> {paymentMethods.easypaisa_number}</p>
+            <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+              💡 Send money to this EasyPaisa number and upload the payment screenshot
+            </div>
           </div>
         ) : null;
     }
@@ -277,10 +299,20 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             <h3 className="font-semibold font-poppins">Payment Method</h3>
             
             {isLoadingPaymentMethods ? (
-              <div className="p-4 bg-muted rounded-lg">
+              <div className="p-4 bg-muted rounded-lg flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
                 <p className="text-sm text-muted-foreground font-poppins">
                   Loading payment methods...
                 </p>
+              </div>
+            ) : paymentMethodsError ? (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                  <p className="text-sm text-red-800 font-poppins">
+                    Error: {paymentMethodsError}
+                  </p>
+                </div>
               </div>
             ) : !hasAnyPaymentMethod ? (
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">

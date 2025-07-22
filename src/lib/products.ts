@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { uploadImage } from '@/lib/storage';
@@ -271,30 +270,42 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
 
 export const getProductById = async (productId: string): Promise<Product | null> => {
   try {
+    console.log('🔍 getProductById: Fetching product with ID:', productId);
+    
     const { data, error } = await supabase
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
-        categories!fk_products_category_id(id, name, description),
+        shops(id, name, contact, address, postal_code, owner_id),
+        categories(id, name, description),
         product_specifications(*),
         product_images(*),
         product_pricing_tiers(*)
       `)
       .eq('id', productId)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return null; // Product not found
-      }
-      console.error('Error fetching product by ID:', error);
+      console.error('❌ Error fetching product by ID:', error);
       throw error;
     }
 
+    if (!data) {
+      console.log('⚠️ Product not found for ID:', productId);
+      return null;
+    }
+
+    console.log('✅ Product found:', {
+      id: data.id,
+      name: data.name,
+      shopId: data.shop_id,
+      shopName: data.shops?.name,
+      shopOwner: data.shops?.owner_id
+    });
+
     return data as Product;
   } catch (error) {
-    console.error('Error in getProductById:', error);
+    console.error('💥 Error in getProductById:', error);
     return null;
   }
 };

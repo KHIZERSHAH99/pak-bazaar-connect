@@ -41,8 +41,8 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingPaymentMethods, setIsLoadingPaymentMethods] = useState(true);
   const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
-  const [actualShopId, setActualShopId] = useState<string>('');
-  const [actualShopName, setActualShopName] = useState<string>('');
+  const [resolvedShopId, setResolvedShopId] = useState<string>('');
+  const [resolvedShopName, setResolvedShopName] = useState<string>('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -50,31 +50,48 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
       try {
         setIsLoadingPaymentMethods(true);
         setPaymentMethodsError(null);
-        let resolvedShopId = shopId;
-        let resolvedShopName = shopName;
-
-        console.log('🚀 EnhancedOrderForm: Starting payment methods fetch', { 
-          shopId, 
-          shopName, 
-          productId 
+        
+        console.log('🚀 EnhancedOrderForm: Starting initialization', { 
+          providedShopId: shopId, 
+          providedShopName: shopName, 
+          productId: productId 
         });
 
-        // If we have a product ID, resolve it to get the shop ID
-        if (productId) {
-          console.log('📦 Resolving product to shop...', productId);
+        let finalShopId = shopId;
+        let finalShopName = shopName;
+
+        // If we have a productId, try to resolve it to get additional shop details
+        // but ONLY if shopId is not already provided or is empty
+        if (productId && (!shopId || shopId.trim() === '')) {
+          console.log('📦 No shopId provided, resolving from productId:', productId);
           const product = await getProductById(productId);
-          if (product) {
-            resolvedShopId = product.shop_id;
-            resolvedShopName = product.shops?.name || shopName;
-            console.log('✅ Product resolved to shop:', { resolvedShopId, resolvedShopName });
+          if (product && product.shops) {
+            finalShopId = product.shop_id;
+            finalShopName = product.shops.name || shopName;
+            console.log('✅ Product resolved to shop:', { finalShopId, finalShopName });
+          } else {
+            console.log('❌ Failed to resolve product to shop');
+            setPaymentMethodsError('Unable to find shop information for this product');
+            setIsLoadingPaymentMethods(false);
+            return;
           }
+        } else {
+          console.log('🏪 Using provided shop details:', { finalShopId, finalShopName });
         }
 
-        setActualShopId(resolvedShopId);
-        setActualShopName(resolvedShopName);
+        // Validate that we have a shop ID
+        if (!finalShopId || finalShopId.trim() === '') {
+          console.log('❌ No valid shop ID available');
+          setPaymentMethodsError('Shop information is missing');
+          setIsLoadingPaymentMethods(false);
+          return;
+        }
 
-        console.log('💳 Fetching payment methods for resolved shop:', resolvedShopId);
-        const methods = await getPaymentMethodsForShop(resolvedShopId);
+        setResolvedShopId(finalShopId);
+        setResolvedShopName(finalShopName);
+
+        console.log('💳 Fetching payment methods for shop:', finalShopId);
+        const methods = await getPaymentMethodsForShop(finalShopId);
         console.log('📋 Payment methods response:', methods);
         
         setPaymentMethods(methods);
@@ -92,7 +109,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             console.log('💸 Default payment method set to easypaisa');
           }
         } else {
-          console.log('⚠️ No payment methods available');
+          console.log('⚠️ No payment methods found for shop:', finalShopId);
         }
       } catch (error: any) {
         console.error('💥 Error fetching payment methods:', error);
@@ -163,7 +180,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const order = await createOrderWithPayment(actualShopId, totalAmount, selectedMethod, screenshot, {
+      const order = await createOrderWithPayment(resolvedShopId, totalAmount, selectedMethod, screenshot, {
         buyer_name: buyerInfo.name,
         buyer_phone: buyerInfo.phone,
         buyer_address: buyerInfo.address
@@ -175,7 +192,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
       toast({
         title: "Order Created Successfully",
-        description: `Your order has been submitted and is pending approval from ${actualShopName}`,
+        description: `Your order has been submitted and is pending approval from ${resolvedShopName}`,
         variant: "default"
       });
 
@@ -262,7 +279,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="font-poppins">Create Order - {actualShopName}</CardTitle>
+        <CardTitle className="font-poppins">Create Order - {resolvedShopName || shopName}</CardTitle>
         <p className="text-lg font-semibold text-primary">
           Total Amount: PKR {totalAmount.toLocaleString()}
         </p>

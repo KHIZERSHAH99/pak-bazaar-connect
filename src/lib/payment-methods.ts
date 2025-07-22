@@ -65,21 +65,21 @@ export const upsertPaymentMethods = async (paymentData: {
 
 // Get payment methods for a wholesaler (public - for sellers to see)
 export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentMethodInfo | null> => {
-  console.log('🔍 Fetching payment methods for shop ID:', shopId);
+  console.log('🔍 getPaymentMethodsForShop: Starting with shop ID:', shopId);
   
-  if (!shopId) {
+  if (!shopId || shopId.trim() === '') {
     console.error('❌ No shop ID provided');
     return null;
   }
 
   try {
     // First get the shop to find the owner
-    console.log('📋 Step 1: Getting shop details...');
+    console.log('📋 Step 1: Getting shop details for ID:', shopId);
     const { data: shop, error: shopError } = await supabase
       .from('shops')
       .select('owner_id, name')
       .eq('id', shopId)
-      .single();
+      .maybeSingle();
 
     if (shopError) {
       console.error('❌ Error fetching shop:', shopError);
@@ -116,15 +116,29 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
       return null;
     }
 
+    // Check if at least one payment method is configured
+    const hasBank = paymentMethods.bank_name && paymentMethods.account_number;
+    const hasJazzCash = paymentMethods.jazzcash_number;
+    const hasEasyPaisa = paymentMethods.easypaisa_number;
+
     console.log('✅ Payment methods found:', {
-      hasBank: !!paymentMethods.bank_name,
-      hasJazzCash: !!paymentMethods.jazzcash_number,
-      hasEasyPaisa: !!paymentMethods.easypaisa_number,
+      hasBank,
+      hasJazzCash,
+      hasEasyPaisa,
       bankName: paymentMethods.bank_name,
-      accountNumber: paymentMethods.account_number
+      accountNumber: paymentMethods.account_number ? paymentMethods.account_number.slice(-4) + '...' : null,
+      jazzcashNumber: paymentMethods.jazzcash_number,
+      easypaisaNumber: paymentMethods.easypaisa_number
     });
 
-    return paymentMethods;
+    // Only return payment methods if at least one is properly configured
+    if (hasBank || hasJazzCash || hasEasyPaisa) {
+      return paymentMethods;
+    } else {
+      console.log('⚠️ Payment methods exist but none are properly configured');
+      return null;
+    }
+
   } catch (error) {
     console.error('💥 Unexpected error in getPaymentMethodsForShop:', error);
     return null;

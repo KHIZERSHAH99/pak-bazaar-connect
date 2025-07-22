@@ -53,40 +53,49 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
         let resolvedShopId = shopId;
         let resolvedShopName = shopName;
 
-        console.log('Initial props:', { shopId, shopName, productId });
+        console.log('🚀 EnhancedOrderForm: Starting payment methods fetch', { 
+          shopId, 
+          shopName, 
+          productId 
+        });
 
         // If we have a product ID, resolve it to get the shop ID
         if (productId) {
-          console.log('Resolving product to shop...', productId);
+          console.log('📦 Resolving product to shop...', productId);
           const product = await getProductById(productId);
           if (product) {
             resolvedShopId = product.shop_id;
             resolvedShopName = product.shops?.name || shopName;
-            console.log('Resolved shop:', { resolvedShopId, resolvedShopName });
+            console.log('✅ Product resolved to shop:', { resolvedShopId, resolvedShopName });
           }
         }
 
         setActualShopId(resolvedShopId);
         setActualShopName(resolvedShopName);
 
-        console.log('Fetching payment methods for shop:', resolvedShopId);
+        console.log('💳 Fetching payment methods for resolved shop:', resolvedShopId);
         const methods = await getPaymentMethodsForShop(resolvedShopId);
-        console.log('Payment methods response:', methods);
+        console.log('📋 Payment methods response:', methods);
         
         setPaymentMethods(methods);
 
         // Set default payment method if available
         if (methods) {
-          if (methods.bank_name) {
+          if (methods.bank_name && methods.account_number) {
             setSelectedMethod('bank_transfer');
+            console.log('🏦 Default payment method set to bank_transfer');
           } else if (methods.jazzcash_number) {
             setSelectedMethod('jazzcash');
+            console.log('📱 Default payment method set to jazzcash');
           } else if (methods.easypaisa_number) {
             setSelectedMethod('easypaisa');
+            console.log('💸 Default payment method set to easypaisa');
           }
+        } else {
+          console.log('⚠️ No payment methods available');
         }
       } catch (error: any) {
-        console.error('Error fetching payment methods:', error);
+        console.error('💥 Error fetching payment methods:', error);
         setPaymentMethodsError(error.message || 'Failed to load payment methods');
         toast({
           title: "Error",
@@ -205,10 +214,12 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             <div className="space-y-1 text-sm">
               <p><span className="font-medium">Bank:</span> {paymentMethods.bank_name}</p>
               <p><span className="font-medium">Account Number:</span> {paymentMethods.account_number}</p>
-              <p><span className="font-medium">Account Title:</span> {paymentMethods.account_title}</p>
+              {paymentMethods.account_title && (
+                <p><span className="font-medium">Account Title:</span> {paymentMethods.account_title}</p>
+              )}
             </div>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
-              💡 Transfer the exact amount and upload the payment screenshot below
+              💡 Transfer the exact amount (PKR {totalAmount.toLocaleString()}) and upload the payment screenshot below
             </div>
           </div>
         ) : null;
@@ -221,7 +232,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             </div>
             <p className="text-sm"><span className="font-medium">Mobile Number:</span> {paymentMethods.jazzcash_number}</p>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
-              💡 Send money to this JazzCash number and upload the payment screenshot
+              💡 Send PKR {totalAmount.toLocaleString()} to this JazzCash number and upload the payment screenshot
             </div>
           </div>
         ) : null;
@@ -234,15 +245,16 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             </div>
             <p className="text-sm"><span className="font-medium">Mobile Number:</span> {paymentMethods.easypaisa_number}</p>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
-              💡 Send money to this EasyPaisa number and upload the payment screenshot
+              💡 Send PKR {totalAmount.toLocaleString()} to this EasyPaisa number and upload the payment screenshot
             </div>
           </div>
         ) : null;
     }
   };
 
+  // Check if any payment method is available
   const hasAnyPaymentMethod = paymentMethods && (
-    paymentMethods.bank_name || 
+    (paymentMethods.bank_name && paymentMethods.account_number) || 
     paymentMethods.jazzcash_number || 
     paymentMethods.easypaisa_number
   );
@@ -330,11 +342,11 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
                     <SelectValue placeholder="Select payment method" />
                   </SelectTrigger>
                   <SelectContent>
-                    {paymentMethods?.bank_name && (
+                    {paymentMethods?.bank_name && paymentMethods?.account_number && (
                       <SelectItem value="bank_transfer">
                         <div className="flex items-center gap-2">
                           {getPaymentIcon('bank_transfer')}
-                          Bank Transfer
+                          Bank Transfer - {paymentMethods.bank_name}
                         </div>
                       </SelectItem>
                     )}
@@ -342,7 +354,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
                       <SelectItem value="jazzcash">
                         <div className="flex items-center gap-2">
                           {getPaymentIcon('jazzcash')}
-                          JazzCash
+                          JazzCash - {paymentMethods.jazzcash_number}
                         </div>
                       </SelectItem>
                     )}
@@ -350,7 +362,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
                       <SelectItem value="easypaisa">
                         <div className="flex items-center gap-2">
                           {getPaymentIcon('easypaisa')}
-                          EasyPaisa
+                          EasyPaisa - {paymentMethods.easypaisa_number}
                         </div>
                       </SelectItem>
                     )}

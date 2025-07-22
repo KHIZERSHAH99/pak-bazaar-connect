@@ -65,15 +65,16 @@ export const upsertPaymentMethods = async (paymentData: {
 
 // Get payment methods for a wholesaler (public - for sellers to see)
 export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentMethodInfo | null> => {
-  console.log('getPaymentMethodsForShop called with shopId:', shopId);
+  console.log('🔍 Fetching payment methods for shop ID:', shopId);
   
   if (!shopId) {
-    console.error('No shop ID provided');
+    console.error('❌ No shop ID provided');
     return null;
   }
 
   try {
     // First get the shop to find the owner
+    console.log('📋 Step 1: Getting shop details...');
     const { data: shop, error: shopError } = await supabase
       .from('shops')
       .select('owner_id, name')
@@ -81,38 +82,51 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
       .single();
 
     if (shopError) {
-      console.error('Error fetching shop:', shopError);
-      throw new Error(`Shop not found: ${shopError.message}`);
+      console.error('❌ Error fetching shop:', shopError);
+      return null;
     }
-
-    console.log('Shop found:', shop);
 
     if (!shop) {
-      throw new Error('Shop not found');
+      console.error('❌ Shop not found for ID:', shopId);
+      return null;
     }
 
+    console.log('✅ Shop found:', {
+      shopId,
+      shopName: shop.name,
+      ownerId: shop.owner_id
+    });
+
     // Then get the payment methods for the shop owner
+    console.log('📋 Step 2: Getting payment methods for owner:', shop.owner_id);
     const { data: paymentMethods, error: paymentError } = await supabase
       .from('payment_methods')
       .select('*')
       .eq('wholesaler_id', shop.owner_id)
       .eq('is_active', true)
-      .single();
+      .maybeSingle();
 
     if (paymentError) {
-      if (paymentError.code === 'PGRST116') {
-        // No payment methods found
-        console.log('No payment methods found for wholesaler:', shop.owner_id);
-        return null;
-      }
-      console.error('Error fetching payment methods:', paymentError);
-      throw new Error(`Failed to fetch payment methods: ${paymentError.message}`);
+      console.error('❌ Error fetching payment methods:', paymentError);
+      return null;
     }
 
-    console.log('Payment methods found:', paymentMethods);
+    if (!paymentMethods) {
+      console.log('⚠️ No payment methods found for wholesaler:', shop.owner_id);
+      return null;
+    }
+
+    console.log('✅ Payment methods found:', {
+      hasBank: !!paymentMethods.bank_name,
+      hasJazzCash: !!paymentMethods.jazzcash_number,
+      hasEasyPaisa: !!paymentMethods.easypaisa_number,
+      bankName: paymentMethods.bank_name,
+      accountNumber: paymentMethods.account_number
+    });
+
     return paymentMethods;
   } catch (error) {
-    console.error('Unexpected error in getPaymentMethodsForShop:', error);
+    console.error('💥 Unexpected error in getPaymentMethodsForShop:', error);
     return null;
   }
 };

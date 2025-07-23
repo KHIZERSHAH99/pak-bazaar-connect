@@ -61,10 +61,10 @@ export const createProduct = async (productData: {
       })
       .select(`
         *,
-        shops!shop_id (
+        shops (
           id, name, contact, address, postal_code, owner_id
         ),
-        categories!category_id (
+        categories (
           id, name, description
         )
       `)
@@ -92,10 +92,10 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops!shop_id (
+        shops (
           id, name, contact, address, postal_code, owner_id
         ),
-        categories!category_id (
+        categories (
           id, name, description
         )
       `)
@@ -143,10 +143,10 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops!shop_id (
+        shops (
           id, name, contact, address, postal_code, owner_id
         ),
-        categories!category_id (
+        categories (
           id, name, description
         )
       `)
@@ -180,7 +180,7 @@ export const updateProduct = async (
       .from('products')
       .select(`
         *,
-        shops!shop_id (
+        shops (
           owner_id
         )
       `)
@@ -201,10 +201,10 @@ export const updateProduct = async (
       .eq('id', productId)
       .select(`
         *,
-        shops!shop_id (
+        shops (
           id, name, contact, address, postal_code, owner_id
         ),
-        categories!category_id (
+        categories (
           id, name, description
         )
       `)
@@ -234,7 +234,7 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       .from('products')
       .select(`
         *,
-        shops!shop_id (
+        shops (
           owner_id
         )
       `)
@@ -270,14 +270,15 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
       .from('products')
       .select(`
         *,
-        shops!shop_id (
+        shops (
           id, name, contact, address, postal_code, owner_id
         ),
-        categories!category_id (
+        categories (
           id, name, description
         )
       `)
       .eq('is_active', true)
+      .eq('verification_status', 'approved')
       .order('created_at', { ascending: false })
       .limit(limit);
 
@@ -301,10 +302,10 @@ export const getProductById = async (productId: string): Promise<Product | null>
       .from('products')
       .select(`
         *,
-        shops!shop_id (
+        shops (
           id, name, contact, address, postal_code, owner_id
         ),
-        categories!category_id (
+        categories (
           id, name, description
         ),
         product_specifications (*),

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,8 +42,8 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingPaymentMethods, setIsLoadingPaymentMethods] = useState(true);
   const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
-  const [resolvedShopId, setResolvedShopId] = useState<string>('');
-  const [resolvedShopName, setResolvedShopName] = useState<string>('');
+  const [resolvedShopId, setResolvedShopId] = useState<string>(shopId);
+  const [resolvedShopName, setResolvedShopName] = useState<string>(shopName);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -60,12 +61,11 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
         let finalShopId = shopId;
         let finalShopName = shopName;
 
-        // If we have a productId, try to resolve it to get additional shop details
-        // but ONLY if shopId is not already provided or is empty
-        if (productId && (!shopId || shopId.trim() === '')) {
-          console.log('📦 No shopId provided, resolving from productId:', productId);
+        // If we have a productId and no shopId, try to resolve shop info from product
+        if (productId && (!shopId || shopId.trim() === '' || shopId === 'undefined')) {
+          console.log('📦 Resolving shop from productId:', productId);
           const product = await getProductById(productId);
-          if (product && product.shops) {
+          if (product && product.shops && product.shop_id) {
             finalShopId = product.shop_id;
             finalShopName = product.shops.name || shopName;
             console.log('✅ Product resolved to shop:', { finalShopId, finalShopName });
@@ -75,12 +75,10 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             setIsLoadingPaymentMethods(false);
             return;
           }
-        } else {
-          console.log('🏪 Using provided shop details:', { finalShopId, finalShopName });
         }
 
-        // Validate that we have a shop ID
-        if (!finalShopId || finalShopId.trim() === '') {
+        // Validate that we have a valid shop ID
+        if (!finalShopId || finalShopId.trim() === '' || finalShopId === 'undefined') {
           console.log('❌ No valid shop ID available');
           setPaymentMethodsError('Shop information is missing');
           setIsLoadingPaymentMethods(false);
@@ -279,7 +277,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="font-poppins">Create Order - {resolvedShopName || shopName}</CardTitle>
+        <CardTitle className="font-poppins">Create Order - {resolvedShopName}</CardTitle>
         <p className="text-lg font-semibold text-primary">
           Total Amount: PKR {totalAmount.toLocaleString()}
         </p>

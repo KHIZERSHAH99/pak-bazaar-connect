@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { uploadImage } from '@/lib/storage';
@@ -60,8 +61,8 @@ export const createProduct = async (productData: {
       })
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
-        categories!fk_products_category_id(id, name, description)
+        shops!products_shop_id_fkey(id, name, contact, address, postal_code, owner_id),
+        categories!products_category_id_fkey(id, name, description)
       `)
       .single();
 
@@ -87,8 +88,8 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
-        categories!fk_products_category_id(id, name, description)
+        shops!products_shop_id_fkey(id, name, contact, address, postal_code, owner_id),
+        categories!products_category_id_fkey(id, name, description)
       `)
       .eq('shop_id', shopId)
       .order('created_at', { ascending: false });
@@ -134,8 +135,8 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
-        categories!fk_products_category_id(id, name, description)
+        shops!products_shop_id_fkey(id, name, contact, address, postal_code, owner_id),
+        categories!products_category_id_fkey(id, name, description)
       `)
       .in('shop_id', shopIds)
       .order('created_at', { ascending: false });
@@ -167,7 +168,7 @@ export const updateProduct = async (
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(owner_id)
+        shops!products_shop_id_fkey(owner_id)
       `)
       .eq('id', productId)
       .single();
@@ -186,8 +187,8 @@ export const updateProduct = async (
       .eq('id', productId)
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
-        categories!fk_products_category_id(id, name, description)
+        shops!products_shop_id_fkey(id, name, contact, address, postal_code, owner_id),
+        categories!products_category_id_fkey(id, name, description)
       `)
       .single();
 
@@ -215,7 +216,7 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(owner_id)
+        shops!products_shop_id_fkey(owner_id)
       `)
       .eq('id', productId)
       .single();
@@ -249,8 +250,8 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
       .from('products')
       .select(`
         *,
-        shops!fk_products_shop_id(id, name, contact, address, postal_code, owner_id),
-        categories!fk_products_category_id(id, name, description)
+        shops!products_shop_id_fkey(id, name, contact, address, postal_code, owner_id),
+        categories!products_category_id_fkey(id, name, description)
       `)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
@@ -276,8 +277,8 @@ export const getProductById = async (productId: string): Promise<Product | null>
       .from('products')
       .select(`
         *,
-        shops(id, name, contact, address, postal_code, owner_id),
-        categories(id, name, description),
+        shops!products_shop_id_fkey(id, name, contact, address, postal_code, owner_id),
+        categories!products_category_id_fkey(id, name, description),
         product_specifications(*),
         product_images(*),
         product_pricing_tiers(*)

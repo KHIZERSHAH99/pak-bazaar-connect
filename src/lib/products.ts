@@ -61,8 +61,8 @@ export const createProduct = async (productData: {
       })
       .select(`
         *,
-        shops(id, name, contact, address, postal_code, owner_id),
-        categories(id, name, description)
+        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!category_id(id, name, description)
       `)
       .single();
 
@@ -88,8 +88,8 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops(id, name, contact, address, postal_code, owner_id),
-        categories(id, name, description)
+        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!category_id(id, name, description)
       `)
       .eq('shop_id', shopId)
       .order('created_at', { ascending: false });
@@ -135,8 +135,8 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
       .from('products')
       .select(`
         *,
-        shops(id, name, contact, address, postal_code, owner_id),
-        categories(id, name, description)
+        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!category_id(id, name, description)
       `)
       .in('shop_id', shopIds)
       .order('created_at', { ascending: false });
@@ -168,7 +168,7 @@ export const updateProduct = async (
       .from('products')
       .select(`
         *,
-        shops(owner_id)
+        shops!shop_id(owner_id)
       `)
       .eq('id', productId)
       .single();
@@ -177,7 +177,7 @@ export const updateProduct = async (
       throw new Error('Product not found');
     }
 
-    if (product.shops.owner_id !== user.id) {
+    if (product.shops?.owner_id !== user.id) {
       throw new Error('You can only update your own products');
     }
 
@@ -187,8 +187,8 @@ export const updateProduct = async (
       .eq('id', productId)
       .select(`
         *,
-        shops(id, name, contact, address, postal_code, owner_id),
-        categories(id, name, description)
+        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!category_id(id, name, description)
       `)
       .single();
 
@@ -216,7 +216,7 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       .from('products')
       .select(`
         *,
-        shops(owner_id)
+        shops!shop_id(owner_id)
       `)
       .eq('id', productId)
       .single();
@@ -225,7 +225,7 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       throw new Error('Product not found');
     }
 
-    if (product.shops.owner_id !== user.id) {
+    if (product.shops?.owner_id !== user.id) {
       throw new Error('You can only delete your own products');
     }
 
@@ -250,8 +250,8 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
       .from('products')
       .select(`
         *,
-        shops(id, name, contact, address, postal_code, owner_id),
-        categories(id, name, description)
+        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!category_id(id, name, description)
       `)
       .eq('is_active', true)
       .order('created_at', { ascending: false })
@@ -277,8 +277,8 @@ export const getProductById = async (productId: string): Promise<Product | null>
       .from('products')
       .select(`
         *,
-        shops(id, name, contact, address, postal_code, owner_id),
-        categories(id, name, description),
+        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        categories!category_id(id, name, description),
         product_specifications(*),
         product_images(*),
         product_pricing_tiers(*)

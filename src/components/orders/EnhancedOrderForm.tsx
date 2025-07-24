@@ -238,7 +238,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
               <CheckCircle className="h-5 w-5 text-teal-600" />
               <p className="font-medium text-teal-800">EasyPaisa Details:</p>
             </div>
-            <p className="text-sm"><span className="font-medium">Mobile Number:</span> {paymentMethods.easypaisa_number}</p>
+            <p className="text-base text-[#000a00] py-[11px] font-semibold"><span className="font-medium">Mobile Number:</span> {paymentMethods.easypaisa_number}</p>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
               💡 Send PKR {totalAmount.toLocaleString()} to this EasyPaisa number and upload the payment screenshot
             </div>

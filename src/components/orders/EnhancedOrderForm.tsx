@@ -207,15 +207,15 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     if (!paymentMethods) return null;
     switch (selectedMethod) {
       case 'bank_transfer':
-        return paymentMethods.bank_name && paymentMethods.account_number ? <div className="space-y-2 p-4 bg-green-50 border border-green-200 rounded-lg">
+        return paymentMethods.bank_name && paymentMethods.account_number ? <div className="space-y-2 p-4 border border-green-200 rounded-lg bg-green-50">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="h-5 w-5 text-green-600" />
               <p className="font-medium text-green-800">Bank Transfer Details:</p>
             </div>
-            <div className="space-y-1 text-sm">
-              <p className="text-base text-[#000a00]"><span className="font-medium">Bank:</span> {paymentMethods.bank_name}</p>
-              <p className="text-[#000a00]"><span className="font-medium">Account Number:</span> {paymentMethods.account_number}</p>
-              {paymentMethods.account_title && <p className="text-[#000a00]"><span className="font-medium">Account Title:</span> {paymentMethods.account_title}</p>}
+            <div className="space-y-1 text-sm my-[17px]">
+              <p className="text-base text-green-950 font-extrabold"><span className="font-medium">Bank:</span> {paymentMethods.bank_name}</p>
+              <p className="text-[#000a00] my-0 font-extrabold"><span className="font-medium">Account Number:</span> {paymentMethods.account_number}</p>
+              {paymentMethods.account_title && <p className="text-[#000a00] my-px py-0 font-extrabold"><span className="font-medium">Account Title:</span> {paymentMethods.account_title}</p>}
             </div>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
               💡 Transfer the exact amount (PKR {totalAmount.toLocaleString()}) and upload the payment screenshot below

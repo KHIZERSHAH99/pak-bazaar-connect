@@ -227,7 +227,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
               <CheckCircle className="h-5 w-5 text-orange-600" />
               <p className="font-medium text-orange-800">JazzCash Details:</p>
             </div>
-            <p className="text-sm font-extrabold text-[#000d60]"><span className="font-medium">Mobile Number:</span> {paymentMethods.jazzcash_number}</p>
+            <p className="font-extrabold text-lg py-[6px] text-red-700"><span className="font-medium">Mobile Number:</span> {paymentMethods.jazzcash_number}</p>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
               💡 Send PKR {totalAmount.toLocaleString()} to this JazzCash number and upload the payment screenshot
             </div>

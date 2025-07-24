@@ -213,9 +213,9 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
               <p className="font-medium text-green-800">Bank Transfer Details:</p>
             </div>
             <div className="space-y-1 text-sm my-[17px]">
-              <p className="text-base font-extrabold text-[#000b06]"><span className="font-medium">Bank:</span> {paymentMethods.bank_name}</p>
-              <p className="text-[#000a00] my-0 font-extrabold"><span className="font-medium">Account Number:</span> {paymentMethods.account_number}</p>
-              {paymentMethods.account_title && <p className="text-[#000a00] my-px py-0 font-extrabold"><span className="font-medium">Account Title:</span> {paymentMethods.account_title}</p>}
+              <p className="font-extrabold text-[#000b06] py-px text-base mx-0 px-0"><span className="font-medium">Bank:</span> {paymentMethods.bank_name}</p>
+              <p className="text-[#000a00] my-0 font-extrabold py-[3px] text-base"><span className="font-medium">Account Number:</span> {paymentMethods.account_number}</p>
+              {paymentMethods.account_title && <p className="text-[#000a00] my-px py-0 font-extrabold text-base"><span className="font-medium">Account Title:</span> {paymentMethods.account_title}</p>}
             </div>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
               💡 Transfer the exact amount (PKR {totalAmount.toLocaleString()}) and upload the payment screenshot below

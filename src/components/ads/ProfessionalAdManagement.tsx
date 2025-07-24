@@ -152,7 +152,7 @@ const ProfessionalAdManagement: React.FC = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 bg-lime-200 rounded-xl">
+          <CardContent className="p-6 bg-lime-200 rounded-2xl">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Campaigns</p>
@@ -167,7 +167,7 @@ const ProfessionalAdManagement: React.FC = () => {
         </Card>
 
         <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 bg-lime-200 rounded-2xl">
+          <CardContent className="p-6 bg-lime-200 rounded-md py-[14px]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active Campaigns</p>

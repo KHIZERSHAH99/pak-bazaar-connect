@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { uploadImage } from '@/lib/storage';
@@ -59,15 +58,7 @@ export const createProduct = async (productData: {
         verification_status: 'approved',
         moq: productData.moq || 1
       })
-      .select(`
-        *,
-        shops (
-          id, name, contact, address, postal_code, owner_id
-        ),
-        categories (
-          id, name, description
-        )
-      `)
+      .select()
       .single();
 
     if (error) {
@@ -79,7 +70,8 @@ export const createProduct = async (productData: {
       throw new Error('No data returned from product creation');
     }
 
-    return data as Product;
+    // Get the full product with relationships
+    return await getProductById(data.id) || data as Product;
   } catch (error) {
     console.error('Error in createProduct:', error);
     throw error;
@@ -90,15 +82,7 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
   try {
     const { data, error } = await supabase
       .from('products')
-      .select(`
-        *,
-        shops (
-          id, name, contact, address, postal_code, owner_id
-        ),
-        categories (
-          id, name, description
-        )
-      `)
+      .select('*')
       .eq('shop_id', shopId)
       .order('created_at', { ascending: false });
 
@@ -107,7 +91,24 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
       throw error;
     }
 
-    return (data || []) as Product[];
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // Get shop and category info separately
+    const [shopData, categoryData] = await Promise.all([
+      supabase.from('shops').select('*').eq('id', shopId).single(),
+      supabase.from('categories').select('*')
+    ]);
+
+    const shop = shopData.data;
+    const categories = categoryData.data || [];
+
+    return data.map(product => ({
+      ...product,
+      shops: shop,
+      categories: categories.find(cat => cat.id === product.category_id) || null
+    })) as Product[];
   } catch (error) {
     console.error('Error in getProductsByShop:', error);
     throw error;
@@ -124,7 +125,7 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
     // First get shops owned by the wholesaler
     const { data: shops, error: shopsError } = await supabase
       .from('shops')
-      .select('id')
+      .select('*')
       .eq('owner_id', user.id);
 
     if (shopsError) {
@@ -141,15 +142,7 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
     // Then get products only from those shops
     const { data, error } = await supabase
       .from('products')
-      .select(`
-        *,
-        shops (
-          id, name, contact, address, postal_code, owner_id
-        ),
-        categories (
-          id, name, description
-        )
-      `)
+      .select('*')
       .in('shop_id', shopIds)
       .order('created_at', { ascending: false });
 
@@ -158,7 +151,25 @@ export const getProductsByWholesaler = async (): Promise<Product[]> => {
       throw error;
     }
 
-    return (data || []) as Product[];
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // Get categories
+    const { data: categories } = await supabase
+      .from('categories')
+      .select('*');
+
+    return data.map(product => {
+      const shop = shops.find(s => s.id === product.shop_id);
+      const category = categories?.find(cat => cat.id === product.category_id);
+      
+      return {
+        ...product,
+        shops: shop || null,
+        categories: category || null
+      };
+    }) as Product[];
   } catch (error) {
     console.error('Error in getProductsByWholesaler:', error);
     throw error;
@@ -175,15 +186,10 @@ export const updateProduct = async (
       throw new Error('User not authenticated');
     }
 
-    // Verify user owns the product through shop ownership
+    // First get the product
     const { data: product, error: productError } = await supabase
       .from('products')
-      .select(`
-        *,
-        shops (
-          owner_id
-        )
-      `)
+      .select('*')
       .eq('id', productId)
       .single();
 
@@ -191,7 +197,18 @@ export const updateProduct = async (
       throw new Error('Product not found');
     }
 
-    if (product.shops?.owner_id !== user.id) {
+    // Then get the shop to verify ownership
+    const { data: shop, error: shopError } = await supabase
+      .from('shops')
+      .select('owner_id')
+      .eq('id', product.shop_id)
+      .single();
+
+    if (shopError) {
+      throw new Error('Shop not found');
+    }
+
+    if (shop.owner_id !== user.id) {
       throw new Error('You can only update your own products');
     }
 
@@ -199,15 +216,7 @@ export const updateProduct = async (
       .from('products')
       .update(updates)
       .eq('id', productId)
-      .select(`
-        *,
-        shops (
-          id, name, contact, address, postal_code, owner_id
-        ),
-        categories (
-          id, name, description
-        )
-      `)
+      .select()
       .single();
 
     if (error) {
@@ -215,7 +224,8 @@ export const updateProduct = async (
       throw new Error(`Failed to update product: ${error.message}`);
     }
 
-    return data as Product;
+    // Get the full product with relationships
+    return await getProductById(productId) || data as Product;
   } catch (error) {
     console.error('Error in updateProduct:', error);
     throw error;
@@ -229,15 +239,10 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       throw new Error('User not authenticated');
     }
 
-    // Verify user owns the product through shop ownership
+    // First get the product
     const { data: product, error: productError } = await supabase
       .from('products')
-      .select(`
-        *,
-        shops (
-          owner_id
-        )
-      `)
+      .select('*')
       .eq('id', productId)
       .single();
 
@@ -245,7 +250,18 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       throw new Error('Product not found');
     }
 
-    if (product.shops?.owner_id !== user.id) {
+    // Then get the shop to verify ownership
+    const { data: shop, error: shopError } = await supabase
+      .from('shops')
+      .select('owner_id')
+      .eq('id', product.shop_id)
+      .single();
+
+    if (shopError) {
+      throw new Error('Shop not found');
+    }
+
+    if (shop.owner_id !== user.id) {
       throw new Error('You can only delete your own products');
     }
 
@@ -268,15 +284,7 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
   try {
     const { data, error } = await supabase
       .from('products')
-      .select(`
-        *,
-        shops (
-          id, name, contact, address, postal_code, owner_id
-        ),
-        categories (
-          id, name, description
-        )
-      `)
+      .select('*')
       .eq('is_active', true)
       .eq('verification_status', 'approved')
       .order('created_at', { ascending: false })
@@ -287,7 +295,24 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
       throw error;
     }
 
-    return (data || []) as Product[];
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // Get shops and categories separately
+    const [shopsData, categoriesData] = await Promise.all([
+      supabase.from('shops').select('*'),
+      supabase.from('categories').select('*')
+    ]);
+
+    const shops = shopsData.data || [];
+    const categories = categoriesData.data || [];
+
+    return data.map(product => ({
+      ...product,
+      shops: shops.find(shop => shop.id === product.shop_id) || null,
+      categories: categories.find(cat => cat.id === product.category_id) || null
+    })) as Product[];
   } catch (error) {
     console.error('Error in getActiveProducts:', error);
     return [];
@@ -300,18 +325,7 @@ export const getProductById = async (productId: string): Promise<Product | null>
     
     const { data, error } = await supabase
       .from('products')
-      .select(`
-        *,
-        shops (
-          id, name, contact, address, postal_code, owner_id
-        ),
-        categories (
-          id, name, description
-        ),
-        product_specifications (*),
-        product_images (*),
-        product_pricing_tiers (*)
-      `)
+      .select('*')
       .eq('id', productId)
       .maybeSingle();
 
@@ -325,15 +339,33 @@ export const getProductById = async (productId: string): Promise<Product | null>
       return null;
     }
 
+    // Get related data separately
+    const [shopData, categoryData, specsData, imagesData, pricingData] = await Promise.all([
+      supabase.from('shops').select('*').eq('id', data.shop_id).single(),
+      data.category_id ? supabase.from('categories').select('*').eq('id', data.category_id).single() : null,
+      supabase.from('product_specifications').select('*').eq('product_id', productId),
+      supabase.from('product_images').select('*').eq('product_id', productId),
+      supabase.from('product_pricing_tiers').select('*').eq('product_id', productId)
+    ]);
+
+    const result = {
+      ...data,
+      shops: shopData.data || null,
+      categories: categoryData?.data || null,
+      product_specifications: specsData.data || [],
+      product_images: imagesData.data || [],
+      product_pricing_tiers: pricingData.data || []
+    };
+
     console.log('✅ Product found:', {
-      id: data.id,
-      name: data.name,
-      shopId: data.shop_id,
-      shopName: data.shops?.name,
-      shopOwner: data.shops?.owner_id
+      id: result.id,
+      name: result.name,
+      shopId: result.shop_id,
+      shopName: result.shops?.name,
+      shopOwner: result.shops?.owner_id
     });
 
-    return data as Product;
+    return result as Product;
   } catch (error) {
     console.error('💥 Error in getProductById:', error);
     return null;

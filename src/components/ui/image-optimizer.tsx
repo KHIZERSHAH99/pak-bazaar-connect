@@ -40,8 +40,20 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     }
   }, [currentSrc, fallbackSrc]);
 
-  // Generate optimized URL for different quality levels
+  // Generate optimized URL for Supabase images and other sources
   const getOptimizedSrc = useCallback((originalSrc: string) => {
+    // Optimize Supabase storage images
+    if (originalSrc.includes('supabase.co/storage')) {
+      const separator = originalSrc.includes('?') ? '&' : '?';
+      const qualityParams = {
+        low: `${separator}width=400&height=300&quality=50&format=webp`,
+        medium: `${separator}width=800&height=600&quality=75&format=webp`,
+        high: `${separator}width=1200&height=900&quality=90&format=webp`
+      };
+      return `${originalSrc}${qualityParams[quality]}`;
+    }
+    
+    // Optimize Unsplash images
     if (originalSrc.includes('unsplash.com')) {
       const qualityParams = {
         low: '&q=50&w=400',
@@ -50,6 +62,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       };
       return `${originalSrc}${qualityParams[quality]}`;
     }
+    
     return originalSrc;
   }, [quality]);
 

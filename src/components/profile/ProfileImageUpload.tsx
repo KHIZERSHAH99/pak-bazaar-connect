@@ -188,6 +188,13 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profile, onImag
                 src={imagePreview || profile.profile_image} 
                 alt="Profile" 
                 className="object-cover"
+                loading="lazy"
+                onLoad={() => {
+                  // Optimize image loading performance
+                  if (imagePreview) {
+                    URL.revokeObjectURL(imagePreview);
+                  }
+                }}
               />
               <AvatarFallback className="bg-pakistani_green-100 text-pakistani_green-700 text-2xl font-bold">
                 {profile.email?.substring(0, 2).toUpperCase() || "U"}

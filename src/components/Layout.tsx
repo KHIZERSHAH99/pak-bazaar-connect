@@ -20,7 +20,10 @@ const Layout: React.FC<LayoutProps> = ({
   keywords,
   showHeaderAd = false
 }) => {
-  usePageAnalytics();
+  // Only track analytics in production or when explicitly needed
+  if (process.env.NODE_ENV === 'development') {
+    usePageAnalytics();
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">

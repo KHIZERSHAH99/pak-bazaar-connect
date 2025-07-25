@@ -6,44 +6,48 @@ export const usePageAnalytics = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Track page views
-    const trackPageView = () => {
-      // Log page view for analytics
-      console.log('Page view:', {
-        path: location.pathname,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        referrer: document.referrer,
-        title: document.title
-      });
+    // Debounce to prevent duplicate calls
+    const timeoutId = setTimeout(() => {
+      // Track page views only once per location change
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Page view:', {
+          path: location.pathname,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent.slice(0, 100), // Truncate for performance
+          referrer: document.referrer,
+          title: document.title
+        });
+      }
 
-      // Track performance metrics
-      if ('performance' in window) {
+      // Optimized performance tracking - only measure what's needed
+      if ('performance' in window && location.pathname !== '/') {
         setTimeout(() => {
           const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-          if (perfData) {
+          if (perfData && process.env.NODE_ENV === 'development') {
             console.log('Performance metrics:', {
               path: location.pathname,
-              loadTime: perfData.loadEventEnd - perfData.loadEventStart,
-              domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
-              firstContentfulPaint: performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0
+              loadTime: Math.round(perfData.loadEventEnd - perfData.loadEventStart),
+              domContentLoaded: Math.round(perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart),
+              firstContentfulPaint: Math.round(performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0)
             });
           }
-        }, 1000);
+        }, 500); // Reduced timeout for faster feedback
       }
-    };
+    }, 100); // Debounce duplicate calls
 
-    trackPageView();
+    return () => clearTimeout(timeoutId);
   }, [location.pathname]);
 
   return {
     trackEvent: (eventName: string, properties?: Record<string, any>) => {
-      console.log('Custom event:', {
-        event: eventName,
-        properties,
-        path: location.pathname,
-        timestamp: new Date().toISOString()
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Custom event:', {
+          event: eventName,
+          properties,
+          path: location.pathname,
+          timestamp: new Date().toISOString()
+        });
+      }
     }
   };
 };

@@ -16,17 +16,22 @@ const LazyLoadWrapper: React.FC<LazyLoadWrapperProps> = ({
   className = ''
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [hasIntersected, setHasIntersected] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !hasIntersected) {
           setIsVisible(true);
-          observer.disconnect();
+          setHasIntersected(true);
+          observer.disconnect(); // Disconnect after first intersection
         }
       },
-      { threshold }
+      { 
+        threshold,
+        rootMargin: '50px' // Start loading 50px before element comes into view
+      }
     );
 
     const currentRef = ref.current;
@@ -39,7 +44,7 @@ const LazyLoadWrapper: React.FC<LazyLoadWrapperProps> = ({
         observer.unobserve(currentRef);
       }
     };
-  }, [threshold]);
+  }, [threshold, hasIntersected]);
 
   return (
     <div ref={ref} className={className} style={{ minHeight: height }}>

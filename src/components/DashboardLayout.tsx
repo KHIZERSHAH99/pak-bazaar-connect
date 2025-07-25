@@ -23,7 +23,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     loading
   } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  usePageAnalytics();
+  // Conditionally use analytics to prevent duplicate tracking
+  if (process.env.NODE_ENV === 'development') {
+    usePageAnalytics();
+  }
   if (loading) {
     return <LoadingScreen />;
   }

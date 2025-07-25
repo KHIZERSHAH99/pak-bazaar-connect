@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Upload, X, Image, FileImage } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { validateFile, ALLOWED_MIME_TYPES, sanitizeFileName } from '@/lib/security/file-validation';
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
@@ -12,6 +13,7 @@ interface FileUploadProps {
   preview?: boolean;
   disabled?: boolean;
   placeholder?: string;
+  category?: 'profileImage' | 'productImage' | 'shopLogo' | 'paymentScreenshot' | 'document';
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
@@ -21,41 +23,76 @@ const FileUpload: React.FC<FileUploadProps> = ({
   currentFile = null,
   preview = true,
   disabled = false,
-  placeholder = "Click to upload file"
+  placeholder = "Click to upload file",
+  category = 'productImage'
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const validateFile = (file: File): boolean => {
-    // Check file size
-    if (file.size > maxSize * 1024) {
+  const validateFileContent = async (file: File): Promise<boolean> => {
+    try {
+      // Determine allowed MIME types based on accept prop
+      let allowedTypes: string[] = [];
+      if (accept.includes('image/')) {
+        allowedTypes = [...ALLOWED_MIME_TYPES.images];
+      } else if (accept.includes('application/pdf')) {
+        allowedTypes = [...ALLOWED_MIME_TYPES.documents];
+      } else {
+        // Parse custom accept string
+        allowedTypes = accept.split(',').map(type => type.trim());
+      }
+
+      const validationResult = await validateFile(file, category, allowedTypes);
+      
+      if (!validationResult.isValid) {
+        toast({
+          title: "File validation failed",
+          description: validationResult.errors.join('. '),
+          variant: "destructive"
+        });
+        return false;
+      }
+
+      // Legacy size check for backward compatibility
+      if (file.size > maxSize * 1024) {
+        toast({
+          title: "File too large",
+          description: `Please upload a file smaller than ${maxSize}KB`,
+          variant: "destructive"
+        });
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('File validation error:', error);
       toast({
-        title: "File too large",
-        description: `Please upload a file smaller than ${maxSize}KB`,
+        title: "File validation error",
+        description: "Failed to validate file. Please try again.",
         variant: "destructive"
       });
       return false;
     }
-
-    // Check file type if it's an image
-    if (accept.includes('image/') && !file.type.startsWith('image/')) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload an image file",
-        variant: "destructive"
-      });
-      return false;
-    }
-
-    return true;
   };
 
-  const handleFileSelect = (file: File) => {
-    if (!validateFile(file)) return;
+  const handleFileSelect = async (file: File) => {
+    // Sanitize filename
+    const sanitizedName = sanitizeFileName(file.name);
+    if (sanitizedName !== file.name) {
+      console.warn('Filename was sanitized:', { original: file.name, sanitized: sanitizedName });
+    }
 
-    onFileSelect(file);
+    const isValid = await validateFileContent(file);
+    if (!isValid) return;
+
+    // Create a new file object with sanitized name if needed
+    const processedFile = sanitizedName !== file.name 
+      ? new File([file], sanitizedName, { type: file.type })
+      : file;
+
+    onFileSelect(processedFile);
     
     // Create preview for images
     if (preview && file.type.startsWith('image/')) {
@@ -68,7 +105,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
     toast({
       title: "File uploaded successfully",
-      description: `${file.name} (${(file.size / 1024).toFixed(1)}KB)`,
+      description: `${sanitizedName} (${(file.size / 1024).toFixed(1)}KB)`,
       variant: "default"
     });
   };

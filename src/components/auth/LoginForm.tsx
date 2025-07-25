@@ -8,25 +8,55 @@ import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
 import { phoneSignIn, validatePhoneNumber } from '@/lib/phone-auth';
+import { supabase } from '@/integrations/supabase/client';
 
 const LoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if account is temporarily locked
+    if (loginAttempts >= 5) {
+      toast({
+        title: 'Account Temporarily Locked',
+        description: 'Too many failed attempts. Please try again later.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
+      // Check rate limit
+      const rateLimitResponse = await supabase.functions.invoke('rate-limit-check', {
+        body: { 
+          action: 'login', 
+          identifier: phoneNumber,
+          maxRequests: 5,
+          windowMinutes: 15
+        }
+      });
+
+      if (!rateLimitResponse.data?.allowed) {
+        throw new Error('Too many login attempts. Please try again later.');
+      }
+
       if (!validatePhoneNumber(phoneNumber)) {
         throw new Error('Please enter a valid phone number');
       }
 
       await phoneSignIn(phoneNumber, password);
+
+      // Reset login attempts on success
+      setLoginAttempts(0);
 
       toast({
         title: 'Welcome back!',
@@ -41,9 +71,23 @@ const LoginForm: React.FC = () => {
     } catch (error: any) {
       console.error('Login error:', error);
       
+      // Increment login attempts
+      setLoginAttempts(prev => prev + 1);
+      
+      let errorMessage = error.message || 'Invalid phone number or password';
+      
+      // Provide specific error messages without revealing too much
+      if (error.message?.includes('Invalid login credentials')) {
+        errorMessage = 'Invalid phone number or password';
+      } else if (error.message?.includes('Email not confirmed')) {
+        errorMessage = 'Please verify your account before logging in';
+      } else if (error.message?.includes('rate limit')) {
+        errorMessage = 'Too many attempts. Please try again later.';
+      }
+      
       toast({
         title: 'Login Failed',
-        description: error.message || 'Invalid phone number or password',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -139,11 +183,12 @@ const LoginForm: React.FC = () => {
           </p>
         </div>
 
-        <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-          <h4 className="font-medium text-green-800 mb-2 font-poppins">Demo Accounts:</h4>
-          <div className="text-sm text-green-700 space-y-1 font-poppins">
-            <p><strong>Wholesaler:</strong> 03001234567 | password: demo123</p>
-            <p><strong>Seller:</strong> 03004567890 | password: demo123</p>
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <h4 className="font-medium text-blue-800 mb-2 font-poppins">Demo Accounts:</h4>
+          <div className="text-sm text-blue-700 space-y-1 font-poppins">
+            <p><strong>Wholesaler:</strong> 03001234567</p>
+            <p><strong>Seller:</strong> 03004567890</p>
+            <p className="text-xs text-blue-600 mt-2">Contact admin for demo credentials</p>
           </div>
         </div>
       </CardContent>

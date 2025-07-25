@@ -5,20 +5,17 @@ const demoAccounts = [
   {
     role: "Admin",
     email: "admin@test.com",
-    password: "password123",
-    note: "Full platform access."
+    note: "Full platform access. Contact admin for credentials."
   },
   {
-    role: "Wholesaler",
+    role: "Wholesaler", 
     email: "wholesaler1@test.com",
-    password: "password123",
-    note: "Can create shops, products and ads."
+    note: "Can create shops, products and ads. Contact admin for credentials."
   },
   {
     role: "Seller",
-    email: "seller1@test.com",
-    password: "password123",
-    note: "Can browse & order from shops."
+    email: "seller1@test.com", 
+    note: "Can browse & order from shops. Contact admin for credentials."
   }
 ];
 
@@ -35,7 +32,7 @@ const DemoAccounts: React.FC = () => (
             className="flex flex-col sm:flex-row sm:justify-between items-start gap-1 sm:gap-0 rounded-md p-2 bg-card dark:bg-gray-800 text-foreground dark:text-gray-100 shadow-sm"
           >
             <span className="font-medium">{acc.role}:</span>
-            <span className="font-mono text-xs break-all">{acc.email} / {acc.password}</span>
+            <span className="font-mono text-xs break-all">{acc.email}</span>
             <span className="text-xs text-muted-foreground dark:text-gray-400">{acc.note}</span>
           </li>
         ))}

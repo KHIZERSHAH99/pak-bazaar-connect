@@ -18,6 +18,9 @@ const PaymentScreenshot: React.FC<PaymentScreenshotProps> = ({ paymentScreenshot
     .from('payment-screenshots')
     .getPublicUrl(paymentScreenshot);
 
+  // Construct the full URL
+  const imageUrl = data.publicUrl;
+
   return (
     <div>
       <Button
@@ -33,11 +36,11 @@ const PaymentScreenshot: React.FC<PaymentScreenshotProps> = ({ paymentScreenshot
       {showScreenshot && (
         <div className="mt-4 p-4 border rounded-lg">
           <img
-            src={data.publicUrl}
+            src={imageUrl}
             alt="Payment Screenshot"
             className="max-w-full h-auto max-h-96 mx-auto rounded-lg"
             onError={(e) => {
-              console.error('Failed to load payment screenshot');
+              console.error('Failed to load payment screenshot:', imageUrl);
               e.currentTarget.src = '/placeholder.svg';
             }}
           />

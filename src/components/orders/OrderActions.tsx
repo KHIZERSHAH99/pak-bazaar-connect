@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { confirmOrder, rejectOrder } from '@/lib/orders-enhanced';
+import { confirmOrder, rejectOrder } from '@/lib/orders/core';
 import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
 
 interface OrderActionsProps {

@@ -91,6 +91,28 @@ export const confirmOrder = async (orderId: string, notes?: string) => {
   const user = await getCurrentUser();
   if (!user) throw new Error('User not authenticated');
 
+  // First, get the order to verify ownership
+  const { data: orderData, error: fetchError } = await supabase
+    .from('orders')
+    .select('*, shops!orders_shop_id_fkey(owner_id)')
+    .eq('id', orderId)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error('Error fetching order:', fetchError);
+    throw fetchError;
+  }
+
+  if (!orderData) {
+    throw new Error('Order not found');
+  }
+
+  // Verify user owns the shop
+  if (orderData.shops?.owner_id !== user.id) {
+    throw new Error('Unauthorized to confirm this order');
+  }
+
+  // Now update the order
   const { data, error } = await supabase
     .from('orders')
     .update({
@@ -99,10 +121,7 @@ export const confirmOrder = async (orderId: string, notes?: string) => {
       wholesaler_notes: notes
     })
     .eq('id', orderId)
-    .select(`
-      *,
-      shops!orders_shop_id_fkey(owner_id)
-    `)
+    .select('*')
     .maybeSingle();
 
   if (error) {
@@ -111,16 +130,10 @@ export const confirmOrder = async (orderId: string, notes?: string) => {
   }
 
   if (!data) {
-    throw new Error('Order not found or confirmation failed');
+    throw new Error('Order confirmation failed');
   }
 
-  // Verify user owns the shop
-  const order = data;
-  if (order.shops?.owner_id !== user.id) {
-    throw new Error('Unauthorized to confirm this order');
-  }
-
-  return order;
+  return { ...data, shops: orderData.shops };
 };
 
 // Reject order (wholesaler action)
@@ -128,6 +141,28 @@ export const rejectOrder = async (orderId: string, notes?: string) => {
   const user = await getCurrentUser();
   if (!user) throw new Error('User not authenticated');
 
+  // First, get the order to verify ownership
+  const { data: orderData, error: fetchError } = await supabase
+    .from('orders')
+    .select('*, shops!orders_shop_id_fkey(owner_id)')
+    .eq('id', orderId)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error('Error fetching order:', fetchError);
+    throw fetchError;
+  }
+
+  if (!orderData) {
+    throw new Error('Order not found');
+  }
+
+  // Verify user owns the shop
+  if (orderData.shops?.owner_id !== user.id) {
+    throw new Error('Unauthorized to reject this order');
+  }
+
+  // Now update the order
   const { data, error } = await supabase
     .from('orders')
     .update({
@@ -136,10 +171,7 @@ export const rejectOrder = async (orderId: string, notes?: string) => {
       wholesaler_notes: notes
     })
     .eq('id', orderId)
-    .select(`
-      *,
-      shops!orders_shop_id_fkey(owner_id)
-    `)
+    .select('*')
     .maybeSingle();
 
   if (error) {
@@ -148,16 +180,10 @@ export const rejectOrder = async (orderId: string, notes?: string) => {
   }
 
   if (!data) {
-    throw new Error('Order not found or rejection failed');
+    throw new Error('Order rejection failed');
   }
 
-  // Verify user owns the shop
-  const order = data;
-  if (order.shops?.owner_id !== user.id) {
-    throw new Error('Unauthorized to reject this order');
-  }
-
-  return order;
+  return { ...data, shops: orderData.shops };
 };
 
 // Reuse previous order

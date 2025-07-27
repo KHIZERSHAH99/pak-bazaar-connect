@@ -52,7 +52,13 @@ const PaymentImage: React.FC<{ paymentScreenshot: string }> = ({ paymentScreensh
         
         if (error) {
           console.error('Error creating signed URL:', error);
-          setError(`Failed to create signed URL: ${error.message}`);
+          
+          // Handle specific error cases
+          if (error.message === 'Object not found') {
+            setError('Payment screenshot file is missing from storage. This may happen if the file was deleted or failed to upload properly.');
+          } else {
+            setError(`Failed to access payment screenshot: ${error.message}`);
+          }
           setImageUrl('/placeholder.svg');
         } else if (data?.signedUrl) {
           console.log('Signed URL created:', data.signedUrl);

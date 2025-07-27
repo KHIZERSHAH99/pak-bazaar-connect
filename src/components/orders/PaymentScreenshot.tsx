@@ -36,10 +36,15 @@ const PaymentScreenshot: React.FC<PaymentScreenshotProps> = ({ paymentScreenshot
 const PaymentImage: React.FC<{ paymentScreenshot: string }> = ({ paymentScreenshot }) => {
   const [imageUrl, setImageUrl] = useState<string>('/placeholder.svg');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadImage = async () => {
       setLoading(true);
+      setError(null);
+      
+      console.log('Loading payment screenshot:', paymentScreenshot);
+      
       try {
         const { data, error } = await supabase.storage
           .from('payment-screenshots')
@@ -47,12 +52,19 @@ const PaymentImage: React.FC<{ paymentScreenshot: string }> = ({ paymentScreensh
         
         if (error) {
           console.error('Error creating signed URL:', error);
+          setError(`Failed to create signed URL: ${error.message}`);
           setImageUrl('/placeholder.svg');
-        } else {
+        } else if (data?.signedUrl) {
+          console.log('Signed URL created:', data.signedUrl);
           setImageUrl(data.signedUrl);
+        } else {
+          console.error('No signed URL returned');
+          setError('No signed URL returned from storage');
+          setImageUrl('/placeholder.svg');
         }
       } catch (error) {
         console.error('Error loading payment screenshot:', error);
+        setError(`Unexpected error: ${error}`);
         setImageUrl('/placeholder.svg');
       } finally {
         setLoading(false);
@@ -66,13 +78,24 @@ const PaymentImage: React.FC<{ paymentScreenshot: string }> = ({ paymentScreensh
     return <div className="flex justify-center items-center h-48">Loading screenshot...</div>;
   }
 
+  if (error) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-destructive mb-2">Failed to load payment screenshot</p>
+        <p className="text-sm text-muted-foreground">{error}</p>
+        <p className="text-xs text-muted-foreground mt-1">File: {paymentScreenshot}</p>
+      </div>
+    );
+  }
+
   return (
     <img
       src={imageUrl}
       alt="Payment Screenshot"
       className="max-w-full h-auto max-h-96 mx-auto rounded-lg"
       onError={(e) => {
-        console.error('Failed to load payment screenshot');
+        console.error('Failed to load payment screenshot image');
+        setError('Image failed to load from signed URL');
         e.currentTarget.src = '/placeholder.svg';
       }}
     />

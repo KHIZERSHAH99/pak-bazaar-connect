@@ -686,6 +686,60 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          created_at: string | null
+          custom_requirements: string | null
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          specifications: Json | null
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string | null
+          custom_requirements?: string | null
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          specifications?: Json | null
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string | null
+          custom_requirements?: string | null
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          specifications?: Json | null
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_messages: {
         Row: {
           created_at: string | null
@@ -721,6 +775,60 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_status_history: {
+        Row: {
+          carrier_name: string | null
+          changed_by: string | null
+          created_at: string | null
+          estimated_delivery: string | null
+          id: string
+          notes: string | null
+          order_id: string
+          previous_status: string | null
+          status: string
+          tracking_number: string | null
+        }
+        Insert: {
+          carrier_name?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          estimated_delivery?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          previous_status?: string | null
+          status: string
+          tracking_number?: string | null
+        }
+        Update: {
+          carrier_name?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          estimated_delivery?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          previous_status?: string | null
+          status?: string
+          tracking_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
@@ -767,20 +875,32 @@ export type Database = {
           buyer_id: string
           buyer_name: string | null
           buyer_phone: string | null
+          carrier_name: string | null
           commission_id: string | null
           confirmed_at: string | null
           created_at: string | null
           delivered_at: string | null
           delivery_confirmed_by: string | null
+          estimated_delivery: string | null
           id: string
+          internal_notes: string | null
+          last_status_update: string | null
+          order_notes: string | null
+          packed_at: string | null
           payment_method: string | null
           payment_screenshot: string | null
+          priority_level: number | null
+          processing_started_at: string | null
           rejected_at: string | null
           rejection_reason: string | null
+          requires_attention: boolean | null
+          returned_at: string | null
           screenshot_uploaded_at: string | null
+          shipped_at: string | null
           shop_id: string
           status: string
           total_amount: number
+          tracking_number: string | null
           wholesaler_notes: string | null
         }
         Insert: {
@@ -789,20 +909,32 @@ export type Database = {
           buyer_id: string
           buyer_name?: string | null
           buyer_phone?: string | null
+          carrier_name?: string | null
           commission_id?: string | null
           confirmed_at?: string | null
           created_at?: string | null
           delivered_at?: string | null
           delivery_confirmed_by?: string | null
+          estimated_delivery?: string | null
           id?: string
+          internal_notes?: string | null
+          last_status_update?: string | null
+          order_notes?: string | null
+          packed_at?: string | null
           payment_method?: string | null
           payment_screenshot?: string | null
+          priority_level?: number | null
+          processing_started_at?: string | null
           rejected_at?: string | null
           rejection_reason?: string | null
+          requires_attention?: boolean | null
+          returned_at?: string | null
           screenshot_uploaded_at?: string | null
+          shipped_at?: string | null
           shop_id: string
           status?: string
           total_amount: number
+          tracking_number?: string | null
           wholesaler_notes?: string | null
         }
         Update: {
@@ -811,20 +943,32 @@ export type Database = {
           buyer_id?: string
           buyer_name?: string | null
           buyer_phone?: string | null
+          carrier_name?: string | null
           commission_id?: string | null
           confirmed_at?: string | null
           created_at?: string | null
           delivered_at?: string | null
           delivery_confirmed_by?: string | null
+          estimated_delivery?: string | null
           id?: string
+          internal_notes?: string | null
+          last_status_update?: string | null
+          order_notes?: string | null
+          packed_at?: string | null
           payment_method?: string | null
           payment_screenshot?: string | null
+          priority_level?: number | null
+          processing_started_at?: string | null
           rejected_at?: string | null
           rejection_reason?: string | null
+          requires_attention?: boolean | null
+          returned_at?: string | null
           screenshot_uploaded_at?: string | null
+          shipped_at?: string | null
           shop_id?: string
           status?: string
           total_amount?: number
+          tracking_number?: string | null
           wholesaler_notes?: string | null
         }
         Relationships: [
@@ -1446,7 +1590,17 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      order_status:
+        | "pending"
+        | "confirmed"
+        | "completed"
+        | "rejected"
+        | "cancelled"
+        | "processing"
+        | "packed"
+        | "shipped"
+        | "delivered"
+        | "returned"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1573,6 +1727,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      order_status: [
+        "pending",
+        "confirmed",
+        "completed",
+        "rejected",
+        "cancelled",
+        "processing",
+        "packed",
+        "shipped",
+        "delivered",
+        "returned",
+      ],
+    },
   },
 } as const

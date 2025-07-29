@@ -178,7 +178,7 @@ export interface Review {
 }
 
 export type AdStatus = 'pending' | 'approved' | 'active' | 'rejected';
-export type OrderStatus = 'pending' | 'confirmed' | 'completed' | 'rejected' | 'cancelled';
+export type OrderStatus = 'pending' | 'confirmed' | 'completed' | 'rejected' | 'cancelled' | 'processing' | 'packed' | 'shipped' | 'delivered' | 'returned';
 export type RoleRequestStatus = 'pending' | 'approved' | 'rejected';
 export type PaymentMethod = 'bank_transfer' | 'jazzcash' | 'easypaisa';
 export type CommissionStatus = 'pending' | 'paid';
@@ -212,9 +212,54 @@ export interface Order {
   delivery_confirmed_by?: string;
   auto_delete_screenshot_at?: string;
   wholesaler_notes?: string;
+  // Enhanced tracking fields
+  tracking_number?: string;
+  carrier_name?: string;
+  estimated_delivery?: string;
+  processing_started_at?: string;
+  packed_at?: string;
+  shipped_at?: string;
+  returned_at?: string;
+  order_notes?: string;
+  internal_notes?: string;
+  priority_level?: number;
+  requires_attention?: boolean;
+  last_status_update?: string;
   created_at?: string;
   // Joined data
   shops?: Shop;
+  profiles?: Profile;
+  order_items?: OrderItem[];
+  status_history?: OrderStatusHistory[];
+}
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id?: string;
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  specifications?: any;
+  custom_requirements?: string;
+  created_at?: string;
+  // Joined data
+  products?: Product;
+}
+
+export interface OrderStatusHistory {
+  id: string;
+  order_id: string;
+  status: string;
+  previous_status?: string;
+  changed_by?: string;
+  notes?: string;
+  estimated_delivery?: string;
+  tracking_number?: string;
+  carrier_name?: string;
+  created_at?: string;
+  // Joined data
   profiles?: Profile;
 }
 

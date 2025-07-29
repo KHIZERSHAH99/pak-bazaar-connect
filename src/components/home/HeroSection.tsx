@@ -4,7 +4,9 @@ import { ArrowRight, Users, ShieldCheck, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContextFixed';
 import { useNavigate } from 'react-router-dom';
 const HeroSection: React.FC = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
   return <div className="relative bg-gradient-to-br from-pakistani_green-600 via-pakistani_green-700 to-pakistani_green-800 text-white py-24 overflow-hidden">
       {/* Modern Background Pattern */}
@@ -37,21 +39,12 @@ const HeroSection: React.FC = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                className="bg-white text-primary hover:bg-gray-100 font-poppins" 
-                onClick={() => navigate(user ? '/dashboard' : '/signup')}
-              >
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 font-poppins" onClick={() => navigate(user ? '/dashboard' : '/signup')}>
                 {user ? 'Dashboard' : 'Signup'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-primary font-poppins" 
-                onClick={() => navigate(user ? '/products' : '/login')}
-              >
+              <Button size="lg" variant="outline" onClick={() => navigate(user ? '/products' : '/login')} className="border-white hover:bg-white font-poppins font-medium text-green-950">
                 {user ? 'Browse Products' : 'Login'}
               </Button>
             </div>

@@ -3,6 +3,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import SEOHead from '@/components/ui/seo-head';
+import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
 import { usePageAnalytics } from '@/hooks/usePageAnalytics';
 
 interface LayoutProps {
@@ -33,6 +34,7 @@ const Layout: React.FC<LayoutProps> = ({
         keywords={keywords}
       />
       <Navbar />
+      {showHeaderAd && <HeaderAdBanner />}
       
       <main className="flex-grow">
         {children}

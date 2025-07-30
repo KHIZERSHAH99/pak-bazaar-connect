@@ -3,7 +3,6 @@ import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import SEOHead from '@/components/ui/seo-head';
-import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
 import { usePageAnalytics } from '@/hooks/usePageAnalytics';
 
 interface LayoutProps {
@@ -11,15 +10,13 @@ interface LayoutProps {
   title?: string;
   description?: string;
   keywords?: string;
-  showHeaderAd?: boolean;
 }
 
 const Layout: React.FC<LayoutProps> = ({ 
   children, 
   title,
   description,
-  keywords,
-  showHeaderAd = false
+  keywords
 }) => {
   // Only track analytics in production or when explicitly needed
   if (process.env.NODE_ENV === 'development') {
@@ -34,7 +31,6 @@ const Layout: React.FC<LayoutProps> = ({
         keywords={keywords}
       />
       <Navbar />
-      {showHeaderAd && <HeaderAdBanner />}
       
       <main className="flex-grow">
         {children}

@@ -1,9 +1,15 @@
 
-// Enhanced input validation with Pakistani business-specific rules
+// Enhanced input validation with Pakistani business-specific rules and security measures
 export const validatePhoneNumber = (phone: string): boolean => {
   // Pakistani phone number format: +92XXXXXXXXXX or 03XXXXXXXXX
   const pakistaniPhoneRegex = /^(\+92|0)?[3][0-9]{9}$/;
-  return pakistaniPhoneRegex.test(phone.replace(/[\s-]/g, ''));
+  const cleanPhone = phone.replace(/[\s-]/g, '');
+  
+  // Additional security checks
+  if (cleanPhone.length > 15) return false; // Prevent buffer overflow attempts
+  if (/(.)\1{7,}/.test(cleanPhone)) return false; // Prevent repeated digits (e.g., 0000000000)
+  
+  return pakistaniPhoneRegex.test(cleanPhone);
 };
 
 export const validateNTN = (ntn: string): boolean => {
@@ -32,18 +38,25 @@ export const validatePrice = (price: number): boolean => {
   return !isNaN(price) && price > 0 && price <= 999999999;
 };
 
-// Enhanced input sanitization
+// Enhanced input sanitization with comprehensive security measures
 export const sanitizeInput = (input: string): string => {
   if (!input || typeof input !== 'string') return '';
   
-  return input
+  // Remove null bytes and control characters
+  let sanitized = input.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  
+  return sanitized
     .trim()
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#x27;')
     .replace(/\//g, '&#x2F;')
-    .slice(0, 1000); // Limit length
+    .replace(/\\/g, '&#x5C;') // Escape backslashes
+    .replace(/`/g, '&#x60;') // Escape backticks
+    .replace(/\{/g, '&#x7B;') // Escape curly braces
+    .replace(/\}/g, '&#x7D;')
+    .slice(0, 1000); // Limit length to prevent memory exhaustion
 };
 
 export const sanitizeBusinessName = (name: string): string => {

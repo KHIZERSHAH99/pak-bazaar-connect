@@ -4,10 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Phone, Lock, Eye, EyeOff, Loader2, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContextFixed';
+import { validateLoginForm } from '@/lib/security/form-validation';
+import { rateLimiter, RATE_LIMITS, getClientIdentifier } from '@/lib/security/rateLimit';
+import { validateAndSanitizeInput } from '@/lib/security/validation';
 
 const FixedLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -24,9 +27,34 @@ const FixedLoginForm: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // Client-side rate limiting check
+      const clientId = getClientIdentifier();
+      const rateCheck = await rateLimiter.checkRateLimit(
+        `login_${clientId}`, 
+        RATE_LIMITS.LOGIN.maxRequests, 
+        RATE_LIMITS.LOGIN.windowMs
+      );
+
+      if (!rateCheck.allowed) {
+        throw new Error(`Too many login attempts. Please try again in ${Math.ceil((rateCheck.resetTime - Date.now()) / 60000)} minutes.`);
+      }
+
+      // Validate and sanitize form data
+      const validation = await validateLoginForm({
+        phoneNumber: phoneNumber,
+        password: password
+      });
+
+      if (!validation.isValid) {
+        const errorMessages = Object.values(validation.errors).flat();
+        throw new Error(errorMessages[0] || 'Invalid input provided');
+      }
+
       console.log('🔐 Attempting login with phone:', phoneNumber);
       
-      const result = await signIn(phoneNumber, password);
+      // Use sanitized data for login
+      const sanitizedPhone = validation.sanitizedData?.phoneNumber || phoneNumber;
+      const result = await signIn(sanitizedPhone, password);
       
       if (result.error) {
         throw new Error(result.error);
@@ -40,7 +68,9 @@ const FixedLoginForm: React.FC = () => {
       // Navigate to redirect URL or dashboard
       const redirectTo = searchParams.get('redirect') || '/dashboard';
       console.log('🔄 Redirecting to:', redirectTo);
-      navigate(redirectTo, { replace: true });
+      
+      // Force full page reload for security
+      window.location.href = redirectTo;
     } catch (error: any) {
       console.error('Login error:', error);
       
@@ -152,6 +182,16 @@ const FixedLoginForm: React.FC = () => {
             >
               Sign up here
             </Link>
+          </p>
+        </div>
+
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center mb-2">
+            <Shield className="h-4 w-4 text-blue-600 mr-2" />
+            <span className="text-sm font-medium text-blue-800 font-poppins">Security Notice</span>
+          </div>
+          <p className="text-xs text-blue-700 font-poppins">
+            Your login attempts are monitored for security. Multiple failed attempts will temporarily lock your account.
           </p>
         </div>
 

@@ -45,20 +45,58 @@ class RateLimiter {
     const allowed = entry.count <= maxRequests;
     const remaining = Math.max(0, maxRequests - entry.count);
 
-    // Log rate limit violations
+    // Enhanced logging for rate limit violations
     if (!allowed) {
-      console.warn(`Rate limit exceeded for ${identifier}: ${entry.count}/${maxRequests}`);
+      console.warn(`🚨 Rate limit exceeded for ${identifier}: ${entry.count}/${maxRequests}`);
       await this.logSecurityEvent('rate_limit_exceeded', {
         identifier,
         count: entry.count,
-        limit: maxRequests
+        limit: maxRequests,
+        windowMs,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString()
       });
+
+      // Check for suspicious activity patterns
+      if (entry.count > maxRequests * 2) {
+        await this.logSecurityEvent('suspicious_rate_limit_activity', {
+          identifier,
+          count: entry.count,
+          limit: maxRequests,
+          severity: 'high'
+        });
+      }
     }
 
     return {
       allowed,
       remaining,
       resetTime: entry.resetTime
+    };
+  }
+
+  // New method for checking progressive penalties
+  async checkProgressiveRateLimit(identifier: string, action: string): Promise<{ allowed: boolean; remaining: number; resetTime: number; penaltyMultiplier: number }> {
+    const violationKey = `violations_${identifier}_${action}`;
+    const violations = parseInt(localStorage.getItem(violationKey) || '0');
+    
+    // Progressive penalty: each violation increases the penalty
+    const penaltyMultiplier = Math.min(Math.pow(2, violations), 8); // Max 8x penalty
+    const baseLimit = RATE_LIMITS[action as keyof typeof RATE_LIMITS] || RATE_LIMITS.API_GENERAL;
+    const adjustedLimit = Math.max(1, Math.floor(baseLimit.maxRequests / penaltyMultiplier));
+    const adjustedWindow = baseLimit.windowMs * penaltyMultiplier;
+
+    const result = await this.checkRateLimit(identifier, adjustedLimit, adjustedWindow);
+
+    // Track violations
+    if (!result.allowed) {
+      localStorage.setItem(violationKey, (violations + 1).toString());
+      localStorage.setItem(`${violationKey}_expiry`, (Date.now() + 24 * 60 * 60 * 1000).toString()); // 24h expiry
+    }
+
+    return {
+      ...result,
+      penaltyMultiplier
     };
   }
 
@@ -85,12 +123,16 @@ class RateLimiter {
 // Create singleton instance
 export const rateLimiter = new RateLimiter();
 
-// Rate limiting presets
+// Enhanced rate limiting presets with security considerations
 export const RATE_LIMITS = {
   LOGIN: { maxRequests: 5, windowMs: 15 * 60 * 1000 }, // 5 attempts per 15 minutes
   SIGNUP: { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 attempts per hour
   API_GENERAL: { maxRequests: 100, windowMs: 60 * 1000 }, // 100 requests per minute
-  PASSWORD_RESET: { maxRequests: 3, windowMs: 60 * 60 * 1000 } // 3 attempts per hour
+  PASSWORD_RESET: { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 attempts per hour
+  ORDER_CREATE: { maxRequests: 10, windowMs: 60 * 60 * 1000 }, // 10 orders per hour
+  PRODUCT_CREATE: { maxRequests: 20, windowMs: 60 * 60 * 1000 }, // 20 products per hour
+  MESSAGE_SEND: { maxRequests: 50, windowMs: 60 * 60 * 1000 }, // 50 messages per hour
+  PROFILE_UPDATE: { maxRequests: 5, windowMs: 60 * 60 * 1000 } // 5 profile updates per hour
 };
 
 // Helper function to get client identifier (IP + User Agent hash)

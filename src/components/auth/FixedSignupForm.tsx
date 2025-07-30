@@ -5,10 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Phone, Lock, Eye, EyeOff, Loader2, User, Building } from 'lucide-react';
+import { Phone, Lock, Eye, EyeOff, Loader2, User, Building, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
 import { enhancedSignUp } from '@/lib/auth-enhanced';
+import { validateSignupForm } from '@/lib/security/form-validation';
+import { rateLimiter, RATE_LIMITS, getClientIdentifier } from '@/lib/security/rateLimit';
+import { validatePasswordStrength } from '@/lib/security/password-validation';
 
 const FixedSignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -34,43 +37,69 @@ const FixedSignupForm: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // Client-side rate limiting check
+      const clientId = getClientIdentifier();
+      const rateCheck = await rateLimiter.checkRateLimit(
+        `signup_${clientId}`, 
+        RATE_LIMITS.SIGNUP.maxRequests, 
+        RATE_LIMITS.SIGNUP.windowMs
+      );
+
+      if (!rateCheck.allowed) {
+        throw new Error(`Too many signup attempts. Please try again in ${Math.ceil((rateCheck.resetTime - Date.now()) / 60000)} minutes.`);
+      }
+
+      // Enhanced password strength validation
+      const passwordStrength = validatePasswordStrength(formData.password);
+      if (!passwordStrength.isValid) {
+        throw new Error(passwordStrength.errors[0] || 'Password does not meet security requirements');
+      }
+
+      // Comprehensive form validation
+      const validation = await validateSignupForm({
+        phoneNumber: formData.phoneNumber,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        contactName: formData.contactName,
+        businessName: formData.businessName,
+        role: formData.role,
+        address: formData.address,
+        city: formData.city,
+        industry: formData.industry,
+        businessType: formData.businessType
+      });
+
+      if (!validation.isValid) {
+        const errorMessages = Object.values(validation.errors).flat();
+        throw new Error(errorMessages[0] || 'Invalid input provided');
+      }
+
       const cleanPhone = formData.phoneNumber.replace(/[^0-9]/g, '');
-      
-      if (cleanPhone.length < 10) {
-        throw new Error('Please enter a valid phone number');
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        throw new Error('Passwords do not match');
-      }
-
-      if (formData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters long');
-      }
-
       const tempEmail = `${cleanPhone}@temp-phone-auth.com`;
       
+      // Use sanitized data for signup
       await enhancedSignUp(
         tempEmail,
         formData.password,
-        formData.role,
+        validation.sanitizedData!.role,
         {
-          phoneNumber: formData.phoneNumber,
-          contactName: formData.contactName,
-          businessName: formData.businessName,
+          phoneNumber: validation.sanitizedData!.phoneNumber,
+          contactName: validation.sanitizedData!.contactName,
+          businessName: validation.sanitizedData!.businessName,
           businessType: formData.businessType,
-          address: formData.address,
-          city: formData.city,
-          industry: formData.industry
+          address: validation.sanitizedData!.address,
+          city: validation.sanitizedData!.city,
+          industry: validation.sanitizedData!.industry
         }
       );
 
       toast({
         title: 'Account Created!',
-        description: 'Your account has been created successfully.',
+        description: 'Your secure account has been created successfully.',
       });
 
-      navigate('/dashboard');
+      // Force full page reload for security
+      window.location.href = '/dashboard';
     } catch (error: any) {
       console.error('Signup error:', error);
       
@@ -78,7 +107,9 @@ const FixedSignupForm: React.FC = () => {
       
       if (error.message?.includes('User already registered')) {
         errorMessage = 'An account with this phone number already exists. Please sign in instead.';
-      } else if (error.message?.includes('Password')) {
+      } else if (error.message?.includes('Password') || error.message?.includes('security')) {
+        errorMessage = error.message;
+      } else if (error.message?.includes('rate limit') || error.message?.includes('attempts')) {
         errorMessage = error.message;
       }
 
@@ -245,6 +276,18 @@ const FixedSignupForm: React.FC = () => {
             )}
           </Button>
         </form>
+
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center mb-2">
+            <Shield className="h-4 w-4 text-blue-600 mr-2" />
+            <span className="text-sm font-medium text-blue-800 font-poppins">Security Requirements</span>
+          </div>
+          <ul className="text-xs text-blue-700 font-poppins space-y-1">
+            <li>• Password must be at least 8 characters</li>
+            <li>• Include uppercase, lowercase, and numbers</li>
+            <li>• Account creation is monitored for security</li>
+          </ul>
+        </div>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground font-poppins">

@@ -33,12 +33,20 @@ export const validateSignupForm = async (formData: {
     }
 
     if (formData.phoneNumber) {
-      const phoneRegex = /^(\+92|0)?3[0-9]{2}[0-9]{7}$/;
-      const cleanPhone = formData.phoneNumber.replace(/[-\s]/g, '');
+      // More flexible phone validation to accept various formats
+      const phoneRegex = /^(\+92|92|0)?3[0-9]{2}[0-9]{7}$/;
+      const cleanPhone = formData.phoneNumber.replace(/[-\s\(\)]/g, '');
       if (!phoneRegex.test(cleanPhone)) {
-        errors.phoneNumber = ['Please enter a valid Pakistani phone number'];
+        errors.phoneNumber = ['Please enter a valid Pakistani phone number (format: 03XXXXXXXXX)'];
       } else {
-        sanitizedData.phoneNumber = cleanPhone;
+        // Normalize to standard format
+        let normalizedPhone = cleanPhone;
+        if (normalizedPhone.startsWith('+92')) {
+          normalizedPhone = '0' + normalizedPhone.substring(3);
+        } else if (normalizedPhone.startsWith('92')) {
+          normalizedPhone = '0' + normalizedPhone.substring(2);
+        }
+        sanitizedData.phoneNumber = normalizedPhone;
       }
     }
 
@@ -151,12 +159,20 @@ export const validateLoginForm = async (formData: {
     }
 
     if (formData.phoneNumber) {
-      const phoneRegex = /^(\+92|0)?3[0-9]{2}[0-9]{7}$/;
-      const cleanPhone = formData.phoneNumber.replace(/[-\s]/g, '');
+      // More flexible phone validation to accept various formats
+      const phoneRegex = /^(\+92|92|0)?3[0-9]{2}[0-9]{7}$/;
+      const cleanPhone = formData.phoneNumber.replace(/[-\s\(\)]/g, '');
       if (!phoneRegex.test(cleanPhone)) {
-        errors.phoneNumber = ['Please enter a valid phone number'];
+        errors.phoneNumber = ['Please enter a valid Pakistani phone number (format: 03XXXXXXXXX)'];
       } else {
-        sanitizedData.phoneNumber = cleanPhone;
+        // Normalize to standard format
+        let normalizedPhone = cleanPhone;
+        if (normalizedPhone.startsWith('+92')) {
+          normalizedPhone = '0' + normalizedPhone.substring(3);
+        } else if (normalizedPhone.startsWith('92')) {
+          normalizedPhone = '0' + normalizedPhone.substring(2);
+        }
+        sanitizedData.phoneNumber = normalizedPhone;
       }
     }
 
@@ -240,12 +256,20 @@ export const validateOrderForm = async (formData: {
     }
 
     if (formData.buyerPhone) {
-      const phoneRegex = /^(\+92|0)?3[0-9]{2}[0-9]{7}$/;
-      const cleanPhone = formData.buyerPhone.replace(/[-\s]/g, '');
+      // More flexible phone validation to accept various formats
+      const phoneRegex = /^(\+92|92|0)?3[0-9]{2}[0-9]{7}$/;
+      const cleanPhone = formData.buyerPhone.replace(/[-\s\(\)]/g, '');
       if (!phoneRegex.test(cleanPhone)) {
-        errors.buyerPhone = ['Please enter a valid Pakistani phone number'];
+        errors.buyerPhone = ['Please enter a valid Pakistani phone number (format: 03XXXXXXXXX)'];
       } else {
-        sanitizedData.buyerPhone = cleanPhone;
+        // Normalize to standard format
+        let normalizedPhone = cleanPhone;
+        if (normalizedPhone.startsWith('+92')) {
+          normalizedPhone = '0' + normalizedPhone.substring(3);
+        } else if (normalizedPhone.startsWith('92')) {
+          normalizedPhone = '0' + normalizedPhone.substring(2);
+        }
+        sanitizedData.buyerPhone = normalizedPhone;
       }
     }
 

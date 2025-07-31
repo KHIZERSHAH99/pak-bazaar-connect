@@ -46,7 +46,8 @@ const FixedSignupForm: React.FC = () => {
       );
 
       if (!rateCheck.allowed) {
-        throw new Error(`Too many signup attempts. Please try again in ${Math.ceil((rateCheck.resetTime - Date.now()) / 60000)} minutes.`);
+        const waitMinutes = Math.ceil((rateCheck.resetTime - Date.now()) / 60000);
+        throw new Error(`Too many signup attempts (${rateCheck.remaining} remaining). Please wait ${waitMinutes} minutes before trying again. This security measure prevents automated account creation.`);
       }
 
       // Enhanced password strength validation
@@ -280,12 +281,13 @@ const FixedSignupForm: React.FC = () => {
         <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
           <div className="flex items-center mb-2">
             <Shield className="h-4 w-4 text-blue-600 mr-2" />
-            <span className="text-sm font-medium text-blue-800 font-poppins">Security Requirements</span>
+            <span className="text-sm font-medium text-blue-800 font-poppins">Security & Limits</span>
           </div>
           <ul className="text-xs text-blue-700 font-poppins space-y-1">
-            <li>• Password must be at least 8 characters</li>
-            <li>• Include uppercase, lowercase, and numbers</li>
-            <li>• Account creation is monitored for security</li>
+            <li>• Password: 8+ chars, uppercase, lowercase, numbers</li>
+            <li>• Rate limit: 5 signups per hour (prevents spam)</li>
+            <li>• Phone validation ensures Pakistani numbers only</li>
+            <li>• All business data is encrypted and secured</li>
           </ul>
         </div>
 

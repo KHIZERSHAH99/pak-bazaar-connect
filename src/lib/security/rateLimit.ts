@@ -29,6 +29,15 @@ class RateLimiter {
     const now = Date.now();
     const key = identifier;
     
+    // Check if this is a demo account - exempt from rate limiting
+    if (this.isDemoAccount(identifier)) {
+      return {
+        allowed: true,
+        remaining: maxRequests,
+        resetTime: now + windowMs
+      };
+    }
+    
     let entry = this.storage.get(key);
     
     if (!entry || now > entry.resetTime) {
@@ -113,6 +122,12 @@ class RateLimiter {
     }
   }
 
+  // Check if identifier contains demo account patterns
+  private isDemoAccount(identifier: string): boolean {
+    const demoPhones = ['03001234567', '03004567890', '03007891234'];
+    return demoPhones.some(phone => identifier.includes(phone));
+  }
+
   destroy() {
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
@@ -125,8 +140,8 @@ export const rateLimiter = new RateLimiter();
 
 // Enhanced rate limiting presets with security considerations
 export const RATE_LIMITS = {
-  LOGIN: { maxRequests: 5, windowMs: 15 * 60 * 1000 }, // 5 attempts per 15 minutes
-  SIGNUP: { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 attempts per hour
+  LOGIN: { maxRequests: 10, windowMs: 15 * 60 * 1000 }, // 10 attempts per 15 minutes (increased from 5)
+  SIGNUP: { maxRequests: 5, windowMs: 60 * 60 * 1000 }, // 5 attempts per hour (increased from 3)
   API_GENERAL: { maxRequests: 100, windowMs: 60 * 1000 }, // 100 requests per minute
   PASSWORD_RESET: { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 attempts per hour
   ORDER_CREATE: { maxRequests: 10, windowMs: 60 * 60 * 1000 }, // 10 orders per hour

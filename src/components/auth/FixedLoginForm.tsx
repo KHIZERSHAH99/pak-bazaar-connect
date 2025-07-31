@@ -36,7 +36,8 @@ const FixedLoginForm: React.FC = () => {
       );
 
       if (!rateCheck.allowed) {
-        throw new Error(`Too many login attempts. Please try again in ${Math.ceil((rateCheck.resetTime - Date.now()) / 60000)} minutes.`);
+        const waitMinutes = Math.ceil((rateCheck.resetTime - Date.now()) / 60000);
+        throw new Error(`Too many login attempts (${rateCheck.remaining} remaining). Please wait ${waitMinutes} minutes before trying again. This security measure protects accounts from unauthorized access.`);
       }
 
       // Validate and sanitize form data
@@ -188,10 +189,15 @@ const FixedLoginForm: React.FC = () => {
         <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
           <div className="flex items-center mb-2">
             <Shield className="h-4 w-4 text-blue-600 mr-2" />
-            <span className="text-sm font-medium text-blue-800 font-poppins">Security Notice</span>
+            <span className="text-sm font-medium text-blue-800 font-poppins">Why Login Limits?</span>
           </div>
-          <p className="text-xs text-blue-700 font-poppins">
-            Your login attempts are monitored for security. Multiple failed attempts will temporarily lock your account.
+          <p className="text-xs text-blue-700 font-poppins mb-2">
+            We limit login attempts (10 per 15 minutes) to protect your account from unauthorized access and brute force attacks.
+          </p>
+          <p className="text-xs text-blue-600 font-poppins">
+            • Demo accounts are exempt from these limits<br/>
+            • Limits reset automatically after 15 minutes<br/>
+            • This keeps your business data secure
           </p>
         </div>
 

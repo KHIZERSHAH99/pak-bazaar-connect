@@ -6,7 +6,9 @@ import { UserRole } from '@/lib/types';
 export const validatePhoneNumber = (phone: string): boolean => {
   const phoneRegex = /^(\+92|92|0)?3[0-9]{2}[0-9]{7}$/;
   const cleanPhone = phone.replace(/[-\s\(\)]/g, '');
-  return phoneRegex.test(cleanPhone);
+  const isValid = phoneRegex.test(cleanPhone);
+  console.log('🔍 Phone validation:', { phone, cleanPhone, isValid });
+  return isValid;
 };
 
 // Format phone number for display
@@ -38,11 +40,11 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
       throw new Error('Please enter a valid Pakistani phone number (format: 03XXXXXXXXX)');
     }
 
-    // Strategy 1: Direct query to find user by phone number
+    // Strategy 1: Direct query to find user by phone number OR email format
     const { data: userProfile, error: lookupError } = await supabase
       .from('profiles')
       .select('id, email, phone_number, role')
-      .eq('phone_number', normalizedPhone)
+      .or(`phone_number.eq.${normalizedPhone},email.eq.${normalizedPhone}@temp-phone-auth.com,email.eq.${normalizedPhone}@phone.auth.local`)
       .maybeSingle();
 
     if (lookupError) {

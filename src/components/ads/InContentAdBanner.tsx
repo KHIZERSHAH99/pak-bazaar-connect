@@ -13,7 +13,7 @@ const InContentAdBanner: React.FC<InContentAdBannerProps> = ({ className = '' })
       <div className="flex justify-center">
         {/* Responsive ad that works on all screen sizes */}
         <AdsteeraBanner
-          zoneId="content-banner"
+          zoneId="5186568"
           adType="banner"
           className="w-full max-w-2xl mx-auto"
         />

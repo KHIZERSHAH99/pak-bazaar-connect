@@ -10,14 +10,14 @@ const HeaderAdBanner: React.FC = () => {
         <div className="flex justify-center">
           {/* Adsteera Banner Ad */}
           <AdsteeraBanner 
-            zoneId="header-banner"
+            zoneId="5186568"
             adType="banner"
             className="hidden md:block" 
           />
           
           {/* Mobile Banner Ad */}
           <AdsteeraBanner 
-            zoneId="header-mobile"
+            zoneId="5186568"
             adType="banner"
             style={{ width: '320px', height: '50px' }}
             className="block md:hidden" 

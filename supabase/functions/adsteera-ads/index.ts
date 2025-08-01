@@ -42,15 +42,15 @@ Deno.serve(async (req) => {
 
     console.log('Fetching Adsteera ad:', { zone_id, format, width, height });
 
-    // Make request to Adsteera API
-    const adsteeraResponse = await fetch('https://api.adsteera.com/v1/ads/get', {
+    // Make request to Adsteera API - using correct endpoint
+    const adsteeraResponse = await fetch('https://adsteera.com/api/get-ad', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${adsteeraToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        zone_id: zone_id,
+        zone: zone_id || '5186568', // Use provided zone ID as default
         format: format,
         width: width,
         height: height,
@@ -58,6 +58,8 @@ Deno.serve(async (req) => {
         user_agent: req.headers.get('user-agent') || '',
       }),
     });
+
+    console.log('Adsteera request sent:', { zone_id: zone_id || '5186568', format, width, height });
 
     if (!adsteeraResponse.ok) {
       console.error('Adsteera API error:', adsteeraResponse.status, adsteeraResponse.statusText);

@@ -7,7 +7,7 @@ const SidebarAdBanner: React.FC = () => {
     <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
       <div className="text-xs text-gray-500 text-center mb-2">Advertisement</div>
       <AdsteeraBanner
-        zoneId="sidebar-rect"
+        zoneId="5186568"
         adType="rectangle"
         className="mx-auto"
       />

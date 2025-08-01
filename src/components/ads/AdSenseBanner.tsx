@@ -1,13 +1,13 @@
 
 import React from 'react';
 
-interface AdBannerProps {
+interface MontagAdBannerProps {
   adType?: 'banner' | 'rectangle' | 'sidebar';
   className?: string;
   style?: React.CSSProperties;
 }
 
-const AdBanner: React.FC<AdBannerProps> = ({
+const MontagAdBanner: React.FC<MontagAdBannerProps> = ({
   adType = 'banner',
   className = '',
   style = {}
@@ -15,32 +15,33 @@ const AdBanner: React.FC<AdBannerProps> = ({
   const getAdStyles = () => {
     switch (adType) {
       case 'rectangle':
-        return { width: '300px', height: '250px', minHeight: '250px', ...style };
+        return { width: '300px', height: '250px', ...style };
       case 'sidebar':
-        return { width: '160px', height: '600px', minHeight: '600px', ...style };
+        return { width: '160px', height: '600px', ...style };
       default:
-        return { width: '100%', maxWidth: '728px', height: '90px', minHeight: '90px', ...style };
+        return { width: '728px', height: '90px', ...style };
     }
   };
 
   return (
     <div 
-      className={`ad-banner ${className}`} 
+      className={`monetag-ad ${className}`} 
       style={{
-        backgroundColor: 'hsl(var(--muted))',
-        border: '1px solid hsl(var(--border))',
-        borderRadius: '8px',
+        background: '#f8f9fa',
+        border: '1px solid #e9ecef',
+        borderRadius: '4px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: 'hsl(var(--muted-foreground))',
-        fontSize: '14px',
+        minHeight: '90px',
         ...getAdStyles()
       }}
     >
-      Advertisement Space
+      <span style={{ color: '#6c757d', fontSize: '12px' }}>
+        Advertisement Space
+      </span>
     </div>
   );
 };
 
-export default AdBanner;
+export default MontagAdBanner;

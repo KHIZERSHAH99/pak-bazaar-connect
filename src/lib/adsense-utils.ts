@@ -1,86 +1,67 @@
 import React from 'react';
 
-// Utility functions for AdSense management
-export const AdSenseUtils = {
-  // Check if AdSense script is loaded
-  isAdSenseLoaded: (): boolean => {
-    return typeof window !== 'undefined' && !!(window as any).adsbygoogle;
+// Utility functions for Monetag management
+export const MontagUtils = {
+  // Check if Monetag is initialized
+  isMontagLoaded: (): boolean => {
+    return typeof window !== 'undefined' && !!document.querySelector('meta[name="monetag"]');
   },
 
-  // Get AdSense loading status
-  getAdSenseStatus: () => {
+  // Get Monetag status
+  getMontagStatus: () => {
     if (typeof window === 'undefined') return 'server-side';
     
-    const script = document.querySelector('script[src*="pagead2.googlesyndication.com"]');
-    if (!script) return 'not-loaded';
+    const meta = document.querySelector('meta[name="monetag"]');
+    if (!meta) return 'not-loaded';
     
-    if ((window as any).adsbygoogle) return 'loaded';
-    
-    return 'loading';
+    return 'loaded';
   },
 
-  // Debug AdSense ads on page
+  // Debug Monetag ads on page
   debugAds: () => {
     if (typeof window === 'undefined' || process.env.NODE_ENV !== 'development') {
       return;
     }
 
-    console.group('🔍 AdSense Debug Info');
-    console.log('AdSense Status:', AdSenseUtils.getAdSenseStatus());
-    console.log('AdSense Object:', (window as any).adsbygoogle);
+    console.group('🔍 Monetag Debug Info');
+    console.log('Monetag Status:', MontagUtils.getMontagStatus());
     
-    const ads = document.querySelectorAll('.adsbygoogle');
+    const ads = document.querySelectorAll('.monetag-ad');
     console.log(`Found ${ads.length} ad containers on page:`);
     
     ads.forEach((ad, index) => {
-      const slot = ad.getAttribute('data-ad-slot');
-      const client = ad.getAttribute('data-ad-client');
-      console.log(`Ad ${index + 1}: Slot=${slot}, Client=${client}`);
+      console.log(`Ad ${index + 1}: Type=${ad.className}`);
     });
     
     console.groupEnd();
   },
 
-  // Refresh ads (useful for SPA navigation)
-  refreshAds: () => {
-    try {
-      if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
-        // This will refresh all ads on the page
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-        console.log('AdSense ads refreshed');
-      }
-    } catch (error) {
-      console.error('Error refreshing AdSense ads:', error);
-    }
-  },
-
   isLoaded: () => {
-    return false;
+    return MontagUtils.isMontagLoaded();
   }
 };
 
-// Hook for using AdSense in React components
-export const useAdSense = () => {
+// Hook for using Monetag in React components
+export const useMontag = () => {
   const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    const checkAdSense = () => {
-      setIsLoaded(AdSenseUtils.isLoaded());
+    const checkMontag = () => {
+      setIsLoaded(MontagUtils.isLoaded());
     };
 
     // Check immediately
-    checkAdSense();
+    checkMontag();
 
-    // Also check after a delay in case script is still loading
-    const timer = setTimeout(checkAdSense, 1000);
+    // Also check after a delay
+    const timer = setTimeout(checkMontag, 1000);
 
     return () => clearTimeout(timer);
   }, []);
 
   return {
     isLoaded,
-    status: AdSenseUtils.getAdSenseStatus(),
-    debug: AdSenseUtils.debugAds,
-    refresh: AdSenseUtils.refreshAds
+    status: MontagUtils.getMontagStatus(),
+    debug: MontagUtils.debugAds
   };
 };

@@ -159,19 +159,26 @@ export const validateLoginForm = async (formData: {
     }
 
     if (formData.phoneNumber) {
-      // More flexible phone validation to accept various formats
-      const phoneRegex = /^(\+92|92|0)?3[0-9]{2}[0-9]{7}$/;
+      console.log('🔍 Validating phone number:', formData.phoneNumber);
+      
+      // Pakistani mobile number validation - more flexible pattern
+      const phoneRegex = /^(\+92|92|0)?3[0-9]{9}$/;
       const cleanPhone = formData.phoneNumber.replace(/[-\s\(\)]/g, '');
+      
+      console.log('🔍 Clean phone:', cleanPhone);
+      console.log('🔍 Regex test result:', phoneRegex.test(cleanPhone));
+      
       if (!phoneRegex.test(cleanPhone)) {
         errors.phoneNumber = ['Please enter a valid Pakistani phone number (format: 03XXXXXXXXX)'];
       } else {
-        // Normalize to standard format
+        // Normalize to standard format (always start with 03)
         let normalizedPhone = cleanPhone;
-        if (normalizedPhone.startsWith('+92')) {
+        if (normalizedPhone.startsWith('+923')) {
           normalizedPhone = '0' + normalizedPhone.substring(3);
-        } else if (normalizedPhone.startsWith('92')) {
+        } else if (normalizedPhone.startsWith('923')) {
           normalizedPhone = '0' + normalizedPhone.substring(2);
         }
+        console.log('🔍 Normalized phone:', normalizedPhone);
         sanitizedData.phoneNumber = normalizedPhone;
       }
     }

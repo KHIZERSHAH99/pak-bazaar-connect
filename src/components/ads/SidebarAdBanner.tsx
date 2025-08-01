@@ -1,12 +1,11 @@
 
 import React from 'react';
-import NativeAdBanner from './NativeAdBanner';
+import SidebarRectangleAd from './SidebarRectangleAd';
 
 const SidebarAdBanner: React.FC = () => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-      <div className="text-xs text-gray-500 text-center mb-2">Advertisement</div>
-      <NativeAdBanner className="mx-auto" />
+      <SidebarRectangleAd />
     </div>
   );
 };

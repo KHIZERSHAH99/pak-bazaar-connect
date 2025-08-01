@@ -3,6 +3,8 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import InContentAdBanner from '@/components/ads/InContentAdBanner';
+import MediumRectangleAdBanner from '@/components/ads/MediumRectangleAdBanner';
 import { 
   Shield, 
   Zap, 
@@ -96,6 +98,8 @@ const Features: React.FC = () => {
             ))}
           </div>
 
+          <InContentAdBanner className="my-12" />
+
           {/* Why Choose Us Section */}
           <Card className="bg-pakistani_green-50 dark:bg-pakistani_green-900/20 border-pakistani_green-200 dark:border-pakistani_green-800 mb-12">
             <CardHeader>
@@ -147,6 +151,10 @@ const Features: React.FC = () => {
                 <p className="text-muted-foreground font-poppins">User Rating</p>
               </CardContent>
             </Card>
+          </div>
+
+          <div className="flex justify-center my-8">
+            <MediumRectangleAdBanner />
           </div>
 
           {/* Call to Action */}

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { createOrder, getProductsByShopPublic, getShopById } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart } from 'lucide-react';
-import Layout from '@/components/Layout';
+import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import {
   Table,
@@ -151,7 +151,7 @@ const ShopProducts: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <DashboardLayout>
       <div className="container mx-auto py-8">
         <h1 className="text-2xl font-bold mb-4">Shop Products</h1>
         {isShopLoading ? (
@@ -237,8 +237,14 @@ const ShopProducts: React.FC = () => {
           )}
         </Card>
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 };
 
-export default ShopProducts;
+const ShopProductsWithAuth = () => (
+  <ProtectedRoute allowedRoles={['seller']}>
+    <ShopProducts />
+  </ProtectedRoute>
+);
+
+export default ShopProductsWithAuth;

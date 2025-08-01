@@ -14,20 +14,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRole,
   allowPending = false 
 }) => {
-  const { user, profile, loading, isGuestSeller } = useAuth();
+  const { user, profile, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
     return <LoadingScreen />;
   }
 
-  // Allow guest sellers for seller routes
-  if (!user && requiredRole === 'seller' && isGuestSeller) {
-    return <>{children}</>;
-  }
-
-  // Only require authentication for wholesaler and admin routes
-  if (!user && (requiredRole === 'wholesaler' || requiredRole === 'admin')) {
+  if (!user) {
+    // Redirect to login with return URL
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from '@/components/Layout';
+import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -78,7 +78,7 @@ const BrowseShops: React.FC = () => {
   }, [shops, debouncedSearchTerm]);
 
   const handleViewProducts = (shopId: string) => {
-    navigate(`/seller/shop/${shopId}/products`);
+    navigate(`/dashboard/browse-shops/${shopId}`);
   };
 
   const getShopImageSrc = (logo?: string) => {
@@ -89,7 +89,7 @@ const BrowseShops: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <DashboardLayout>
       <div className="space-y-6">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -236,8 +236,14 @@ const BrowseShops: React.FC = () => {
           </div>
         )}
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 };
 
-export default BrowseShops;
+const BrowseShopsWithAuth = () => (
+  <ProtectedRoute allowedRoles={['seller']}>
+    <BrowseShops />
+  </ProtectedRoute>
+);
+
+export default BrowseShopsWithAuth;

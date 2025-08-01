@@ -27,19 +27,11 @@ export interface Profile {
   profile_image?: string;
 }
 
-// Guest seller profile for non-authenticated users
-export const GUEST_SELLER_PROFILE: Profile = {
-  id: '00000000-0000-0000-0000-000000000000',
-  email: 'guest@seller.com',
-  role: 'seller'
-};
-
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  isGuestSeller: boolean;
   signIn: (phoneOrEmail: string, password: string) => Promise<{ error?: string }>;
   signUp: (phoneOrEmail: string, password: string, role: string, businessData?: Record<string, any>) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
@@ -57,12 +49,10 @@ export const LoadingScreen: React.FC = () => (
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(GUEST_SELLER_PROFILE);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [initializationAttempts, setInitializationAttempts] = useState(0);
   const { toast } = useToast();
-
-  const isGuestSeller = !user && profile?.id === '00000000-0000-0000-0000-000000000000';
 
   const fetchProfile = async (userId: string, retryCount = 0): Promise<Profile | null> => {
     try {
@@ -204,8 +194,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
           }, 100);
         } else {
-          // When user logs out, revert to guest seller profile
-          setProfile(GUEST_SELLER_PROFILE);
+          setProfile(null);
         }
         
         setLoading(false);
@@ -340,7 +329,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(null);
       setSession(null);
-      setProfile(GUEST_SELLER_PROFILE);
+      setProfile(null);
       
       toast({
         title: "Signed out successfully",
@@ -363,7 +352,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     profile,
     loading,
-    isGuestSeller,
     signIn,
     signUp,
     signOut,

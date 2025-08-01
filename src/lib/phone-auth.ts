@@ -2,11 +2,10 @@
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 
-// Phone number validation - consistent with form validation
+// Phone number validation
 export const validatePhoneNumber = (phone: string): boolean => {
-  const phoneRegex = /^(\+92|92|0)?3[0-9]{2}[0-9]{7}$/;
-  const cleanPhone = phone.replace(/[-\s\(\)]/g, '');
-  return phoneRegex.test(cleanPhone);
+  const cleanPhone = phone.replace(/[^0-9]/g, '');
+  return cleanPhone.length >= 10 && cleanPhone.length <= 15;
 };
 
 // Format phone number for display
@@ -26,23 +25,17 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
   try {
     console.log('🔐 Starting enhanced phone sign in process for:', phoneNumber);
     
-    // Normalize phone number consistent with form validation
-    let normalizedPhone = phoneNumber.replace(/[-\s\(\)]/g, '');
-    if (normalizedPhone.startsWith('+92')) {
-      normalizedPhone = '0' + normalizedPhone.substring(3);
-    } else if (normalizedPhone.startsWith('92')) {
-      normalizedPhone = '0' + normalizedPhone.substring(2);
-    }
+    const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
     
-    if (!validatePhoneNumber(normalizedPhone)) {
-      throw new Error('Please enter a valid Pakistani phone number (format: 03XXXXXXXXX)');
+    if (!validatePhoneNumber(cleanPhone)) {
+      throw new Error('Please enter a valid phone number');
     }
 
     // Strategy 1: Direct query to find user by phone number
     const { data: userProfile, error: lookupError } = await supabase
       .from('profiles')
       .select('id, email, phone_number, role')
-      .eq('phone_number', normalizedPhone)
+      .eq('phone_number', cleanPhone)
       .maybeSingle();
 
     if (lookupError) {
@@ -59,8 +52,8 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
     } else {
       // Strategy 2: Try phone-based email formats as fallback
       const phoneEmailFormats = [
-        `${normalizedPhone}@phone.auth.local`,
-        `${normalizedPhone}@temp-phone-auth.com`
+        `${cleanPhone}@phone.auth.local`,
+        `${cleanPhone}@temp-phone-auth.com`
       ];
       
       let foundProfile = null;

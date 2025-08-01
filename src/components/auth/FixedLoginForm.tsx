@@ -4,13 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone, Lock, Eye, EyeOff, Loader2, Shield } from 'lucide-react';
+import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContextFixed';
-import { validateLoginForm } from '@/lib/security/form-validation';
-import { rateLimiter, RATE_LIMITS, getClientIdentifier } from '@/lib/security/rateLimit';
-import { validateAndSanitizeInput } from '@/lib/security/validation';
 
 const FixedLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -27,35 +24,9 @@ const FixedLoginForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Client-side rate limiting check
-      const clientId = getClientIdentifier();
-      const rateCheck = await rateLimiter.checkRateLimit(
-        `login_${clientId}`, 
-        RATE_LIMITS.LOGIN.maxRequests, 
-        RATE_LIMITS.LOGIN.windowMs
-      );
-
-      if (!rateCheck.allowed) {
-        const waitMinutes = Math.ceil((rateCheck.resetTime - Date.now()) / 60000);
-        throw new Error(`Too many login attempts (${rateCheck.remaining} remaining). Please wait ${waitMinutes} minutes before trying again. This security measure protects accounts from unauthorized access.`);
-      }
-
-      // Validate and sanitize form data
-      const validation = await validateLoginForm({
-        phoneNumber: phoneNumber,
-        password: password
-      });
-
-      if (!validation.isValid) {
-        const errorMessages = Object.values(validation.errors).flat();
-        throw new Error(errorMessages[0] || 'Invalid input provided');
-      }
-
       console.log('🔐 Attempting login with phone:', phoneNumber);
       
-      // Use sanitized data for login
-      const sanitizedPhone = validation.sanitizedData?.phoneNumber || phoneNumber;
-      const result = await signIn(sanitizedPhone, password);
+      const result = await signIn(phoneNumber, password);
       
       if (result.error) {
         throw new Error(result.error);
@@ -69,9 +40,7 @@ const FixedLoginForm: React.FC = () => {
       // Navigate to redirect URL or dashboard
       const redirectTo = searchParams.get('redirect') || '/dashboard';
       console.log('🔄 Redirecting to:', redirectTo);
-      
-      // Force full page reload for security
-      window.location.href = redirectTo;
+      navigate(redirectTo, { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
       
@@ -183,21 +152,6 @@ const FixedLoginForm: React.FC = () => {
             >
               Sign up here
             </Link>
-          </p>
-        </div>
-
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="flex items-center mb-2">
-            <Shield className="h-4 w-4 text-blue-600 mr-2" />
-            <span className="text-sm font-medium text-blue-800 font-poppins">Why Login Limits?</span>
-          </div>
-          <p className="text-xs text-blue-700 font-poppins mb-2">
-            We limit login attempts (10 per 15 minutes) to protect your account from unauthorized access and brute force attacks.
-          </p>
-          <p className="text-xs text-blue-600 font-poppins">
-            • Demo accounts are exempt from these limits<br/>
-            • Limits reset automatically after 15 minutes<br/>
-            • This keeps your business data secure
           </p>
         </div>
 

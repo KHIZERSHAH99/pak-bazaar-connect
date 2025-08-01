@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Layout from '@/components/Layout';
+import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -108,28 +108,28 @@ const ShopDetails: React.FC = () => {
     return `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop&auto=format`;
   };
   if (loading) {
-    return <Layout>
+    return <DashboardLayout>
         <div className="flex justify-center items-center py-12">
           <LoadingSpinner size="lg" text="Loading shop details..." />
         </div>
-      </Layout>;
+      </DashboardLayout>;
   }
   if (!shop) {
-    return <Layout>
+    return <DashboardLayout>
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Shop Not Found</h2>
           <p className="text-gray-600 mb-6">The shop you're looking for doesn't exist.</p>
-          <Button onClick={() => navigate('/seller/browse-shops')} className="bg-primary hover:bg-primary/90">
+          <Button onClick={() => navigate('/dashboard/browse-shops')} className="bg-primary hover:bg-primary/90">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Browse Shops
           </Button>
         </div>
-      </Layout>;
+      </DashboardLayout>;
   }
-  return <Layout>
+  return <DashboardLayout>
       <div className="space-y-6">
         {/* Back Button */}
-        <Button variant="outline" onClick={() => navigate('/seller/browse-shops')} className="mb-4">
+        <Button variant="outline" onClick={() => navigate('/dashboard/browse-shops')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Browse Shops
         </Button>
@@ -215,6 +215,9 @@ const ShopDetails: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>;
+    </DashboardLayout>;
 };
-export default ShopDetails;
+const ShopDetailsWithAuth = () => <ProtectedRoute allowedRoles={['seller']}>
+    <ShopDetails />
+  </ProtectedRoute>;
+export default ShopDetailsWithAuth;

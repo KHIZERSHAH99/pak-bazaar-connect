@@ -95,19 +95,19 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="wholesaler"><DashboardProducts /></ProtectedRoute>} />
         <Route path="/dashboard/orders" element={<ProtectedRoute><DashboardOrders /></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />
-        <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><DashboardSellerOrders /></ProtectedRoute>} />
+        <Route path="/dashboard/seller-orders" element={<DashboardSellerOrders />} />
         <Route path="/dashboard/ads" element={<ProtectedRoute requiredRole="wholesaler"><DashboardAds /></ProtectedRoute>} />
         <Route path="/dashboard/ad-approvals" element={<ProtectedRoute requiredRole="admin"><DashboardAdApprovals /></ProtectedRoute>} />
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
         <Route path="/dashboard/chat" element={<ProtectedRoute><DashboardChat /></ProtectedRoute>} />
-        <Route path="/dashboard/browse-shops" element={<ProtectedRoute requiredRole="seller"><DashboardBrowseShops /></ProtectedRoute>} />
+        <Route path="/dashboard/browse-shops" element={<DashboardBrowseShops />} />
 
-        {/* Seller routes */}
-        <Route path="/seller/orders" element={<ProtectedRoute requiredRole="seller"><SellerOrders /></ProtectedRoute>} />
-        <Route path="/seller/browse-shops" element={<ProtectedRoute requiredRole="seller"><BrowseShops /></ProtectedRoute>} />
-        <Route path="/seller/shop/:shopId" element={<ProtectedRoute requiredRole="seller"><ShopDetails /></ProtectedRoute>} />
-        <Route path="/seller/shop/:shopId/products" element={<ProtectedRoute requiredRole="seller"><ShopProducts /></ProtectedRoute>} />
+        {/* Seller routes - now public for all users */}
+        <Route path="/seller/orders" element={<SellerOrders />} />
+        <Route path="/seller/browse-shops" element={<BrowseShops />} />
+        <Route path="/seller/shop/:shopId" element={<ShopDetails />} />
+        <Route path="/seller/shop/:shopId/products" element={<ShopProducts />} />
 
         {/* Wholesaler routes */}
         <Route path="/wholesaler/orders" element={<ProtectedRoute requiredRole="wholesaler"><WholesalerOrders /></ProtectedRoute>} />

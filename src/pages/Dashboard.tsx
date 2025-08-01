@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContextFixed';
+import { Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import WholesalerDashboard from '@/components/dashboard/WholesalerDashboard';
@@ -75,6 +76,11 @@ const Dashboard: React.FC = () => {
         </div>
       </DashboardLayout>
     );
+  }
+
+  // Redirect all users except admin and existing wholesalers to seller dashboard
+  if (profile.role !== 'admin' && profile.role !== 'wholesaler') {
+    return <Navigate to="/dashboard/seller-dashboard" replace />;
   }
 
   const renderDashboard = () => {

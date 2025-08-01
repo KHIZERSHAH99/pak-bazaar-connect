@@ -51,14 +51,6 @@ const EnhancedSignupForm = () => {
         <Form {...form}>
           <form onSubmit={handleFormSubmit} className="space-y-6">
             {currentStep === 1 && (
-              <RoleStep
-                selectedRole={selectedRole}
-                onRoleSelect={handleRoleSelect}
-                isLoading={isLoading}
-              />
-            )}
-            
-            {currentStep === 2 && (
               <EnhancedAccountInfoStep 
                 form={form} 
                 isLoading={isLoading} 
@@ -67,15 +59,11 @@ const EnhancedSignupForm = () => {
               />
             )}
             
-            {currentStep === 3 && selectedRole === 'seller' && (
+            {currentStep === 2 && (
               <SellerInfoStep form={form} isLoading={isLoading} />
             )}
 
-            {currentStep === 3 && selectedRole === 'wholesaler' && (
-              <EnhancedBusinessInfoStep form={form} isLoading={isLoading} />
-            )}
-
-            {currentStep === 4 && selectedRole === 'wholesaler' && (
+            {currentStep === 3 && (
               <CompletionStep />
             )}
             

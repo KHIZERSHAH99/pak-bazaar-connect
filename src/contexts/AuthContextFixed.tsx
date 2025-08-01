@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 id: currentUser.id,
                 email: currentUser.email || '',
                 phone_number: currentUser.user_metadata?.phone_number || '03000000000',
-                role: currentUser.user_metadata?.role || 'pending',
+                role: currentUser.user_metadata?.role || 'seller',
                 contact_name: currentUser.user_metadata?.contact_name || 'User',
                 business_name: currentUser.user_metadata?.business_name || 'Business'
               });
@@ -272,9 +272,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: cleanEmail,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+            emailRedirectTo: `${window.location.origin}/dashboard/seller-dashboard`,
             data: {
-              role: role,
+              role: 'seller', // Force seller role for all signups
               ...businessData
             }
           }

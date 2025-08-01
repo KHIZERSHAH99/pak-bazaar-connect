@@ -77,18 +77,21 @@ export const enhancedSignIn = async (phoneOrEmail: string, password: string) => 
 export const enhancedSignUp = async (
   emailOrPhone: string, 
   password: string, 
-  role: UserRole,
+  role: UserRole = 'seller',
   businessData?: Record<string, any>
 ) => {
   try {
     console.log('🔐 Starting enhanced sign up process');
+    
+    // Force role to be 'seller' for all new signups
+    const defaultRole = 'seller';
     
     // Determine if input is phone number or email
     const isPhoneNumber = /^[\d\s\+\-\(\)]+$/.test(emailOrPhone.trim());
     
     if (isPhoneNumber) {
       // Use phone authentication
-      return await phoneSignUp(emailOrPhone, password, role, businessData || {});
+      return await phoneSignUp(emailOrPhone, password, defaultRole, businessData || {});
     } else {
       // Use email authentication
       const cleanEmail = emailOrPhone.toLowerCase().trim();
@@ -97,9 +100,9 @@ export const enhancedSignUp = async (
         email: cleanEmail,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/dashboard/seller-dashboard`,
           data: {
-            role: role,
+            role: defaultRole,
             ...businessData
           }
         }

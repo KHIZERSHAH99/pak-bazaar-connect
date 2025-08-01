@@ -9,9 +9,9 @@ import { UserRole } from '@/lib/types';
 
 export const useEnhancedSignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(1); // Skip role selection, start at account info
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [selectedRole, setSelectedRole] = useState<UserRole>('wholesaler');
+  const [selectedRole, setSelectedRole] = useState<UserRole>('seller'); // Default to seller
   const [isPhoneBlocked, setIsPhoneBlocked] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -24,7 +24,7 @@ export const useEnhancedSignupForm = () => {
       password: '',
       confirmPassword: '',
       businessName: '',
-      businessType: selectedRole === 'seller' ? 'Retailer' : 'Wholesaler',
+      businessType: 'Retailer', // Default to Retailer since everyone is a seller
       address: '',
       city: '',
       
@@ -34,26 +34,22 @@ export const useEnhancedSignupForm = () => {
     }
   });
   
-  const totalSteps = selectedRole === 'seller' ? 3 : 4;
+  const totalSteps = 3; // Simplified: Account Info -> Basic Info -> Complete
   
   const getStepTitle = () => {
     switch(currentStep) {
-      case 1: return 'Choose Your Role';
-      case 2: return 'Account Information';
-      case 3: return selectedRole === 'seller' ? 'Basic Information' : 'Business Information';
-      case 4: return 'Complete Registration';
+      case 1: return 'Account Information';
+      case 2: return 'Basic Information';
+      case 3: return 'Complete Registration';
       default: return 'Sign Up';
     }
   };
 
   const validateCurrentStep = async () => {
     const stepFields = {
-      1: [],
-      2: ['phoneNumber', 'password', 'confirmPassword'],
-      3: selectedRole === 'seller' 
-        ? ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName']
-        : ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName', 'industry'],
-      4: []
+      1: ['phoneNumber', 'password', 'confirmPassword'], // Account info
+      2: ['businessName', 'businessType', 'address', 'city', 'postalCode', 'contactName'], // Basic info
+      3: [] // Completion step
     };
     
     const currentFields = stepFields[currentStep as keyof typeof stepFields];

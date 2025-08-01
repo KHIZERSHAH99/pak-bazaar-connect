@@ -83,6 +83,9 @@ base_url = "http://127.0.0.1:54321"
 enabled = true
 port = 54333
 
-# Configure functions for the Notifications function
+# Configure edge functions
 [functions.notifications]
 verify_jwt = true
+
+[functions.adsteera-ads]
+verify_jwt = false

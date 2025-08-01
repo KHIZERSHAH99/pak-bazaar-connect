@@ -58,13 +58,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             </Button>
           </Link>
           
-          <Link to="/browse-shops" onClick={handleLinkClick}>
+          <Link to="/dashboard/browse-shops" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
               className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins"
             >
               <Users className="w-4 h-4 mr-3" />
-              Browse Shops
+              Shops
             </Button>
           </Link>
           
@@ -187,12 +187,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 variant="ghost" 
                 className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
               >
-                Wholesaler Login
+                Login
               </Button>
             </Link>
             <Link to="/signup" onClick={handleLinkClick}>
               <Button className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins">
-                Become Wholesaler
+                Sign Up
               </Button>
             </Link>
           </div>

@@ -1,8 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import FixedProtectedRoute from '@/components/FixedProtectedRoute';
-import GuestProtectedRoute from '@/components/GuestProtectedRoute';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 // Import all existing pages
 import Index from '@/pages/Index';
@@ -47,9 +46,6 @@ import BrowseShops from '@/pages/seller/BrowseShops';
 import ShopDetails from '@/pages/seller/ShopDetails';
 import ShopProducts from '@/pages/seller/ShopProducts';
 
-// Guest pages
-import GuestBrowseShops from '@/pages/guest/GuestBrowseShops';
-
 // Wholesaler pages
 import WholesalerOrders from '@/pages/wholesaler/WholesalerOrders';
 import Shops from '@/pages/wholesaler/Shops';
@@ -67,9 +63,10 @@ const AppRoutes: React.FC = () => {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Index />} />
+        <Route path="/login" element={<FixedLogin />} />
+        <Route path="/signup" element={<FixedSignup />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/browse-shops" element={<GuestBrowseShops />} />
         
         <Route path="/features" element={<Features />} />
         <Route path="/chat" element={<Chat />} />
@@ -82,41 +79,46 @@ const AppRoutes: React.FC = () => {
         <Route path="/refund-policy" element={<RefundPolicy />} />
         <Route path="/shipping-policy" element={<ShippingPolicy />} />
         
-        {/* Additional routes - allow guest access */}
-        <Route path="/favorites" element={<GuestProtectedRoute allowGuest><Favorites /></GuestProtectedRoute>} />
-        <Route path="/messages" element={<GuestProtectedRoute allowGuest><Messages /></GuestProtectedRoute>} />
-        <Route path="/checkout" element={<GuestProtectedRoute allowGuest><Checkout /></GuestProtectedRoute>} />
-        <Route path="/analytics" element={<GuestProtectedRoute allowGuest><Analytics /></GuestProtectedRoute>} />
+        {/* Additional routes */}
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/analytics" element={<Analytics />} />
 
-        {/* Wholesaler-only authentication routes */}
-        <Route path="/login" element={<FixedLogin />} />
-        <Route path="/signup" element={<FixedSignup />} />
+        {/* Protected routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
-        {/* Wholesaler-only protected routes */}
-        <Route path="/dashboard" element={<GuestProtectedRoute wholesalerOnly><Dashboard /></GuestProtectedRoute>} />
-        <Route path="/profile" element={<GuestProtectedRoute wholesalerOnly><Profile /></GuestProtectedRoute>} />
+        {/* Dashboard routes */}
+        <Route path="/dashboard/seller-dashboard" element={<ProtectedRoute><DashboardSellerDashboard /></ProtectedRoute>} />
+        <Route path="/dashboard/shops" element={<ProtectedRoute requiredRole="wholesaler"><DashboardShops /></ProtectedRoute>} />
+        <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="wholesaler"><DashboardProducts /></ProtectedRoute>} />
+        <Route path="/dashboard/orders" element={<ProtectedRoute><DashboardOrders /></ProtectedRoute>} />
+        <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />
+        <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><DashboardSellerOrders /></ProtectedRoute>} />
+        <Route path="/dashboard/ads" element={<ProtectedRoute requiredRole="wholesaler"><DashboardAds /></ProtectedRoute>} />
+        <Route path="/dashboard/ad-approvals" element={<ProtectedRoute requiredRole="admin"><DashboardAdApprovals /></ProtectedRoute>} />
+        <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
+        <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
+        <Route path="/dashboard/chat" element={<ProtectedRoute><DashboardChat /></ProtectedRoute>} />
+        <Route path="/dashboard/browse-shops" element={<ProtectedRoute requiredRole="seller"><DashboardBrowseShops /></ProtectedRoute>} />
 
-        {/* Dashboard routes - wholesaler only */}
-        <Route path="/dashboard/shops" element={<GuestProtectedRoute wholesalerOnly><DashboardShops /></GuestProtectedRoute>} />
-        <Route path="/dashboard/products" element={<GuestProtectedRoute wholesalerOnly><DashboardProducts /></GuestProtectedRoute>} />
-        <Route path="/dashboard/orders" element={<GuestProtectedRoute wholesalerOnly><DashboardOrders /></GuestProtectedRoute>} />
-        <Route path="/dashboard/wholesaler-orders" element={<GuestProtectedRoute wholesalerOnly><DashboardWholesalerOrders /></GuestProtectedRoute>} />
-        <Route path="/dashboard/ads" element={<GuestProtectedRoute wholesalerOnly><DashboardAds /></GuestProtectedRoute>} />
-        <Route path="/dashboard/analytics" element={<GuestProtectedRoute wholesalerOnly><DashboardAnalytics /></GuestProtectedRoute>} />
-        <Route path="/dashboard/chat" element={<GuestProtectedRoute wholesalerOnly><DashboardChat /></GuestProtectedRoute>} />
+        {/* Seller routes */}
+        <Route path="/seller/orders" element={<ProtectedRoute requiredRole="seller"><SellerOrders /></ProtectedRoute>} />
+        <Route path="/seller/browse-shops" element={<ProtectedRoute requiredRole="seller"><BrowseShops /></ProtectedRoute>} />
+        <Route path="/seller/shop/:shopId" element={<ProtectedRoute requiredRole="seller"><ShopDetails /></ProtectedRoute>} />
+        <Route path="/seller/shop/:shopId/products" element={<ProtectedRoute requiredRole="seller"><ShopProducts /></ProtectedRoute>} />
 
         {/* Wholesaler routes */}
-        <Route path="/wholesaler/orders" element={<GuestProtectedRoute wholesalerOnly><WholesalerOrders /></GuestProtectedRoute>} />
-        <Route path="/wholesaler/shops" element={<GuestProtectedRoute wholesalerOnly><Shops /></GuestProtectedRoute>} />
-        <Route path="/wholesaler/products" element={<GuestProtectedRoute wholesalerOnly><WholesalerProducts /></GuestProtectedRoute>} />
-        <Route path="/wholesaler/advertisements" element={<GuestProtectedRoute wholesalerOnly><Advertisements /></GuestProtectedRoute>} />
+        <Route path="/wholesaler/orders" element={<ProtectedRoute requiredRole="wholesaler"><WholesalerOrders /></ProtectedRoute>} />
+        <Route path="/wholesaler/shops" element={<ProtectedRoute requiredRole="wholesaler"><Shops /></ProtectedRoute>} />
+        <Route path="/wholesaler/products" element={<ProtectedRoute requiredRole="wholesaler"><WholesalerProducts /></ProtectedRoute>} />
+        <Route path="/wholesaler/advertisements" element={<ProtectedRoute requiredRole="wholesaler"><Advertisements /></ProtectedRoute>} />
 
         {/* Admin routes */}
-        <Route path="/admin/dashboard" element={<GuestProtectedRoute allowedRoles={['admin']}><AdminDashboard /></GuestProtectedRoute>} />
-        <Route path="/admin/panel" element={<GuestProtectedRoute allowedRoles={['admin']}><AdminPanel /></GuestProtectedRoute>} />
-        <Route path="/admin/ad-approvals" element={<GuestProtectedRoute allowedRoles={['admin']}><AdApprovals /></GuestProtectedRoute>} />
-        <Route path="/dashboard/ad-approvals" element={<GuestProtectedRoute allowedRoles={['admin']}><DashboardAdApprovals /></GuestProtectedRoute>} />
-        <Route path="/dashboard/admin" element={<GuestProtectedRoute allowedRoles={['admin']}><DashboardAdmin /></GuestProtectedRoute>} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/panel" element={<ProtectedRoute requiredRole="admin"><AdminPanel /></ProtectedRoute>} />
+        <Route path="/admin/ad-approvals" element={<ProtectedRoute requiredRole="admin"><AdApprovals /></ProtectedRoute>} />
 
         {/* 404 route */}
         <Route path="*" element={<NotFound />} />

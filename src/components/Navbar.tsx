@@ -79,10 +79,10 @@ const Navbar = () => {
                     Products
                   </Button>
                 </Link>
-                <Link to="/browse-shops">
+                <Link to="/dashboard/browse-shops">
                   <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins transition-all duration-200">
                     <Users className="w-4 h-4 mr-2" />
-                    Browse Shops
+                    Shops
                   </Button>
                 </Link>
                 <Link to="/features">
@@ -93,15 +93,15 @@ const Navbar = () => {
                 </Link>
               </div>
 
-              {user && profile?.role === 'wholesaler' ? <UserMenu email={profile?.email || user.email} role={profile?.role} onLogout={handleLogout} getRoleBadge={getRoleBadge} /> : <div className="flex items-center space-x-3">
+              {user ? <UserMenu email={profile?.email || user.email} role={profile?.role} onLogout={handleLogout} getRoleBadge={getRoleBadge} /> : <div className="flex items-center space-x-3">
                   <Link to="/login">
                     <Button variant="ghost" className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins">
-                      Wholesaler Login
+                      Login
                     </Button>
                   </Link>
                   <Link to="/signup">
                     <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins shadow-md transition-all duration-200 hover:shadow-lg">
-                      Become Wholesaler
+                      Sign Up
                     </Button>
                   </Link>
                 </div>}

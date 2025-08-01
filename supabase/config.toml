@@ -86,6 +86,3 @@ port = 54333
 # Configure edge functions
 [functions.notifications]
 verify_jwt = true
-
-[functions.adsteera-ads]
-verify_jwt = false

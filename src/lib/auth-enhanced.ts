@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 import { phoneSignIn, phoneSignUp } from '@/lib/phone-auth';
+import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
 
 // Export UserRole for use in other components
 export type { UserRole } from '@/lib/types';
@@ -25,17 +26,29 @@ export const cleanupAuthState = () => {
   }
 };
 
-// Enhanced authentication with phone number support
+// Enhanced authentication with phone number support and security
 export const enhancedSignIn = async (phoneOrEmail: string, password: string) => {
   try {
     console.log('🔐 Starting enhanced sign in process');
     
+    // Enhanced security validation
+    const securityCheck = await authSecurityManager.enforceSecureLogin(phoneOrEmail, password);
+    if (!securityCheck.allowed) {
+      toast({
+        title: "Sign In Blocked",
+        description: securityCheck.message || 'Login denied for security reasons',
+        variant: "destructive"
+      });
+      throw new Error(securityCheck.message || 'Login denied for security reasons');
+    }
+    
     // Determine if input is phone number or email
     const isPhoneNumber = /^[\d\s\+\-\(\)]+$/.test(phoneOrEmail.trim());
     
+    let authResult;
     if (isPhoneNumber) {
       // Use phone authentication
-      return await phoneSignIn(phoneOrEmail, password);
+      authResult = await phoneSignIn(phoneOrEmail, password);
     } else {
       // Use email authentication
       const cleanEmail = phoneOrEmail.toLowerCase().trim();
@@ -64,12 +77,21 @@ export const enhancedSignIn = async (phoneOrEmail: string, password: string) => 
         
         throw error;
       }
-
-      console.log('✅ Enhanced email sign in successful');
-      return data;
+      
+      authResult = data;
     }
+
+    // Record successful login
+    await authSecurityManager.recordAuthAttempt(phoneOrEmail, true);
+    
+    console.log('✅ Enhanced sign in successful');
+    return authResult;
   } catch (error) {
     console.error('Enhanced sign in error:', error);
+    
+    // Record failed login attempt
+    await authSecurityManager.recordAuthAttempt(phoneOrEmail, false);
+    
     throw error;
   }
 };
@@ -82,6 +104,22 @@ export const enhancedSignUp = async (
 ) => {
   try {
     console.log('🔐 Starting enhanced sign up process');
+    
+    // Enhanced password security validation
+    const passwordSecurity = await authSecurityManager.validatePasswordSecurity(password);
+    if (!passwordSecurity.isValid) {
+      const errorMessage = passwordSecurity.isBreached 
+        ? 'This password has been found in data breaches. Please choose a different password.'
+        : passwordSecurity.errors.join('. ');
+      
+      toast({
+        title: "Password Security Issue",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      
+      throw new Error(errorMessage);
+    }
     
     // Force role to be 'seller' for all new signups
     const defaultRole = 'seller';

@@ -1,21 +1,18 @@
 
 import React from 'react';
 
-const demoAccounts = [
+// Demo accounts removed for security in production
+const demoAccounts = process.env.NODE_ENV === 'development' ? [
   {
-    role: "Admin",
-    email: "admin@test.com",
-    note: "Full platform access. Contact admin for credentials."
-  },
+    role: "Development Testing",
+    email: "Contact administrator",
+    note: "Demo accounts only available in development mode."
+  }
+] : [
   {
-    role: "Wholesaler", 
-    email: "wholesaler1@test.com",
-    note: "Can create shops, products and ads. Contact admin for credentials."
-  },
-  {
-    role: "Seller",
-    email: "seller1@test.com", 
-    note: "Can browse & order from shops. Contact admin for credentials."
+    role: "Production Account",
+    email: "Contact Support",
+    note: "Please contact support for account access in production."
   }
 ];
 

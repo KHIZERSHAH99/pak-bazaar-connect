@@ -183,14 +183,15 @@ const LoginForm: React.FC = () => {
           </p>
         </div>
 
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <h4 className="font-medium text-blue-800 mb-2 font-poppins">Demo Accounts:</h4>
-          <div className="text-sm text-blue-700 space-y-1 font-poppins">
-            <p><strong>Wholesaler:</strong> 03001234567</p>
-            <p><strong>Seller:</strong> 03004567890</p>
-            <p className="text-xs text-blue-600 mt-2">Contact admin for demo credentials</p>
+{process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <h4 className="font-medium text-blue-800 mb-2 font-poppins">Development Mode:</h4>
+            <div className="text-sm text-blue-700 space-y-1 font-poppins">
+              <p className="text-xs text-blue-600">Demo accounts available in development only</p>
+              <p className="text-xs text-blue-600">Contact administrator for production access</p>
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

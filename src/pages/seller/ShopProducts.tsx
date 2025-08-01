@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { createOrder, getProductsByShopPublic, getShopById } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart } from 'lucide-react';
-import DashboardLayout from '@/components/DashboardLayout';
+import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import {
   Table,
@@ -151,7 +151,7 @@ const ShopProducts: React.FC = () => {
   };
 
   return (
-    <DashboardLayout>
+    <Layout>
       <div className="container mx-auto py-8">
         <h1 className="text-2xl font-bold mb-4">Shop Products</h1>
         {isShopLoading ? (
@@ -237,7 +237,7 @@ const ShopProducts: React.FC = () => {
           )}
         </Card>
       </div>
-    </DashboardLayout>
+    </Layout>
   );
 };
 

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DashboardLayout from '@/components/DashboardLayout';
+import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -89,7 +89,7 @@ const BrowseShops: React.FC = () => {
   };
 
   return (
-    <DashboardLayout>
+    <Layout>
       <div className="space-y-6">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -236,7 +236,7 @@ const BrowseShops: React.FC = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </Layout>
   );
 };
 

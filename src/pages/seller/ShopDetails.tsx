@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import DashboardLayout from '@/components/DashboardLayout';
+import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -108,14 +108,14 @@ const ShopDetails: React.FC = () => {
     return `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop&auto=format`;
   };
   if (loading) {
-    return <DashboardLayout>
+    return <Layout>
         <div className="flex justify-center items-center py-12">
           <LoadingSpinner size="lg" text="Loading shop details..." />
         </div>
-      </DashboardLayout>;
+      </Layout>;
   }
   if (!shop) {
-    return <DashboardLayout>
+    return <Layout>
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Shop Not Found</h2>
           <p className="text-gray-600 mb-6">The shop you're looking for doesn't exist.</p>
@@ -124,9 +124,9 @@ const ShopDetails: React.FC = () => {
             Back to Browse Shops
           </Button>
         </div>
-      </DashboardLayout>;
+      </Layout>;
   }
-  return <DashboardLayout>
+  return <Layout>
       <div className="space-y-6">
         {/* Back Button */}
         <Button variant="outline" onClick={() => navigate('/seller/browse-shops')} className="mb-4">
@@ -215,6 +215,6 @@ const ShopDetails: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>;
+    </Layout>;
 };
 export default ShopDetails;

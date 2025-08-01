@@ -161,23 +161,35 @@ export const validateLoginForm = async (formData: {
     if (formData.phoneNumber) {
       console.log('🔍 Validating phone number:', formData.phoneNumber);
       
-      // Pakistani mobile number validation - more flexible pattern
-      const phoneRegex = /^(\+92|92|0)?3[0-9]{9}$/;
-      const cleanPhone = formData.phoneNumber.replace(/[-\s\(\)]/g, '');
-      
+      // Clean phone number by removing all non-numeric characters except +
+      const cleanPhone = formData.phoneNumber.replace(/[-\s\(\)\.]/g, '');
       console.log('🔍 Clean phone:', cleanPhone);
-      console.log('🔍 Regex test result:', phoneRegex.test(cleanPhone));
       
-      if (!phoneRegex.test(cleanPhone)) {
-        errors.phoneNumber = ['Please enter a valid Pakistani phone number (format: 03XXXXXXXXX)'];
+      // Pakistani mobile number validation - very flexible pattern
+      // Accepts: 03XXXXXXXXX, +923XXXXXXXXX, 923XXXXXXXXX, 3XXXXXXXXX
+      const phoneRegex = /^(\+92|92|0)?3[0-9]{9}$/;
+      
+      // Additional check for direct 3XXXXXXXXX format (10 digits starting with 3)
+      const directFormat = /^3[0-9]{9}$/;
+      
+      console.log('🔍 Regex test result:', phoneRegex.test(cleanPhone));
+      console.log('🔍 Direct format test:', directFormat.test(cleanPhone));
+      
+      if (!phoneRegex.test(cleanPhone) && !directFormat.test(cleanPhone)) {
+        errors.phoneNumber = ['Please enter a valid Pakistani phone number (e.g., 03001234567, +923001234567)'];
       } else {
         // Normalize to standard format (always start with 03)
         let normalizedPhone = cleanPhone;
+        
         if (normalizedPhone.startsWith('+923')) {
           normalizedPhone = '0' + normalizedPhone.substring(3);
         } else if (normalizedPhone.startsWith('923')) {
           normalizedPhone = '0' + normalizedPhone.substring(2);
+        } else if (normalizedPhone.startsWith('3') && normalizedPhone.length === 10) {
+          normalizedPhone = '0' + normalizedPhone;
         }
+        // If it already starts with 03, keep as is
+        
         console.log('🔍 Normalized phone:', normalizedPhone);
         sanitizedData.phoneNumber = normalizedPhone;
       }

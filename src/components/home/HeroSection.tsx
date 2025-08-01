@@ -39,13 +39,13 @@ const HeroSection: React.FC = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 font-poppins" onClick={() => navigate(user ? '/dashboard' : '/signup')}>
-                {user ? 'Dashboard' : 'Signup'}
+              <Button size="lg" className="bg-yellow-400 text-primary hover:bg-yellow-300 font-poppins" onClick={() => navigate('/browse-shops')}>
+                Browse Shops & Order
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               
-              <Button size="lg" variant="outline" onClick={() => navigate(user ? '/products' : '/login')} className="border-white hover:bg-white font-poppins font-medium text-green-950">
-                {user ? 'Browse Products' : 'Login'}
+              <Button size="lg" variant="outline" onClick={() => navigate(user && user ? '/dashboard' : '/signup')} className="border-white hover:bg-white font-poppins font-medium text-green-950">
+                {user ? 'Dashboard' : 'Become Wholesaler'}
               </Button>
             </div>
             

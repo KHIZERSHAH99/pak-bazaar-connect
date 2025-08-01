@@ -4,6 +4,9 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import SEOHead from '@/components/ui/seo-head';
 import { usePageAnalytics } from '@/hooks/usePageAnalytics';
+import TallSidebarAd from './ads/TallSidebarAd';
+import MobileTopBanner from './ads/MobileTopBanner';
+import MobileBottomBanner from './ads/MobileBottomBanner';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -31,11 +34,30 @@ const Layout: React.FC<LayoutProps> = ({
         keywords={keywords}
       />
       <Navbar />
+      <MobileTopBanner />
       
-      <main className="flex-grow">
-        {children}
-      </main>
+      <div className="flex flex-grow">
+        {/* Left sidebar ad - desktop only */}
+        <div className="hidden xl:block w-[180px] flex-shrink-0">
+          <div className="p-2">
+            <TallSidebarAd />
+          </div>
+        </div>
+        
+        {/* Main content */}
+        <main className="flex-grow max-w-none">
+          {children}
+        </main>
+        
+        {/* Right sidebar ad - desktop only */}
+        <div className="hidden xl:block w-[180px] flex-shrink-0">
+          <div className="p-2">
+            <TallSidebarAd />
+          </div>
+        </div>
+      </div>
       
+      <MobileBottomBanner />
       <Footer />
     </div>
   );

@@ -78,7 +78,7 @@ const BrowseShops: React.FC = () => {
   }, [shops, debouncedSearchTerm]);
 
   const handleViewProducts = (shopId: string) => {
-    navigate(`/dashboard/browse-shops/${shopId}`);
+    navigate(`/seller/shop/${shopId}/products`);
   };
 
   const getShopImageSrc = (logo?: string) => {
@@ -240,10 +240,4 @@ const BrowseShops: React.FC = () => {
   );
 };
 
-const BrowseShopsWithAuth = () => (
-  <ProtectedRoute allowedRoles={['seller']}>
-    <BrowseShops />
-  </ProtectedRoute>
-);
-
-export default BrowseShopsWithAuth;
+export default BrowseShops;

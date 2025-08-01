@@ -119,7 +119,7 @@ const ShopDetails: React.FC = () => {
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Shop Not Found</h2>
           <p className="text-gray-600 mb-6">The shop you're looking for doesn't exist.</p>
-          <Button onClick={() => navigate('/dashboard/browse-shops')} className="bg-primary hover:bg-primary/90">
+          <Button onClick={() => navigate('/seller/browse-shops')} className="bg-primary hover:bg-primary/90">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Browse Shops
           </Button>
@@ -129,7 +129,7 @@ const ShopDetails: React.FC = () => {
   return <DashboardLayout>
       <div className="space-y-6">
         {/* Back Button */}
-        <Button variant="outline" onClick={() => navigate('/dashboard/browse-shops')} className="mb-4">
+        <Button variant="outline" onClick={() => navigate('/seller/browse-shops')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Browse Shops
         </Button>
@@ -217,7 +217,4 @@ const ShopDetails: React.FC = () => {
       </div>
     </DashboardLayout>;
 };
-const ShopDetailsWithAuth = () => <ProtectedRoute allowedRoles={['seller']}>
-    <ShopDetails />
-  </ProtectedRoute>;
-export default ShopDetailsWithAuth;
+export default ShopDetails;

@@ -241,10 +241,4 @@ const ShopProducts: React.FC = () => {
   );
 };
 
-const ShopProductsWithAuth = () => (
-  <ProtectedRoute allowedRoles={['seller']}>
-    <ShopProducts />
-  </ProtectedRoute>
-);
-
-export default ShopProductsWithAuth;
+export default ShopProducts;

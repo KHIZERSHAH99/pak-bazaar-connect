@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search } from 'lucide-react';
-
 interface OrderFiltersProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
@@ -11,7 +9,6 @@ interface OrderFiltersProps {
   onStatusChange: (value: string) => void;
   searchPlaceholder: string;
 }
-
 const OrderFilters: React.FC<OrderFiltersProps> = ({
   searchTerm,
   onSearchChange,
@@ -19,16 +16,10 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({
   onStatusChange,
   searchPlaceholder
 }) => {
-  return (
-    <div className="flex flex-col md:flex-row gap-4">
+  return <div className="flex flex-col md:flex-row gap-4">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <Input
-          placeholder={searchPlaceholder}
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10"
-        />
+        <Input placeholder={searchPlaceholder} value={searchTerm} onChange={e => onSearchChange(e.target.value)} className="pl-10 my-0 px-[37px] py-[16px]" />
       </div>
       
       <Select value={statusFilter} onValueChange={onStatusChange}>
@@ -43,8 +34,6 @@ const OrderFilters: React.FC<OrderFiltersProps> = ({
           <SelectItem value="completed">Completed</SelectItem>
         </SelectContent>
       </Select>
-    </div>
-  );
+    </div>;
 };
-
 export default OrderFilters;

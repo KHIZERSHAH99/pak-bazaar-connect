@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Eye, RotateCcw, Clock, CheckCircle, XCircle, Package } from 'lucide-react';
 import { Order } from '@/lib/types';
-
 interface OrderCardProps {
   order: Order;
   onViewOrder: (order: Order) => void;
@@ -13,7 +11,6 @@ interface OrderCardProps {
   showReorderButton?: boolean;
   userRole: 'wholesaler' | 'seller';
 }
-
 const OrderCard: React.FC<OrderCardProps> = ({
   order,
   onViewOrder,
@@ -35,7 +32,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
         return <Clock className="h-4 w-4 text-gray-600" />;
     }
   };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
@@ -50,10 +46,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-
-  return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
+  return <Card className="hover:shadow-md transition-shadow">
+      <CardContent className="p-6 rounded-2xl bg-[#00ff00]/20 py-[31px] my-[6px]">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">
@@ -71,54 +65,32 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 <p><strong>Amount:</strong> Rs. {order.total_amount?.toLocaleString()}</p>
                 <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
                 
-                {userRole === 'wholesaler' && order.buyer_name && (
-                  <p><strong>Buyer:</strong> {order.buyer_name}</p>
-                )}
+                {userRole === 'wholesaler' && order.buyer_name && <p><strong>Buyer:</strong> {order.buyer_name}</p>}
                 
-                {userRole === 'seller' && order.shops?.name && (
-                  <p><strong>Shop:</strong> {order.shops.name}</p>
-                )}
+                {userRole === 'seller' && order.shops?.name && <p><strong>Shop:</strong> {order.shops.name}</p>}
                 
-                {order.payment_method && (
-                  <p><strong>Payment:</strong> {order.payment_method.replace('_', ' ').toUpperCase()}</p>
-                )}
+                {order.payment_method && <p><strong>Payment:</strong> {order.payment_method.replace('_', ' ').toUpperCase()}</p>}
               </div>
             </div>
 
-            {order.wholesaler_notes && (
-              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+            {order.wholesaler_notes && <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                 <p className="text-sm"><strong>Notes:</strong> {order.wholesaler_notes}</p>
-              </div>
-            )}
+              </div>}
           </div>
 
           <div className="flex flex-col gap-2 ml-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onViewOrder(order)}
-              className="flex items-center gap-2"
-            >
+            <Button variant="outline" size="sm" onClick={() => onViewOrder(order)} className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               View Details
             </Button>
             
-            {showReorderButton && onReorder && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onReorder(order)}
-                className="flex items-center gap-2"
-              >
+            {showReorderButton && onReorder && <Button variant="outline" size="sm" onClick={() => onReorder(order)} className="flex items-center gap-2">
                 <RotateCcw className="h-4 w-4" />
                 Reorder
-              </Button>
-            )}
+              </Button>}
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default OrderCard;

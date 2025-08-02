@@ -16,43 +16,36 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
       // Clear existing content
       containerRef.current.innerHTML = '';
       
-      // Create ad script elements
+      // Create script elements with proper initialization
       const scripts = [
-        "//euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg",
-        "//euphoric-square.com/bbXtV.sJdkGYlg0/YMWMcL/WeBmb9-uPZbUclVkCPWT/YD1iN/Txc/y/NkzsArtANujxU/1/NMz/II3PMXQ_",
-        "//euphoric-square.com/bEXPVqs/d.GFl/0NYIWUc-/_eqmC9KuFZfUMlwkCPWT/Y/1LNfTJcdz/MJDaAttxNLjcUM1xN/zPM/wiMJQQ",
-        "//euphoric-square.com/b.X/V/sPdUGol/0tY/Wxcl/TeCmq9HuxZYUil-kMPFTdYe1kNwT/cdzlMaTVAJtxNxj/Uw1nN/zUMjxiMGQo"
+        {
+          src: "//euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg",
+          init: "(function(euun){var d=document,s=d.createElement('script'),l=d.scripts[d.scripts.length-1];s.settings=euun||{};s.src='//euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg';s.async=true;s.referrerPolicy='no-referrer-when-downgrade';l.parentNode.insertBefore(s,l);})({});"
+        },
+        {
+          src: "//euphoric-square.com/bbXtV.sJdkGYlg0/YMWMcL/WeBmb9-uPZbUclVkCPWT/YD1iN/Txc/y/NkzsArtANujxU/1/NMz/II3PMXQ_",
+          init: "(function(nob){var d=document,s=d.createElement('script'),l=d.scripts[d.scripts.length-1];s.settings=nob||{};s.src='//euphoric-square.com/bbXtV.sJdkGYlg0/YMWMcL/WeBmb9-uPZbUclVkCPWT/YD1iN/Txc/y/NkzsArtANujxU/1/NMz/II3PMXQ_';s.async=true;s.referrerPolicy='no-referrer-when-downgrade';l.parentNode.insertBefore(s,l);})({});"
+        },
+        {
+          src: "//euphoric-square.com/bEXPVqs/d.GFl/0NYIWUc-/_eqmC9KuFZfUMlwkCPWT/Y/1LNfTJcdz/MJDaAttxNLjcUM1xN/zPM/wiMJQQ",
+          init: "(function(qh){var d=document,s=d.createElement('script'),l=d.scripts[d.scripts.length-1];s.settings=qh||{};s.src='//euphoric-square.com/bEXPVqs/d.GFl/0NYIWUc-/_eqmC9KuFZfUMlwkCPWT/Y/1LNfTJcdz/MJDaAttxNLjcUM1xN/zPM/wiMJQQ';s.async=true;s.referrerPolicy='no-referrer-when-downgrade';l.parentNode.insertBefore(s,l);})({});"
+        },
+        {
+          src: "//euphoric-square.com/b.X/V/sPdUGol/0tY/Wxcl/TeCmq9HuxZYUil-kMPFTdYe1kNwT/cdzlMaTVAJtxNxj/Uw1nN/zUMjxiMGQo",
+          init: "(function(qym){var d=document,s=d.createElement('script'),l=d.scripts[d.scripts.length-1];s.settings=qym||{};s.src='//euphoric-square.com/b.X/V/sPdUGol/0tY/Wxcl/TeCmq9HuxZYUil-kMPFTdYe1kNwT/cdzlMaTVAJtxNxj/Uw1nN/zUMjxiMGQo';s.async=true;s.referrerPolicy='no-referrer-when-downgrade';l.parentNode.insertBefore(s,l);})({});"
+        }
       ];
       
-      scripts.forEach((src, index) => {
+      scripts.forEach((scriptConfig, index) => {
         setTimeout(() => {
-          const script = document.createElement('script');
-          script.type = 'text/javascript';
-          script.async = true;
-          script.src = src;
-          script.referrerPolicy = 'no-referrer-when-downgrade';
-          
-          // Add script to container
-          containerRef.current?.appendChild(script);
-          
-          // Monitor for floating ads and contain them
-          script.onload = () => {
-            setTimeout(() => {
-              // Find any elements that might be floating and contain them
-              const floatingElements = document.querySelectorAll('[style*="position: fixed"], [style*="position:fixed"]');
-              floatingElements.forEach(el => {
-                const elementSrc = (el as HTMLElement).innerHTML || '';
-                if (elementSrc.includes('euphoric-square.com') || el.closest('[src*="euphoric-square.com"]')) {
-                  (el as HTMLElement).style.position = 'static';
-                  (el as HTMLElement).style.left = 'auto';
-                  (el as HTMLElement).style.right = 'auto';
-                  (el as HTMLElement).style.bottom = 'auto';
-                  (el as HTMLElement).style.top = 'auto';
-                }
-              });
-            }, 200);
-          };
-        }, index * 300);
+          try {
+            // Execute the initialization script
+            eval(scriptConfig.init);
+            console.log(`HilTop script ${index + 1} loaded successfully`);
+          } catch (error) {
+            console.error(`Error loading HilTop script ${index + 1}:`, error);
+          }
+        }, index * 200);
       });
     }
   }, []);
@@ -64,12 +57,27 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
       style={{
         width: '100%',
         height: 'auto',
-        minHeight: '50px',
+        minHeight: '100px',
         position: 'relative',
         display: 'block',
+        backgroundColor: '#f8f9fa',
+        border: '1px dashed #dee2e6',
+        borderRadius: '4px',
         ...style
       }}
-    />
+    >
+      {/* Fallback content while ads load */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100px',
+        color: '#6c757d',
+        fontSize: '14px'
+      }}>
+        Loading Advertisement...
+      </div>
+    </div>
   );
 };
 

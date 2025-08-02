@@ -100,6 +100,10 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
       style={{
         width: '100%',
         minHeight: '100px',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'block',
+        zIndex: 1,
         ...style
       }}
     />

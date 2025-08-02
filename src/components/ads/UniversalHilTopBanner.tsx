@@ -17,77 +17,111 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
     if (containerRef.current && typeof window !== 'undefined') {
       console.log('UniversalHilTopBanner: Container available, initializing scripts');
       
+      // Create a unique ID for this container
+      const containerId = `hiltop-container-${Math.random().toString(36).substr(2, 9)}`;
+      containerRef.current.id = containerId;
+      
       // Clear existing content but keep the fallback
       const fallback = containerRef.current.querySelector('.ad-fallback');
       
-      // Test with just one script first
+      // Force containment with aggressive CSS
+      const style = document.createElement('style');
+      style.textContent = `
+        #${containerId} * {
+          position: static !important;
+          top: auto !important;
+          left: auto !important;
+          right: auto !important;
+          bottom: auto !important;
+          transform: none !important;
+          z-index: auto !important;
+        }
+        
+        #${containerId} iframe,
+        #${containerId} div,
+        #${containerId} span {
+          max-width: 100% !important;
+          margin: 0 auto !important;
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Load script with containment
       setTimeout(() => {
         try {
-          console.log('Loading single HilTop script test');
-          const script = document.createElement('script');
-          script.type = 'text/javascript';
-          script.async = true;
-          script.src = "//euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg";
-          script.referrerPolicy = 'no-referrer-when-downgrade';
+          console.log('Loading HilTop script with containment');
           
-          script.onload = () => {
-            console.log('HilTop script loaded successfully');
-            if (fallback) (fallback as HTMLElement).style.display = 'none';
-          };
+          // Create script element that will be contained
+          const scriptElement = document.createElement('div');
+          scriptElement.innerHTML = `
+            <script type="text/javascript">
+              (function() {
+                console.log('HilTop script executing in container');
+                var container = document.getElementById('${containerId}');
+                if (container) {
+                  var script = document.createElement('script');
+                  script.src = "//euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg";
+                  script.async = true;
+                  script.referrerPolicy = 'no-referrer-when-downgrade';
+                  
+                  script.onload = function() {
+                    console.log('HilTop script loaded');
+                    var fallback = container.querySelector('.ad-fallback');
+                    if (fallback) fallback.style.display = 'none';
+                    
+                    // Move any floating elements back to container
+                    setTimeout(function() {
+                      var floatingAds = document.querySelectorAll('iframe[src*="euphoric-square"], [id*="hiltop"], [class*="hiltop"]');
+                      floatingAds.forEach(function(ad) {
+                        if (!ad.closest('#${containerId}') && ad.parentNode !== container) {
+                          try {
+                            container.appendChild(ad);
+                            console.log('Moved floating ad to container');
+                          } catch(e) {
+                            console.log('Could not move ad:', e);
+                          }
+                        }
+                      });
+                    }, 1000);
+                  };
+                  
+                  container.appendChild(script);
+                }
+              })();
+            </script>
+          `;
           
-          script.onerror = (error) => {
-            console.error('HilTop script failed to load:', error);
-          };
-          
-          document.head.appendChild(script);
-          
-          // Alternative method - direct eval
-          setTimeout(() => {
-            try {
-              (function(euun: any){
-                console.log('Direct eval HilTop script execution');
-                var d = document,
-                    s = d.createElement('script'),
-                    l = d.scripts[d.scripts.length - 1];
-                (s as any).settings = euun || {};
-                s.src = "//euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg";
-                s.async = true;
-                s.referrerPolicy = 'no-referrer-when-downgrade';
-                l.parentNode!.insertBefore(s, l);
-              })({});
-              console.log('Direct eval executed successfully');
-            } catch (error) {
-              console.error('Direct eval failed:', error);
-            }
-          }, 1000);
+          // Append to container
+          if (containerRef.current) {
+            containerRef.current.appendChild(scriptElement);
+          }
           
         } catch (error) {
           console.error('Error in script loading:', error);
         }
       }, 500);
       
-      // Check for ad content periodically
-      let checkCount = 0;
-      const checkInterval = setInterval(() => {
-        checkCount++;
-        if (containerRef.current) {
-          const hasAds = document.querySelectorAll('iframe[src*="euphoric-square"]').length > 0 ||
-                        document.querySelectorAll('[id*="hiltop"]').length > 0 ||
-                        document.querySelectorAll('[class*="hiltop"]').length > 0;
-          
-          console.log(`Ad check ${checkCount}: Found ads:`, hasAds);
-          
-          if (hasAds && fallback) {
-            (fallback as HTMLElement).style.display = 'none';
-            clearInterval(checkInterval);
+      // Cleanup floating ads periodically
+      const cleanupInterval = setInterval(() => {
+        const floatingAds = document.body.querySelectorAll('iframe[src*="euphoric-square"]:not([id*="' + containerId + '"] *)');
+        floatingAds.forEach((ad) => {
+          if (containerRef.current && !ad.closest('#' + containerId)) {
+            try {
+              containerRef.current.appendChild(ad);
+              console.log('Cleaned up floating ad');
+            } catch (e) {
+              console.log('Could not cleanup ad:', e);
+            }
           }
-          
-          if (checkCount >= 10) {
-            console.log('Ad loading check completed after 10 attempts');
-            clearInterval(checkInterval);
-          }
-        }
-      }, 1000);
+        });
+      }, 2000);
+      
+      // Cleanup on unmount
+      return () => {
+        clearInterval(cleanupInterval);
+        const styleEl = document.querySelector(`style:contains("#${containerId}")`);
+        if (styleEl) styleEl.remove();
+      };
       
     } else {
       console.log('UniversalHilTopBanner: No container or window not available');

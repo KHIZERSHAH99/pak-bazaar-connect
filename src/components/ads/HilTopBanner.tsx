@@ -35,77 +35,69 @@ const HilTopBanner: React.FC<HilTopBannerProps> = ({
       
       const config = getAdConfig();
       
-      // Create HilTop ad script
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.innerHTML = `
-        (function() {
-          var hilTop = document.createElement('div');
-          hilTop.style.width = '${config.width}px';
-          hilTop.style.height = '${config.height}px';
-          hilTop.style.backgroundColor = '#f8f9fa';
-          hilTop.style.border = '1px solid #e9ecef';
-          hilTop.style.borderRadius = '4px';
-          hilTop.style.display = 'flex';
-          hilTop.style.alignItems = 'center';
-          hilTop.style.justifyContent = 'center';
-          hilTop.style.fontSize = '12px';
-          hilTop.style.color = '#6c757d';
-          hilTop.innerHTML = 'HilTop Advertisement ${config.key}';
-          
-          // Simulate ad loading
-          setTimeout(function() {
-            try {
-              var adContent = document.createElement('iframe');
-              adContent.src = 'about:blank';
-              adContent.style.width = '100%';
-              adContent.style.height = '100%';
-              adContent.style.border = 'none';
-              adContent.onload = function() {
-                try {
-                  this.contentDocument.body.innerHTML = 
-                    '<div style="background: linear-gradient(45deg, #4CAF50, #81C784); color: white; height: 100%; display: flex; align-items: center; justify-content: center; font-family: Arial, sans-serif; font-size: 14px; text-align: center;">' +
-                    '<div>HilTop Ad<br>${config.key}</div>' +
-                    '</div>';
-                } catch(e) {
-                  console.log('HilTop ad content security restricted');
-                }
-              };
-              hilTop.innerHTML = '';
-              hilTop.appendChild(adContent);
-            } catch(e) {
-              console.log('HilTop ad loading error:', e);
-            }
-          }, Math.random() * 1000 + 500);
-          
-          return hilTop;
-        })()
+      // Create the actual Adsteera script based on ad type
+      const optionsScript = document.createElement('script');
+      optionsScript.type = 'text/javascript';
+      
+      // Use the correct Adsteera keys for each ad size
+      let adKey = '';
+      switch (adType) {
+        case 'medium-rectangle':
+          adKey = '19504014bfa77eb1a1c95ce36b68cb2d';
+          break;
+        case 'sidebar':
+          adKey = '5bb02b15fc62b8e72bf7b96d1dda1de7';
+          break;
+        case 'mobile':
+          adKey = '74b4eeb76902944fd342002807fd5a4a';
+          break;
+        case 'small-banner':
+          adKey = '9b2fde480b2294961627c49845f3e13c';
+          break;
+        default: // leaderboard
+          adKey = '097576b5a2cc73324b0a3294b1a029f5';
+          break;
+      }
+      
+      optionsScript.innerHTML = `
+        atOptions = {
+          'key' : '${adKey}',
+          'format' : 'iframe',
+          'height' : ${config.height},
+          'width' : ${config.width},
+          'params' : {}
+        };
       `;
       
-      // Execute the script and append the result
-      try {
-        const adElement = eval('(' + script.innerHTML + ')');
-        containerRef.current.appendChild(adElement);
-      } catch (error) {
-        console.error('HilTop ad loading error:', error);
-        // Fallback display
-        const fallback = document.createElement('div');
-        const config = getAdConfig();
-        fallback.style.cssText = `
-          width: ${config.width}px;
-          height: ${config.height}px;
-          background: #f8f9fa;
-          border: 1px solid #e9ecef;
-          border-radius: 4px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          color: #6c757d;
-        `;
-        fallback.textContent = `HilTop Advertisement ${config.key}`;
-        containerRef.current.appendChild(fallback);
-      }
+      const invokeScript = document.createElement('script');
+      invokeScript.type = 'text/javascript';
+      invokeScript.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+      
+      // Append scripts to container
+      containerRef.current.appendChild(optionsScript);
+      containerRef.current.appendChild(invokeScript);
+      
+      // Add fallback in case ads don't load
+      setTimeout(() => {
+        if (containerRef.current && containerRef.current.children.length <= 2) {
+          const fallback = document.createElement('div');
+          fallback.style.cssText = `
+            width: ${config.width}px;
+            height: ${config.height}px;
+            background: linear-gradient(45deg, #4CAF50, #81C784);
+            color: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+          `;
+          fallback.innerHTML = `<div>Adsteera Ad<br>${config.key}</div>`;
+          containerRef.current.appendChild(fallback);
+        }
+      }, 3000);
     }
   }, [adType]);
 

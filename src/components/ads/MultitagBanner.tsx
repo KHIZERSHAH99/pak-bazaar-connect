@@ -18,8 +18,19 @@ const MultitagBanner: React.FC<MultitagBannerProps> = ({
       // Clear existing content
       containerRef.current.innerHTML = '';
       
+      // Create a unique container for the multitag script
+      const scriptContainer = document.createElement('div');
+      scriptContainer.style.cssText = `
+        width: 100%;
+        min-height: ${device === 'desktop' ? '250px' : '100px'};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+      
       const script = document.createElement('script');
       script.type = 'text/javascript';
+      script.async = true;
       
       if (device === 'desktop') {
         // PC multitag banner script
@@ -51,26 +62,35 @@ const MultitagBanner: React.FC<MultitagBannerProps> = ({
         `;
       }
       
-      // Append the script to container
-      containerRef.current.appendChild(script);
+      // Append the script to head instead of container
+      document.head.appendChild(script);
       
       // Create fallback display
       const fallbackDiv = document.createElement('div');
       fallbackDiv.style.cssText = `
         min-height: ${device === 'desktop' ? '250px' : '100px'};
         width: 100%;
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
+        background: linear-gradient(45deg, #2196F3, #64B5F6);
+        color: white;
         border-radius: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 12px;
-        color: #6c757d;
-        margin-top: 10px;
+        text-align: center;
+        font-family: Arial, sans-serif;
       `;
-      fallbackDiv.textContent = `HilTop Multitag ${device === 'desktop' ? 'Desktop' : 'Mobile'} Banner`;
-      containerRef.current.appendChild(fallbackDiv);
+      fallbackDiv.innerHTML = `<div>HilTop Multitag<br>${device === 'desktop' ? 'Desktop' : 'Mobile'} Banner</div>`;
+      
+      scriptContainer.appendChild(fallbackDiv);
+      containerRef.current.appendChild(scriptContainer);
+      
+      // Remove fallback after ads load
+      setTimeout(() => {
+        if (fallbackDiv.parentNode && containerRef.current?.children.length > 1) {
+          fallbackDiv.remove();
+        }
+      }, 5000);
     }
   }, [device]);
 

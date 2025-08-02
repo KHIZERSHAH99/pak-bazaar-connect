@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContextFixed';
 import { Button } from '@/components/ui/button';
 import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Flag, Menu, X, ShoppingBag, Users, Zap } from 'lucide-react';
+import { Flag, Menu, X, ShoppingBag, Users, Zap, Package, BookOpen } from 'lucide-react';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 const Navbar = () => {
@@ -89,6 +89,18 @@ const Navbar = () => {
                   <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
                     <Zap className="w-4 h-4 mr-2" />
                     Features
+                  </Button>
+                </Link>
+                <Link to="/demo">
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
+                    <Package className="w-4 h-4 mr-2" />
+                    Demo
+                  </Button>
+                </Link>
+                <Link to="/blog">
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Blog
                   </Button>
                 </Link>
                 <Link to="/about">

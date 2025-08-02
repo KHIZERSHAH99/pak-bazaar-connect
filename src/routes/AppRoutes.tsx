@@ -22,6 +22,9 @@ import AboutUs from '@/pages/AboutUs';
 import TermsOfService from '@/pages/TermsOfService';
 import RefundPolicy from '@/pages/RefundPolicy';
 import ShippingPolicy from '@/pages/ShippingPolicy';
+import Blog from '@/pages/Blog';
+import BlogPost from '@/pages/BlogPost';
+import DemoShowcase from '@/pages/DemoShowcase';
 import Checkout from '@/pages/Checkout';
 import Favorites from '@/pages/Favorites';
 import Messages from '@/pages/Messages';
@@ -76,6 +79,9 @@ const AppRoutes: React.FC = () => {
         {/* Legal pages */}
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogPost />} />
+        <Route path="/demo" element={<DemoShowcase />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />

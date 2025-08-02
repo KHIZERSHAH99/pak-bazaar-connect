@@ -2,15 +2,13 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, Award, Shield } from 'lucide-react';
-
 const AboutUs: React.FC = () => {
-  return (
-    <Layout>
+  return <Layout>
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 py-12">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-gray-900 mb-6 font-poppins">About TradeConnect Pakistan</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-6 font-poppins">About Pak Bazaar Connect</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto font-poppins leading-relaxed">
               Connecting Pakistani wholesalers and retailers through a modern, secure, and efficient B2B marketplace. 
               Empowering businesses to grow together.
@@ -149,8 +147,6 @@ const AboutUs: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default AboutUs;

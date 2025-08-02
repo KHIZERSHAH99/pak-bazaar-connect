@@ -35,9 +35,17 @@ const HilTopBanner: React.FC<HilTopBannerProps> = ({
       
       const config = getAdConfig();
       
-      // Create the actual Adsteera script based on ad type
-      const optionsScript = document.createElement('script');
-      optionsScript.type = 'text/javascript';
+      // Create a unique container ID for this ad
+      const adContainerId = `ad-container-${Math.random().toString(36).substr(2, 9)}`;
+      const adContainer = document.createElement('div');
+      adContainer.id = adContainerId;
+      adContainer.style.cssText = `
+        width: ${config.width}px;
+        height: ${config.height}px;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+      `;
       
       // Use the correct Adsteera keys for each ad size
       let adKey = '';
@@ -59,34 +67,60 @@ const HilTopBanner: React.FC<HilTopBannerProps> = ({
           break;
       }
       
-      optionsScript.innerHTML = `
-        atOptions = {
-          'key' : '${adKey}',
-          'format' : 'iframe',
-          'height' : ${config.height},
-          'width' : ${config.width},
-          'params' : {}
+      // Try to load ad script
+      try {
+        // Set global options for Adsteera
+        (window as any).atOptions = {
+          'key': adKey,
+          'format': 'iframe',
+          'height': config.height,
+          'width': config.width,
+          'params': {}
         };
-      `;
+        
+        // Create and load the invoke script
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+        script.setAttribute('data-cfasync', 'false');
+        
+        // Track if script loads successfully
+        let scriptLoaded = false;
+        
+        script.onload = () => {
+          console.log(`Adsteera script loaded for ${adKey}`);
+          scriptLoaded = true;
+        };
+        
+        script.onerror = () => {
+          console.warn(`Failed to load Adsteera script for ${adKey}`);
+          showFallback();
+        };
+        
+        // Append script to head
+        document.head.appendChild(script);
+        
+        // Show fallback if script doesn't load within 3 seconds
+        setTimeout(() => {
+          if (!scriptLoaded) {
+            showFallback();
+          }
+        }, 3000);
+        
+      } catch (error) {
+        console.error('Error loading ad script:', error);
+        showFallback();
+      }
       
-      const invokeScript = document.createElement('script');
-      invokeScript.type = 'text/javascript';
-      invokeScript.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
-      
-      // Append scripts to container
-      containerRef.current.appendChild(optionsScript);
-      containerRef.current.appendChild(invokeScript);
-      
-      // Add fallback in case ads don't load
-      setTimeout(() => {
-        if (containerRef.current && containerRef.current.children.length <= 2) {
+      function showFallback() {
+        if (adContainer && adContainer.children.length === 0) {
           const fallback = document.createElement('div');
           fallback.style.cssText = `
-            width: ${config.width}px;
-            height: ${config.height}px;
-            background: linear-gradient(45deg, #4CAF50, #81C784);
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,10 +128,12 @@ const HilTopBanner: React.FC<HilTopBannerProps> = ({
             text-align: center;
             font-family: Arial, sans-serif;
           `;
-          fallback.innerHTML = `<div>Adsteera Ad<br>${config.key}</div>`;
-          containerRef.current.appendChild(fallback);
+          fallback.innerHTML = `<div>Advertisement<br>${config.key}<br><small>Adsteera Network</small></div>`;
+          adContainer.appendChild(fallback);
         }
-      }, 3000);
+      }
+      
+      containerRef.current.appendChild(adContainer);
     }
   }, [adType]);
 

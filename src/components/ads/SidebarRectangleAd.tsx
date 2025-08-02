@@ -1,12 +1,12 @@
 import React from 'react';
-import HilTopBanner from './HilTopBanner';
+import SimpleAdBanner from './SimpleAdBanner';
 
 const SidebarRectangleAd: React.FC = () => {
   return (
     <div className="hidden lg:block">
       <div className="text-xs text-gray-500 text-center mb-2">Advertisement</div>
       <div className="flex justify-center">
-        <HilTopBanner adType="sidebar" />
+        <SimpleAdBanner adType="sidebar" />
       </div>
     </div>
   );

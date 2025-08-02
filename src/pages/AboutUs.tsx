@@ -90,12 +90,7 @@ const AboutUs: React.FC = () => {
             <CardContent className="p-8">
               <h2 className="text-3xl font-bold mb-6 font-poppins text-center">Our Story</h2>
               <div className="prose max-w-none">
-                <p className="text-gray-600 mb-4 font-poppins leading-relaxed">
-                  TradeConnect Pakistan was founded with a simple yet powerful vision: to transform the way businesses 
-                  interact and trade in Pakistan. Recognizing the challenges faced by both wholesalers and retailers 
-                  in finding reliable partners and conducting efficient transactions, we set out to create a platform 
-                  that would bridge these gaps.
-                </p>
+                <p className="text-gray-600 mb-4 font-poppins leading-relaxed">Pak bazaar connect was founded with a simple yet powerful vision: to transform the way businesses interact and trade in Pakistan. Recognizing the challenges faced by both wholesalers and retailers in finding reliable partners and conducting efficient transactions, we set out to create a platform that would bridge these gaps.</p>
                 <p className="text-gray-600 mb-4 font-poppins leading-relaxed">
                   Our platform emerged from understanding the unique needs of Pakistani businesses. We recognized 
                   that traditional methods of B2B commerce were often inefficient, time-consuming, and lacked 

@@ -26,6 +26,7 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
       
       // Force containment with aggressive CSS
       const style = document.createElement('style');
+      style.className = `hiltop-style-${containerId}`;
       style.textContent = `
         #${containerId} * {
           position: static !important;
@@ -119,7 +120,7 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
       // Cleanup on unmount
       return () => {
         clearInterval(cleanupInterval);
-        const styleEl = document.querySelector(`style:contains("#${containerId}")`);
+        const styleEl = document.querySelector(`.hiltop-style-${containerId}`);
         if (styleEl) styleEl.remove();
       };
       

@@ -36,9 +36,12 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
               s = d.createElement('script'),
               l = d.scripts[d.scripts.length - 1];
           s.settings = euun || {};
-          s.src = "//euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg";
+          s.src = "https://euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg";
           s.async = true;
           s.referrerPolicy = 'no-referrer-when-downgrade';
+          s.onerror = function() {
+            console.log('HilTop script failed to load');
+          };
           l.parentNode.insertBefore(s, l);
         })({});
       `;

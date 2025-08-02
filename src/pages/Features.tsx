@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import InContentAdBanner from '@/components/ads/InContentAdBanner';
 import MediumRectangleAdBanner from '@/components/ads/MediumRectangleAdBanner';
+import DesktopMultitagBanner from '@/components/ads/DesktopMultitagBanner';
+import MobileMultitagBanner from '@/components/ads/MobileMultitagBanner';
 import { 
   Shield, 
   Zap, 
@@ -155,6 +157,12 @@ const Features: React.FC = () => {
 
           <div className="flex justify-center my-8">
             <MediumRectangleAdBanner />
+          </div>
+
+          {/* Additional Multitag Banners */}
+          <div className="my-8">
+            <DesktopMultitagBanner />
+            <MobileMultitagBanner />
           </div>
 
           {/* Call to Action */}

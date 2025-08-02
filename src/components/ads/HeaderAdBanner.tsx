@@ -1,6 +1,7 @@
 import React from 'react';
 import LeaderboardAdBanner from './LeaderboardAdBanner';
 import MobileBannerAd from './MobileBannerAd';
+import MobileMultitagBanner from './MobileMultitagBanner';
 
 const HeaderAdBanner: React.FC = () => {
   return (
@@ -10,7 +11,10 @@ const HeaderAdBanner: React.FC = () => {
         <div className="hidden md:block">
           <LeaderboardAdBanner />
         </div>
-        <MobileBannerAd />
+        <div className="block md:hidden space-y-2">
+          <MobileBannerAd />
+          <MobileMultitagBanner />
+        </div>
       </div>
     </div>
   );

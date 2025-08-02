@@ -9,9 +9,6 @@ import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
-import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
-import InContentAdBanner from '@/components/ads/InContentAdBanner';
-import SidebarAdBanner from '@/components/ads/SidebarAdBanner';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -176,7 +173,7 @@ const Products: React.FC = () => {
       title="Products - Pak Bazaar Connect"
       description="Browse quality products from verified wholesalers across Pakistan"
     >
-      <HeaderAdBanner />
+      
       <div className="container mx-auto px-4 py-8">
         <div className="flex gap-8">
           <div className="flex-1">
@@ -197,14 +194,14 @@ const Products: React.FC = () => {
               onClearFilters={clearFilters}
             />
 
-            <InContentAdBanner className="my-8" />
+            
             <ProductsGrid products={products} loading={loading} />
           </div>
           
           {/* Sidebar with ad */}
           <div className="hidden lg:block w-80">
             <div className="sticky top-8">
-              <SidebarAdBanner />
+              
             </div>
           </div>
         </div>

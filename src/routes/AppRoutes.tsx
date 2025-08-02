@@ -18,6 +18,7 @@ import Stats from '@/pages/Stats';
 import Features from '@/pages/Features';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import Contact from '@/pages/Contact';
+import AboutUs from '@/pages/AboutUs';
 import TermsOfService from '@/pages/TermsOfService';
 import RefundPolicy from '@/pages/RefundPolicy';
 import ShippingPolicy from '@/pages/ShippingPolicy';
@@ -74,6 +75,7 @@ const AppRoutes: React.FC = () => {
         
         {/* Legal pages */}
         <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/refund-policy" element={<RefundPolicy />} />

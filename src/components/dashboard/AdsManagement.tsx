@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Plus, Target, BarChart3 } from 'lucide-react';
-import EnhancedCreateAdDialog from '@/components/ads/EnhancedCreateAdDialog';
+
 import { useQuery } from '@tanstack/react-query';
 import { getAdsByWholesaler } from '@/lib/ads';
 import { Badge } from '@/components/ui/badge';
@@ -194,7 +194,7 @@ const AdsManagement: React.FC = () => {
         </CardContent>
       </Card>
 
-      <EnhancedCreateAdDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} onAdCreated={handleAdCreated} />
+      {/* Ad creation will be restored later */}
     </div>;
 };
 export default AdsManagement;

@@ -4,8 +4,6 @@ import DashboardLayout from '@/components/DashboardLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import EnhancedCreateAdDialog from '@/components/ads/EnhancedCreateAdDialog';
-import AdManagementDashboard from '@/components/ads/AdManagementDashboard';
 import { useQuery } from '@tanstack/react-query';
 import { getProductsByWholesaler } from '@/lib/products';
 
@@ -41,14 +39,11 @@ const Advertisements: React.FC = () => {
           </Button>
         </div>
 
-        <AdManagementDashboard />
+        <div className="bg-gray-50 rounded-lg p-8 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Ad Management Temporarily Disabled</h2>
+          <p className="text-gray-600">Ad functionality will be restored after AdSense approval to ensure compliance.</p>
+        </div>
       </div>
-
-      <EnhancedCreateAdDialog
-        isOpen={isDialogOpen}
-        onClose={handleDialogClose}
-        onAdCreated={handleAdCreated}
-      />
     </DashboardLayout>
   );
 };

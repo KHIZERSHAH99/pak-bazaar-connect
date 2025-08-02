@@ -91,6 +91,12 @@ const Navbar = () => {
                     Features
                   </Button>
                 </Link>
+                <Link to="/about">
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
+                    <Users className="w-4 h-4 mr-2" />
+                    About
+                  </Button>
+                </Link>
               </div>
 
               {user ? <UserMenu email={profile?.email || user.email} role={profile?.role} onLogout={handleLogout} getRoleBadge={getRoleBadge} /> : <div className="flex items-center space-x-3">

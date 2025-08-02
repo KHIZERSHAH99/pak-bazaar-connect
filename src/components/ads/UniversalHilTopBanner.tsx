@@ -1,13 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 
-interface MultitagBannerProps {
-  device?: 'desktop' | 'mobile';
+interface UniversalHilTopBannerProps {
   className?: string;
   style?: React.CSSProperties;
 }
 
-const MultitagBanner: React.FC<MultitagBannerProps> = ({
-  device = 'desktop',
+const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
   className = '',
   style = {}
 }) => {
@@ -19,14 +17,14 @@ const MultitagBanner: React.FC<MultitagBannerProps> = ({
       containerRef.current.innerHTML = '';
       
       // Create unique container ID
-      const containerId = `multitag-${device}-${Math.random().toString(36).substr(2, 9)}`;
+      const containerId = `universal-hiltop-${Math.random().toString(36).substr(2, 9)}`;
       const scriptContainer = document.createElement('div');
       scriptContainer.id = containerId;
       
       // Append to container first
       containerRef.current.appendChild(scriptContainer);
       
-      // Create and execute the universal HilTop script (works for both mobile and desktop)
+      // Create and execute the universal HilTop script
       const script = document.createElement('script');
       script.type = 'text/javascript';
       script.async = true;
@@ -48,28 +46,27 @@ const MultitagBanner: React.FC<MultitagBannerProps> = ({
       // Execute the script
       try {
         eval(script.innerHTML);
-        console.log(`HilTop universal multitag script executed for ${device}`);
+        console.log('HilTop universal script executed');
       } catch (error) {
-        console.error(`Error executing HilTop multitag script:`, error);
+        console.error('Error executing HilTop universal script:', error);
       }
       
       // Also append script to document for maximum compatibility
       document.head.appendChild(script);
     }
-  }, [device]);
+  }, []);
 
   return (
     <div 
       ref={containerRef}
-      className={`multitag-banner ${className}`}
+      className={`universal-hiltop-banner ${className}`}
       style={{
         width: '100%',
-        minHeight: device === 'desktop' ? '250px' : '100px',
+        minHeight: '100px',
         ...style
       }}
-      data-device={device}
     />
   );
 };
 
-export default MultitagBanner;
+export default UniversalHilTopBanner;

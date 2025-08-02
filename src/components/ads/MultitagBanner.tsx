@@ -18,22 +18,21 @@ const MultitagBanner: React.FC<MultitagBannerProps> = ({
       // Clear existing content
       containerRef.current.innerHTML = '';
       
-      // Create a unique container for the multitag script
+      // Create unique container ID
+      const containerId = `multitag-${device}-${Math.random().toString(36).substr(2, 9)}`;
       const scriptContainer = document.createElement('div');
-      scriptContainer.style.cssText = `
-        width: 100%;
-        min-height: ${device === 'desktop' ? '250px' : '100px'};
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      `;
+      scriptContainer.id = containerId;
       
+      // Append to container first
+      containerRef.current.appendChild(scriptContainer);
+      
+      // Create and execute the multitag script
       const script = document.createElement('script');
       script.type = 'text/javascript';
       script.async = true;
       
       if (device === 'desktop') {
-        // PC multitag banner script
+        // PC multitag banner script - execute immediately
         script.innerHTML = `
           (function(rktxg){
             var d = document,
@@ -44,10 +43,10 @@ const MultitagBanner: React.FC<MultitagBannerProps> = ({
             s.async = true;
             s.referrerPolicy = 'no-referrer-when-downgrade';
             l.parentNode.insertBefore(s, l);
-          })({})
+          })({});
         `;
       } else {
-        // Mobile multitag banner script
+        // Mobile multitag banner script - execute immediately
         script.innerHTML = `
           (function(wqfg){
             var d = document,
@@ -58,39 +57,20 @@ const MultitagBanner: React.FC<MultitagBannerProps> = ({
             s.async = true;
             s.referrerPolicy = 'no-referrer-when-downgrade';
             l.parentNode.insertBefore(s, l);
-          })({})
+          })({});
         `;
       }
       
-      // Append the script to head instead of container
+      // Execute the script
+      try {
+        eval(script.innerHTML);
+        console.log(`HilTop multitag ${device} script executed`);
+      } catch (error) {
+        console.error(`Error executing HilTop multitag ${device} script:`, error);
+      }
+      
+      // Also append script to document for maximum compatibility
       document.head.appendChild(script);
-      
-      // Create fallback display
-      const fallbackDiv = document.createElement('div');
-      fallbackDiv.style.cssText = `
-        min-height: ${device === 'desktop' ? '250px' : '100px'};
-        width: 100%;
-        background: linear-gradient(45deg, #2196F3, #64B5F6);
-        color: white;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        text-align: center;
-        font-family: Arial, sans-serif;
-      `;
-      fallbackDiv.innerHTML = `<div>HilTop Multitag<br>${device === 'desktop' ? 'Desktop' : 'Mobile'} Banner</div>`;
-      
-      scriptContainer.appendChild(fallbackDiv);
-      containerRef.current.appendChild(scriptContainer);
-      
-      // Remove fallback after ads load
-      setTimeout(() => {
-        if (fallbackDiv.parentNode && containerRef.current?.children.length > 1) {
-          fallbackDiv.remove();
-        }
-      }, 5000);
     }
   }, [device]);
 

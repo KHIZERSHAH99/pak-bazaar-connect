@@ -1,10 +1,10 @@
 import React from 'react';
-import SimpleAdBanner from './SimpleAdBanner';
+import HilTopBanner from './HilTopBanner';
 
 const MediumRectangleAdBanner: React.FC = () => {
   return (
     <div className="flex justify-center">
-      <SimpleAdBanner adType="medium-rectangle" />
+      <HilTopBanner adType="medium-rectangle" />
     </div>
   );
 };

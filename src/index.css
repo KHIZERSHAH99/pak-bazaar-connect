@@ -106,29 +106,3 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-400;
 }
-
-/* Targeted ad positioning fixes - only for floating ads */
-.universal-hiltop-banner,
-.hilltop-ad {
-  position: relative !important;
-  display: block !important;
-  overflow: hidden !important;
-  margin: 0 auto !important;
-}
-
-/* Force only ad-generated content to stay contained */
-iframe[src*="euphoric-square.com"],
-div[id*="hiltop"],
-div[class*="hiltop"],
-[style*="position: fixed"][style*="euphoric-square"],
-[style*="position:fixed"][style*="euphoric-square"] {
-  position: static !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  top: auto !important;
-  transform: none !important;
-  max-width: 100% !important;
-  margin: 0 auto !important;
-  z-index: auto !important;
-}

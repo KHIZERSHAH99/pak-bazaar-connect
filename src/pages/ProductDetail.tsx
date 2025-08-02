@@ -6,7 +6,8 @@ import Layout from '@/components/Layout';
 import { getProductById } from '@/lib/products';
 import { Product } from '@/lib/types';
 import EnhancedProductDetail from '@/components/products/EnhancedProductDetail';
-import InlineContentAd from '@/components/ads/InlineContentAd';
+import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
+import InContentAdBanner from '@/components/ads/InContentAdBanner';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -90,8 +91,9 @@ const ProductDetail: React.FC = () => {
 
   return (
     <Layout>
+      <HeaderAdBanner />
       <EnhancedProductDetail product={product} onBack={handleBackToProducts} />
-      <InlineContentAd />
+      <InContentAdBanner className="my-8" />
     </Layout>
   );
 };

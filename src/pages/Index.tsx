@@ -5,16 +5,18 @@ import HeroSection from '@/components/home/HeroSection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import CallToActionSection from '@/components/home/CallToActionSection';
-import InlineContentAd from '@/components/ads/InlineContentAd';
+import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
+import InContentAdBanner from '@/components/ads/InContentAdBanner';
 
 const Index: React.FC = () => {
   return (
     <Layout>
       <div className="min-h-screen">
+        <HeaderAdBanner />
         <HeroSection />
-        <InlineContentAd />
+        <InContentAdBanner className="my-12" />
         <FeaturedProducts />
-        <InlineContentAd />
+        <InContentAdBanner className="my-12" />
         <WhyChooseUsSection />
         <CallToActionSection />
       </div>

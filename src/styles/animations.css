@@ -25,6 +25,17 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* AdSense container styling */
+.adsense-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90px;
+}
+
+.adsense-container ins {
+  background: transparent !important;
+}
 
 /* Loading pulse effect */
 @keyframes pulse-soft {

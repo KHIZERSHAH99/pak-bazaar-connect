@@ -107,26 +107,21 @@ html {
   @apply bg-gray-400;
 }
 
-/* Aggressive ad positioning fixes */
+/* Targeted ad positioning fixes - only for floating ads */
 .universal-hiltop-banner,
 .hilltop-ad {
   position: relative !important;
   display: block !important;
   overflow: hidden !important;
   margin: 0 auto !important;
-  width: 100% !important;
-  height: auto !important;
 }
 
-/* Force all ad content to stay in containers */
-.universal-hiltop-banner *,
-.hilltop-ad *,
+/* Force only ad-generated content to stay contained */
 iframe[src*="euphoric-square.com"],
 div[id*="hiltop"],
 div[class*="hiltop"],
-script[src*="euphoric-square.com"] + *,
-[style*="position: fixed"],
-[style*="position:fixed"] {
+[style*="position: fixed"][style*="euphoric-square"],
+[style*="position:fixed"][style*="euphoric-square"] {
   position: static !important;
   left: auto !important;
   right: auto !important;
@@ -136,27 +131,4 @@ script[src*="euphoric-square.com"] + *,
   max-width: 100% !important;
   margin: 0 auto !important;
   z-index: auto !important;
-  width: 100% !important;
-  height: auto !important;
-}
-
-/* Global override for any fixed positioned elements */
-* {
-  position: static !important;
-}
-
-/* Allow only specific elements to have other positions */
-.navbar,
-.fixed,
-.sticky,
-.absolute,
-.relative,
-header,
-nav,
-.toast,
-.modal,
-.dropdown,
-.popover,
-.tooltip {
-  position: unset !important;
 }

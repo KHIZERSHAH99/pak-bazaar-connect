@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 interface UniversalHilTopBannerProps {
   className?: string;
@@ -9,28 +9,14 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
   className = '',
   style = {}
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (containerRef.current && typeof window !== 'undefined') {
       // Clear existing content
       containerRef.current.innerHTML = '';
       
-      // Create constrained container for ads
-      const adContainer = document.createElement('div');
-      adContainer.style.cssText = `
-        position: relative !important;
-        width: 100% !important;
-        height: auto !important;
-        overflow: hidden !important;
-        display: block !important;
-        margin: 0 auto !important;
-        max-width: 100% !important;
-      `;
-      
-      containerRef.current.appendChild(adContainer);
-      
-      // Inject scripts with containment
+      // Create ad script elements
       const scripts = [
         "//euphoric-square.com/bmX.VJs/dfGNlJ0nYeWuck/ze-mr9kuqZMUblxkCPETnYN1NNWT/cyyZMnj/gVt/NDjCUX1ANdzoIhy/O_Qg",
         "//euphoric-square.com/bbXtV.sJdkGYlg0/YMWMcL/WeBmb9-uPZbUclVkCPWT/YD1iN/Txc/y/NkzsArtANujxU/1/NMz/II3PMXQ_",
@@ -46,22 +32,27 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
           script.src = src;
           script.referrerPolicy = 'no-referrer-when-downgrade';
           
-          // Override any positioning attempts
+          // Add script to container
+          containerRef.current?.appendChild(script);
+          
+          // Monitor for floating ads and contain them
           script.onload = () => {
-            // Force containment after script loads
             setTimeout(() => {
-              const allElements = document.querySelectorAll('*');
-              allElements.forEach(el => {
-                const style = window.getComputedStyle(el);
-                if (style.position === 'fixed' && !el.closest('.navbar, .toast, .modal, .dropdown')) {
+              // Find any elements that might be floating and contain them
+              const floatingElements = document.querySelectorAll('[style*="position: fixed"], [style*="position:fixed"]');
+              floatingElements.forEach(el => {
+                const elementSrc = (el as HTMLElement).innerHTML || '';
+                if (elementSrc.includes('euphoric-square.com') || el.closest('[src*="euphoric-square.com"]')) {
                   (el as HTMLElement).style.position = 'static';
+                  (el as HTMLElement).style.left = 'auto';
+                  (el as HTMLElement).style.right = 'auto';
+                  (el as HTMLElement).style.bottom = 'auto';
+                  (el as HTMLElement).style.top = 'auto';
                 }
               });
-            }, 100);
+            }, 200);
           };
-          
-          adContainer.appendChild(script);
-        }, index * 500); // Stagger script loading
+        }, index * 300);
       });
     }
   }, []);
@@ -72,11 +63,10 @@ const UniversalHilTopBanner: React.FC<UniversalHilTopBannerProps> = ({
       className={`universal-hiltop-banner ${className}`}
       style={{
         width: '100%',
-        minHeight: '100px',
+        height: 'auto',
+        minHeight: '50px',
         position: 'relative',
-        overflow: 'hidden',
         display: 'block',
-        zIndex: 1,
         ...style
       }}
     />

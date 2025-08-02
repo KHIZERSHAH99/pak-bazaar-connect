@@ -35,12 +35,22 @@ const HilTopBanner: React.FC<HilTopBannerProps> = ({
       style={{
         width: `${config.width}px`,
         height: `${config.height}px`,
+        maxWidth: '100%',
+        margin: '0 auto',
+        display: 'block',
+        position: 'relative',
+        overflow: 'hidden',
         ...style
       }}
       data-ad-type={adType}
       data-ad-size={`${config.width}x${config.height}`}
     >
-      <UniversalHilTopBanner />
+      <UniversalHilTopBanner 
+        style={{
+          width: '100%',
+          height: '100%'
+        }}
+      />
     </div>
   );
 };

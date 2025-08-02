@@ -884,6 +884,7 @@ export type Database = {
           estimated_delivery: string | null
           id: string
           internal_notes: string | null
+          is_guest_order: boolean | null
           last_status_update: string | null
           order_notes: string | null
           packed_at: string | null
@@ -918,6 +919,7 @@ export type Database = {
           estimated_delivery?: string | null
           id?: string
           internal_notes?: string | null
+          is_guest_order?: boolean | null
           last_status_update?: string | null
           order_notes?: string | null
           packed_at?: string | null
@@ -952,6 +954,7 @@ export type Database = {
           estimated_delivery?: string | null
           id?: string
           internal_notes?: string | null
+          is_guest_order?: boolean | null
           last_status_update?: string | null
           order_notes?: string | null
           packed_at?: string | null
@@ -1533,6 +1536,10 @@ export type Database = {
       delete_old_screenshots: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_effective_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_product_analytics: {
         Args: { p_shop_ids: string[]; p_start_date?: string }

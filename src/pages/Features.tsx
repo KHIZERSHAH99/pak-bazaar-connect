@@ -3,10 +3,6 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import InContentAdBanner from '@/components/ads/InContentAdBanner';
-import MediumRectangleAdBanner from '@/components/ads/MediumRectangleAdBanner';
-import DesktopMultitagBanner from '@/components/ads/DesktopMultitagBanner';
-import MobileMultitagBanner from '@/components/ads/MobileMultitagBanner';
 import { 
   Shield, 
   Zap, 
@@ -100,7 +96,7 @@ const Features: React.FC = () => {
             ))}
           </div>
 
-          <InContentAdBanner className="my-12" />
+          
 
           {/* Why Choose Us Section */}
           <Card className="bg-pakistani_green-50 dark:bg-pakistani_green-900/20 border-pakistani_green-200 dark:border-pakistani_green-800 mb-12">
@@ -155,15 +151,6 @@ const Features: React.FC = () => {
             </Card>
           </div>
 
-          <div className="flex justify-center my-8">
-            <MediumRectangleAdBanner />
-          </div>
-
-          {/* Additional Multitag Banners */}
-          <div className="my-8">
-            <DesktopMultitagBanner />
-            <MobileMultitagBanner />
-          </div>
 
           {/* Call to Action */}
           <Card className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 text-white">

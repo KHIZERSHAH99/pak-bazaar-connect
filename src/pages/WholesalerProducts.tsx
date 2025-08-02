@@ -6,8 +6,6 @@ import { Product, Category, City } from '@/lib/types';
 import ProductsHeader from '@/components/products/ProductsHeader';
 import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
-import HeaderAdBanner from '@/components/ads/HeaderAdBanner';
-import InContentAdBanner from '@/components/ads/InContentAdBanner';
 
 const WholesalerProducts: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -73,7 +71,6 @@ const WholesalerProducts: React.FC = () => {
 
   return (
     <Layout>
-      <HeaderAdBanner />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4 font-poppins">Wholesaler Products</h1>
@@ -95,7 +92,7 @@ const WholesalerProducts: React.FC = () => {
           onClearFilters={clearFilters}
         />
 
-        <InContentAdBanner className="my-8" />
+        
         <ProductsGrid products={products} loading={loading} />
       </div>
     </Layout>

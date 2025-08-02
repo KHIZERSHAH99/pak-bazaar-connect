@@ -6,6 +6,7 @@ import { Product, Category, City } from '@/lib/types';
 import ProductsHeader from '@/components/products/ProductsHeader';
 import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
+import InlineContentAd from '@/components/ads/InlineContentAd';
 
 const WholesalerProducts: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -92,7 +93,7 @@ const WholesalerProducts: React.FC = () => {
           onClearFilters={clearFilters}
         />
 
-        
+        <InlineContentAd />
         <ProductsGrid products={products} loading={loading} />
       </div>
     </Layout>

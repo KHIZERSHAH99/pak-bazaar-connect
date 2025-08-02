@@ -9,6 +9,8 @@ import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
+import InlineContentAd from '@/components/ads/InlineContentAd';
+import SidebarAd from '@/components/ads/SidebarAd';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -194,11 +196,16 @@ const Products: React.FC = () => {
               onClearFilters={clearFilters}
             />
 
-            
+            <InlineContentAd />
             <ProductsGrid products={products} loading={loading} />
           </div>
           
-          {/* Sidebar with ad */}
+          {/* Sidebar with ads */}
+          <div className="hidden lg:block w-80">
+            <div className="sticky top-8 space-y-6">
+              <SidebarAd />
+            </div>
+          </div>
         </div>
 
         {/* Back to Top Button - Fixed Position */}

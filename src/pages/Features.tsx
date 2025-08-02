@@ -3,6 +3,7 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import InlineContentAd from '@/components/ads/InlineContentAd';
 import { 
   Shield, 
   Zap, 
@@ -95,6 +96,8 @@ const Features: React.FC = () => {
               </Card>
             ))}
           </div>
+
+          <InlineContentAd />
 
           
 

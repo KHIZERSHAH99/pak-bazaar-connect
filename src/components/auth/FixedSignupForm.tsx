@@ -12,6 +12,7 @@ import { enhancedSignUp } from '@/lib/auth-enhanced';
 
 const FixedSignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
+    email: '',
     phoneNumber: '',
     password: '',
     confirmPassword: '',
@@ -35,11 +36,16 @@ const FixedSignupForm: React.FC = () => {
 
     try {
       console.log('🔄 Starting signup process with data:', {
+        email: formData.email,
         phoneNumber: formData.phoneNumber,
         contactName: formData.contactName,
         businessName: formData.businessName,
         role: formData.role
       });
+
+      if (!formData.email || !formData.email.includes('@')) {
+        throw new Error('Please enter a valid email address');
+      }
 
       const cleanPhone = formData.phoneNumber.replace(/[^0-9]/g, '');
       console.log('📞 Cleaned phone number:', cleanPhone);
@@ -56,12 +62,11 @@ const FixedSignupForm: React.FC = () => {
         throw new Error('Password must be more than 3 characters');
       }
 
-      const tempEmail = `${cleanPhone}@temp-phone-auth.com`;
-      console.log('📧 Generated temp email:', tempEmail);
+      console.log('📧 Using email:', formData.email);
       
       console.log('🚀 Calling enhancedSignUp...');
       await enhancedSignUp(
-        tempEmail,
+        formData.email,
         formData.password,
         formData.role,
         {
@@ -133,6 +138,23 @@ const FixedSignupForm: React.FC = () => {
                 <SelectItem value="wholesaler">Wholesaler (Sell Products)</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email" className="flex items-center font-poppins">
+              <User className="h-4 w-4 mr-2 text-primary" />
+              Email Address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="your@email.com"
+              value={formData.email}
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              disabled={isLoading}
+              className="font-poppins"
+              required
+            />
           </div>
 
           <div className="space-y-2">

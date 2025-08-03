@@ -34,7 +34,15 @@ const FixedSignupForm: React.FC = () => {
     setIsLoading(true);
 
     try {
+      console.log('🔄 Starting signup process with data:', {
+        phoneNumber: formData.phoneNumber,
+        contactName: formData.contactName,
+        businessName: formData.businessName,
+        role: formData.role
+      });
+
       const cleanPhone = formData.phoneNumber.replace(/[^0-9]/g, '');
+      console.log('📞 Cleaned phone number:', cleanPhone);
       
       if (cleanPhone.length < 10) {
         throw new Error('Please enter a valid phone number');
@@ -49,7 +57,9 @@ const FixedSignupForm: React.FC = () => {
       }
 
       const tempEmail = `${cleanPhone}@temp-phone-auth.com`;
+      console.log('📧 Generated temp email:', tempEmail);
       
+      console.log('🚀 Calling enhancedSignUp...');
       await enhancedSignUp(
         tempEmail,
         formData.password,
@@ -65,6 +75,7 @@ const FixedSignupForm: React.FC = () => {
         }
       );
 
+      console.log('✅ Signup successful!');
       toast({
         title: 'Account Created!',
         description: 'Your account has been created successfully.',
@@ -72,13 +83,20 @@ const FixedSignupForm: React.FC = () => {
 
       navigate('/dashboard');
     } catch (error: any) {
-      console.error('Signup error:', error);
+      console.error('❌ Signup error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       
       let errorMessage = 'Failed to create account. Please try again.';
       
       if (error.message?.includes('User already registered')) {
         errorMessage = 'An account with this phone number already exists. Please sign in instead.';
       } else if (error.message?.includes('Password')) {
+        errorMessage = error.message;
+      } else if (error.message) {
         errorMessage = error.message;
       }
 

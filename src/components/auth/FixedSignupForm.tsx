@@ -52,8 +52,8 @@ const FixedSignupForm: React.FC = () => {
         throw new Error('Passwords do not match');
       }
 
-      if (formData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters long');
+      if (formData.password.length <= 3) {
+        throw new Error('Password must be more than 3 characters');
       }
 
       const tempEmail = `${cleanPhone}@temp-phone-auth.com`;

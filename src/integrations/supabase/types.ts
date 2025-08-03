@@ -1525,6 +1525,10 @@ export type Database = {
         Args: { target_month?: string }
         Returns: undefined
       }
+      check_user_exists: {
+        Args: { p_email?: string; p_phone?: string }
+        Returns: Json
+      }
       delete_completed_order_screenshots: {
         Args: Record<PropertyKey, never>
         Returns: undefined

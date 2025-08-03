@@ -9,6 +9,7 @@ import { Phone, Lock, Eye, EyeOff, Loader2, User, Building } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
 import { enhancedSignUp } from '@/lib/auth-enhanced';
+import { supabase } from '@/integrations/supabase/client';
 
 const FixedSignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -60,6 +61,29 @@ const FixedSignupForm: React.FC = () => {
 
       if (formData.password.length <= 3) {
         throw new Error('Password must be more than 3 characters');
+      }
+
+      // Check for existing email/phone before creating account
+      console.log('🔍 Checking for existing users...');
+      const { data: existingCheck, error: checkError } = await supabase.rpc('check_user_exists', {
+        p_email: formData.email,
+        p_phone: formData.phoneNumber
+      });
+
+      if (checkError) {
+        console.error('Error checking existing users:', checkError);
+        throw new Error('Unable to verify account uniqueness. Please try again.');
+      }
+
+      // Type-safe check for existing users
+      const checkResult = existingCheck as { email_exists: boolean; phone_exists: boolean } | null;
+      
+      if (checkResult?.email_exists) {
+        throw new Error('An account with this email address already exists. Please use a different email or sign in instead.');
+      }
+
+      if (checkResult?.phone_exists) {
+        throw new Error('An account with this phone number already exists. Please use a different phone number or sign in instead.');
       }
 
       console.log('📧 Using email:', formData.email);

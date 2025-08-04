@@ -59,8 +59,10 @@ const FixedSignupForm: React.FC = () => {
         throw new Error('Passwords do not match');
       }
 
-      if (formData.password.length <= 3) {
-        throw new Error('Password must be more than 3 characters');
+      // Enhanced password validation
+      const passwordValidation = await import('@/lib/security/password-validation').then(m => m.validatePasswordStrength(formData.password));
+      if (!passwordValidation.isValid) {
+        throw new Error(`Password security requirements not met: ${passwordValidation.errors.join(', ')}`);
       }
 
       // Check for existing email/phone before creating account

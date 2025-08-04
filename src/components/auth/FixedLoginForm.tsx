@@ -54,18 +54,7 @@ const FixedLoginForm: React.FC = () => {
     }
   };
 
-  const handleDemoLogin = async (demoPhone: string) => {
-    setPhoneNumber(demoPhone);
-    setPassword('demo123');
-    
-    // Small delay to show the form filled, then auto-submit
-    setTimeout(() => {
-      const form = document.querySelector('form') as HTMLFormElement;
-      if (form) {
-        form.requestSubmit();
-      }
-    }, 500);
-  };
+  // Demo login removed for security in production
 
   return (
     <Card className="w-full max-w-md mx-auto shadow-lg">
@@ -155,43 +144,13 @@ const FixedLoginForm: React.FC = () => {
           </p>
         </div>
 
-        <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
-          <h4 className="font-medium text-green-800 mb-3 font-poppins">Demo Accounts:</h4>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-2 bg-white rounded border">
-              <div className="text-sm text-green-700 font-poppins">
-                <p><strong>Wholesaler:</strong> 03001234567</p>
-                <p className="text-xs text-green-600">Password: demo123</p>
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => handleDemoLogin('03001234567')}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                Use
-              </Button>
-            </div>
-            <div className="flex items-center justify-between p-2 bg-white rounded border">
-              <div className="text-sm text-green-700 font-poppins">
-                <p><strong>Seller:</strong> 03004567890</p>
-                <p className="text-xs text-green-600">Password: demo123</p>
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => handleDemoLogin('03004567890')}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                Use
-              </Button>
-            </div>
+        {/* Demo accounts only in development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200">
+            <h4 className="font-medium text-amber-800 mb-2 font-poppins">Development Testing:</h4>
+            <p className="text-xs text-amber-600 font-poppins">Demo accounts are only available in development mode for testing purposes.</p>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

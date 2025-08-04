@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Upload, X, Image, FileImage } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { validateFile, ALLOWED_MIME_TYPES, sanitizeFileName } from '@/lib/security/file-validation';
+import { fileSecurityManager } from '@/lib/security/file-security-enhanced';
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
@@ -33,23 +34,24 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   const validateFileContent = async (file: File): Promise<boolean> => {
     try {
-      // Determine allowed MIME types based on accept prop
-      let allowedTypes: string[] = [];
-      if (accept.includes('image/')) {
-        allowedTypes = [...ALLOWED_MIME_TYPES.images];
-      } else if (accept.includes('application/pdf')) {
-        allowedTypes = [...ALLOWED_MIME_TYPES.documents];
-      } else {
-        // Parse custom accept string
-        allowedTypes = accept.split(',').map(type => type.trim());
+      // Enhanced security validation using the security manager
+      const securityResult = await fileSecurityManager.performEnhancedValidation(file, category);
+      
+      if (!securityResult.isValid) {
+        toast({
+          title: "Security validation failed",
+          description: securityResult.errors.join('. '),
+          variant: "destructive"
+        });
+        return false;
       }
 
-      const validationResult = await validateFile(file, category, allowedTypes);
-      
-      if (!validationResult.isValid) {
+      // Log security threats if detected
+      if (securityResult.securityThreats.length > 0) {
+        console.warn('Security threats detected in file:', securityResult.securityThreats);
         toast({
-          title: "File validation failed",
-          description: validationResult.errors.join('. '),
+          title: "Security concerns detected",
+          description: "File contains suspicious content and was blocked for security.",
           variant: "destructive"
         });
         return false;

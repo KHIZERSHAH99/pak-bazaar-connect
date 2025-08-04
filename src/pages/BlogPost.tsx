@@ -5,6 +5,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, User, Clock, ArrowLeft, Share2 } from 'lucide-react';
+import { sanitizeHtmlContent } from '@/lib/security/content-sanitizer';
+
+// Safe HTML Content Component
+const SafeHtmlContent: React.FC<{ content: string; className?: string }> = ({ content, className }) => {
+  const { sanitizedContent, securityThreats } = sanitizeHtmlContent(content);
+  
+  // Log security threats if any
+  if (securityThreats.length > 0) {
+    console.warn('Security threats detected in blog content:', securityThreats);
+  }
+  
+  return (
+    <div 
+      className={className}
+      dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+    />
+  );
+};
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -275,10 +293,10 @@ const BlogPost = () => {
                   </div>
                 </div>
 
-                {/* Article Body */}
-                <div 
+                {/* Article Body - NOW SAFE FROM XSS */}
+                <SafeHtmlContent 
+                  content={post.content}
                   className="prose prose-lg dark:prose-invert max-w-none font-poppins"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
                 {/* Call to Action */}

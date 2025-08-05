@@ -35,15 +35,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
   return (
     <div className="md:hidden bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 shadow-lg">
-      <div className="px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto">
+      <div className="px-3 py-4 space-y-3 max-h-[75vh] overflow-y-auto">
         {/* Main Navigation */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Link to="/" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
+              size="sm"
               className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
             >
-              <Home className="w-4 h-4 mr-3" />
+              <Home className="w-4 h-4 mr-2" />
               Home
             </Button>
           </Link>
@@ -51,9 +52,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/products" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
+              size="sm"
               className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
             >
-              <ShoppingBag className="w-4 h-4 mr-3" />
+              <ShoppingBag className="w-4 h-4 mr-2" />
               Products
             </Button>
           </Link>
@@ -61,9 +63,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/dashboard/browse-shops" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
+              size="sm"
               className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins"
             >
-              <Users className="w-4 h-4 mr-3" />
+              <Users className="w-4 h-4 mr-2" />
               Shops
             </Button>
           </Link>
@@ -71,9 +74,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/features" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
+              size="sm"
               className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
             >
-              <Zap className="w-4 h-4 mr-3" />
+              <Zap className="w-4 h-4 mr-2" />
               Features
             </Button>
           </Link>
@@ -81,18 +85,18 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
         {/* User Section */}
         {user ? (
-          <div className="space-y-4 border-t border-gray-200 dark:border-gray-800 pt-4">
+          <div className="space-y-3 border-t border-gray-200 dark:border-gray-800 pt-3">
             {/* User Info */}
             {profile && (
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-2 rounded-full">
-                  <User className="w-5 h-5 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <div className="flex items-center space-x-2 p-2.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-1.5 rounded-full">
+                  <User className="w-4 h-4 text-pakistani_green-700 dark:text-pakistani_green-400" />
                 </div>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900 dark:text-white font-poppins text-sm">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 dark:text-white font-poppins text-sm truncate">
                     {profile.email}
                   </p>
-                  <Badge variant="secondary" className="text-xs font-poppins mt-1">
+                  <Badge variant="secondary" className="text-xs font-poppins mt-0.5">
                     {profile.role}
                   </Badge>
                 </div>
@@ -100,13 +104,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             )}
 
             {/* User Actions */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Link to="/profile" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
+                  size="sm"
                   className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
                 >
-                  <User className="w-4 h-4 mr-3" />
+                  <User className="w-4 h-4 mr-2" />
                   Profile
                 </Button>
               </Link>
@@ -114,9 +119,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link to="/dashboard" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
+                  size="sm"
                   className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
                 >
-                  <Settings className="w-4 h-4 mr-3" />
+                  <Settings className="w-4 h-4 mr-2" />
                   Dashboard
                 </Button>
               </Link>
@@ -124,9 +130,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link to="/favorites" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
+                  size="sm"
                   className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
                 >
-                  <Heart className="w-4 h-4 mr-3" />
+                  <Heart className="w-4 h-4 mr-2" />
                   Favorites
                 </Button>
               </Link>
@@ -134,9 +141,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link to="/messages" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
+                  size="sm"
                   className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
                 >
-                  <MessageSquare className="w-4 h-4 mr-3" />
+                  <MessageSquare className="w-4 h-4 mr-2" />
                   Messages
                 </Button>
               </Link>
@@ -145,9 +153,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 <Link to="/analytics" onClick={handleLinkClick}>
                   <Button 
                     variant="ghost" 
+                    size="sm"
                     className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
                   >
-                    <BarChart className="w-4 h-4 mr-3" />
+                    <BarChart className="w-4 h-4 mr-2" />
                     Analytics
                   </Button>
                 </Link>
@@ -155,14 +164,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             </div>
 
             {/* Controls Section */}
-            <div className="space-y-3 border-t border-gray-200 dark:border-gray-800 pt-4">
+            <div className="space-y-2 border-t border-gray-200 dark:border-gray-800 pt-3">
               {/* Theme Toggle */}
               <Button
                 onClick={handleThemeToggle}
                 variant="ghost"
+                size="sm"
                 className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
               >
-                {theme === 'light' ? <Moon className="w-4 h-4 mr-3" /> : <Sun className="w-4 h-4 mr-3" />}
+                {theme === 'light' ? <Moon className="w-4 h-4 mr-2" /> : <Sun className="w-4 h-4 mr-2" />}
                 {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
               </Button>
             </div>
@@ -174,24 +184,26 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 onClose();
               }}
               variant="outline"
+              size="sm"
               className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900/20 dark:hover:text-red-300 font-poppins"
             >
-              <LogOut className="w-4 h-4 mr-3" />
+              <LogOut className="w-4 h-4 mr-2" />
               Logout
             </Button>
           </div>
         ) : (
-          <div className="space-y-3 border-t border-gray-200 dark:border-gray-800 pt-4">
+          <div className="space-y-2 border-t border-gray-200 dark:border-gray-800 pt-3">
             <Link to="/login" onClick={handleLinkClick}>
               <Button 
                 variant="ghost" 
+                size="sm"
                 className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
               >
                 Login
               </Button>
             </Link>
             <Link to="/signup" onClick={handleLinkClick}>
-              <Button className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins">
+              <Button size="sm" className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins">
                 Sign Up
               </Button>
             </Link>

@@ -58,16 +58,16 @@ const Navbar = () => {
       {/* Main Navbar */}
       <header className="bg-white dark:bg-gray-950 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-              <div className="bg-pakistani_green-700 rounded-xl p-2 shadow-md hover:shadow-lg transition-shadow">
-                <span className="text-white text-xl font-bold">PBC</span>
-              </div>
-              <span className="text-xl font-bold text-pakistani_green-800 dark:text-white hidden sm:inline font-poppins">
-                Pak Bazaar Connect
-              </span>
-            </Link>
+            <div className="flex justify-between items-center h-14 md:h-16">
+              {/* Logo */}
+              <Link to="/" className="flex items-center space-x-2 md:space-x-3 hover:opacity-80 transition-opacity">
+                <div className="bg-pakistani_green-700 rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-white text-lg md:text-xl font-bold">PBC</span>
+                </div>
+                <span className="text-lg md:text-xl font-bold text-pakistani_green-800 dark:text-white hidden sm:inline font-poppins">
+                  Pak Bazaar Connect
+                </span>
+              </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
@@ -127,8 +127,8 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
-                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <Button variant="ghost" size="icon-sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
           </div>

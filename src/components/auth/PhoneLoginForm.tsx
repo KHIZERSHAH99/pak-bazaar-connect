@@ -6,8 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, Lock, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { phoneSignIn } from '@/lib/phone-auth';
 
 const PhoneLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -22,17 +22,7 @@ const PhoneLoginForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Convert phone number to temporary email format
-      const tempEmail = `${phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
-      
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: tempEmail,
-        password: password,
-      });
-
-      if (error) {
-        throw error;
-      }
+      const data = await phoneSignIn(phoneNumber, password);
 
       toast({
         title: 'Login Successful',
@@ -70,7 +60,7 @@ const PhoneLoginForm: React.FC = () => {
             <Input
               id="phoneNumber"
               type="tel"
-              placeholder="03XX XXXXXXX or +92XXX XXXXXXX"
+              placeholder="03XX XXXXXXX"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               disabled={isLoading}

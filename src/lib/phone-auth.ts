@@ -31,32 +31,49 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
       throw new Error('Please enter a valid phone number');
     }
 
-    // Strategy 1: Direct query to find user by phone number
-    const { data: userProfile, error: lookupError } = await supabase
-      .from('profiles')
-      .select('id, email, phone_number, role')
-      .eq('phone_number', cleanPhone)
-      .maybeSingle();
+    // Strategy 1: Try multiple phone number variations
+    const phoneVariations = [
+      cleanPhone,
+      cleanPhone.startsWith('92') ? `0${cleanPhone.substring(2)}` : `92${cleanPhone.startsWith('0') ? cleanPhone.substring(1) : cleanPhone}`,
+      cleanPhone.startsWith('0') ? cleanPhone : `0${cleanPhone}`,
+      cleanPhone.startsWith('0') ? cleanPhone.substring(1) : cleanPhone
+    ];
 
-    if (lookupError) {
-      console.error('Phone lookup error:', lookupError);
-      throw new Error('Authentication failed');
-    }
+    console.log('🔍 Trying phone variations:', phoneVariations);
 
+    let userProfile = null;
     let loginEmail = '';
+
+    // Try each phone variation
+    for (const phoneVar of phoneVariations) {
+      const { data: profile, error: lookupError } = await supabase
+        .from('profiles')
+        .select('id, email, phone_number, role')
+        .eq('phone_number', phoneVar)
+        .maybeSingle();
+
+      if (lookupError && lookupError.code !== 'PGRST116') {
+        console.error('Phone lookup error:', lookupError);
+        continue;
+      }
+
+      if (profile) {
+        userProfile = profile;
+        loginEmail = profile.email;
+        console.log('✅ Found user via phone lookup:', phoneVar, '→', loginEmail);
+        break;
+      }
+    }
     
-    if (userProfile) {
-      // Found user via phone number lookup
-      loginEmail = userProfile.email;
-      console.log('✅ Found user via phone lookup:', loginEmail);
-    } else {
+    if (!userProfile) {
       // Strategy 2: Try phone-based email formats as fallback
       const phoneEmailFormats = [
-        `${cleanPhone}@phone.auth.local`,
-        `${cleanPhone}@temp-phone-auth.com`
+        `${cleanPhone}@temp-phone-auth.com`,
+        `${cleanPhone}@phone.auth.local`
       ];
       
-      let foundProfile = null;
+      console.log('🔍 Trying email formats:', phoneEmailFormats);
+      
       for (const emailFormat of phoneEmailFormats) {
         const { data: fallbackProfile } = await supabase
           .from('profiles')
@@ -65,14 +82,15 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
           .maybeSingle();
           
         if (fallbackProfile) {
-          foundProfile = fallbackProfile;
+          userProfile = fallbackProfile;
           loginEmail = emailFormat;
           console.log('✅ Found user via email format:', emailFormat);
           break;
         }
       }
       
-      if (!foundProfile) {
+      if (!userProfile) {
+        console.log('❌ No user found with phone:', phoneNumber);
         throw new Error('No account found with this phone number');
       }
     }

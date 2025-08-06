@@ -1315,7 +1315,9 @@ export type Database = {
           is_suspended: boolean | null
           last_commission_payment: string | null
           last_order_data: Json | null
+          last_otp_request: string | null
           last_role_switch: string | null
+          normalized_phone: string | null
           ntn_number: string | null
           otp_attempts: number | null
           otp_code: string | null
@@ -1352,7 +1354,9 @@ export type Database = {
           is_suspended?: boolean | null
           last_commission_payment?: string | null
           last_order_data?: Json | null
+          last_otp_request?: string | null
           last_role_switch?: string | null
+          normalized_phone?: string | null
           ntn_number?: string | null
           otp_attempts?: number | null
           otp_code?: string | null
@@ -1389,7 +1393,9 @@ export type Database = {
           is_suspended?: boolean | null
           last_commission_payment?: string | null
           last_order_data?: Json | null
+          last_otp_request?: string | null
           last_role_switch?: string | null
+          normalized_phone?: string | null
           ntn_number?: string | null
           otp_attempts?: number | null
           otp_code?: string | null
@@ -1541,6 +1547,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      generate_otp: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_effective_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -1582,6 +1592,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      normalize_pakistani_phone: {
+        Args: { phone_input: string }
+        Returns: string
+      }
       suspend_overdue_accounts: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1598,6 +1612,10 @@ export type Database = {
           p_referrer?: string
         }
         Returns: undefined
+      }
+      validate_pakistani_phone: {
+        Args: { phone_input: string }
+        Returns: boolean
       }
     }
     Enums: {

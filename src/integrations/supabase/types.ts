@@ -1531,6 +1531,14 @@ export type Database = {
         Args: { target_month?: string }
         Returns: undefined
       }
+      can_request_otp: {
+        Args: { user_phone: string }
+        Returns: boolean
+      }
+      check_account_lockout: {
+        Args: { user_phone: string }
+        Returns: Json
+      }
       check_user_exists: {
         Args: { p_email?: string; p_phone?: string }
         Returns: Json
@@ -1616,6 +1624,10 @@ export type Database = {
       validate_pakistani_phone: {
         Args: { phone_input: string }
         Returns: boolean
+      }
+      verify_otp: {
+        Args: { user_phone: string; provided_otp: string }
+        Returns: Json
       }
     }
     Enums: {

@@ -212,29 +212,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      // Determine if input is phone number or email
-      const isPhoneNumber = /^[\d\s\+\-\(\)]+$/.test(phoneOrEmail.trim());
+      console.log('🔐 Starting Pakistani phone sign in process for:', phoneOrEmail);
       
-      if (isPhoneNumber) {
-        await phoneSignIn(phoneOrEmail, password);
+      // Import Pakistani phone auth functions dynamically
+      const { phoneSignIn: pakPhoneSignIn, validatePakistaniPhone, normalizePakistaniPhone } = await import('@/lib/pakistani-phone-auth');
+      
+      // Always treat input as a Pakistani phone number first
+      const normalizedPhone = normalizePakistaniPhone(phoneOrEmail);
+      
+      if (validatePakistaniPhone(normalizedPhone)) {
+        console.log('📱 Using Pakistani phone authentication for:', normalizedPhone);
+        await pakPhoneSignIn(normalizedPhone, password);
       } else {
-        // Use email authentication
-        const cleanEmail = phoneOrEmail.toLowerCase().trim();
+        // Fallback to old phone auth for existing users or email auth
+        const isPhoneNumber = /^[\d\s\+\-\(\)]+$/.test(phoneOrEmail.trim());
         
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: cleanEmail,
-          password
-        });
+        if (isPhoneNumber) {
+          console.log('📱 Fallback to legacy phone authentication');
+          await phoneSignIn(phoneOrEmail, password);
+        } else {
+          console.log('📧 Using email authentication');
+          const cleanEmail = phoneOrEmail.toLowerCase().trim();
+          
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: cleanEmail,
+            password
+          });
 
-        if (error) {
-          console.error('Email sign in error:', error);
-          throw new Error(error.message);
+          if (error) {
+            console.error('Email sign in error:', error);
+            throw new Error(error.message);
+          }
         }
       }
 
       toast({
         title: "Sign in successful",
-        description: "Welcome back!",
+        description: "خوش آمدید! Welcome back!",
         variant: "default"
       });
 
@@ -259,36 +273,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      // Determine if input is phone number or email
-      const isPhoneNumber = /^[\d\s\+\-\(\)]+$/.test(phoneOrEmail.trim());
+      console.log('🔐 Starting Pakistani phone sign up process for:', phoneOrEmail);
       
-      if (isPhoneNumber) {
-        await phoneSignUp(phoneOrEmail, password, role as UserRole, businessData || {});
+      // Import Pakistani phone auth functions dynamically
+      const { phoneSignUp: pakPhoneSignUp, validatePakistaniPhone, normalizePakistaniPhone } = await import('@/lib/pakistani-phone-auth');
+      
+      // Always treat input as a Pakistani phone number first
+      const normalizedPhone = normalizePakistaniPhone(phoneOrEmail);
+      
+      if (validatePakistaniPhone(normalizedPhone)) {
+        console.log('📱 Using Pakistani phone signup for:', normalizedPhone);
+        await pakPhoneSignUp(normalizedPhone, password, role as UserRole, businessData || {});
       } else {
-        // Use email authentication
-        const cleanEmail = phoneOrEmail.toLowerCase().trim();
+        // Fallback to old phone signup for existing users or email signup
+        const isPhoneNumber = /^[\d\s\+\-\(\)]+$/.test(phoneOrEmail.trim());
         
-        const { data, error } = await supabase.auth.signUp({
-          email: cleanEmail,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/dashboard/seller-dashboard`,
-            data: {
-              role: 'seller', // Force seller role for all signups
-              ...businessData
+        if (isPhoneNumber) {
+          console.log('📱 Fallback to legacy phone signup');
+          await phoneSignUp(phoneOrEmail, password, role as UserRole, businessData || {});
+        } else {
+          console.log('📧 Using email signup');
+          const cleanEmail = phoneOrEmail.toLowerCase().trim();
+          
+          const { data, error } = await supabase.auth.signUp({
+            email: cleanEmail,
+            password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/dashboard`,
+              data: {
+                role: role || 'seller',
+                ...businessData
+              }
             }
-          }
-        });
+          });
 
-        if (error) {
-          console.error('Email sign up error:', error);
-          throw new Error(error.message);
+          if (error) {
+            console.error('Email sign up error:', error);
+            throw new Error(error.message);
+          }
         }
       }
 
       toast({
         title: "Account created successfully",
-        description: "Please check your email to verify your account",
+        description: "اکاؤنٹ بن گیا! Your Pakistani business account is ready.",
         variant: "default"
       });
 

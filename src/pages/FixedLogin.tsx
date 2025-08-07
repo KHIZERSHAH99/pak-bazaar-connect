@@ -2,7 +2,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContextFixed';
-import FixedLoginForm from '@/components/auth/FixedLoginForm';
+import PakistaniLoginForm from '@/components/auth/PakistaniLoginForm';
 
 const FixedLogin: React.FC = () => {
   const { user, loading } = useAuth();
@@ -21,7 +21,7 @@ const FixedLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <FixedLoginForm />
+      <PakistaniLoginForm />
     </div>
   );
 };

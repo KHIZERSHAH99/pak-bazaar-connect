@@ -249,8 +249,10 @@ export const phoneSignUp = async (
 export const phoneSignIn = async (phoneNumber: string, password: string) => {
   try {
     console.log('🔐 Starting Pakistani phone sign in');
+    console.log('📱 Input phone number:', phoneNumber);
     
     const normalizedPhone = normalizePakistaniPhone(phoneNumber);
+    console.log('📱 Normalized phone:', normalizedPhone);
     
     if (!validatePakistaniPhone(normalizedPhone)) {
       throw new Error('Please enter a valid Pakistani mobile number (03XX-XXXXXXX)');
@@ -263,6 +265,7 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
     }
 
     // Find user by normalized phone
+    console.log('🔍 Looking up user with normalized phone:', normalizedPhone);
     const { data: userProfile, error: lookupError } = await supabase
       .from('profiles')
       .select('id, email, normalized_phone, phone_verified, role')
@@ -274,7 +277,17 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
       throw new Error('Authentication failed');
     }
 
+    console.log('🔍 User lookup result:', userProfile);
+    
     if (!userProfile) {
+      // Let's also check what phones exist in the database for debugging
+      const { data: allProfiles } = await supabase
+        .from('profiles')
+        .select('normalized_phone, phone_number')
+        .limit(10);
+      
+      console.log('📞 Available phones in database:', allProfiles);
+      
       // Log failed attempt
       await supabase.rpc('log_audit_event', {
         p_user_id: null,

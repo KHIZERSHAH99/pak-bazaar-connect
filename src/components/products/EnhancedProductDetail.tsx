@@ -32,7 +32,7 @@ interface EnhancedProductDetailProps {
 const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, onBack }) => {
   const [quantity, setQuantity] = useState(product.moq || 1);
   const [showOrderForm, setShowOrderForm] = useState(false);
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -55,19 +55,23 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
   };
 
   const handleOrderClick = () => {
-    if (!profile) {
+    // Allow guests and sellers to place orders
+    const canOrder = !user || profile?.role === 'seller' || !profile;
+    
+    if (!canOrder) {
       toast({
-        title: "Login Required",
-        description: "Please login to place an order",
+        title: "Access Required",
+        description: "Please sign in as a seller to place orders",
         variant: "destructive"
       });
       return;
     }
 
-    if (profile.role !== 'seller') {
+    // Check if trying to order from own shop (only for authenticated users)
+    if (user && product.shops?.owner_id === user.id) {
       toast({
-        title: "Access Denied",
-        description: "Only sellers can place orders",
+        title: "Cannot Order",
+        description: "You cannot order from your own shop",
         variant: "destructive"
       });
       return;
@@ -231,17 +235,10 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 onClick={handleOrderClick}
                 className="w-full"
                 size="lg"
-                disabled={!profile || profile.role !== 'seller'}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Place Order
               </Button>
-
-              {(!profile || profile.role !== 'seller') && (
-                <p className="text-sm text-muted-foreground text-center">
-                  Please login as a seller to place orders
-                </p>
-              )}
             </div>
           </div>
         </div>

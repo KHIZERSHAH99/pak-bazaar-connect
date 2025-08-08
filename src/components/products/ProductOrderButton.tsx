@@ -26,7 +26,7 @@ const ProductOrderButton: React.FC<ProductOrderButtonProps> = ({
   const { toast } = useToast();
 
   const totalAmount = (product.price || 0) * quantity;
-  const canOrder = user && profile?.role === 'seller';
+  const canOrder = !user || profile?.role === 'seller' || !profile; // Allow guests and sellers
 
   const handleOrderClick = () => {
     if (!canOrder) {
@@ -75,7 +75,7 @@ const ProductOrderButton: React.FC<ProductOrderButtonProps> = ({
         className={`bg-primary hover:bg-primary/90 font-poppins ${className || 'w-full'}`}
       >
         <ShoppingCart className="h-4 w-4 mr-2" />
-        {canOrder ? 'Place Order' : 'Sign in to Order'}
+        Place Order
       </Button>
 
       {/* Order Dialog */}

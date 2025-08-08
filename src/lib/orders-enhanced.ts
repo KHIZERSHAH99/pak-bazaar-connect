@@ -527,12 +527,16 @@ export const createOrderWithPayment = async (
 ): Promise<Order | null> => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      throw new Error('User not authenticated');
+    const isGuestOrder = !user;
+    
+    // For guest orders, require buyer info
+    if (isGuestOrder && !buyerInfo) {
+      throw new Error('Buyer information is required for guest orders');
     }
 
     // Upload payment screenshot
-    const screenshotPath = `${user.id}/${Date.now()}_${paymentScreenshot.name}`;
+    const userId = user?.id || 'guest';
+    const screenshotPath = `${userId}/${Date.now()}_${paymentScreenshot.name}`;
     const { error: uploadError } = await supabase.storage
       .from('payment-screenshots')
       .upload(screenshotPath, paymentScreenshot);
@@ -543,13 +547,14 @@ export const createOrderWithPayment = async (
 
     // Create order
     const orderData = {
-      buyer_id: user.id,
+      buyer_id: user?.id || '00000000-0000-0000-0000-000000000000', // Special UUID for guest orders
       shop_id: shopId,
       total_amount: totalAmount,
       payment_method: paymentMethod,
       payment_screenshot: screenshotPath,
       screenshot_uploaded_at: new Date().toISOString(),
       status: 'pending',
+      is_guest_order: isGuestOrder,
       buyer_name: buyerInfo?.buyer_name || 'Unknown',
       buyer_phone: buyerInfo?.buyer_phone || '',
       buyer_address: buyerInfo?.buyer_address || ''

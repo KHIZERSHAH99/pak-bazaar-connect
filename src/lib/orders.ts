@@ -36,10 +36,14 @@ export const createOrder = async (orderData: {
   buyerName?: string;
   buyerPhone?: string;
   buyerAddress?: string;
+  isGuestOrder?: boolean;
 }): Promise<Order> => {
   const user = await getCurrentUser();
   
-  if (!user) throw new Error('User not authenticated');
+  // Allow guest orders
+  if (!user && !orderData.isGuestOrder) {
+    throw new Error('User not authenticated');
+  }
   
   // Validate input
   if (!orderData.shopId || !orderData.totalAmount) {
@@ -50,7 +54,7 @@ export const createOrder = async (orderData: {
     throw new Error('Order amount must be greater than 0');
   }
   
-  // Get shop details to check if user is not ordering from own shop
+  // Get shop details to check if user is not ordering from own shop (only for authenticated users)
   const { data: shop, error: shopError } = await supabase
     .from('shops')
     .select('owner_id, name')
@@ -62,20 +66,22 @@ export const createOrder = async (orderData: {
     throw new Error('Shop not found');
   }
   
-  if (shop.owner_id === user.id) {
+  // Only check shop ownership for authenticated users
+  if (user && shop.owner_id === user.id) {
     throw new Error('You cannot order from your own shop');
   }
   
   const { data, error } = await supabase
     .from('orders')
     .insert([{
-      buyer_id: user.id,
+      buyer_id: user?.id || '00000000-0000-0000-0000-000000000000', // Special UUID for guest orders
       shop_id: orderData.shopId,
       total_amount: orderData.totalAmount,
       payment_method: orderData.paymentMethod || 'bank_transfer',
       buyer_name: orderData.buyerName,
       buyer_phone: orderData.buyerPhone,
       buyer_address: orderData.buyerAddress,
+      is_guest_order: !user,
       status: 'pending'
     }])
     .select(`

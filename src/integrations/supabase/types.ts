@@ -1527,6 +1527,10 @@ export type Database = {
         Args: { p_order_id: string; p_status: string; p_notes?: string }
         Returns: string
       }
+      associate_phone_with_account: {
+        Args: { p_email: string; p_phone_number: string }
+        Returns: Json
+      }
       calculate_monthly_commissions: {
         Args: { target_month?: string }
         Returns: undefined
@@ -1558,6 +1562,15 @@ export type Database = {
       generate_otp: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_available_phones: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          phone_number: string
+          normalized_phone: string
+          email: string
+          role: string
+        }[]
       }
       get_effective_user_role: {
         Args: Record<PropertyKey, never>

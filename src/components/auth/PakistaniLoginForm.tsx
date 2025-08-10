@@ -85,9 +85,36 @@ const PakistaniLoginForm: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Login error:', error);
+      
+      // Enhanced error handling with helpful suggestions
+      let errorMessage = error.message || 'Invalid phone number or password';
+      let toastDescription = errorMessage;
+      
+      if (errorMessage.includes('No account found')) {
+        toastDescription = `${errorMessage}\n\nWould you like to create a new account?`;
+        
+        // Show a more helpful toast for this specific error
+        setTimeout(() => {
+          toast({
+            title: 'Account Not Found',
+            description: 'No account exists with this phone number. Create a new account to get started.',
+            action: (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/signup')}
+                className="ml-2"
+              >
+                Sign Up
+              </Button>
+            ),
+          });
+        }, 1000);
+      }
+      
       toast({
         title: 'Login Failed',
-        description: error.message || 'Invalid phone number or password',
+        description: toastDescription,
         variant: 'destructive',
       });
     } finally {

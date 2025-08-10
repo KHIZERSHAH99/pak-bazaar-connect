@@ -3,11 +3,17 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import PhoneLoginForm from '@/components/auth/PhoneLoginForm';
+import PakistaniLoginForm from '@/components/auth/PakistaniLoginForm';
 import SignupForm from '@/components/auth/SignupForm';
+import LoginDebugPanel from '@/components/auth/LoginDebugPanel';
 import { Button } from '@/components/ui/button';
 
 const Login: React.FC = () => {
   const [showSignup, setShowSignup] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
+
+  // Check if we should show debug panel (only in development or for debugging)
+  const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('lovable.app');
 
   return (
     <Layout>
@@ -28,7 +34,7 @@ const Login: React.FC = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
           <div className="px-4 py-8 sm:px-10">
-            {showSignup ? <SignupForm /> : <PhoneLoginForm />}
+            {showSignup ? <SignupForm /> : <PakistaniLoginForm />}
             
             <div className="mt-6 text-center">
               <Button
@@ -43,6 +49,18 @@ const Login: React.FC = () => {
               </Button>
             </div>
 
+            {isDev && (
+              <div className="mt-4 text-center">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDebug(!showDebug)}
+                  className="text-sm"
+                >
+                  {showDebug ? 'Hide Debug' : 'Show Debug Panel'}
+                </Button>
+              </div>
+            )}
+
             <div className="mt-6 text-center">
               <Link
                 to="/"
@@ -52,6 +70,12 @@ const Login: React.FC = () => {
               </Link>
             </div>
           </div>
+          
+          {showDebug && isDev && (
+            <div className="mt-8 px-4">
+              <LoginDebugPanel />
+            </div>
+          )}
         </div>
       </div>
     </Layout>

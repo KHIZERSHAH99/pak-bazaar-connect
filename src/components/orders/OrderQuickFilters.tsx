@@ -99,7 +99,7 @@ const OrderQuickFilters: React.FC<OrderQuickFiltersProps> = ({
   return <div className="space-y-4 bg-[#aae4aa]/0">
       {/* Main Status Filters */}
       <Card className="bg-[#aae4aa]/0">
-        <CardContent className="p-4 bg-[#aae4aa] rounded-2xl">
+        <CardContent className="p-4 rounded-2xl bg-[1#00ff000f] bg-[#00ff00]/[0.06]">
           <div className="flex flex-wrap gap-2 bg-[#00ee00]/0">
             {filters.map(filter => {
             const stats = calculateStats(filter.key === 'all' ? undefined : filter.key);
@@ -127,7 +127,7 @@ const OrderQuickFilters: React.FC<OrderQuickFiltersProps> = ({
 
       {/* Priority Filters */}
       {userRole === 'wholesaler' && <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-4 bg-[#00ff00]/[0.06]">
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="h-4 w-4 text-orange-600" />
               <span className="text-sm font-medium text-orange-800">Priority Filters</span>

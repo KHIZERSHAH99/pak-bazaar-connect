@@ -248,7 +248,7 @@ export const phoneSignUp = async (
 // Sign in with Pakistani phone number
 export const phoneSignIn = async (phoneNumber: string, password: string) => {
   try {
-    console.log('🔐 Starting Pakistani phone sign in');
+    console.log('🔐 Starting Pakistani phone sign in with secure function');
     console.log('📱 Input phone number:', phoneNumber);
     
     const normalizedPhone = normalizePakistaniPhone(phoneNumber);
@@ -264,107 +264,40 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
       throw new Error(lockoutStatus.message || 'Account temporarily locked');
     }
 
-    // Enhanced debug: Check all phone number variations
-    console.log('🔍 Checking multiple phone variations...');
-    const phoneVariations = [
-      normalizedPhone,
-      phoneNumber, // original input
-      phoneNumber.replace(/[^0-9]/g, ''), // cleaned original
-      // Also try with different prefixes if needed
-    ];
+    console.log('🔍 Using secure database function for user lookup...');
     
-    console.log('📞 Phone variations to check:', phoneVariations);
+    // Use the secure database function to find user
+    const { data: lookupResult, error: lookupError } = await supabase
+      .rpc('authenticate_user_by_phone', { user_phone: phoneNumber });
 
-    // Try to find user with any phone variation
-    let userProfile = null;
-    let foundWithPhone = '';
-    
-    for (const phoneVar of phoneVariations) {
-      const { data: profile, error: lookupError } = await supabase
-        .from('profiles')
-        .select('id, email, normalized_phone, phone_number, phone_verified, role')
-        .eq('normalized_phone', phoneVar)
-        .maybeSingle();
-
-      if (profile) {
-        userProfile = profile;
-        foundWithPhone = phoneVar;
-        break;
-      }
-      
-      // Also try matching on phone_number field (in case normalization is different)
-      const { data: profile2 } = await supabase
-        .from('profiles')
-        .select('id, email, normalized_phone, phone_number, phone_verified, role')
-        .eq('phone_number', phoneVar)
-        .maybeSingle();
-        
-      if (profile2) {
-        userProfile = profile2;
-        foundWithPhone = phoneVar;
-        break;
-      }
+    if (lookupError) {
+      console.error('❌ Database function error:', lookupError);
+      throw new Error('Authentication service error. Please try again.');
     }
 
-    console.log('🔍 User lookup result:', userProfile);
-    console.log('📱 Found with phone variation:', foundWithPhone);
-    
-    if (!userProfile) {
-      // Enhanced debugging: Get all available phones with better logging
-      console.log('❌ No user found, checking all available phones...');
-      
-      const { data: allProfiles, error: debugError } = await supabase
-        .from('profiles')
-        .select('normalized_phone, phone_number, email, role')
-        .not('normalized_phone', 'is', null)
-        .limit(20);
-      
-      if (debugError) {
-        console.error('Debug query error:', debugError);
-      } else {
-        console.log('📞 All available phones in database:', allProfiles);
-        console.log('📞 Total profiles with phones:', allProfiles?.length || 0);
-      }
+    console.log('📋 Lookup result:', lookupResult);
 
-      // Check if we can find user by other means
-      const { data: emailProfiles } = await supabase
-        .from('profiles')
-        .select('id, email, phone_number, normalized_phone')
-        .limit(5);
-      
-      console.log('📧 Sample profiles (first 5):', emailProfiles);
-      
-      // Log failed attempt with more details
-      try {
-        await supabase.rpc('log_audit_event', {
-          p_user_id: null,
-          p_event_type: 'login_failed',
-          p_new_values: JSON.stringify({ 
-            phone: normalizedPhone, 
-            variations: phoneVariations,
-            reason: 'user_not_found',
-            available_count: allProfiles?.length || 0
-          })
-        });
-      } catch (auditError) {
-        console.error('Audit log error:', auditError);
-      }
-      
-      throw new Error('No account found with this phone number. Please check the number or create a new account.');
+    // Type the lookup result
+    const authResult = lookupResult as { 
+      success: boolean; 
+      error?: string; 
+      email?: string; 
+      user_id?: string; 
+    };
+
+    if (!authResult.success) {
+      console.log('❌ User not found:', authResult.error);
+      throw new Error(authResult.error || 'No account found with this phone number. Please check the number or create a new account.');
     }
 
-    // Enhanced validation - check if account is properly set up
-    if (!userProfile.email) {
-      console.error('User profile missing email:', userProfile);
-      throw new Error('Account configuration error. Please contact support.');
-    }
+    const { email, user_id } = authResult;
+    console.log('✅ User found - Email:', email, 'ID:', user_id);
 
-    console.log('✅ User found, attempting authentication...');
-    console.log('📧 Using email for auth:', userProfile.email);
+    console.log('🔑 Attempting Supabase authentication...');
 
     // Sign in using the associated email
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: userProfile.email,
+      email: email,
       password
     });
 
@@ -374,11 +307,11 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
       // Log failed attempt with detailed error
       try {
         await supabase.rpc('log_audit_event', {
-          p_user_id: userProfile.id,
+          p_user_id: user_id,
           p_event_type: 'login_failed',
           p_new_values: JSON.stringify({ 
             phone: normalizedPhone, 
-            email: userProfile.email,
+            email: email,
             error_code: error.message,
             reason: 'invalid_credentials' 
           })
@@ -401,12 +334,11 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
     // Enhanced success logging
     try {
       await supabase.rpc('log_audit_event', {
-        p_user_id: userProfile.id,
+        p_user_id: user_id,
         p_event_type: 'login_success',
         p_new_values: JSON.stringify({ 
           phone: normalizedPhone,
-          email: userProfile.email,
-          role: userProfile.role
+          email: email
         })
       });
     } catch (auditError) {
@@ -414,8 +346,8 @@ export const phoneSignIn = async (phoneNumber: string, password: string) => {
     }
 
     console.log('✅ Pakistani phone sign in successful');
-    console.log('👤 User role:', userProfile.role);
-    console.log('📧 User email:', userProfile.email);
+    console.log('👤 User ID:', user_id);
+    console.log('📧 User email:', email);
     
     return data;
 

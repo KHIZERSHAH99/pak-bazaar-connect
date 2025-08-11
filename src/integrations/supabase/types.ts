@@ -1531,6 +1531,10 @@ export type Database = {
         Args: { p_email: string; p_phone_number: string }
         Returns: Json
       }
+      authenticate_user_by_phone: {
+        Args: { user_phone: string }
+        Returns: Json
+      }
       calculate_monthly_commissions: {
         Args: { target_month?: string }
         Returns: undefined

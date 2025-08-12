@@ -1592,6 +1592,10 @@ export type Database = {
           views_by_day: Json
         }[]
       }
+      get_profile_summary: {
+        Args: { profile_id: string }
+        Returns: Json
+      }
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -1607,6 +1611,10 @@ export type Database = {
       }
       increment_coupon_usage: {
         Args: { coupon_id: string }
+        Returns: undefined
+      }
+      log_admin_profile_view: {
+        Args: { viewed_profile_id: string }
         Returns: undefined
       }
       log_audit_event: {

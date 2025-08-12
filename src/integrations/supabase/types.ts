@@ -1576,6 +1576,10 @@ export type Database = {
           role: string
         }[]
       }
+      get_current_commission_rate: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       get_effective_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string

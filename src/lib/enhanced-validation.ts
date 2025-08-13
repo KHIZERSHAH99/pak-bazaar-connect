@@ -1,12 +1,28 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 
-// Enhanced Pakistani business validation
+// Enhanced Pakistani business validation with stricter network code validation
 export const validatePakistaniPhone = (phone: string): boolean => {
   // Pakistani phone number validation: +92 or 0 followed by 3XX-XXXXXXX
   const phoneRegex = /^(\+92|0)?3[0-9]{2}[0-9]{7}$/;
   const cleanPhone = phone.replace(/[-\s]/g, '');
-  return phoneRegex.test(cleanPhone);
+  
+  if (!phoneRegex.test(cleanPhone)) {
+    return false;
+  }
+  
+  // Validate against actual Pakistani mobile network codes
+  const networkCodes = [
+    '300', '301', '302', '303', '304', '305', '306', '307', '308', '309', // Jazz
+    '310', '311', '312', '313', '314', '315', '316', '317', '318', '319', // Jazz
+    '320', '321', '322', '323', '324', '325', // Telenor
+    '330', '331', '332', '333', '334', '335', '336', '337', '338', '339', // Ufone
+    '340', '341', '342', '343', '344', '345', '346', '347', '348', '349'  // Zong
+  ];
+  
+  const normalized = cleanPhone.slice(-10);
+  const prefix = normalized.slice(0, 3);
+  return networkCodes.includes(prefix);
 };
 
 export const validateCNIC = (cnic: string): boolean => {
@@ -28,17 +44,54 @@ export const validateCNIC = (cnic: string): boolean => {
 };
 
 export const validateBusinessAddress = (address: string): boolean => {
-  return address.trim().length >= 10 && address.trim().length <= 200;
+  const trimmed = address.trim();
+  
+  // Length validation
+  if (trimmed.length < 15 || trimmed.length > 200) {
+    return false;
+  }
+  
+  // Character validation - allow common address characters
+  const addressRegex = /^[a-zA-Z0-9\s\u0600-\u06FF,.-/#]+$/;
+  if (!addressRegex.test(trimmed)) {
+    return false;
+  }
+  
+  // Must contain at least one number (house/building number)
+  if (!/\d/.test(trimmed)) {
+    return false;
+  }
+  
+  // Block test/demo addresses
+  const demoPatterns = ['test', 'demo', 'sample', 'placeholder', 'example', '123 main'];
+  const lowerAddress = trimmed.toLowerCase();
+  return !demoPatterns.some(pattern => lowerAddress.includes(pattern));
 };
 
 export const validateCity = (city: string): boolean => {
   const pakistaniCities = [
     'Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad',
     'Multan', 'Peshawar', 'Quetta', 'Sialkot', 'Gujranwala',
-    'Hyderabad', 'Sukkur', 'Bahawalpur', 'Sargodha', 'Mardan'
+    'Hyderabad', 'Sukkur', 'Bahawalpur', 'Sargodha', 'Mardan',
+    'Sahiwal', 'Okara', 'Wah Cantonment', 'Dera Ghazi Khan', 'Mirpur Khas',
+    'Nawabshah', 'Mingora', 'Chiniot', 'Kamoke', 'Mandi Bahauddin',
+    'Jhelum', 'Sadiqabad', 'Jacobabad', 'Shikarpur', 'Khanewal',
+    'Hafizabad', 'Kohat', 'Muzaffargarh', 'Khanpur', 'Gojra',
+    'Bahawalnagar', 'Muridke', 'Pak Pattan', 'Abottabad', 'Tando Adam',
+    'Jaranwala', 'Khairpur', 'Chishtian', 'Daska', 'Dadu'
   ];
+  
+  const trimmedCity = city.trim();
+  
+  // Block test/demo cities
+  const demoPatterns = ['test', 'demo', 'sample', 'placeholder'];
+  const lowerCity = trimmedCity.toLowerCase();
+  if (demoPatterns.some(pattern => lowerCity.includes(pattern))) {
+    return false;
+  }
+  
   return pakistaniCities.some(validCity => 
-    validCity.toLowerCase() === city.trim().toLowerCase()
+    validCity.toLowerCase() === lowerCity
   );
 };
 

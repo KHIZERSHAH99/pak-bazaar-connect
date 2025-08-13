@@ -1551,6 +1551,10 @@ export type Database = {
         Args: { p_email?: string; p_phone?: string }
         Returns: Json
       }
+      cleanup_old_product_views: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       delete_completed_order_screenshots: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1560,6 +1564,10 @@ export type Database = {
         Returns: undefined
       }
       delete_old_screenshots: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      detect_unusual_access_patterns: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -1590,6 +1598,14 @@ export type Database = {
           total_views: number
           unique_viewers: number
           views_by_day: Json
+        }[]
+      }
+      get_product_analytics_secure: {
+        Args: { p_shop_id: string; p_days_back?: number }
+        Returns: {
+          total_views: number
+          unique_viewers: number
+          daily_views: Json
         }[]
       }
       get_profile_summary: {
@@ -1627,6 +1643,10 @@ export type Database = {
           p_new_values?: string
           p_user_agent?: string
         }
+        Returns: undefined
+      }
+      monitor_product_view_patterns: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       normalize_pakistani_phone: {

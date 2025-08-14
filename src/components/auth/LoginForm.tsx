@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Phone, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import { phoneSignIn, validatePhoneNumber } from '@/lib/phone-auth';
+import { signIn } from '@/lib/auth';
+import { validatePakistaniPhone } from '@/lib/auth/phone-utils';
 import { supabase } from '@/integrations/supabase/client';
 
 const LoginForm: React.FC = () => {
@@ -49,11 +50,11 @@ const LoginForm: React.FC = () => {
         throw new Error('Too many login attempts. Please try again later.');
       }
 
-      if (!validatePhoneNumber(phoneNumber)) {
+      if (!validatePakistaniPhone(phoneNumber)) {
         throw new Error('Please enter a valid phone number');
       }
 
-      await phoneSignIn(phoneNumber, password);
+      await signIn(phoneNumber, password);
 
       // Reset login attempts on success
       setLoginAttempts(0);

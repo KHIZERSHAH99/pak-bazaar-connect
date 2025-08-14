@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { enhancedSignIn } from '@/lib/auth-enhanced';
+import { signIn } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { AlertCircle, Mail, Key, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -37,7 +37,7 @@ const SecureLoginForm: React.FC = () => {
         throw new Error('No internet connection. Please check your network and try again.');
       }
       
-      await enhancedSignIn(email, password);
+      await signIn(email, password);
       
       toast({
         title: 'Success',

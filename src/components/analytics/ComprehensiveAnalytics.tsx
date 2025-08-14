@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Eye, MessageSquare, ShoppingCart, TrendingUp, Users, Clock, DollarSign } from 'lucide-react';
 import { getSellerAnalytics } from '@/lib/analytics';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AnalyticsData {

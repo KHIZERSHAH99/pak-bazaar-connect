@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 // Import all existing pages
 import Index from '@/pages/Index';

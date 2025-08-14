@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContextFixed";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "next-themes";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
@@ -46,7 +46,7 @@ import DashboardSellerDashboard from '@/pages/dashboard/DashboardSellerDashboard
 import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
 
 // Components
-import FixedProtectedRoute from '@/components/FixedProtectedRoute';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import FixedDashboard from '@/components/dashboard/FixedDashboard';
 
 const queryClient = new QueryClient({
@@ -89,52 +89,52 @@ const App = () => {
                       
                       {/* Protected Routes */}
                       <Route path="/dashboard" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <FixedDashboard />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/profile" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <Profile />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/stats" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <Stats />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/chat" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <Chat />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/messages" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <Messages />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/analytics" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <Analytics />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/favorites" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <Favorites />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       {/* Admin Routes */}
                       <Route path="/admin" element={
-                        <FixedProtectedRoute allowedRoles={['admin']}>
+                        <ProtectedRoute allowedRoles={['admin']}>
                           <AdminDashboard />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       {/* Marketplace Pages */}
@@ -147,69 +147,69 @@ const App = () => {
                       
                       {/* Dashboard Sub-Routes */}
                       <Route path="/dashboard/shops" element={
-                        <FixedProtectedRoute allowedRoles={['wholesaler']}>
+                        <ProtectedRoute allowedRoles={['wholesaler']}>
                           <DashboardShops />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/products" element={
-                        <FixedProtectedRoute allowedRoles={['wholesaler']}>
+                        <ProtectedRoute allowedRoles={['wholesaler']}>
                           <DashboardProducts />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/ads" element={
-                        <FixedProtectedRoute allowedRoles={['wholesaler']}>
+                        <ProtectedRoute allowedRoles={['wholesaler']}>
                           <DashboardAds />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/orders" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <DashboardOrders />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/chat" element={
-                        <FixedProtectedRoute>
+                        <ProtectedRoute>
                           <DashboardChat />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/ad-approvals" element={
-                        <FixedProtectedRoute allowedRoles={['admin']}>
+                        <ProtectedRoute allowedRoles={['admin']}>
                           <DashboardAdApprovals />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/browse-shops" element={
-                        <FixedProtectedRoute allowedRoles={['seller']}>
+                        <ProtectedRoute allowedRoles={['seller']}>
                           <DashboardBrowseShops />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/seller-orders" element={
-                        <FixedProtectedRoute allowedRoles={['seller']}>
+                        <ProtectedRoute allowedRoles={['seller']}>
                           <DashboardSellerOrders />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/wholesaler-orders" element={
-                        <FixedProtectedRoute allowedRoles={['wholesaler']}>
+                        <ProtectedRoute allowedRoles={['wholesaler']}>
                           <DashboardWholesalerOrders />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/seller-dashboard" element={
-                        <FixedProtectedRoute allowedRoles={['seller']}>
+                        <ProtectedRoute allowedRoles={['seller']}>
                           <DashboardSellerDashboard />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       <Route path="/dashboard/admin" element={
-                        <FixedProtectedRoute allowedRoles={['admin']}>
+                        <ProtectedRoute allowedRoles={['admin']}>
                           <DashboardAdmin />
-                        </FixedProtectedRoute>
+                        </ProtectedRoute>
                       } />
                       
                       {/* Policy Pages */}

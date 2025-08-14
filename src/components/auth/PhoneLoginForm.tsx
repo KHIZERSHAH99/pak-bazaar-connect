@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Phone, Lock, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { phoneSignIn } from '@/lib/phone-auth';
+import { signIn } from '@/lib/auth';
 
 const PhoneLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -22,7 +22,7 @@ const PhoneLoginForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const data = await phoneSignIn(phoneNumber, password);
+      const data = await signIn(phoneNumber, password);
 
       toast({
         title: 'Login Successful',

@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 import EnhancedSignupForm from '@/components/auth/EnhancedSignupForm';
 import { Flag } from 'lucide-react';
 import { Link } from 'react-router-dom';

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 import CommissionOverview from './CommissionOverview';
 import CommissionRecordsList from './CommissionRecordsList';
 import MonthlySalesReport from './MonthlySalesReport';

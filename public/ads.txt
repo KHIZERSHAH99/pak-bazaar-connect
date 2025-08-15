@@ -1,1 +1,14 @@
+# Ads.txt file for Pak Bazaar Connect - Pakistan's Leading B2B Marketplace
+# This file is required by Google AdSense to verify authorized ad networks
+# For more information visit: https://iabtechlab.com/ads-txt/
+
+# Google AdSense
 google.com, pub-6598242635867029, DIRECT, f08c47fec0942fa0
+
+# Additional authorized networks can be added here
+# Format: <DOMAIN>, <PUBLISHER_ID>, <RELATIONSHIP>, <CERTIFICATION_AUTHORITY_ID>
+
+# Google Ad Manager (if applicable)
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+
+# End of ads.txt file

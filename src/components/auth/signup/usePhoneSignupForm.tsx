@@ -6,7 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formSchema, FormValues } from './signupSchema';
 import { UserRole } from '@/lib/types';
-import { phoneSignUp, validatePhoneNumber } from '@/lib/phone-auth';
+import { signUp } from '@/lib/auth';
+import { validatePakistaniPhone } from '@/lib/auth/phone-utils';
 
 export const usePhoneSignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -171,7 +172,7 @@ export const usePhoneSignupForm = () => {
       return;
     }
     
-    if (!validatePhoneNumber(values.phoneNumber)) {
+    if (!validatePakistaniPhone(values.phoneNumber)) {
       toast({
         title: 'Invalid Phone Number',
         description: 'Please enter a valid phone number',
@@ -201,7 +202,7 @@ export const usePhoneSignupForm = () => {
         postal_code: values.postalCode || ''
       };
       
-      await phoneSignUp(values.phoneNumber, values.password, selectedRole, businessData);
+      await signUp(values.phoneNumber, values.password, selectedRole, businessData);
       
       toast({
         title: 'Account Created Successfully!',

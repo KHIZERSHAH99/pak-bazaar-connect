@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { createOrderWithPayment } from '@/lib/orders-enhanced';
 import { getPaymentMethodsForShop } from '@/lib/payment-methods';
 import { PaymentMethodInfo, PaymentMethod } from '@/lib/types';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 import FileUpload from '@/components/common/FileUpload';
 
 interface EnhancedOrderFormProps {

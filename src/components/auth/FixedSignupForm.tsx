@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Phone, Lock, Eye, EyeOff, Loader2, User, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import { enhancedSignUp } from '@/lib/auth-enhanced';
+import { signUp } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
 
 const FixedSignupForm: React.FC = () => {
@@ -90,8 +90,8 @@ const FixedSignupForm: React.FC = () => {
 
       console.log('📧 Using email:', formData.email);
       
-      console.log('🚀 Calling enhancedSignUp...');
-      await enhancedSignUp(
+      console.log('🚀 Calling signUp...');
+      await signUp(
         formData.email,
         formData.password,
         formData.role,

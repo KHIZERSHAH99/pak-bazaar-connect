@@ -8,7 +8,7 @@ import { MessageSquare, Send, User, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getOrderMessages, sendOrderMessage } from '@/lib/orders-enhanced';
 import { OrderMessage } from '@/lib/types';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface OrderMessagingSystemProps {
   orderId: string;

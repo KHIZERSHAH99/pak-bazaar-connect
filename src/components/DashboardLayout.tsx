@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth, LoadingScreen } from '@/contexts/AuthContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import DashboardSidebar from './dashboard/DashboardSidebar';
@@ -8,7 +8,6 @@ import PerformanceMonitor from '@/components/ui/performance-monitor';
 import { usePageAnalytics } from '@/hooks/usePageAnalytics';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
-import { LoadingScreen } from '@/contexts/AuthContextFixed';
 interface DashboardLayoutProps {
   children: React.ReactNode;
   title?: string;

@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Building, Smartphone, Plus, Edit, Check } from 'lucide-react';
 import { getWholesalerPaymentMethods, createPaymentMethod } from '@/lib/enhanced-payment';
 import { PaymentMethodInfo } from '@/types/enhanced-payment';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 
 const PaymentMethodsSetup: React.FC = () => {
   const { user } = useAuth();

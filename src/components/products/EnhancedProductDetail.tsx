@@ -18,7 +18,7 @@ import {
   Shield
 } from 'lucide-react';
 import { Product } from '@/lib/types';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 import EnhancedOrderForm from '@/components/orders/EnhancedOrderForm';

@@ -8,7 +8,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './signupSchema';
 import { UserRole } from '@/lib/types';
 import { supabase } from '@/integrations/supabase/client';
-import { validatePhoneNumber } from '@/lib/phone-auth';
+import { validatePakistaniPhone } from '@/lib/auth/phone-utils';
 
 interface PhoneAccountInfoStepProps {
   form: UseFormReturn<FormValues>;
@@ -40,7 +40,7 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
         return;
       }
 
-      if (!validatePhoneNumber(phoneNumber)) {
+      if (!validatePakistaniPhone(phoneNumber)) {
         setPhoneCheckState('idle');
         onPhoneBlocked(false);
         return;

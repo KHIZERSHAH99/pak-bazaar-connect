@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ShoppingCart, Plus, Minus } from 'lucide-react';
 import { Product } from '@/lib/types';
-import { useAuth } from '@/contexts/AuthContextFixed';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import EnhancedOrderForm from '@/components/orders/EnhancedOrderForm';
 

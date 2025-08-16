@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -1524,7 +1524,7 @@ export type Database = {
     }
     Functions: {
       add_order_tracking: {
-        Args: { p_order_id: string; p_status: string; p_notes?: string }
+        Args: { p_notes?: string; p_order_id: string; p_status: string }
         Returns: string
       }
       associate_phone_with_account: {
@@ -1578,9 +1578,9 @@ export type Database = {
       get_available_phones: {
         Args: Record<PropertyKey, never>
         Returns: {
-          phone_number: string
-          normalized_phone: string
           email: string
+          normalized_phone: string
+          phone_number: string
           role: string
         }[]
       }
@@ -1601,11 +1601,11 @@ export type Database = {
         }[]
       }
       get_product_analytics_secure: {
-        Args: { p_shop_id: string; p_days_back?: number }
+        Args: { p_days_back?: number; p_shop_id: string }
         Returns: {
+          daily_views: Json
           total_views: number
           unique_viewers: number
-          daily_views: Json
         }[]
       }
       get_profile_summary: {
@@ -1617,12 +1617,12 @@ export type Database = {
         Returns: string
       }
       get_wholesaler_monthly_sales: {
-        Args: { wholesaler_uuid: string; target_month?: string }
+        Args: { target_month?: string; wholesaler_uuid: string }
         Returns: {
+          paid_commission: number
+          pending_commission: number
           total_orders: number
           total_sales: number
-          pending_commission: number
-          paid_commission: number
         }[]
       }
       increment_coupon_usage: {
@@ -1635,13 +1635,13 @@ export type Database = {
       }
       log_audit_event: {
         Args: {
-          p_user_id: string
           p_event_type: string
-          p_table_name?: string
-          p_record_id?: string
-          p_old_values?: string
           p_new_values?: string
+          p_old_values?: string
+          p_record_id?: string
+          p_table_name?: string
           p_user_agent?: string
+          p_user_id: string
         }
         Returns: undefined
       }
@@ -1664,9 +1664,9 @@ export type Database = {
       track_product_view: {
         Args: {
           p_product_id: string
+          p_referrer?: string
           p_session_id?: string
           p_user_agent?: string
-          p_referrer?: string
         }
         Returns: undefined
       }
@@ -1675,7 +1675,7 @@ export type Database = {
         Returns: boolean
       }
       verify_otp: {
-        Args: { user_phone: string; provided_otp: string }
+        Args: { provided_otp: string; user_phone: string }
         Returns: Json
       }
     }

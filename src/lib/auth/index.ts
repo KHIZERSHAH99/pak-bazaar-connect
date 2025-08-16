@@ -193,6 +193,7 @@ const signUpWithPhone = async (
   const { data, error } = await supabase.auth.signUp({
     email: uniqueEmail,
     password,
+    phone: normalizedPhone, // Add phone to auth.users
     options: {
       emailRedirectTo: `${window.location.origin}/dashboard`,
       data: {
@@ -215,6 +216,32 @@ const signUpWithPhone = async (
       throw new Error('An account with this information already exists');
     }
     throw new Error('Registration failed. Please try again.');
+  }
+
+  // After successful signup, ensure profile is created properly
+  if (data.user) {
+    // Update the profile to ensure proper phone data storage
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .upsert({
+        id: data.user.id,
+        email: uniqueEmail,
+        phone_number: normalizedPhone,
+        normalized_phone: normalizedPhone,
+        role,
+        contact_name: businessData.contactName || 'User',
+        business_name: businessData.businessName || 'Business',
+        business_type: businessData.businessType || 'Retailer',
+        address: businessData.address || '',
+        city: businessData.city || '',
+        postal_code: businessData.postalCode || '',
+        industry: businessData.industry || '',
+        years_in_business: businessData.yearsInBusiness || '1-3 years'
+      });
+
+    if (profileError) {
+      console.error('Profile creation error:', profileError);
+    }
   }
 
   return data;

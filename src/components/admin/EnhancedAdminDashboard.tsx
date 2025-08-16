@@ -10,8 +10,40 @@ import { SecurityMonitor } from '@/components/security/SecurityMonitor';
 import { EnhancedCommissionTracker } from '@/components/commission/EnhancedCommissionTracker';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { Link } from 'react-router-dom';
+import { fixPhoneUserData, validatePhoneData } from '@/lib/fix-phone-data';
+import { useToast } from '@/hooks/use-toast';
 
 export const EnhancedAdminDashboard: React.FC = () => {
+  const { toast } = useToast();
+  
+  const handleFixPhoneData = async () => {
+    try {
+      toast({
+        title: "Starting Phone Data Fix",
+        description: "Cleaning up phone user data...",
+      });
+      await fixPhoneUserData();
+      toast({
+        title: "Phone Data Fixed",
+        description: "All phone user data has been cleaned up successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Fix Failed",
+        description: "There was an error fixing phone data.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleValidatePhoneData = async () => {
+    await validatePhoneData();
+    toast({
+      title: "Phone Data Validated",
+      description: "Check console for validation results.",
+    });
+  };
+
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
@@ -138,6 +170,22 @@ export const EnhancedAdminDashboard: React.FC = () => {
                 Support Chat
               </Button>
             </Link>
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={handleFixPhoneData}
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Fix Phone User Data
+            </Button>
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={handleValidatePhoneData}
+            >
+              <Activity className="h-4 w-4 mr-2" />
+              Validate Phone Data
+            </Button>
           </CardContent>
         </Card>
 

@@ -47,7 +47,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
     }
   };
   return <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6 rounded-2xl bg-[#00ff00]/20 py-[31px] my-[6px]">
+      <CardContent className="p-6 rounded-2xl py-[31px] my-[6px] bg-[#00ff00]/0">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">

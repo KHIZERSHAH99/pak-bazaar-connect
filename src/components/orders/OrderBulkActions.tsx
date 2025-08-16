@@ -96,7 +96,7 @@ const OrderBulkActions: React.FC<OrderBulkActionsProps> = ({
     }
   };
   if (userRole !== 'wholesaler') return null;
-  return <Card className="mb-6 bg-[#00ff00]/[0.06]">
+  return <Card className="mb-6 bg-[#38c638]/0">
       <CardHeader className="bg-[#ff1100]/0">
         <CardTitle className="flex items-center gap-2">
           <CheckSquare className="h-5 w-5" />

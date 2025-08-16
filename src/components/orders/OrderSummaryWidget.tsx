@@ -90,7 +90,7 @@ const OrderSummaryWidget: React.FC<OrderSummaryWidgetProps> = ({
       {metrics.map((metric, index) => {
       const Icon = metric.icon;
       return <Card key={index} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-4 rounded-2xl bg-[38f1a] bg-[#00ff00]/[0.06]">
+            <CardContent className="p-4 rounded-2xl bg-[38f1a] bg-[#00ff00]/[0.01]">
               <div className="flex items-center justify-between">
                 <div className={`p-2 rounded-full ${metric.bgColor}`}>
                   <Icon className={`h-5 w-5 ${metric.color}`} />

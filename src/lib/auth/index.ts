@@ -106,7 +106,7 @@ export const signOut = async () => {
   }
 };
 
-// Phone-based authentication
+// Phone-based authentication with enhanced lookup
 const signInWithPhone = async (phoneNumber: string, password: string) => {
   const normalizedPhone = normalizePakistaniPhone(phoneNumber);
   
@@ -114,19 +114,61 @@ const signInWithPhone = async (phoneNumber: string, password: string) => {
     throw new Error('Please enter a valid Pakistani phone number');
   }
 
-  // Use Supabase RPC to find user by phone
-  const { data: authData, error: authError } = await supabase
-    .rpc('authenticate_user_by_phone', { user_phone: normalizedPhone });
+  console.log('🔍 Looking up user with phone:', phoneNumber, '→ normalized:', normalizedPhone);
 
-  if (authError || !authData) {
-    throw new Error('No account found with this phone number');
+  // Try multiple lookup strategies for phone authentication
+  let authResult;
+  
+  // First try the enhanced function
+  try {
+    const { data: authData, error: authError } = await supabase
+      .rpc('authenticate_user_by_phone', { user_phone: normalizedPhone });
+
+    if (authError) {
+      console.error('RPC authenticate_user_by_phone error:', authError);
+      // Fallback to direct profile lookup
+      throw authError;
+    }
+
+    authResult = authData as { success: boolean; error?: string; email?: string };
+  } catch (rpcError) {
+    console.warn('RPC failed, trying direct lookup:', rpcError);
+    
+    // Fallback: Direct profile lookup with multiple strategies
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, email, role, phone_number, normalized_phone')
+      .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${phoneNumber},phone_number.eq.${normalizedPhone},email.like.%${normalizedPhone}@temp-phone-auth.com,email.like.%${normalizedPhone}@phone.auth.local`)
+      .limit(1)
+      .maybeSingle();
+
+    if (profileError) {
+      console.error('Direct profile lookup error:', profileError);
+      throw new Error('Database lookup failed');
+    }
+
+    if (profileData) {
+      authResult = {
+        success: true,
+        email: profileData.email,
+        user_id: profileData.id,
+        role: profileData.role
+      };
+      console.log('✅ Found user via direct lookup:', profileData.id);
+    } else {
+      authResult = {
+        success: false,
+        error: 'No account found with this phone number'
+      };
+    }
   }
-
-  const authResult = authData as { success: boolean; error?: string; email?: string };
   
   if (!authResult.success) {
+    console.error('❌ Phone lookup failed:', authResult.error);
     throw new Error(authResult.error || 'No account found with this phone number');
   }
+
+  console.log('✅ Found user, attempting password authentication with email:', authResult.email);
 
   // Sign in with the found email
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -135,12 +177,14 @@ const signInWithPhone = async (phoneNumber: string, password: string) => {
   });
 
   if (error) {
+    console.error('❌ Password authentication failed:', error);
     if (error.message.includes('Invalid login credentials')) {
       throw new Error('Invalid phone number or password');
     }
     throw new Error('Sign in failed. Please try again.');
   }
 
+  console.log('🎉 Phone authentication successful');
   return data;
 };
 

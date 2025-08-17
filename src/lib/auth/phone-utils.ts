@@ -25,6 +25,15 @@ export const normalizePakistaniPhone = (phone: string): string => {
   } else if (/^03[0-9]{9}$/.test(cleanPhone)) {
     // Already in correct format
     return cleanPhone;
+  } else if (/^92[0-9]+$/.test(cleanPhone) && cleanPhone.length >= 12) {
+    // Handle +923XXXXXXXXX without the leading +
+    return '0' + cleanPhone.substring(2);
+  }
+  
+  // For any other format, try to extract 11-digit number starting with 03
+  const match = cleanPhone.match(/(?:0)?(3[0-9]{9})/);
+  if (match) {
+    return '0' + match[1];
   }
   
   // Return as-is if doesn't match expected patterns

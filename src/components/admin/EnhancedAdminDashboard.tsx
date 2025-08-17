@@ -11,6 +11,7 @@ import { EnhancedCommissionTracker } from '@/components/commission/EnhancedCommi
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { fixPhoneUserData, validatePhoneData } from '@/lib/fix-phone-data';
+import { manualPhoneDataFix, validateCurrentPhoneData } from '@/lib/auth/phone-data-fixer';
 import { useToast } from '@/hooks/use-toast';
 
 export const EnhancedAdminDashboard: React.FC = () => {
@@ -176,7 +177,7 @@ export const EnhancedAdminDashboard: React.FC = () => {
               onClick={handleFixPhoneData}
             >
               <Users className="h-4 w-4 mr-2" />
-              Fix Phone User Data
+              Fix Phone User Data (Legacy)
             </Button>
             <Button 
               className="w-full justify-start" 
@@ -184,7 +185,35 @@ export const EnhancedAdminDashboard: React.FC = () => {
               onClick={handleValidatePhoneData}
             >
               <Activity className="h-4 w-4 mr-2" />
-              Validate Phone Data
+              Validate Phone Data (Legacy)
+            </Button>
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={async () => {
+                await manualPhoneDataFix();
+                toast({
+                  title: "Phone Data Fix Complete",
+                  description: "Check console for details",
+                });
+              }}
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Manual Phone Data Fix
+            </Button>
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={async () => {
+                await validateCurrentPhoneData();
+                toast({
+                  title: "Phone Data Validation Complete",
+                  description: "Check console for results",
+                });
+              }}
+            >
+              <Activity className="h-4 w-4 mr-2" />
+              Validate Current Phone Data
             </Button>
           </CardContent>
         </Card>

@@ -2,7 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from './types';
 import { validatePasswordSecurity } from './security/enhanced-password-security';
-import { validateAndSanitizeInput, checkFieldUniqueness } from './security/enhanced-input-validation';
+import { validateAndSanitizeInput, checkFieldUniqueness } from './security/simple-validation';
 import { checkLoginRateLimit, checkSignupRateLimit, enhancedRateLimiter } from './security/enhanced-rate-limiting';
 import { checkDemoCredentialSecurity, validateBusinessCredentials, logCredentialSecurityEvent } from './security/demo-credential-blocker';
 

@@ -1,10 +1,52 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from './types';
+import { validatePasswordSecurity } from './security/enhanced-password-security';
+import { validateAndSanitizeInput, checkFieldUniqueness } from './security/enhanced-input-validation';
+import { checkLoginRateLimit, checkSignupRateLimit, enhancedRateLimiter } from './security/enhanced-rate-limiting';
+import { checkDemoCredentialSecurity, validateBusinessCredentials, logCredentialSecurityEvent } from './security/demo-credential-blocker';
 
-// Enhanced authentication with better error handling and phone support
+// Enhanced authentication with comprehensive security
 export const enhancedSignIn = async (emailOrPhone: string, password: string) => {
   try {
+    // Get client fingerprint for rate limiting
+    const clientId = enhancedRateLimiter.getClientFingerprint();
+    
+    // Check rate limiting
+    const rateLimitResult = await checkLoginRateLimit(clientId);
+    if (!rateLimitResult.allowed) {
+      const error = rateLimitResult.isBlocked 
+        ? `Too many failed attempts. Please try again in ${Math.ceil((rateLimitResult.retryAfter || 0) / 60000)} minutes.`
+        : 'Rate limit exceeded. Please slow down.';
+      throw new Error(error);
+    }
+
+    // Validate and sanitize input
+    const emailValidation = await validateAndSanitizeInput(
+      emailOrPhone, 
+      emailOrPhone.includes('@') ? 'email' : 'phone'
+    );
+    
+    if (!emailValidation.isValid) {
+      throw new Error(emailValidation.errors[0] || 'Invalid input format');
+    }
+
+    // Check for demo credentials in production
+    const securityCheck = checkDemoCredentialSecurity(
+      emailOrPhone.includes('@') ? emailOrPhone : undefined,
+      !emailOrPhone.includes('@') ? emailOrPhone : undefined,
+      password
+    );
+    
+    if (securityCheck.isBlocked) {
+      await logCredentialSecurityEvent('demo_credential_blocked', {
+        email: emailOrPhone.includes('@') ? emailOrPhone : undefined,
+        phone: !emailOrPhone.includes('@') ? emailOrPhone : undefined,
+        reason: securityCheck.reason
+      });
+      throw new Error(securityCheck.reason || 'Authentication blocked');
+    }
+
     // Clean up any existing auth state first
     await supabase.auth.signOut({ scope: 'global' });
     
@@ -66,13 +108,72 @@ export const enhancedSignUp = async (
   formData: any
 ) => {
   try {
+    // Get client fingerprint for rate limiting
+    const clientId = enhancedRateLimiter.getClientFingerprint();
+    
+    // Check rate limiting
+    const rateLimitResult = await checkSignupRateLimit(clientId);
+    if (!rateLimitResult.allowed) {
+      const error = rateLimitResult.isBlocked 
+        ? `Too many signup attempts. Please try again in ${Math.ceil((rateLimitResult.retryAfter || 0) / 60000)} minutes.`
+        : 'Rate limit exceeded. Please slow down.';
+      throw new Error(error);
+    }
+
+    // Validate password security
+    const passwordValidation = await validatePasswordSecurity(password);
+    if (!passwordValidation.isValid) {
+      throw new Error(passwordValidation.errors[0] || 'Password does not meet security requirements');
+    }
+
+    // Validate and sanitize email
+    const emailValidation = await validateAndSanitizeInput(email, 'email');
+    if (!emailValidation.isValid) {
+      throw new Error(emailValidation.errors[0] || 'Invalid email format');
+    }
+
+    // Validate and sanitize phone
+    if (formData.phoneNumber) {
+      const phoneValidation = await validateAndSanitizeInput(formData.phoneNumber, 'phone');
+      if (!phoneValidation.isValid) {
+        throw new Error(phoneValidation.errors[0] || 'Invalid phone number format');
+      }
+      formData.phoneNumber = phoneValidation.sanitizedValue;
+    }
+
+    // Check field uniqueness
+    const emailExists = await checkFieldUniqueness('email', emailValidation.sanitizedValue);
+    if (emailExists) {
+      throw new Error('An account with this email already exists');
+    }
+
+    if (formData.phoneNumber) {
+      const phoneExists = await checkFieldUniqueness('phone', formData.phoneNumber);
+      if (phoneExists) {
+        throw new Error('An account with this phone number already exists');
+      }
+    }
+
+    // Validate business credentials
+    const businessValidation = await validateBusinessCredentials({
+      email: emailValidation.sanitizedValue,
+      phone_number: formData.phoneNumber || '',
+      business_name: formData.businessName || '',
+      contact_name: formData.contactName || ''
+    });
+
+    if (businessValidation.isBlocked) {
+      throw new Error(businessValidation.reason || 'Registration blocked');
+    }
+
     // Clean up any existing auth state first
     await supabase.auth.signOut({ scope: 'global' });
     
     const { data, error } = await supabase.auth.signUp({
-      email: email.toLowerCase().trim(),
+      email: emailValidation.sanitizedValue,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/`,
         data: {
           role,
           phone_number: formData.phoneNumber,

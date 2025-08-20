@@ -282,17 +282,23 @@ export const checkFieldUniqueness = async (
   excludeUserId?: string
 ): Promise<boolean> => {
   try {
-    const columnMap: Record<string, string> = {
-      email: 'email',
-      phone: 'phone_number',
-      ntn: 'ntn_number',
-      strn: 'strn_number'
-    };
-
-    const column = columnMap[field];
-    if (!column) {
-      console.error(`Invalid field type: ${field}`);
-      return false;
+    let column: string;
+    switch (field) {
+      case 'email':
+        column = 'email';
+        break;
+      case 'phone':
+        column = 'phone_number';
+        break;
+      case 'ntn':
+        column = 'ntn_number';
+        break;
+      case 'strn':
+        column = 'strn_number';
+        break;
+      default:
+        console.error(`Invalid field type: ${field}`);
+        return false;
     }
 
     let query = supabase

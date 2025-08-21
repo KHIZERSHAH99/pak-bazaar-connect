@@ -2,7 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { signIn, signUp, signOut, getUserProfile } from '@/lib/auth';
+import { authenticateUser, registerUser, signOutUser } from '@/lib/auth/consolidated';
+import { getUserProfile } from '@/lib/auth/profile';
 import { UserRole } from '@/lib/types';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
 
@@ -127,7 +128,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error(securityCheck.message || 'Sign in blocked for security reasons');
       }
       
-      await signIn(phoneOrEmail, password);
+      await authenticateUser(phoneOrEmail, password);
       
       // Record successful login
       await authSecurityManager.recordAuthAttempt(phoneOrEmail, true);
@@ -164,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ): Promise<{ error?: string }> => {
     try {
       setLoading(true);
-      await signUp(phoneOrEmail, password, role as UserRole, businessData);
+      await registerUser(phoneOrEmail, password, role as UserRole, businessData || {});
       
       toast({
         title: "Account Created",
@@ -190,8 +191,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleSignOut = async (): Promise<void> => {
     try {
       setLoading(true);
-      await signOut();
+      await signOutUser();
       
+      // Note: signOutUser handles page reload, so these may not execute
       setUser(null);
       setSession(null);
       setProfile(null);
@@ -200,9 +202,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         title: "Signed Out",
         description: "You have been signed out successfully.",
       });
-      
-      // Force page reload for clean state
-      window.location.href = '/';
     } catch (error: any) {
       console.error('Sign out error:', error);
       
@@ -218,7 +217,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshProfile = async (): Promise<void> => {
     if (user) {
-      await fetchProfile(user.id);
+      const profileData = await getUserProfile();
+      setProfile(profileData as Profile);
     }
   };
 

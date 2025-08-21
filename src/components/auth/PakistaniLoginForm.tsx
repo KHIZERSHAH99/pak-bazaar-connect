@@ -6,8 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Phone, Lock, Eye, EyeOff, Loader2, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { phoneSignIn, validatePakistaniPhone, formatPakistaniPhone, normalizePakistaniPhone, checkAccountLockout } from '@/lib/pakistani-phone-auth';
-import OTPInput from '@/components/auth/OTPInput';
+import { authenticateUser } from '@/lib/auth/consolidated';
+import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/auth/phone-utils';
+import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
 
 const PakistaniLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -25,9 +26,9 @@ const PakistaniLoginForm: React.FC = () => {
   useEffect(() => {
     const checkLockout = async () => {
       if (phoneNumber && validatePakistaniPhone(normalizePakistaniPhone(phoneNumber))) {
-        const lockoutStatus = await checkAccountLockout(phoneNumber);
-        setAccountLocked(lockoutStatus.locked);
-        setLockoutMessage(lockoutStatus.message || '');
+        const lockoutStatus = await authSecurityManager.checkAccountLockout(normalizePakistaniPhone(phoneNumber));
+        setAccountLocked(lockoutStatus.isLocked);
+        setLockoutMessage(`Account locked. Try again in ${Math.ceil(lockoutStatus.remainingTime / 60000)} minutes.`);
       } else {
         setAccountLocked(false);
         setLockoutMessage('');
@@ -69,9 +70,9 @@ const PakistaniLoginForm: React.FC = () => {
         throw new Error(lockoutMessage || 'Account is temporarily locked');
       }
 
-      console.log('🔐 Attempting login with Pakistani phone:', cleanPhone);
+      console.log('🔐 Attempting consolidated authentication:', cleanPhone);
       
-      const result = await phoneSignIn(cleanPhone, password);
+      const result = await authenticateUser(cleanPhone, password);
       
       if (result.user) {
         toast({

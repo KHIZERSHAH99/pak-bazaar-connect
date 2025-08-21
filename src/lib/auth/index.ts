@@ -1,8 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
-import { toast } from '@/hooks/use-toast';
 import { validatePakistaniPhone, normalizePakistaniPhone } from './phone-utils';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
+import { validateAndSanitizeInput, checkFieldUniqueness } from '@/lib/security/simple-validation';
 
 // Export types
 export type { UserRole } from '@/lib/types';

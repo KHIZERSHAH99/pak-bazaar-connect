@@ -1,5 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-import { validatePasswordStrength, checkPasswordBreached, logPasswordSecurityEvent } from './password-validation';
 import { rateLimiter, RATE_LIMITS, getClientIdentifier } from './rateLimit';
 
 interface AuthAttempt {
@@ -36,11 +35,13 @@ class AuthSecurityManager {
     // Create a fingerprint based on browser characteristics
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    ctx!.textBaseline = 'top';
-    ctx!.font = '14px Arial';
-    ctx!.fillText('Security fingerprint', 2, 2);
-    
-    return btoa(canvas.toDataURL()).slice(0, 16);
+    if (ctx) {
+      ctx.textBaseline = 'top';
+      ctx.font = '14px Arial';
+      ctx.fillText('Security fingerprint', 2, 2);
+      return btoa(canvas.toDataURL()).slice(0, 16);
+    }
+    return 'unknown';
   }
 
   async validatePasswordSecurity(password: string): Promise<{
@@ -177,19 +178,6 @@ class AuthSecurityManager {
         isSuspicious = true;
       }
 
-      // Check for unusual file upload patterns
-      const { data: uploadActivity } = await supabase
-        .from('audit_logs')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('event_type', 'file_uploaded')
-        .gte('created_at', oneHourAgo);
-
-      if (uploadActivity && uploadActivity.length > 50) {
-        reasons.push('Excessive file upload activity detected');
-        isSuspicious = true;
-      }
-
       if (isSuspicious) {
         await this.logSecurityEvent('suspicious_activity_detected', {
           userId,
@@ -217,7 +205,7 @@ class AuthSecurityManager {
     }
   }
 
-  // Remove demo credentials in production
+  // Check for demo credentials in production
   isDemoCredentials(identifier: string, password: string): boolean {
     const demoCredentials = [
       { phone: '03001234567', pass: 'demo123' },
@@ -227,7 +215,10 @@ class AuthSecurityManager {
       { email: 'seller1@test.com', pass: 'seller123' }
     ];
 
-    const isDev = process.env.NODE_ENV === 'development';
+    const isDev = process.env.NODE_ENV === 'development' || 
+                  window.location.hostname === 'localhost' || 
+                  window.location.hostname.includes('lovable.app');
+    
     if (!isDev) {
       // Block demo credentials in production
       return demoCredentials.some(cred => 

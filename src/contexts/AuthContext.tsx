@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { signIn, signUp, signOut, getUserProfile } from '@/lib/auth';
 import { UserRole } from '@/lib/types';
+import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
 
 export interface Profile {
   id: string;
@@ -119,7 +120,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleSignIn = async (phoneOrEmail: string, password: string): Promise<{ error?: string }> => {
     try {
       setLoading(true);
+      
+      // Security validation before attempting login
+      const securityCheck = await authSecurityManager.enforceSecureLogin(phoneOrEmail, password);
+      if (!securityCheck.allowed) {
+        throw new Error(securityCheck.message || 'Sign in blocked for security reasons');
+      }
+      
       await signIn(phoneOrEmail, password);
+      
+      // Record successful login
+      await authSecurityManager.recordAuthAttempt(phoneOrEmail, true);
       
       toast({
         title: "Welcome back!",
@@ -129,6 +140,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return {};
     } catch (error: any) {
       const errorMessage = error.message || 'Sign in failed';
+      
+      // Record failed login attempt
+      await authSecurityManager.recordAuthAttempt(phoneOrEmail, false);
       
       toast({
         title: "Sign In Failed",

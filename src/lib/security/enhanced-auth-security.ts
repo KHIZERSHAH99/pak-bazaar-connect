@@ -26,9 +26,15 @@ class AuthSecurityManager {
   getSecurityContext(): SecurityContext {
     return {
       userAgent: navigator.userAgent,
-      clientId: getClientIdentifier(),
+      clientId: this.generateClientFingerprint(),
       ipFingerprint: this.generateIPFingerprint()
     };
+  }
+
+  private generateClientFingerprint(): string {
+    const userAgent = navigator.userAgent;
+    const hash = btoa(userAgent).slice(0, 16);
+    return `client_${hash}`;
   }
 
   private generateIPFingerprint(): string {

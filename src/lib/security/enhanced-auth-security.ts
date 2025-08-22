@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { rateLimiter, RATE_LIMITS, getClientIdentifier } from './rateLimit';
+import { enhancedRateLimiter, ENHANCED_RATE_LIMITS } from './enhanced-rate-limiting';
 
 interface AuthAttempt {
   timestamp: number;
@@ -49,15 +49,71 @@ class AuthSecurityManager {
     errors: string[];
     isBreached: boolean;
   }> {
-    // Simplified validation - only check length > 3
-    const isValid = password.length > 3;
-    const errors = isValid ? [] : ['Password must be more than 3 characters'];
+    const errors: string[] = [];
+    let score = 0;
 
-    // Always return not breached for simplified validation
+    // Minimum length requirement
+    if (password.length < 8) {
+      errors.push('Password must be at least 8 characters long');
+    } else {
+      score += 1;
+    }
+
+    // Character variety checks
+    if (!/[a-z]/.test(password)) {
+      errors.push('Password must contain at least one lowercase letter');
+    } else {
+      score += 1;
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter');
+    } else {
+      score += 1;
+    }
+
+    if (!/\d/.test(password)) {
+      errors.push('Password must contain at least one number');
+    } else {
+      score += 1;
+    }
+
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      errors.push('Password must contain at least one special character');
+    } else {
+      score += 1;
+    }
+
+    // Common patterns to avoid
+    const commonPatterns = [
+      /123456/,
+      /password/i,
+      /qwerty/i,
+      /abc123/i,
+      /admin/i,
+      /letmein/i,
+      /pakistan/i,
+      /karachi/i,
+      /lahore/i
+    ];
+
+    if (commonPatterns.some(pattern => pattern.test(password))) {
+      errors.push('Password contains common patterns. Please choose a more unique password');
+      score = Math.max(0, score - 2);
+    }
+
+    // Check for repeated characters
+    if (/(.)\1{2,}/.test(password)) {
+      errors.push('Password cannot have the same character repeated 3 or more times');
+      score = Math.max(0, score - 1);
+    }
+
+    const isValid = errors.length === 0 && score >= 4;
+
     return {
       isValid,
       errors,
-      isBreached: false
+      isBreached: false // Simplified for now
     };
   }
 
@@ -136,10 +192,15 @@ class AuthSecurityManager {
     remaining: number;
     resetTime: number;
   }> {
-    const limits = RATE_LIMITS[action.toUpperCase() as keyof typeof RATE_LIMITS] || RATE_LIMITS.API_GENERAL;
-    const rateLimitId = identifier || getClientIdentifier();
+    const limits = ENHANCED_RATE_LIMITS[action.toUpperCase() as keyof typeof ENHANCED_RATE_LIMITS] || ENHANCED_RATE_LIMITS.API_GENERAL;
+    const rateLimitId = identifier || enhancedRateLimiter.getClientFingerprint();
     
-    return await rateLimiter.checkRateLimit(rateLimitId, limits.maxRequests, limits.windowMs);
+    const result = await enhancedRateLimiter.checkRateLimit(rateLimitId, limits, action.toLowerCase());
+    return {
+      allowed: result.allowed,
+      remaining: result.remaining,
+      resetTime: result.resetTime
+    };
   }
 
   async detectSuspiciousActivity(userId: string): Promise<{

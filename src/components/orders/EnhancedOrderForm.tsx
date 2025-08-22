@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { SecureOrderFormInput } from './SecureOrderFormInput';
 import { Upload, CreditCard, Smartphone, Building, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createOrderWithPayment } from '@/lib/orders-enhanced';
@@ -261,28 +262,39 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           <div className="space-y-4">
             <h3 className="font-semibold font-poppins">Buyer Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="buyerName">Full Name *</Label>
-                <Input id="buyerName" value={buyerInfo.name} onChange={e => setBuyerInfo({
-                ...buyerInfo,
-                name: e.target.value
-              })} placeholder="Enter your full name" required />
-              </div>
-              <div>
-                <Label htmlFor="buyerPhone">Phone Number *</Label>
-                <Input id="buyerPhone" value={buyerInfo.phone} onChange={e => setBuyerInfo({
-                ...buyerInfo,
-                phone: e.target.value
-              })} placeholder="03XX-XXXXXXX" required />
-              </div>
+              <SecureOrderFormInput
+                id="buyerName"
+                label="Full Name"
+                value={buyerInfo.name}
+                onChange={(value) => setBuyerInfo({ ...buyerInfo, name: value })}
+                placeholder="Enter your full name"
+                required
+                validation="text"
+                maxLength={100}
+              />
+              <SecureOrderFormInput
+                id="buyerPhone"
+                label="Phone Number"
+                value={buyerInfo.phone}
+                onChange={(value) => setBuyerInfo({ ...buyerInfo, phone: value })}
+                type="phone"
+                placeholder="03XX-XXXXXXX"
+                required
+                validation="phone"
+                maxLength={15}
+              />
             </div>
-            <div>
-              <Label htmlFor="buyerAddress">Delivery Address *</Label>
-              <Textarea id="buyerAddress" value={buyerInfo.address} onChange={e => setBuyerInfo({
-              ...buyerInfo,
-              address: e.target.value
-            })} placeholder="Enter complete delivery address" required />
-            </div>
+            <SecureOrderFormInput
+              id="buyerAddress"
+              label="Delivery Address"
+              value={buyerInfo.address}
+              onChange={(value) => setBuyerInfo({ ...buyerInfo, address: value })}
+              type="textarea"
+              placeholder="Enter complete delivery address"
+              required
+              validation="description"
+              maxLength={500}
+            />
           </div>
 
           {/* Payment Method Selection */}

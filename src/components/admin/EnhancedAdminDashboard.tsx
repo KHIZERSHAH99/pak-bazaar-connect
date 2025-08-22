@@ -49,11 +49,11 @@ export const EnhancedAdminDashboard: React.FC = () => {
     queryKey: ['admin-stats'],
     queryFn: async () => {
       const [users, orders, ads, roleRequests, commissions] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact' }),
-        supabase.from('orders').select('*', { count: 'exact' }),
-        supabase.from('ads').select('*', { count: 'exact' }),
-        supabase.from('role_requests').select('*').eq('status', 'pending'),
-        supabase.from('commission_records').select('*', { count: 'exact' })
+        supabase.from('profiles').select('id, role, created_at', { count: 'exact' }),
+        supabase.from('orders').select('id, status, total_amount, created_at', { count: 'exact' }),
+        supabase.from('ads').select('id, status, created_at', { count: 'exact' }),
+        supabase.from('role_requests').select('id, user_id, requested_role, status, created_at').eq('status', 'pending'),
+        supabase.from('commission_records').select('id, amount, created_at', { count: 'exact' })
       ]);
 
       return {

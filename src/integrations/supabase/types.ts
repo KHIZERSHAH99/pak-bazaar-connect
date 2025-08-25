@@ -1572,6 +1572,57 @@ export type Database = {
           },
         ]
       }
+      sms_logs: {
+        Row: {
+          cost: number | null
+          created_at: string | null
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          message_content: string | null
+          message_type: string
+          metadata: Json | null
+          phone_number: string
+          provider: string | null
+          provider_message_id: string | null
+          retry_count: number | null
+          sent_at: string | null
+          status: string | null
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string | null
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          message_content?: string | null
+          message_type: string
+          metadata?: Json | null
+          phone_number: string
+          provider?: string | null
+          provider_message_id?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string | null
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          message_content?: string | null
+          message_type?: string
+          metadata?: Json | null
+          phone_number?: string
+          provider?: string | null
+          provider_message_id?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1720,6 +1771,10 @@ export type Database = {
         Args: { phone_input: string }
         Returns: string
       }
+      send_otp_sms: {
+        Args: { p_otp_code: string; p_phone_number: string }
+        Returns: Json
+      }
       suspend_overdue_accounts: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1734,6 +1789,16 @@ export type Database = {
           p_referrer?: string
           p_session_id?: string
           p_user_agent?: string
+        }
+        Returns: undefined
+      }
+      update_sms_status: {
+        Args: {
+          p_cost?: number
+          p_error_message?: string
+          p_provider_message_id?: string
+          p_sms_log_id: string
+          p_status: string
         }
         Returns: undefined
       }

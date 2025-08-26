@@ -4,16 +4,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Phone, Lock, Eye, EyeOff, Loader2, User, Building, Shield, MessageSquare } from 'lucide-react';
+import { Phone, Lock, Eye, EyeOff, Loader2, User, Building, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import { phoneSignUp, validatePakistaniPhone, formatPakistaniPhone, normalizePakistaniPhone, requestOTP, verifyOTP } from '@/lib/pakistani-phone-auth';
-import OTPInput from '@/components/auth/OTPInput';
-
-type SignupStep = 'details' | 'otp' | 'complete';
+import { phoneSignUp, validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/pakistani-phone-auth';
 
 const PakistaniSignupForm: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<SignupStep>('details');
   const [formData, setFormData] = useState({
     phoneNumber: '',
     password: '',
@@ -30,9 +26,6 @@ const PakistaniSignupForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [developmentOtp, setDevelopmentOtp] = useState(''); // For development only
 
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -53,7 +46,7 @@ const PakistaniSignupForm: React.FC = () => {
     }
   };
 
-  const handleDetailsSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -72,49 +65,8 @@ const PakistaniSignupForm: React.FC = () => {
         throw new Error('Password must be at least 6 characters long');
       }
 
-      // Request OTP
-      const otpResult = await requestOTP(cleanPhone);
-      
-      if (!otpResult.success) {
-        throw new Error(otpResult.message);
-      }
-
-      // Store development OTP if available
-      if (otpResult.otp) {
-        setDevelopmentOtp(otpResult.otp);
-      }
-
-      setOtpSent(true);
-      setCurrentStep('otp');
-      
-      toast({
-        title: 'OTP Sent!',
-        description: otpResult.message,
-      });
-
-    } catch (error: any) {
-      console.error('Details validation error:', error);
-      toast({
-        title: 'Validation Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleOTPVerification = async (enteredOtp: string) => {
-    setIsLoading(true);
-
-    try {
-      const cleanPhone = formData.phoneNumber.replace(/[^0-9]/g, '');
-      
-      // Verify OTP
-      await verifyOTP(cleanPhone, enteredOtp);
-      
-      // Create account after OTP verification
-      console.log('🚀 Creating account with verified phone...');
+      // Create account directly without OTP
+      console.log('🚀 Creating account without OTP...');
       const signupResult = await phoneSignUp(
         cleanPhone,
         formData.password,
@@ -130,23 +82,19 @@ const PakistaniSignupForm: React.FC = () => {
       );
 
       if (signupResult.user) {
-        setCurrentStep('complete');
-        
         toast({
           title: 'اکاؤنٹ بن گیا! Account Created!',
           description: 'Your Pakistani business account has been created successfully.',
         });
 
-        // Navigate to dashboard after a short delay
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 2000);
+        // Navigate to dashboard
+        navigate('/dashboard');
       }
 
     } catch (error: any) {
-      console.error('OTP verification error:', error);
+      console.error('Signup error:', error);
       toast({
-        title: 'Verification Failed',
+        title: 'Signup Failed',
         description: error.message,
         variant: 'destructive',
       });
@@ -154,116 +102,6 @@ const PakistaniSignupForm: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  const resendOTP = async () => {
-    setIsLoading(true);
-    try {
-      const cleanPhone = formData.phoneNumber.replace(/[^0-9]/g, '');
-      const otpResult = await requestOTP(cleanPhone);
-      
-      if (otpResult.success) {
-        if (otpResult.otp) {
-          setDevelopmentOtp(otpResult.otp);
-        }
-        toast({
-          title: 'OTP Resent',
-          description: otpResult.message,
-        });
-      } else {
-        throw new Error(otpResult.message);
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Failed to Resend',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (currentStep === 'complete') {
-    return (
-      <Card className="w-full max-w-md mx-auto shadow-lg">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-primary font-poppins flex items-center justify-center gap-2">
-            <Shield className="h-6 w-6 text-green-600" />
-            Account Created!
-          </CardTitle>
-          <CardDescription className="font-poppins">
-            Welcome to Pakistan's Premier B2B Marketplace
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-center space-y-4">
-          <div className="p-4 bg-green-50 rounded-lg">
-            <p className="text-green-800 font-poppins">
-              Your Pakistani business account has been verified and created successfully.
-            </p>
-          </div>
-          <p className="text-muted-foreground font-poppins">
-            Redirecting to your dashboard...
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (currentStep === 'otp') {
-    return (
-      <Card className="w-full max-w-md mx-auto shadow-lg">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-primary font-poppins flex items-center justify-center gap-2">
-            <MessageSquare className="h-6 w-6" />
-            Verify Your Phone
-          </CardTitle>
-          <CardDescription className="font-poppins">
-            Enter the 6-digit code sent to {formatPakistaniPhone(formData.phoneNumber)}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Development OTP display */}
-          {developmentOtp && (
-            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800 font-poppins">
-                <strong>Development OTP:</strong> {developmentOtp}
-              </p>
-            </div>
-          )}
-          
-          <div className="space-y-4">
-            <OTPInput
-              length={6}
-              onComplete={handleOTPVerification}
-              disabled={isLoading}
-            />
-            
-            <div className="text-center space-y-2">
-              <p className="text-sm text-muted-foreground font-poppins">
-                Didn't receive the code?
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={resendOTP}
-                disabled={isLoading}
-                className="font-poppins"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  'Resend OTP'
-                )}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card className="w-full max-w-md mx-auto shadow-lg">
@@ -277,7 +115,7 @@ const PakistaniSignupForm: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleDetailsSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="role" className="font-poppins">Business Type</Label>
             <Select 
@@ -421,7 +259,7 @@ const PakistaniSignupForm: React.FC = () => {
                 Processing...
               </>
             ) : (
-              'Continue to Verification'
+              'Create Account'
             )}
           </Button>
         </form>
@@ -443,7 +281,7 @@ const PakistaniSignupForm: React.FC = () => {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Shield className="h-4 w-4" />
             <span className="font-poppins">
-              OTP verification required for security
+              Secure Pakistani phone-only authentication
             </span>
           </div>
         </div>

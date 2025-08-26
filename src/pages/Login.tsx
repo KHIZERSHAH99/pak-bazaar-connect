@@ -6,7 +6,6 @@ import PhoneLoginForm from '@/components/auth/PhoneLoginForm';
 import PakistaniLoginForm from '@/components/auth/PakistaniLoginForm';
 import SignupForm from '@/components/auth/SignupForm';
 import LoginDebugPanel from '@/components/auth/LoginDebugPanel';
-import TestAccountsInfo from '@/components/auth/TestAccountsInfo';
 import { Button } from '@/components/ui/button';
 
 const Login: React.FC = () => {
@@ -71,9 +70,6 @@ const Login: React.FC = () => {
               </Link>
             </div>
           </div>
-          
-          {/* Show test accounts in development */}
-          {isDev && <TestAccountsInfo />}
           
           {showDebug && isDev && (
             <div className="mt-8 px-4">

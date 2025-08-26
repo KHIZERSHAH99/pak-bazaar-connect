@@ -262,13 +262,21 @@ class AuthSecurityManager {
 
   private async logSecurityEvent(eventType: string, details: any): Promise<void> {
     try {
-      await supabase.rpc('log_audit_event', {
-        p_user_id: details.userId || (await supabase.auth.getUser()).data.user?.id,
-        p_event_type: eventType,
-        p_new_values: JSON.stringify(details)
-      });
+      // Direct insert into audit_logs instead of using non-existent RPC function
+      const { error } = await supabase
+        .from('audit_logs')
+        .insert({
+          user_id: details.userId || null,
+          event_type: eventType,
+          new_values: details,
+          table_name: 'authentication'
+        });
+      
+      if (error) {
+        console.warn('Failed to log security event:', error);
+      }
     } catch (error) {
-      console.error('Failed to log security event:', error);
+      console.warn('Failed to log security event:', error);
     }
   }
 

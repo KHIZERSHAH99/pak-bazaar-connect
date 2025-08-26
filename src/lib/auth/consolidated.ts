@@ -32,14 +32,20 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
         normalizedPhone = '0' + cleanPhone;
       }
       
-      // Find user by phone
-      const { data: profile } = await supabase
+      // Find user by phone - use maybeSingle to handle no results
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('email, id, role')
         .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${normalizedPhone}`)
-        .single();
+        .maybeSingle();
+      
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Profile query error:', profileError);
+        throw new Error('Failed to verify phone number');
+      }
       
       if (!profile) {
+        console.log('No profile found for phone:', normalizedPhone);
         throw new Error('No account found with this phone number');
       }
       

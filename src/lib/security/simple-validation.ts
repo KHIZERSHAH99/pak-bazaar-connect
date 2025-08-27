@@ -60,12 +60,25 @@ const sanitizeEmail = (email: string): string => {
 };
 
 const sanitizePhone = (phone: string): string => {
-  const cleaned = phone.replace(/[\s-+()]/g, '');
-  if (cleaned.startsWith('92')) {
+  // Remove all non-digit characters
+  const cleaned = phone.replace(/[^\d]/g, '');
+  
+  // Handle various Pakistani phone formats
+  if (cleaned.startsWith('923') && cleaned.length === 12) {
+    // +92 3XX XXXXXXX to 03XX XXXXXXX
+    return '0' + cleaned.substring(2);
+  }
+  if (cleaned.startsWith('92') && cleaned.length === 11) {
+    // 92 3XX XXXXXXX to 03XX XXXXXXX  
     return '0' + cleaned.substring(2);
   }
   if (cleaned.startsWith('3') && cleaned.length === 10) {
+    // 3XX XXXXXXX to 03XX XXXXXXX
     return '0' + cleaned;
+  }
+  if (cleaned.startsWith('03') && cleaned.length === 11) {
+    // Already in correct format
+    return cleaned;
   }
   return cleaned;
 };
@@ -235,7 +248,7 @@ export const checkFieldUniqueness = async (
       const { data } = await supabase
         .from('profiles')
         .select('id')
-        .eq('phone_number', value)
+        .or(`phone_number.eq.${value},normalized_phone.eq.${value}`)
         .limit(1);
       return Boolean(data && data.length > 0);
     }

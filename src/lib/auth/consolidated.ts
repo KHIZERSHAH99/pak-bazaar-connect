@@ -30,13 +30,21 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
         normalizedPhone = '0' + cleanPhone.substring(2);
       } else if (cleanPhone.startsWith('3') && cleanPhone.length === 10) {
         normalizedPhone = '0' + cleanPhone;
+      } else if (!cleanPhone.startsWith('0') && cleanPhone.length === 10) {
+        normalizedPhone = '0' + cleanPhone;
       }
       
-      // Find user by phone - use maybeSingle to handle no results
+      console.log('Attempting login with phone:', normalizedPhone);
+      
+      // First check if this is a phone-based auth account
+      const phoneAuthEmail = `${normalizedPhone}@phone.auth`;
+      console.log('Checking for phone-based auth with email:', phoneAuthEmail);
+      
+      // Try to find user by normalized phone in profiles
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('email, id, role')
-        .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${normalizedPhone}`)
+        .select('email, id, role, phone_number, normalized_phone')
+        .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${normalizedPhone},email.eq.${phoneAuthEmail}`)
         .maybeSingle();
       
       if (profileError && profileError.code !== 'PGRST116') {
@@ -46,10 +54,13 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       
       if (!profile) {
         console.log('No profile found for phone:', normalizedPhone);
-        throw new Error('No account found with this phone number');
+        // Try with the phone auth email directly in case profile doesn't exist
+        authEmail = phoneAuthEmail;
+        console.log('Attempting direct auth with email:', authEmail);
+      } else {
+        console.log('Profile found:', { email: profile.email, phone: profile.phone_number });
+        authEmail = profile.email;
       }
-      
-      authEmail = profile.email;
     } else if (isEmail) {
       authEmail = normalizedInput.toLowerCase();
     } else {
@@ -111,7 +122,8 @@ export const registerUser = async (
       }
       
       phoneNumber = phoneValidation.sanitizedValue;
-      authEmail = `${phoneNumber}@phone.auth.local`;
+      // Use consistent email format for phone-based auth
+      authEmail = `${phoneNumber}@phone.auth`;
       
       // Check phone uniqueness
       const phoneExists = await checkFieldUniqueness('phone', phoneNumber);

@@ -6,7 +6,9 @@ import PhoneLoginForm from '@/components/auth/PhoneLoginForm';
 import PakistaniLoginForm from '@/components/auth/PakistaniLoginForm';
 import SignupForm from '@/components/auth/SignupForm';
 import LoginDebugPanel from '@/components/auth/LoginDebugPanel';
+import { TestLogin } from '@/components/auth/TestLogin';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Login: React.FC = () => {
   const [showSignup, setShowSignup] = useState(false);
@@ -33,42 +35,60 @@ const Login: React.FC = () => {
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
-          <div className="px-4 py-8 sm:px-10">
-            {showSignup ? <SignupForm /> : <PakistaniLoginForm />}
-            
-            <div className="mt-6 text-center">
-              <Button
-                variant="link"
-                onClick={() => setShowSignup(!showSignup)}
-                className="text-primary hover:text-primary/80 font-poppins"
-              >
-                {showSignup 
-                  ? 'Already have an account? Sign in' 
-                  : "Don't have an account? Sign up"
-                }
-              </Button>
-            </div>
-
-            {isDev && (
-              <div className="mt-4 text-center">
+          {isDev ? (
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">Regular Login</TabsTrigger>
+                <TabsTrigger value="test">Test Accounts</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="login" className="px-4 py-8 sm:px-10">
+                {showSignup ? <SignupForm /> : <PakistaniLoginForm />}
+                
+                <div className="mt-6 text-center">
+                  <Button
+                    variant="link"
+                    onClick={() => setShowSignup(!showSignup)}
+                    className="text-primary hover:text-primary/80 font-poppins"
+                  >
+                    {showSignup 
+                      ? 'Already have an account? Sign in' 
+                      : "Don't have an account? Sign up"
+                    }
+                  </Button>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="test" className="px-4 py-8 sm:px-10">
+                <TestLogin />
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="px-4 py-8 sm:px-10">
+              {showSignup ? <SignupForm /> : <PakistaniLoginForm />}
+              
+              <div className="mt-6 text-center">
                 <Button
-                  variant="outline"
-                  onClick={() => setShowDebug(!showDebug)}
-                  className="text-sm"
+                  variant="link"
+                  onClick={() => setShowSignup(!showSignup)}
+                  className="text-primary hover:text-primary/80 font-poppins"
                 >
-                  {showDebug ? 'Hide Debug' : 'Show Debug Panel'}
+                  {showSignup 
+                    ? 'Already have an account? Sign in' 
+                    : "Don't have an account? Sign up"
+                  }
                 </Button>
               </div>
-            )}
-
-            <div className="mt-6 text-center">
-              <Link
-                to="/"
-                className="text-sm text-muted-foreground hover:text-primary font-poppins"
-              >
-                ← Back to Home
-              </Link>
             </div>
+          )}
+
+          <div className="mt-6 text-center">
+            <Link
+              to="/"
+              className="text-sm text-muted-foreground hover:text-primary font-poppins"
+            >
+              ← Back to Home
+            </Link>
           </div>
           
           {showDebug && isDev && (

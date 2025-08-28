@@ -6,9 +6,8 @@ export const validatePakistaniPhone = (phone: string): boolean => {
   
   // Valid Pakistani mobile formats:
   // 03XX-XXXXXXX (11 digits starting with 03)
-  // Also accept 10 digits for legacy data (03XX-XXXXXX)
   // Network codes: 300-399
-  return /^03[0-9]{8,9}$/.test(cleanPhone);
+  return /^03[0-9]{9}$/.test(cleanPhone);
 };
 
 export const normalizePakistaniPhone = (phone: string): string => {
@@ -24,10 +23,7 @@ export const normalizePakistaniPhone = (phone: string): string => {
     // From 3XX XXXXXXX to 03XX XXXXXXX
     return '0' + cleanPhone;
   } else if (/^03[0-9]{9}$/.test(cleanPhone)) {
-    // Already in correct format (11 digits)
-    return cleanPhone;
-  } else if (/^03[0-9]{8}$/.test(cleanPhone)) {
-    // Handle legacy 10-digit format
+    // Already in correct format
     return cleanPhone;
   } else if (/^92[0-9]+$/.test(cleanPhone) && cleanPhone.length >= 12) {
     // Handle +923XXXXXXXXX without the leading +

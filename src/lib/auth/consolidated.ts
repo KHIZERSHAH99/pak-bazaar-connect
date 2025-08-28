@@ -2,6 +2,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from '@/lib/types';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
 import { validateAndSanitizeInput, checkFieldUniqueness } from '@/lib/security/simple-validation';
+import { 
+  showAuthError, 
+  validatePasswordStrength, 
+  validatePakistaniPhone,
+  parseAuthError 
+} from './auth-errors';
 
 // Consolidated authentication with security
 export const authenticateUser = async (emailOrPhone: string, password: string) => {
@@ -22,6 +28,12 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
     let authEmail = '';
     
     if (isPhone) {
+      // Validate phone format first
+      const phoneError = validatePakistaniPhone(normalizedInput);
+      if (phoneError) {
+        throw new Error(phoneError.message);
+      }
+      
       // Normalize Pakistani phone number
       const cleanPhone = normalizedInput.replace(/[^0-9]/g, '');
       let normalizedPhone = cleanPhone;
@@ -94,12 +106,10 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       password
     });
     
-    if (error) {
+      if (error) {
       console.error('Authentication error:', error);
-      if (error.message.includes('Invalid login credentials')) {
-        throw new Error('Invalid credentials');
-      }
-      throw new Error('Authentication failed');
+      const parsedError = parseAuthError(error);
+      throw new Error(parsedError.message);
     }
     
     // Record successful login
@@ -192,10 +202,8 @@ export const registerUser = async (
     
     if (error) {
       console.error('Registration error:', error);
-      if (error.message.includes('User already registered')) {
-        throw new Error('An account with this information already exists');
-      }
-      throw new Error('Registration failed');
+      const parsedError = parseAuthError(error);
+      throw new Error(parsedError.message);
     }
     
     // Ensure profile is created

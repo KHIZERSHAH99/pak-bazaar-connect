@@ -9,6 +9,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authenticateUser } from '@/lib/auth/consolidated';
 import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/auth/phone-utils';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
+import { showAuthError, validatePasswordStrength } from '@/lib/auth/auth-errors';
 
 const PakistaniLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -87,18 +88,15 @@ const PakistaniLoginForm: React.FC = () => {
     } catch (error: any) {
       console.error('Login error:', error);
       
-      // Enhanced error handling with helpful suggestions
-      let errorMessage = error.message || 'Invalid phone number or password';
-      let toastDescription = errorMessage;
+      // Use the new error handling system
+      showAuthError(error, 'login');
       
-      if (errorMessage.includes('No account found')) {
-        toastDescription = `${errorMessage}\n\nWould you like to create a new account?`;
-        
-        // Show a more helpful toast for this specific error
+      // Show signup prompt for certain errors
+      if (error.message?.includes('No account') || error.message?.includes('not found')) {
         setTimeout(() => {
           toast({
-            title: 'Account Not Found',
-            description: 'No account exists with this phone number. Create a new account to get started.',
+            title: 'Need an Account?',
+            description: 'Create a new account to get started with our B2B marketplace.',
             action: (
               <Button 
                 variant="outline" 
@@ -110,14 +108,8 @@ const PakistaniLoginForm: React.FC = () => {
               </Button>
             ),
           });
-        }, 1000);
+        }, 1500);
       }
-      
-      toast({
-        title: 'Login Failed',
-        description: toastDescription,
-        variant: 'destructive',
-      });
     } finally {
       setIsLoading(false);
     }

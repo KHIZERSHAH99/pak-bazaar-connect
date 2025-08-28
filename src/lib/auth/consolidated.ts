@@ -36,15 +36,20 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       
       console.log('Attempting login with phone:', normalizedPhone);
       
-      // First check if this is a phone-based auth account
-      const phoneAuthEmail = `${normalizedPhone}@phone.auth`;
-      console.log('Checking for phone-based auth with email:', phoneAuthEmail);
+      // Try multiple email formats for phone-based accounts
+      const emailFormats = [
+        `${normalizedPhone}@phone.auth`,
+        `${normalizedPhone}@temp-phone-auth.com`,
+        `${normalizedPhone}@phone-auth.com`
+      ];
+      
+      console.log('Checking for phone-based auth with possible emails:', emailFormats);
       
       // Try to find user by normalized phone in profiles
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('email, id, role, phone_number, normalized_phone')
-        .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${normalizedPhone},email.eq.${phoneAuthEmail}`)
+        .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${normalizedPhone}`)
         .maybeSingle();
       
       if (profileError && profileError.code !== 'PGRST116') {
@@ -54,9 +59,25 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       
       if (!profile) {
         console.log('No profile found for phone:', normalizedPhone);
-        // Try with the phone auth email directly in case profile doesn't exist
-        authEmail = phoneAuthEmail;
-        console.log('Attempting direct auth with email:', authEmail);
+        // Try with different email formats
+        let authAttemptSuccessful = false;
+        
+        for (const emailFormat of emailFormats) {
+          console.log('Attempting direct auth with email:', emailFormat);
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: emailFormat,
+            password
+          });
+          
+          if (!error && data.user) {
+            console.log('Successfully authenticated with email format:', emailFormat);
+            await authSecurityManager.recordAuthAttempt(emailOrPhone, true);
+            return data;
+          }
+        }
+        
+        // If no format worked, use the primary format for the error
+        authEmail = emailFormats[0];
       } else {
         console.log('Profile found:', { email: profile.email, phone: profile.phone_number });
         authEmail = profile.email;

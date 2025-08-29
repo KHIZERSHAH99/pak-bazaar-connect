@@ -36,9 +36,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <SEOHead title={title} description={description} />
       <Navbar />
       <div className="flex flex-grow relative">
-        {/* Mobile sidebar toggle button - improved positioning */}
-        <div className="md:hidden fixed bottom-6 right-6 z-30">
-          <Button className="rounded-full w-12 h-12 flex items-center justify-center bg-pakistani_green-700 hover:bg-pakistani_green-800 shadow-xl border-2 border-background transition-all duration-200 hover:scale-105" onClick={toggleSidebar} aria-label={sidebarOpen ? "Close menu" : "Open menu"}>
+        {/* Mobile sidebar toggle button - moved to top for better accessibility */}
+        <div className="md:hidden fixed top-[4.5rem] left-4 z-30">
+          <Button 
+            className="rounded-lg w-10 h-10 flex items-center justify-center bg-card border border-border shadow-lg hover:bg-accent transition-all duration-200 hover:scale-105" 
+            onClick={toggleSidebar} 
+            size="icon"
+            variant="outline"
+            aria-label={sidebarOpen ? "Close menu" : "Open menu"}
+          >
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -48,8 +54,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Improved overlay */}
         {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-10 md:hidden backdrop-blur-sm transition-opacity duration-300" onClick={() => setSidebarOpen(false)} aria-hidden="true" />}
 
-        <main className="flex-grow p-4 md:p-6 overflow-auto bg-slate-50/0">
-          <div className="container mx-auto max-w-7xl">
+        <main className="flex-grow p-3 sm:p-4 md:p-6 overflow-auto bg-background">
+          <div className="container mx-auto max-w-7xl md:pl-0 pl-14">
             <div className="animate-fadeIn">
               {children}
             </div>

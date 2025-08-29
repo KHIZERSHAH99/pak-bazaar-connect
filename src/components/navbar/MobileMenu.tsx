@@ -34,17 +34,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   };
 
   return (
-    <div className="md:hidden bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 shadow-lg">
-      <div className="px-3 py-4 space-y-3 max-h-[75vh] overflow-y-auto">
+    <div className="md:hidden fixed inset-0 top-[3.5rem] z-50 bg-background animate-slide-in-right">
+      <div className="px-4 py-4 space-y-4 h-full overflow-y-auto">
         {/* Main Navigation */}
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Link to="/" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              size="sm"
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+              className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
             >
-              <Home className="w-4 h-4 mr-2" />
+              <Home className="w-5 h-5 mr-3" />
               Home
             </Button>
           </Link>
@@ -52,10 +51,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/products" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              size="sm"
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+              className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
             >
-              <ShoppingBag className="w-4 h-4 mr-2" />
+              <ShoppingBag className="w-5 h-5 mr-3" />
               Products
             </Button>
           </Link>
@@ -63,10 +61,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/dashboard/browse-shops" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              size="sm"
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins"
+              className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
             >
-              <Users className="w-4 h-4 mr-2" />
+              <Users className="w-5 h-5 mr-3" />
               Shops
             </Button>
           </Link>
@@ -74,10 +71,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/features" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              size="sm"
-              className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+              className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
             >
-              <Zap className="w-4 h-4 mr-2" />
+              <Zap className="w-5 h-5 mr-3" />
               Features
             </Button>
           </Link>
@@ -88,12 +84,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <div className="space-y-3 border-t border-gray-200 dark:border-gray-800 pt-3">
             {/* User Info */}
             {profile && (
-              <div className="flex items-center space-x-2 p-2.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                <div className="bg-pakistani_green-100 dark:bg-pakistani_green-900/50 p-1.5 rounded-full">
-                  <User className="w-4 h-4 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <div className="flex items-center space-x-3 p-3 bg-accent rounded-lg">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <User className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 dark:text-white font-poppins text-sm truncate">
+                  <p className="font-medium text-foreground font-poppins text-sm truncate">
                     {profile.email}
                   </p>
                   <Badge variant="secondary" className="text-xs font-poppins mt-0.5">
@@ -104,14 +100,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             )}
 
             {/* User Actions */}
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Link to="/profile" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
-                  size="sm"
-                  className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                  className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
                 >
-                  <User className="w-4 h-4 mr-2" />
+                  <User className="w-5 h-5 mr-3" />
                   Profile
                 </Button>
               </Link>
@@ -119,10 +114,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link to="/dashboard" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
-                  size="sm"
-                  className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                  className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins font-semibold"
                 >
-                  <Settings className="w-4 h-4 mr-2" />
+                  <Settings className="w-5 h-5 mr-3" />
                   Dashboard
                 </Button>
               </Link>
@@ -130,10 +124,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link to="/favorites" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
-                  size="sm"
-                  className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                  className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
                 >
-                  <Heart className="w-4 h-4 mr-2" />
+                  <Heart className="w-5 h-5 mr-3" />
                   Favorites
                 </Button>
               </Link>
@@ -141,10 +134,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link to="/messages" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
-                  size="sm"
-                  className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                  className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
                 >
-                  <MessageSquare className="w-4 h-4 mr-2" />
+                  <MessageSquare className="w-5 h-5 mr-3" />
                   Messages
                 </Button>
               </Link>
@@ -153,10 +145,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 <Link to="/analytics" onClick={handleLinkClick}>
                   <Button 
                     variant="ghost" 
-                    size="sm"
-                    className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                    className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
                   >
-                    <BarChart className="w-4 h-4 mr-2" />
+                    <BarChart className="w-5 h-5 mr-3" />
                     Analytics
                   </Button>
                 </Link>
@@ -164,15 +155,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             </div>
 
             {/* Controls Section */}
-            <div className="space-y-2 border-t border-gray-200 dark:border-gray-800 pt-3">
+            <div className="space-y-2 border-t border-border pt-4">
               {/* Theme Toggle */}
               <Button
                 onClick={handleThemeToggle}
                 variant="ghost"
-                size="sm"
-                className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
               >
-                {theme === 'light' ? <Moon className="w-4 h-4 mr-2" /> : <Sun className="w-4 h-4 mr-2" />}
+                {theme === 'light' ? <Moon className="w-5 h-5 mr-3" /> : <Sun className="w-5 h-5 mr-3" />}
                 {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
               </Button>
             </div>
@@ -183,27 +173,25 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 onLogout();
                 onClose();
               }}
-              variant="outline"
-              size="sm"
-              className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900/20 dark:hover:text-red-300 font-poppins"
+              variant="destructive"
+              className="w-full h-12 font-poppins mt-4"
             >
-              <LogOut className="w-4 h-4 mr-2" />
+              <LogOut className="w-5 h-5 mr-3" />
               Logout
             </Button>
           </div>
         ) : (
-          <div className="space-y-2 border-t border-gray-200 dark:border-gray-800 pt-3">
+          <div className="space-y-2 border-t border-border pt-4">
             <Link to="/login" onClick={handleLinkClick}>
               <Button 
-                variant="ghost" 
-                size="sm"
-                className="w-full justify-start text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                variant="outline" 
+                className="w-full h-12 font-poppins"
               >
                 Login
               </Button>
             </Link>
             <Link to="/signup" onClick={handleLinkClick}>
-              <Button size="sm" className="w-full bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins">
+              <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-poppins">
                 Sign Up
               </Button>
             </Link>

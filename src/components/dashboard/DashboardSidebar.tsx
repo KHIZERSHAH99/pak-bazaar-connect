@@ -18,25 +18,26 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
   return (
     <aside 
-      className={`fixed inset-0 z-20 transform md:relative md:translate-x-0 transition-transform duration-300 ease-in-out 
+      className={`fixed inset-y-0 left-0 z-20 transform md:relative md:translate-x-0 transition-transform duration-300 ease-in-out 
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-        md:block bg-card/95 md:bg-card backdrop-blur-sm md:backdrop-blur-none border-r border-border w-64 flex-shrink-0`}
+        md:block bg-card md:bg-card backdrop-blur-sm md:backdrop-blur-none border-r border-border w-72 sm:w-64 flex-shrink-0 h-full overflow-y-auto`}
     >
-      {/* Mobile close button */}
-      <div className="md:hidden flex justify-end p-4">
+      {/* Mobile header with close button */}
+      <div className="md:hidden sticky top-0 bg-card border-b border-border p-4 flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-foreground font-poppins">Menu</h2>
         <Button 
           variant="ghost"
           size="icon"
           onClick={closeSidebar}
-          className="hover:bg-muted"
+          className="hover:bg-muted rounded-lg"
         >
-          <X className="h-6 w-6" />
+          <X className="h-5 w-5" />
         </Button>
       </div>
 
       <div className="p-4">
         <UserProfile />
-        <h2 className="text-lg font-semibold text-foreground mb-4 px-3 font-poppins">Navigation</h2>
+        <h2 className="hidden md:block text-lg font-semibold text-foreground mb-4 px-3 font-poppins">Navigation</h2>
         <DashboardNavigation onNavigate={closeSidebar} />
       </div>
     </aside>

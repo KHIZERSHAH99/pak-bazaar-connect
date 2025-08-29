@@ -123,7 +123,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
           key={item.path}
           to={item.path}
           onClick={onNavigate}
-          className={`flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium group transition-all duration-200 font-poppins ${
+          className={`flex items-center justify-between px-4 py-3 md:py-2.5 rounded-lg text-sm font-medium group transition-all duration-200 font-poppins touch-manipulation ${
             isActive(item.path)
               ? 'bg-primary text-primary-foreground shadow-sm'
               : 'text-foreground hover:bg-muted hover:text-foreground'
@@ -131,7 +131,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
         >
           <div className="flex items-center">
             {item.icon}
-            {item.name}
+            <span className="text-base md:text-sm">{item.name}</span>
           </div>
           
           {item.badge && (

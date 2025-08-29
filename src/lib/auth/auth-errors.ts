@@ -82,15 +82,40 @@ export const parseAuthError = (error: any): AuthError => {
   if (typeof error === 'string') {
     const lowerError = error.toLowerCase();
     
-    // Check for specific error patterns
-    if (lowerError.includes('email') && lowerError.includes('invalid')) {
+    // Check for login/credential errors first
+    if (lowerError.includes('incorrect email/phone or password') || 
+        lowerError.includes('invalid login') || 
+        lowerError.includes('invalid credentials')) {
       return {
-        code: 'invalid_email',
-        message: AUTH_ERROR_MESSAGES['invalid_email'],
-        field: 'email'
+        code: 'invalid_credentials',
+        message: AUTH_ERROR_MESSAGES['invalid_credentials'],
       };
     }
     
+    // Check for account existence
+    if (lowerError.includes('user not found') || lowerError.includes('no account')) {
+      return {
+        code: 'user_not_found',
+        message: AUTH_ERROR_MESSAGES['user_not_found'],
+      };
+    }
+    
+    // Check for already registered errors
+    if (lowerError.includes('already registered') || lowerError.includes('already exists')) {
+      if (lowerError.includes('phone')) {
+        return {
+          code: 'phone_already_exists',
+          message: AUTH_ERROR_MESSAGES['phone_already_exists'],
+          field: 'phone'
+        };
+      }
+      return {
+        code: 'user_already_registered',
+        message: AUTH_ERROR_MESSAGES['user_already_registered'],
+      };
+    }
+    
+    // Password-specific errors
     if (lowerError.includes('password')) {
       if (lowerError.includes('weak')) {
         return {
@@ -106,13 +131,47 @@ export const parseAuthError = (error: any): AuthError => {
           field: 'password'
         };
       }
+      if (lowerError.includes('incorrect') || lowerError.includes('invalid')) {
+        return {
+          code: 'invalid_password',
+          message: AUTH_ERROR_MESSAGES['invalid_password'],
+          field: 'password'
+        };
+      }
     }
     
-    if (lowerError.includes('phone')) {
+    // Phone-specific errors
+    if (lowerError.includes('phone') && (lowerError.includes('invalid') || lowerError.includes('format'))) {
       return {
         code: 'invalid_phone',
         message: AUTH_ERROR_MESSAGES['invalid_phone'],
         field: 'phone'
+      };
+    }
+    
+    // Email-specific errors (but not when combined with phone)
+    if (lowerError.includes('email') && !lowerError.includes('phone') && 
+        (lowerError.includes('invalid') || lowerError.includes('format'))) {
+      return {
+        code: 'invalid_email',
+        message: AUTH_ERROR_MESSAGES['invalid_email'],
+        field: 'email'
+      };
+    }
+    
+    // Rate limiting
+    if (lowerError.includes('rate limit') || lowerError.includes('too many')) {
+      return {
+        code: 'rate_limit_exceeded',
+        message: AUTH_ERROR_MESSAGES['rate_limit_exceeded'],
+      };
+    }
+    
+    // Network errors
+    if (lowerError.includes('network') || lowerError.includes('connection')) {
+      return {
+        code: 'network_error',
+        message: AUTH_ERROR_MESSAGES['network_error'],
       };
     }
     
@@ -124,81 +183,107 @@ export const parseAuthError = (error: any): AuthError => {
 
   // Handle Supabase error objects
   const errorMessage = error.message || error.error_description || error.msg || '';
-  const errorCode = error.code || error.error || '';
+  const errorCode = error.code || error.error || (error.__isAuthError ? 'auth_error' : '');
+  const lowerMessage = errorMessage.toLowerCase();
   
-  // Check for specific Supabase error codes
-  if (errorCode === 'invalid_grant' || errorMessage.includes('Invalid login credentials')) {
+  // Check for invalid credentials (most common)
+  if (errorCode === 'invalid_grant' || 
+      errorCode === 'invalid_credentials' ||
+      lowerMessage.includes('invalid login credentials') ||
+      lowerMessage.includes('incorrect email/phone or password')) {
     return {
       code: 'invalid_credentials',
       message: AUTH_ERROR_MESSAGES['invalid_credentials'],
     };
   }
   
-  if (errorCode === 'user_already_exists' || errorMessage.includes('already registered')) {
+  // User not found
+  if (lowerMessage.includes('user not found') || lowerMessage.includes('no account')) {
+    return {
+      code: 'user_not_found',
+      message: AUTH_ERROR_MESSAGES['user_not_found'],
+    };
+  }
+  
+  // Already registered
+  if (errorCode === 'user_already_exists' || lowerMessage.includes('already registered')) {
+    if (lowerMessage.includes('phone')) {
+      return {
+        code: 'phone_already_exists',
+        message: AUTH_ERROR_MESSAGES['phone_already_exists'],
+        field: 'phone'
+      };
+    }
     return {
       code: 'user_already_registered',
       message: AUTH_ERROR_MESSAGES['user_already_registered'],
     };
   }
   
-  if (errorMessage.includes('Email not confirmed')) {
+  // Email not confirmed
+  if (lowerMessage.includes('email not confirmed') || lowerMessage.includes('confirm your email')) {
     return {
       code: 'email_not_confirmed',
       message: AUTH_ERROR_MESSAGES['email_not_confirmed'],
     };
   }
   
-  if (errorMessage.includes('rate limit') || errorCode === '429') {
+  // Rate limiting
+  if (errorCode === '429' || lowerMessage.includes('rate limit') || lowerMessage.includes('too many')) {
     return {
       code: 'rate_limit_exceeded',
       message: AUTH_ERROR_MESSAGES['rate_limit_exceeded'],
     };
   }
   
-  if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+  // Network errors
+  if (lowerMessage.includes('network') || lowerMessage.includes('fetch') || lowerMessage.includes('connection')) {
     return {
       code: 'network_error',
       message: AUTH_ERROR_MESSAGES['network_error'],
     };
   }
   
-  if (errorMessage.includes('suspended')) {
+  // Account status errors
+  if (lowerMessage.includes('suspended')) {
     return {
       code: 'account_suspended',
       message: AUTH_ERROR_MESSAGES['account_suspended'],
     };
   }
   
-  if (errorMessage.includes('pending')) {
+  if (lowerMessage.includes('pending')) {
     return {
       code: 'pending_approval',
       message: AUTH_ERROR_MESSAGES['pending_approval'],
     };
   }
   
-  // Check for field-specific errors
-  if (errorMessage.toLowerCase().includes('email')) {
-    return {
-      code: 'invalid_email',
-      message: AUTH_ERROR_MESSAGES['invalid_email'],
-      field: 'email'
-    };
-  }
-  
-  if (errorMessage.toLowerCase().includes('password')) {
-    return {
-      code: 'invalid_password',
-      message: AUTH_ERROR_MESSAGES['invalid_password'],
-      field: 'password'
-    };
-  }
-  
-  if (errorMessage.toLowerCase().includes('phone')) {
-    return {
-      code: 'invalid_phone',
-      message: AUTH_ERROR_MESSAGES['invalid_phone'],
-      field: 'phone'
-    };
+  // Field-specific errors (only as last resort to avoid misinterpretation)
+  if (!lowerMessage.includes('email/phone') && !lowerMessage.includes('credentials')) {
+    if (lowerMessage.includes('email') && (lowerMessage.includes('invalid') || lowerMessage.includes('format'))) {
+      return {
+        code: 'invalid_email',
+        message: AUTH_ERROR_MESSAGES['invalid_email'],
+        field: 'email'
+      };
+    }
+    
+    if (lowerMessage.includes('password') && (lowerMessage.includes('invalid') || lowerMessage.includes('incorrect'))) {
+      return {
+        code: 'invalid_password',
+        message: AUTH_ERROR_MESSAGES['invalid_password'],
+        field: 'password'
+      };
+    }
+    
+    if (lowerMessage.includes('phone') && (lowerMessage.includes('invalid') || lowerMessage.includes('format'))) {
+      return {
+        code: 'invalid_phone',
+        message: AUTH_ERROR_MESSAGES['invalid_phone'],
+        field: 'phone'
+      };
+    }
   }
   
   // Return the original error message if no specific mapping found

@@ -8,6 +8,7 @@ import { Phone, Lock, Eye, EyeOff, Loader2, User, Building, Shield } from 'lucid
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
 import { phoneSignUp, validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/pakistani-phone-auth';
+import { showAuthError, validatePasswordStrength, validateAuthForm } from '@/lib/auth/auth-errors';
 
 const PakistaniSignupForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -53,16 +54,28 @@ const PakistaniSignupForm: React.FC = () => {
     try {
       const cleanPhone = formData.phoneNumber.replace(/[^0-9]/g, '');
       
-      if (!validatePakistaniPhone(cleanPhone)) {
-        throw new Error('Please enter a valid Pakistani mobile number (03XX-XXXXXXX)');
+      // Validate form fields
+      const errors = validateAuthForm({
+        phone: cleanPhone,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword
+      });
+      
+      if (errors.length > 0) {
+        // Show the first error
+        const firstError = errors[0];
+        showAuthError(firstError, 'signup');
+        setIsLoading(false);
+        return;
       }
 
-      if (formData.password !== formData.confirmPassword) {
-        throw new Error('Passwords do not match');
+      // Additional validation for required fields
+      if (!formData.contactName) {
+        throw new Error('Contact person name is required');
       }
-
-      if (formData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters long');
+      
+      if (!formData.businessName) {
+        throw new Error('Business name is required');
       }
 
       // Create account directly without OTP
@@ -93,11 +106,7 @@ const PakistaniSignupForm: React.FC = () => {
 
     } catch (error: any) {
       console.error('Signup error:', error);
-      toast({
-        title: 'Signup Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
+      showAuthError(error, 'signup');
     } finally {
       setIsLoading(false);
     }

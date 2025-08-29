@@ -9,7 +9,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authenticateUser } from '@/lib/auth/consolidated';
 import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/auth/phone-utils';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
-import { showAuthError, validatePasswordStrength } from '@/lib/auth/auth-errors';
+import { showAuthError, parseAuthError, validatePasswordStrength } from '@/lib/auth/auth-errors';
 
 const PakistaniLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');

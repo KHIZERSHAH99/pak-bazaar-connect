@@ -135,61 +135,63 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
   const canAdvanceStatus = userRole === 'wholesaler' && nextStatus && !['completed', 'rejected', 'returned'].includes(order.status);
 
   return (
-    <Card className={`hover:shadow-md transition-shadow ${order.requires_attention ? 'ring-2 ring-yellow-400' : ''}`}>
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <h3 className="text-lg font-semibold font-poppins">
+    <Card className={`hover:shadow-md transition-shadow overflow-hidden ${order.requires_attention ? 'ring-2 ring-yellow-400' : ''}`}>
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold font-poppins truncate">
                 Order #{order.id.slice(0, 8)}
               </h3>
-              <Badge className={`flex items-center gap-1 ${getStatusColor(order.status)}`}>
+              <Badge className={`flex items-center gap-1 text-xs sm:text-sm ${getStatusColor(order.status)}`}>
                 {getStatusIcon(order.status)}
-                {getStatusLabel(order.status)}
+                <span className="hidden sm:inline">{getStatusLabel(order.status)}</span>
+                <span className="sm:hidden">{getStatusLabel(order.status).substring(0, 3)}</span>
               </Badge>
               
               {order.requires_attention && (
-                <Badge variant="outline" className="flex items-center gap-1 border-yellow-400 text-yellow-700">
+                <Badge variant="outline" className="flex items-center gap-1 border-yellow-400 text-yellow-700 text-xs">
                   <AlertTriangle className="h-3 w-3" />
-                  Attention
+                  <span className="hidden sm:inline">Attention</span>
+                  <span className="sm:hidden">!</span>
                 </Badge>
               )}
               
               {order.priority_level && order.priority_level > 1 && (
-                <Badge variant="outline" className={`${getPriorityColor(order.priority_level)}`}>
-                  Priority {order.priority_level}
+                <Badge variant="outline" className={`${getPriorityColor(order.priority_level)} text-xs`}>
+                  P{order.priority_level}
                 </Badge>
               )}
             </div>
             
-            <div className="space-y-2 text-sm text-gray-600 font-poppins">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <p><strong>Amount:</strong> Rs. {order.total_amount?.toLocaleString()}</p>
-                <p><strong>Created:</strong> {formatDate(order.created_at)}</p>
+            <div className="space-y-2 text-xs sm:text-sm text-gray-600 font-poppins">
+              <div className="grid grid-cols-1 gap-2">
+                <p className="truncate"><strong>Amount:</strong> Rs. {order.total_amount?.toLocaleString()}</p>
+                <p className="truncate"><strong>Created:</strong> {formatDate(order.created_at)}</p>
                 
                 {userRole === 'wholesaler' && order.buyer_name && (
-                  <p><strong>Buyer:</strong> {order.buyer_name}</p>
+                  <p className="truncate"><strong>Buyer:</strong> {order.buyer_name}</p>
                 )}
                 
                 {userRole === 'seller' && order.shops?.name && (
-                  <p><strong>Shop:</strong> {order.shops.name}</p>
+                  <p className="truncate"><strong>Shop:</strong> {order.shops.name}</p>
                 )}
                 
                 {order.payment_method && (
-                  <p><strong>Payment:</strong> {order.payment_method.replace('_', ' ').toUpperCase()}</p>
+                  <p className="truncate"><strong>Payment:</strong> {order.payment_method.replace('_', ' ').toUpperCase()}</p>
                 )}
 
                 {order.tracking_number && (
-                  <p><strong>Tracking:</strong> {order.tracking_number}</p>
+                  <p className="truncate"><strong>Tracking:</strong> {order.tracking_number}</p>
                 )}
 
                 {order.carrier_name && (
-                  <p><strong>Carrier:</strong> {order.carrier_name}</p>
+                  <p className="truncate"><strong>Carrier:</strong> {order.carrier_name}</p>
                 )}
 
                 {order.estimated_delivery && (
-                  <p className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
+                  <p className="flex items-center gap-1 truncate">
+                    <Calendar className="h-3 w-3 flex-shrink-0" />
                     <strong>Est. Delivery:</strong> {formatDate(order.estimated_delivery)}
                   </p>
                 )}
@@ -197,22 +199,22 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
             </div>
 
             {(order.wholesaler_notes || order.order_notes) && (
-              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+              <div className="mt-3 p-2 sm:p-3 bg-gray-50 rounded-lg">
                 {order.wholesaler_notes && (
-                  <p className="text-sm"><strong>Notes:</strong> {order.wholesaler_notes}</p>
+                  <p className="text-xs sm:text-sm break-words"><strong>Notes:</strong> {order.wholesaler_notes}</p>
                 )}
                 {order.order_notes && (
-                  <p className="text-sm"><strong>Order Notes:</strong> {order.order_notes}</p>
+                  <p className="text-xs sm:text-sm break-words"><strong>Order Notes:</strong> {order.order_notes}</p>
                 )}
               </div>
             )}
 
             {order.order_items && order.order_items.length > 0 && (
               <div className="mt-3">
-                <p className="text-sm font-medium mb-1">Items ({order.order_items.length}):</p>
+                <p className="text-xs sm:text-sm font-medium mb-1">Items ({order.order_items.length}):</p>
                 <div className="space-y-1">
                   {order.order_items.slice(0, 2).map((item, index) => (
-                    <p key={index} className="text-xs text-gray-600">
+                    <p key={index} className="text-xs text-gray-600 truncate">
                       {item.quantity}x {item.product_name} - Rs. {item.total_price.toLocaleString()}
                     </p>
                   ))}
@@ -226,15 +228,16 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
             )}
           </div>
 
-          <div className="flex flex-col gap-2 ml-4">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onViewOrder(order)}
-              className="flex items-center gap-2"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm min-w-[80px]"
             >
-              <Eye className="h-4 w-4" />
-              View Details
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">View Details</span>
+              <span className="sm:hidden">View</span>
             </Button>
             
             {showReorderButton && onReorder && (
@@ -242,10 +245,11 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => onReorder(order)}
-                className="flex items-center gap-2"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm min-w-[80px]"
               >
-                <RotateCcw className="h-4 w-4" />
-                Reorder
+                <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Reorder</span>
+                <span className="sm:hidden">Re-buy</span>
               </Button>
             )}
 
@@ -254,10 +258,11 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
                 variant="default"
                 size="sm"
                 onClick={() => onStatusUpdate(order.id, nextStatus)}
-                className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                className="flex-1 sm:flex-initial bg-green-600 hover:bg-green-700 text-xs sm:text-sm min-w-[80px]"
               >
                 {getStatusIcon(nextStatus)}
-                {getStatusLabel(nextStatus)}
+                <span className="hidden sm:inline">{getStatusLabel(nextStatus)}</span>
+                <span className="sm:hidden">Next</span>
               </Button>
             )}
 
@@ -266,10 +271,11 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
                 variant="destructive"
                 size="sm"
                 onClick={() => onStatusUpdate(order.id, 'rejected')}
-                className="flex items-center gap-2"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm min-w-[80px]"
               >
-                <XCircle className="h-4 w-4" />
-                Reject
+                <XCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Reject</span>
+                <span className="sm:hidden">No</span>
               </Button>
             )}
           </div>

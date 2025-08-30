@@ -60,28 +60,29 @@ const OptimizedOrderCard: React.FC<OptimizedOrderCardProps> = ({
   };
 
   return (
-    <Card className="hover:shadow-md transition-all duration-200 border-l-4 border-l-primary">
-      <CardContent className="p-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h3 className="font-semibold text-lg font-poppins">
+    <Card className="hover:shadow-md transition-all duration-200 border-l-4 border-l-primary overflow-hidden">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex flex-col gap-3">
+          <div className="flex-1 min-w-0 space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="font-semibold text-base sm:text-lg font-poppins truncate">
                 Order #{order.id.slice(0, 8)}
               </h3>
-              <Badge className={`flex items-center gap-1 ${getStatusColor(order.status)}`}>
+              <Badge className={`flex items-center gap-1 text-xs sm:text-sm ${getStatusColor(order.status)}`}>
                 {getStatusIcon(order.status)}
-                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                <span className="hidden sm:inline">{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                <span className="sm:hidden">{order.status.substring(0, 3).toUpperCase()}</span>
               </Badge>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
+            <div className="space-y-1 text-xs sm:text-sm text-gray-600">
               {userRole === 'seller' && order.shops && (
-                <p className="font-poppins">
+                <p className="font-poppins truncate">
                   <span className="font-medium">Shop:</span> {order.shops.name}
                 </p>
               )}
               {userRole === 'wholesaler' && order.buyer_name && (
-                <p className="font-poppins">
+                <p className="font-poppins truncate">
                   <span className="font-medium">Buyer:</span> {order.buyer_name}
                 </p>
               )}
@@ -92,22 +93,23 @@ const OptimizedOrderCard: React.FC<OptimizedOrderCardProps> = ({
                 <span className="font-medium">Date:</span> {new Date(order.created_at).toLocaleDateString()}
               </p>
               {order.payment_method && (
-                <p className="font-poppins">
+                <p className="font-poppins truncate">
                   <span className="font-medium">Payment:</span> {order.payment_method.replace('_', ' ').toUpperCase()}
                 </p>
               )}
             </div>
           </div>
           
-          <div className="flex flex-col md:flex-row gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onViewOrder(order)}
-              className="flex items-center gap-2"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm min-w-[80px]"
             >
-              <Eye className="h-4 w-4" />
-              View Details
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">View Details</span>
+              <span className="sm:hidden">View</span>
             </Button>
             
             {userRole === 'wholesaler' && order.status === 'pending' && onConfirm && onReject && (
@@ -115,18 +117,21 @@ const OptimizedOrderCard: React.FC<OptimizedOrderCardProps> = ({
                 <Button
                   size="sm"
                   onClick={() => onConfirm(order.id)}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="flex-1 sm:flex-initial bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm min-w-[80px]"
                 >
-                  <CheckCircle className="h-4 w-4 mr-1" />
-                  Confirm
+                  <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span className="hidden sm:inline">Confirm</span>
+                  <span className="sm:hidden">OK</span>
                 </Button>
                 <Button
                   size="sm"
                   variant="destructive"
                   onClick={() => onReject(order.id)}
+                  className="flex-1 sm:flex-initial text-xs sm:text-sm min-w-[80px]"
                 >
-                  <XCircle className="h-4 w-4 mr-1" />
-                  Reject
+                  <XCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span className="hidden sm:inline">Reject</span>
+                  <span className="sm:hidden">No</span>
                 </Button>
               </>
             )}
@@ -136,10 +141,11 @@ const OptimizedOrderCard: React.FC<OptimizedOrderCardProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => onReorder(order)}
-                className="text-primary border-primary hover:bg-primary hover:text-white"
+                className="flex-1 sm:flex-initial text-primary border-primary hover:bg-primary hover:text-white text-xs sm:text-sm min-w-[80px]"
               >
-                <Package className="h-4 w-4 mr-1" />
-                Reorder
+                <Package className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                <span className="hidden sm:inline">Reorder</span>
+                <span className="sm:hidden">Re-buy</span>
               </Button>
             )}
           </div>

@@ -46,47 +46,50 @@ const OrderCard: React.FC<OrderCardProps> = ({
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-  return <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6 rounded-2xl py-[31px] my-[6px] bg-[#00ff00]/0">
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <h3 className="text-lg font-semibold font-poppins">
+  return <Card className="hover:shadow-md transition-shadow overflow-hidden">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold font-poppins truncate">
                 Order #{order.id.slice(0, 8)}
               </h3>
-              <Badge className={`flex items-center gap-1 ${getStatusColor(order.status)}`}>
+              <Badge className={`flex items-center gap-1 text-xs sm:text-sm ${getStatusColor(order.status)}`}>
                 {getStatusIcon(order.status)}
-                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                <span className="hidden sm:inline">{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                <span className="sm:hidden">{order.status.charAt(0).toUpperCase() + order.status.slice(1).substring(0, 3)}</span>
               </Badge>
             </div>
             
-            <div className="space-y-2 text-sm text-gray-600 font-poppins">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <p><strong>Amount:</strong> Rs. {order.total_amount?.toLocaleString()}</p>
+            <div className="space-y-2 text-xs sm:text-sm text-gray-600 font-poppins">
+              <div className="grid grid-cols-1 gap-2">
+                <p className="truncate"><strong>Amount:</strong> Rs. {order.total_amount?.toLocaleString()}</p>
                 <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
                 
-                {userRole === 'wholesaler' && order.buyer_name && <p><strong>Buyer:</strong> {order.buyer_name}</p>}
+                {userRole === 'wholesaler' && order.buyer_name && <p className="truncate"><strong>Buyer:</strong> {order.buyer_name}</p>}
                 
-                {userRole === 'seller' && order.shops?.name && <p><strong>Shop:</strong> {order.shops.name}</p>}
+                {userRole === 'seller' && order.shops?.name && <p className="truncate"><strong>Shop:</strong> {order.shops.name}</p>}
                 
-                {order.payment_method && <p><strong>Payment:</strong> {order.payment_method.replace('_', ' ').toUpperCase()}</p>}
+                {order.payment_method && <p className="truncate"><strong>Payment:</strong> {order.payment_method.replace('_', ' ').toUpperCase()}</p>}
               </div>
             </div>
 
-            {order.wholesaler_notes && <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm"><strong>Notes:</strong> {order.wholesaler_notes}</p>
+            {order.wholesaler_notes && <div className="mt-3 p-2 sm:p-3 bg-gray-50 rounded-lg">
+                <p className="text-xs sm:text-sm break-words"><strong>Notes:</strong> {order.wholesaler_notes}</p>
               </div>}
           </div>
 
-          <div className="flex flex-col gap-2 ml-4">
-            <Button variant="outline" size="sm" onClick={() => onViewOrder(order)} className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
-              View Details
+          <div className="flex flex-row sm:flex-col gap-2">
+            <Button variant="outline" size="sm" onClick={() => onViewOrder(order)} className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm">
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">View Details</span>
+              <span className="sm:hidden">View</span>
             </Button>
             
-            {showReorderButton && onReorder && <Button variant="outline" size="sm" onClick={() => onReorder(order)} className="flex items-center gap-2">
-                <RotateCcw className="h-4 w-4" />
-                Reorder
+            {showReorderButton && onReorder && <Button variant="outline" size="sm" onClick={() => onReorder(order)} className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm">
+                <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Reorder</span>
+                <span className="sm:hidden">Re-order</span>
               </Button>}
           </div>
         </div>

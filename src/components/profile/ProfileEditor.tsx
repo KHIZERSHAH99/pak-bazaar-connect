@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Save, X } from 'lucide-react';
@@ -114,14 +115,25 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onProfileUpdate 
         </div>
 
         <div>
-          <Label htmlFor="phone_number" className="font-poppins">Phone Number</Label>
-          <Input
-            id="phone_number"
-            value={formData.phone_number}
-            onChange={(e) => handleInputChange('phone_number', e.target.value)}
-            disabled={!editing}
-            className="font-poppins"
-          />
+          {editing ? (
+            <PhoneInput
+              value={formData.phone_number}
+              onChange={(value) => handleInputChange('phone_number', value)}
+              disabled={!editing}
+              showValidation
+              autoFormat
+            />
+          ) : (
+            <>
+              <Label htmlFor="phone_number" className="font-poppins">Phone Number</Label>
+              <Input
+                id="phone_number"
+                value={formData.phone_number}
+                disabled
+                className="font-poppins bg-gray-50"
+              />
+            </>
+          )}
         </div>
 
         <div>

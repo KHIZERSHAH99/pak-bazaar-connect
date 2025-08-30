@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Phone, Lock, Eye, EyeOff, Loader2, User, Building, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, Link } from 'react-router-dom';
@@ -31,21 +32,6 @@ const PakistaniSignupForm: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9]/g, '');
-    
-    // Auto-format Pakistani phone number
-    if (value.length <= 11) {
-      if (value.startsWith('03')) {
-        const formatted = value.length > 4 ? 
-          `${value.substring(0, 4)}-${value.substring(4)}` : 
-          value;
-        setFormData({...formData, phoneNumber: formatted});
-      } else {
-        setFormData({...formData, phoneNumber: value});
-      }
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,23 +129,14 @@ const PakistaniSignupForm: React.FC = () => {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber" className="flex items-center font-poppins">
-              <Phone className="h-4 w-4 mr-2 text-primary" />
-              Pakistani Mobile Number
-            </Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              placeholder="03XX-XXXXXXX"
-              value={formData.phoneNumber}
-              onChange={handlePhoneChange}
-              disabled={isLoading}
-              className="font-poppins"
-              maxLength={12}
-              required
-            />
-          </div>
+          <PhoneInput
+            value={formData.phoneNumber}
+            onChange={(value) => setFormData({...formData, phoneNumber: value})}
+            disabled={isLoading}
+            required
+            showValidation
+            autoFormat
+          />
 
           <div className="space-y-2">
             <Label htmlFor="contactName" className="flex items-center font-poppins">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { AlertCircle, Shield } from 'lucide-react';
 import { validateAndSanitizeInput, ValidationResult } from '@/lib/security/simple-validation';
 import { useToast } from '@/hooks/use-toast';
@@ -81,10 +82,21 @@ export const SecureOrderFormInput: React.FC<SecureOrderFormInputProps> = ({
           className={hasErrors ? 'border-red-500 focus:border-red-500' : isSecure ? 'border-green-500' : ''}
           maxLength={maxLength}
         />
+      ) : type === 'phone' ? (
+        <PhoneInput
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={false}
+          required={required}
+          showValidation
+          autoFormat
+          error={validationState?.errors[0]}
+        />
       ) : (
         <Input
           id={id}
-          type={type === 'phone' ? 'tel' : type}
+          type={type === 'email' ? 'email' : 'text'}
           value={value}
           onChange={(e) => handleInputChange(e.target.value)}
           placeholder={placeholder}
@@ -108,11 +120,6 @@ export const SecureOrderFormInput: React.FC<SecureOrderFormInputProps> = ({
         </div>
       )}
       
-      {validation === 'phone' && !hasErrors && value && (
-        <div className="text-xs text-muted-foreground">
-          Format: 03XX-XXXXXXX (Pakistani mobile number)
-        </div>
-      )}
     </div>
   );
 };

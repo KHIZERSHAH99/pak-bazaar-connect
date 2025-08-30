@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Phone, Lock, Eye, EyeOff, Loader2, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
@@ -40,21 +41,6 @@ const PakistaniLoginForm: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [phoneNumber]);
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9]/g, '');
-    
-    // Auto-format Pakistani phone number
-    if (value.length <= 11) {
-      if (value.startsWith('03')) {
-        const formatted = value.length > 4 ? 
-          `${value.substring(0, 4)}-${value.substring(4)}` : 
-          value;
-        setPhoneNumber(formatted);
-      } else {
-        setPhoneNumber(value);
-      }
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,29 +114,15 @@ const PakistaniLoginForm: React.FC = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber" className="flex items-center font-poppins">
-              <Phone className="h-4 w-4 mr-2 text-primary" />
-              Pakistani Mobile Number
-            </Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              placeholder="03XX-XXXXXXX"
-              value={phoneNumber}
-              onChange={handlePhoneChange}
-              disabled={isLoading}
-              className={`font-poppins ${accountLocked ? 'border-destructive' : ''}`}
-              maxLength={12} // 03XX-XXXXXXX format
-              required
-            />
-            {accountLocked && (
-              <div className="flex items-center gap-2 text-sm text-destructive">
-                <Shield className="h-4 w-4" />
-                {lockoutMessage}
-              </div>
-            )}
-          </div>
+          <PhoneInput
+            value={phoneNumber}
+            onChange={setPhoneNumber}
+            disabled={isLoading}
+            required
+            showValidation
+            autoFormat
+            error={accountLocked ? lockoutMessage : undefined}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="password" className="flex items-center font-poppins">

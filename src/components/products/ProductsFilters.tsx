@@ -39,19 +39,19 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
   const hasActiveFilters = selectedCategory !== 'all' || selectedCity !== 'all' || minPrice || maxPrice || searchTerm;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-6 mb-8">
-      <div className="space-y-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-4 mb-6">
+      <div className="space-y-3">
         <Input
           type="text"
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full"
+          className="w-full h-9 text-sm"
         />
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger>
+            <SelectTrigger className="h-9 text-sm">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
@@ -65,7 +65,7 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
           </Select>
 
           <Select value={selectedCity} onValueChange={onCityChange}>
-            <SelectTrigger>
+            <SelectTrigger className="h-9 text-sm">
               <SelectValue placeholder="All Cities" />
             </SelectTrigger>
             <SelectContent>
@@ -78,27 +78,27 @@ const ProductsFilters: React.FC<ProductsFiltersProps> = ({
             </SelectContent>
           </Select>
 
-          <div className="flex gap-2">
-            <Input
-              type="number"
-              placeholder="Min Price"
-              value={minPrice}
-              onChange={(e) => onPriceChange(e.target.value, maxPrice)}
-            />
-            <Input
-              type="number"
-              placeholder="Max Price"
-              value={maxPrice}
-              onChange={(e) => onPriceChange(minPrice, e.target.value)}
-            />
-          </div>
+          <Input
+            type="number"
+            placeholder="Min Price"
+            value={minPrice}
+            onChange={(e) => onPriceChange(e.target.value, maxPrice)}
+            className="h-9 text-sm"
+          />
+          <Input
+            type="number"
+            placeholder="Max Price"
+            value={maxPrice}
+            onChange={(e) => onPriceChange(minPrice, e.target.value)}
+            className="h-9 text-sm"
+          />
         </div>
       </div>
 
       {hasActiveFilters && (
-        <div className="flex justify-end mt-4">
-          <Button variant="outline" onClick={onClearFilters}>
-            <Filter className="h-4 w-4 mr-2" />
+        <div className="flex justify-end mt-3">
+          <Button variant="outline" size="sm" onClick={onClearFilters} className="h-8 text-xs">
+            <Filter className="h-3 w-3 mr-1.5" />
             Clear Filters
           </Button>
         </div>

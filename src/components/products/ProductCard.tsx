@@ -61,46 +61,41 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Link to={`/product/${product.id}`} className="block">
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:shadow-primary/20 h-full bg-card dark:bg-card">
+      <Card className="group overflow-hidden hover:shadow-md transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10 h-full bg-card dark:bg-card">
         {/* Product Image */}
         <div className="relative overflow-hidden">
           <img 
             src={getProductImageSrc(product.image)} 
             alt={product.name} 
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-32 sm:h-36 lg:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               e.currentTarget.src = `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&auto=format`;
             }}
           />
           
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+          {/* Overlay on hover - Desktop only */}
+          <div className="hidden md:flex absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 items-center justify-center">
             <Button 
               variant="secondary" 
               size="sm" 
-              className="opacity-0 group-hover:opacity-100 transition-opacity font-poppins bg-background/90 hover:bg-background"
+              className="opacity-0 group-hover:opacity-100 transition-opacity font-poppins bg-background/90 hover:bg-background text-xs"
             >
-              <Eye className="w-4 h-4 mr-1" />
+              <Eye className="w-3 h-3 mr-1" />
               Quick View
             </Button>
           </div>
 
           {/* Top badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-1">
+          <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.categories && (
-              <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm font-poppins text-xs">
+              <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm font-poppins text-[10px] px-1.5 py-0.5 h-auto">
                 {product.categories.name}
               </Badge>
             )}
             {product.verification_status === 'approved' && (
-              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 shadow-sm">
-                <Verified className="w-3 h-3 mr-1" />
+              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 shadow-sm text-[10px] px-1.5 py-0.5 h-auto">
+                <Verified className="w-2.5 h-2.5 mr-0.5" />
                 Verified
-              </Badge>
-            )}
-            {product.verification_status === 'pending' && (
-              <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100 shadow-sm">
-                Pending
               </Badge>
             )}
           </div>
@@ -109,83 +104,66 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {showFavorite && (
             <button
               onClick={handleToggleFavorite}
-              className="absolute top-3 right-3 bg-background/90 rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+              className="absolute top-2 right-2 bg-background/90 rounded-full p-1.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
             >
-              <Heart className="w-4 h-4 text-muted-foreground" />
+              <Heart className="w-3 h-3 text-muted-foreground" />
             </button>
           )}
         </div>
 
         {/* Product Details */}
-        <div className="p-4 space-y-3 flex-1 flex flex-col">
+        <div className="p-3 space-y-2 flex-1 flex flex-col">
           {/* Product Name */}
-          <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors font-poppins line-clamp-2 flex-shrink-0">
+          <h3 className="font-semibold text-sm lg:text-base text-foreground group-hover:text-primary transition-colors font-poppins line-clamp-1 flex-shrink-0">
             {product.name}
           </h3>
           
           {/* Price */}
           <div className="flex items-center justify-between flex-shrink-0">
-            <span className="text-2xl font-bold text-primary font-poppins">
+            <span className="text-lg lg:text-xl font-bold text-primary font-poppins">
               PKR {product.price.toLocaleString()}
             </span>
             {product.moq && product.moq > 1 && (
-              <Badge variant="outline" className="text-xs text-muted-foreground border-border">
+              <Badge variant="outline" className="text-[10px] text-muted-foreground border-border px-1.5 py-0.5 h-auto">
                 MOQ: {product.moq}
               </Badge>
             )}
           </div>
 
           {/* Supplier Info */}
-          <div className="space-y-2 flex-grow">
-            {product.shops && (
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-foreground font-poppins">
-                  {product.shops.name}
-                </p>
-                <p className="text-xs text-muted-foreground font-poppins">
-                  New Seller
-                </p>
-              </div>
-            )}
-            
-            {product.shops?.cities && (
-              <div className="flex items-center text-xs text-muted-foreground">
-                <MapPin className="w-3 h-3 mr-1" />
-                <span className="font-poppins">{product.shops.cities.name}, {product.shops.cities.province}</span>
-              </div>
-            )}
-          </div>
+          {product.shops && (
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-foreground font-poppins truncate">
+                {product.shops.name}
+              </p>
+              {product.shops?.cities && (
+                <div className="flex items-center text-[10px] text-muted-foreground">
+                  <MapPin className="w-2.5 h-2.5 mr-0.5" />
+                  <span className="font-poppins truncate">{product.shops.cities.name}</span>
+                </div>
+              )}
+            </div>
+          )}
 
-          {/* Description */}
+          {/* Description - Hide on mobile */}
           {product.description && (
-            <p className="text-sm text-muted-foreground font-poppins line-clamp-2 flex-shrink-0">
+            <p className="hidden sm:block text-xs text-muted-foreground font-poppins line-clamp-2 flex-shrink-0">
               {product.description}
             </p>
           )}
 
-          {/* Order Button - Replace Add to Cart */}
+          {/* Order Button */}
           {showAddToCart && (
-            <div className="flex gap-2 mt-auto pt-3 flex-shrink-0">
-              <Link to={`/product/${product.id}`} className="flex-1">
+            <div className="mt-auto pt-2 flex-shrink-0">
+              <Link to={`/product/${product.id}`} className="block">
                 <Button 
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-xs h-8"
                   size="sm"
                 >
-                  <ShoppingCart className="w-4 h-4 mr-1" />
+                  <ShoppingCart className="w-3 h-3 mr-1" />
                   View Product
                 </Button>
               </Link>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="px-3 border-border hover:bg-accent"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                <Package className="w-4 h-4" />
-              </Button>
             </div>
           )}
         </div>

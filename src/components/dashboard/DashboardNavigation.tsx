@@ -39,17 +39,17 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
       { 
         name: 'Dashboard', 
         path: '/dashboard', 
-        icon: <Home className="w-5 h-5 mr-3" /> 
+        icon: <Home className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'Profile', 
         path: '/profile', 
-        icon: <Settings className="w-5 h-5 mr-3" /> 
+        icon: <Settings className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'Chat Support', 
         path: '/dashboard/chat', 
-        icon: <MessageSquare className="w-5 h-5 mr-3" /> 
+        icon: <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
     ];
 
@@ -57,7 +57,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
       { 
         name: 'Ad Approvals', 
         path: '/dashboard/ad-approvals', 
-        icon: <FileText className="w-5 h-5 mr-3" />,
+        icon: <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />,
         badge: 'Admin'
       },
     ];
@@ -66,27 +66,27 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
       { 
         name: 'My Shops', 
         path: '/dashboard/shops', 
-        icon: <Store className="w-5 h-5 mr-3" /> 
+        icon: <Store className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'Products', 
         path: '/dashboard/products', 
-        icon: <Package className="w-5 h-5 mr-3" /> 
+        icon: <Package className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'Advertisements', 
         path: '/dashboard/ads', 
-        icon: <FileText className="w-5 h-5 mr-3" /> 
+        icon: <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'Orders', 
         path: '/dashboard/wholesaler-orders', 
-        icon: <ShoppingCart className="w-5 h-5 mr-3" /> 
+        icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'Analytics', 
         path: '/dashboard/analytics', 
-        icon: <BarChart3 className="w-5 h-5 mr-3" /> 
+        icon: <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
     ];
 
@@ -94,12 +94,12 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
       { 
         name: 'Browse Shops', 
         path: '/dashboard/browse-shops', 
-        icon: <Store className="w-5 h-5 mr-3" /> 
+        icon: <Store className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'My Orders', 
         path: '/dashboard/seller-orders', 
-        icon: <ShoppingCart className="w-5 h-5 mr-3" /> 
+        icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
     ];
 
@@ -117,13 +117,13 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
   const navItems = getNavItems();
 
   return (
-    <nav className="space-y-1">
+    <nav className="space-y-0.5">
       {navItems.map((item) => (
         <Link
           key={item.path}
           to={item.path}
           onClick={onNavigate}
-          className={`flex items-center justify-between px-4 py-3 md:py-2.5 rounded-lg text-sm font-medium group transition-all duration-200 font-poppins touch-manipulation ${
+          className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs sm:text-sm font-medium group transition-all duration-200 font-poppins touch-manipulation ${
             isActive(item.path)
               ? 'bg-primary text-primary-foreground shadow-sm'
               : 'text-foreground hover:bg-muted hover:text-foreground'
@@ -131,16 +131,16 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
         >
           <div className="flex items-center">
             {item.icon}
-            <span className="text-base md:text-sm">{item.name}</span>
+            <span className="text-sm">{item.name}</span>
           </div>
           
           {item.badge && (
-            <Badge variant="secondary" size="sm" className="ml-2 font-poppins">
+            <Badge variant="secondary" className="ml-2 font-poppins text-[10px] px-1.5 py-0">
               {item.badge}
             </Badge>
           )}
           
-          <ChevronRight className={`h-4 w-4 opacity-0 -translate-x-2 transition-all duration-200 
+          <ChevronRight className={`h-3 w-3 sm:h-4 sm:w-4 opacity-0 -translate-x-2 transition-all duration-200 
             ${isActive(item.path) ? 'opacity-100 translate-x-0' : 'group-hover:opacity-50 group-hover:translate-x-0'}`} 
           />
         </Link>

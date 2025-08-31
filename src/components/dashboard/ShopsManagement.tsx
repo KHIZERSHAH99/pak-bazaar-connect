@@ -44,63 +44,62 @@ const ShopsManagement: React.FC = () => {
         {[...Array(2)].map((_, i) => <div key={i} className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>)}
       </div>;
   }
-  return <div className="space-y-6 py-0 my-[34px]">
+  return <div className="space-y-3 sm:space-y-4 py-2 sm:py-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold font-poppins text-gray-900">My Shops</h1>
-        <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins" onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Create Shop
+        <h1 className="text-xl sm:text-2xl font-bold font-poppins text-gray-900">My Shops</h1>
+        <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
+          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">Create Shop</span>
+          <span className="sm:hidden">Create</span>
         </Button>
       </div>
 
       {shops.length === 0 ? <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Store className="h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">
+          <CardContent className="flex flex-col items-center justify-center py-6 sm:py-8">
+            <Store className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 mb-3" />
+            <h3 className="text-sm sm:text-base font-medium text-gray-700 mb-2 font-poppins">
               No shops yet
             </h3>
-            <p className="text-gray-600 mb-4 font-poppins text-center">
+            <p className="text-xs sm:text-sm text-gray-600 mb-3 font-poppins text-center px-4">
               Create your first shop to start selling products on our platform.
             </p>
-            <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins" onClick={() => setIsCreateDialogOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
+            <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
+              <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
               Create Your First Shop
             </Button>
           </CardContent>
-        </Card> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        </Card> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {shops.map(shop => <Card key={shop.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              {shop.logo && <div className="aspect-video relative">
+              {shop.logo && <div className="aspect-video relative h-24 sm:h-32">
                   <img src={shop.logo} alt={shop.name} className="w-full h-full object-cover" />
                 </div>}
               
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <CardTitle className="font-poppins text-xl">{shop.name}</CardTitle>
-                  <Button variant="outline" size="sm" onClick={() => handleEditShop(shop)}>
-                    <Edit className="w-4 h-4" />
+              <CardHeader className="p-3 sm:p-4">
+                <div className="flex justify-between items-start gap-2">
+                  <CardTitle className="font-poppins text-sm sm:text-base">{shop.name}</CardTitle>
+                  <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => handleEditShop(shop)}>
+                    <Edit className="w-3 h-3" />
                   </Button>
                 </div>
               </CardHeader>
               
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2 p-3 sm:p-4 pt-0 sm:pt-0">
                 <div className="flex items-center text-gray-600">
-                  <Phone className="w-4 h-4 mr-2" />
-                  <span className="font-poppins">{shop.contact}</span>
+                  <Phone className="w-3 h-3 mr-1.5" />
+                  <span className="font-poppins text-xs sm:text-sm">{shop.contact}</span>
                 </div>
                 
                 <div className="flex items-start text-gray-600">
-                  <MapPin className="w-4 h-4 mr-2 mt-1" />
+                  <MapPin className="w-3 h-3 mr-1.5 mt-0.5" />
                   <div className="font-poppins">
-                    <p>{shop.address}</p>
-                    <p className="text-sm">Postal Code: {shop.postal_code}</p>
-                    {shop.cities && <p className="text-sm">{shop.cities.name}, {shop.cities.province}</p>}
+                    <p className="text-xs sm:text-sm">{shop.address}</p>
+                    <p className="text-xs">Postal Code: {shop.postal_code}</p>
+                    {shop.cities && <p className="text-xs">{shop.cities.name}, {shop.cities.province}</p>}
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between pt-2">
-                  
-                  
-                  {shop.is_verified && <Badge className="bg-green-100 text-green-800 font-poppins">
+                <div className="flex items-center justify-between pt-1">
+                  {shop.is_verified && <Badge className="bg-green-100 text-green-800 font-poppins text-xs px-2 py-0.5">
                       Verified
                     </Badge>}
                 </div>

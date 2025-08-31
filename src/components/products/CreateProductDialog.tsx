@@ -302,33 +302,33 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-w-[95vw] max-h-[85vh] overflow-y-auto p-3 sm:p-6">
         <DialogHeader>
-          <DialogTitle>Add New Product</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">Add New Product</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="basic" className="flex items-center gap-2">
-                <Info className="w-4 h-4" />
-                Basic
+            <TabsList className="grid w-full grid-cols-5 h-8 sm:h-10">
+              <TabsTrigger value="basic" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Basic</span>
               </TabsTrigger>
-              <TabsTrigger value="details" className="flex items-center gap-2">
-                <Package className="w-4 h-4" />
-                Details
+              <TabsTrigger value="details" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Details</span>
               </TabsTrigger>
-              <TabsTrigger value="specifications" className="flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                Specs
+              <TabsTrigger value="specifications" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Specs</span>
               </TabsTrigger>
-              <TabsTrigger value="images" className="flex items-center gap-2">
-                <Image className="w-4 h-4" />
-                Images
+              <TabsTrigger value="images" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Image className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Images</span>
               </TabsTrigger>
-              <TabsTrigger value="pricing" className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
-                Pricing
+              <TabsTrigger value="pricing" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Pricing</span>
               </TabsTrigger>
             </TabsList>
             

@@ -19,19 +19,19 @@ const UserProfile: React.FC = () => {
   }
 
   return (
-    <div className="mb-6 flex flex-col items-center p-4 rounded-lg border border-border/50 bg-white/[0.31]">
-      <Avatar className="h-16 w-16 border-2 border-primary/20 mb-3">
+    <div className="mb-3 sm:mb-4 flex flex-col items-center p-3 sm:p-4 rounded-lg border border-border/50 bg-white/[0.31]">
+      <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-primary/20 mb-2">
         <AvatarImage 
           src={profile.profile_image} 
           alt="Profile" 
           className="object-cover"
         />
-        <AvatarFallback className="bg-primary text-xl font-bold text-slate-50">
+        <AvatarFallback className="bg-primary text-xs sm:text-sm font-bold text-slate-50">
           {profile.email?.substring(0, 2).toUpperCase() || "U"}
         </AvatarFallback>
       </Avatar>
       <div className="text-center">
-        <p className="font-medium text-foreground mb-1 font-poppins truncate max-w-32">
+        <p className="font-medium text-foreground mb-0.5 font-poppins truncate max-w-32 text-xs sm:text-sm">
           {profile.email?.split('@')[0]}
         </p>
         <Badge 
@@ -39,7 +39,7 @@ const UserProfile: React.FC = () => {
             profile.role === 'admin' ? 'default' : 
             profile.role === 'wholesaler' || profile.role === 'seller' ? 'secondary' : 'outline'
           } 
-          className="capitalize font-poppins"
+          className="capitalize font-poppins text-[10px] sm:text-xs px-1.5 py-0"
         >
           {profile.role}
         </Badge>

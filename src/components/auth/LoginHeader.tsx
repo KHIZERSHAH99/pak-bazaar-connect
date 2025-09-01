@@ -1,18 +1,21 @@
-
 import React from 'react';
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { LogIn } from 'lucide-react';
 
 const LoginHeader: React.FC = () => {
   return (
-    <CardHeader className="bg-pakistani_green-700 dark:bg-gray-900 text-white text-center pb-6">
+    <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-center pb-8 pt-8 rounded-t-xl">
       <div className="flex justify-center mb-4">
-        <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm">
-          <LogIn className="h-8 w-8 text-white" />
+        <div className="bg-primary-foreground/10 p-4 rounded-full backdrop-blur-sm border border-primary-foreground/20 shadow-lg">
+          <LogIn className="h-10 w-10 text-primary-foreground" />
         </div>
       </div>
-      <CardTitle className="text-2xl font-bold text-white dark:text-white">Welcome Back</CardTitle>
-      <CardDescription className="text-green-50 dark:text-gray-300">Log in to your account</CardDescription>
+      <CardTitle className="text-3xl font-bold text-primary-foreground font-poppins">
+        Welcome Back
+      </CardTitle>
+      <CardDescription className="text-primary-foreground/90 text-base mt-2 font-poppins">
+        Log in to your account to continue
+      </CardDescription>
     </CardHeader>
   );
 };

@@ -99,27 +99,29 @@ const PakistaniSignupForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-lg">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold text-primary font-poppins flex items-center justify-center gap-2">
-          <Phone className="h-6 w-6" />
+    <Card className="w-full max-w-md mx-auto shadow-xl border-0 overflow-hidden">
+      <CardHeader className="text-center bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-8 pt-8">
+        <div className="inline-flex items-center justify-center p-3 bg-primary-foreground/10 rounded-full mb-4 backdrop-blur-sm border border-primary-foreground/20">
+          <Phone className="h-8 w-8 text-primary-foreground" />
+        </div>
+        <CardTitle className="text-3xl font-bold text-primary-foreground font-poppins">
           پاکستانی اکاؤنٹ
         </CardTitle>
-        <CardDescription className="font-poppins">
+        <CardDescription className="font-poppins text-primary-foreground/90 text-base mt-2">
           Create your Pakistani B2B business account
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 bg-card">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="role" className="font-poppins">Business Type</Label>
+            <Label htmlFor="role" className="text-sm font-medium font-poppins text-foreground">Business Type</Label>
             <Select 
               value={formData.role} 
               onValueChange={(value: 'seller' | 'wholesaler') => 
                 setFormData({...formData, role: value})
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="h-11">
                 <SelectValue placeholder="Select business type" />
               </SelectTrigger>
               <SelectContent>
@@ -129,18 +131,23 @@ const PakistaniSignupForm: React.FC = () => {
             </Select>
           </div>
 
-          <PhoneInput
-            value={formData.phoneNumber}
-            onChange={(value) => setFormData({...formData, phoneNumber: value})}
-            disabled={isLoading}
-            required
-            showValidation
-            autoFormat
-          />
+          <div className="space-y-2">
+            <Label className="text-sm font-medium font-poppins text-foreground">
+              Pakistani Mobile Number
+            </Label>
+            <PhoneInput
+              value={formData.phoneNumber}
+              onChange={(value) => setFormData({...formData, phoneNumber: value})}
+              disabled={isLoading}
+              required
+              showValidation
+              autoFormat
+              className="w-full"
+            />
+          </div>
 
           <div className="space-y-2">
-            <Label htmlFor="contactName" className="flex items-center font-poppins">
-              <User className="h-4 w-4 mr-2 text-primary" />
+            <Label htmlFor="contactName" className="text-sm font-medium font-poppins text-foreground">
               Contact Person Name
             </Label>
             <Input
@@ -150,14 +157,13 @@ const PakistaniSignupForm: React.FC = () => {
               value={formData.contactName}
               onChange={(e) => setFormData({...formData, contactName: e.target.value})}
               disabled={isLoading}
-              className="font-poppins"
+              className="font-poppins h-11"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="businessName" className="flex items-center font-poppins">
-              <Building className="h-4 w-4 mr-2 text-primary" />
+            <Label htmlFor="businessName" className="text-sm font-medium font-poppins text-foreground">
               Business Name
             </Label>
             <Input
@@ -167,14 +173,13 @@ const PakistaniSignupForm: React.FC = () => {
               value={formData.businessName}
               onChange={(e) => setFormData({...formData, businessName: e.target.value})}
               disabled={isLoading}
-              className="font-poppins"
+              className="font-poppins h-11"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="flex items-center font-poppins">
-              <Lock className="h-4 w-4 mr-2 text-primary" />
+            <Label htmlFor="password" className="text-sm font-medium font-poppins text-foreground">
               Password
             </Label>
             <div className="relative">
@@ -185,13 +190,13 @@ const PakistaniSignupForm: React.FC = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 disabled={isLoading}
-                className="font-poppins pr-10"
+                className="font-poppins pr-10 h-11"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 hover:text-foreground transition-colors"
                 disabled={isLoading}
               >
                 {showPassword ? (
@@ -204,8 +209,7 @@ const PakistaniSignupForm: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="flex items-center font-poppins">
-              <Lock className="h-4 w-4 mr-2 text-primary" />
+            <Label htmlFor="confirmPassword" className="text-sm font-medium font-poppins text-foreground">
               Confirm Password
             </Label>
             <div className="relative">
@@ -216,13 +220,13 @@ const PakistaniSignupForm: React.FC = () => {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                 disabled={isLoading}
-                className="font-poppins pr-10"
+                className="font-poppins pr-10 h-11"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 hover:text-foreground transition-colors"
                 disabled={isLoading}
               >
                 {showConfirmPassword ? (
@@ -236,13 +240,13 @@ const PakistaniSignupForm: React.FC = () => {
 
           <Button
             type="submit"
-            className="w-full bg-primary hover:bg-primary/90 font-poppins"
+            className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-poppins h-11 font-medium shadow-lg hover:shadow-xl transition-all"
             disabled={isLoading}
           >
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Processing...
+                Creating Account...
               </>
             ) : (
               'Create Account'
@@ -250,12 +254,21 @@ const PakistaniSignupForm: React.FC = () => {
           </Button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border"></div>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-2 text-muted-foreground">Or</span>
+          </div>
+        </div>
+
+        <div className="text-center">
           <p className="text-sm text-muted-foreground font-poppins">
             Already have an account?{' '}
             <Link
               to="/login"
-              className="text-primary hover:text-primary/90 font-medium"
+              className="text-primary hover:text-primary/80 font-semibold transition-colors"
             >
               Sign in here
             </Link>
@@ -263,12 +276,19 @@ const PakistaniSignupForm: React.FC = () => {
         </div>
 
         {/* Security notice */}
-        <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Shield className="h-4 w-4" />
-            <span className="font-poppins">
-              Secure Pakistani phone-only authentication
-            </span>
+        <div className="mt-6 p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-full">
+              <Shield className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground font-poppins">
+                Secure Registration
+              </p>
+              <p className="text-xs text-muted-foreground font-poppins mt-0.5">
+                Pakistani phone-only authentication with end-to-end encryption
+              </p>
+            </div>
           </div>
         </div>
       </CardContent>

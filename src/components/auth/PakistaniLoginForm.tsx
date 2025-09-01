@@ -102,31 +102,38 @@ const PakistaniLoginForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-lg">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold text-primary font-poppins flex items-center justify-center gap-2">
-          <Phone className="h-6 w-6" />
+    <Card className="w-full max-w-md mx-auto shadow-xl border-0 overflow-hidden">
+      <CardHeader className="text-center bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-8 pt-8">
+        <div className="inline-flex items-center justify-center p-3 bg-primary-foreground/10 rounded-full mb-4 backdrop-blur-sm border border-primary-foreground/20">
+          <Phone className="h-8 w-8 text-primary-foreground" />
+        </div>
+        <CardTitle className="text-3xl font-bold text-primary-foreground font-poppins">
           پاکستانی لاگ ان
         </CardTitle>
-        <CardDescription className="font-poppins">
+        <CardDescription className="font-poppins text-primary-foreground/90 text-base mt-2">
           Enter your Pakistani mobile number and password
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <PhoneInput
-            value={phoneNumber}
-            onChange={setPhoneNumber}
-            disabled={isLoading}
-            required
-            showValidation
-            autoFormat
-            error={accountLocked ? lockoutMessage : undefined}
-          />
+      <CardContent className="p-6 bg-card">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium font-poppins text-foreground">
+              Pakistani Mobile Number
+            </Label>
+            <PhoneInput
+              value={phoneNumber}
+              onChange={setPhoneNumber}
+              disabled={isLoading}
+              required
+              showValidation
+              autoFormat
+              error={accountLocked ? lockoutMessage : undefined}
+              className="w-full"
+            />
+          </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="flex items-center font-poppins">
-              <Lock className="h-4 w-4 mr-2 text-primary" />
+            <Label htmlFor="password" className="text-sm font-medium font-poppins text-foreground">
               Password
             </Label>
             <div className="relative">
@@ -137,13 +144,13 @@ const PakistaniLoginForm: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading || accountLocked}
-                className="font-poppins pr-10"
+                className="font-poppins pr-10 h-11"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 hover:text-foreground transition-colors"
                 disabled={isLoading}
               >
                 {showPassword ? (
@@ -155,9 +162,18 @@ const PakistaniLoginForm: React.FC = () => {
             </div>
           </div>
 
+          <div className="flex items-center justify-between text-sm">
+            <Link
+              to="/forgot-password"
+              className="text-primary hover:text-primary/80 font-medium font-poppins transition-colors"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
           <Button
             type="submit"
-            className="w-full bg-primary hover:bg-primary/90 font-poppins"
+            className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-poppins h-11 font-medium shadow-lg hover:shadow-xl transition-all"
             disabled={isLoading || accountLocked}
           >
             {isLoading ? (
@@ -171,12 +187,21 @@ const PakistaniLoginForm: React.FC = () => {
           </Button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border"></div>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-2 text-muted-foreground">Or</span>
+          </div>
+        </div>
+
+        <div className="text-center">
           <p className="text-sm text-muted-foreground font-poppins">
             Don't have an account?{' '}
             <Link
               to="/signup"
-              className="text-primary hover:text-primary/90 font-medium"
+              className="text-primary hover:text-primary/80 font-semibold transition-colors"
             >
               Create Pakistani account
             </Link>
@@ -184,12 +209,19 @@ const PakistaniLoginForm: React.FC = () => {
         </div>
 
         {/* Security notice */}
-        <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Shield className="h-4 w-4" />
-            <span className="font-poppins">
-              Secure Pakistani phone-only authentication
-            </span>
+        <div className="mt-6 p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-full">
+              <Shield className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground font-poppins">
+                Secure Authentication
+              </p>
+              <p className="text-xs text-muted-foreground font-poppins mt-0.5">
+                Pakistani phone-only authentication with end-to-end encryption
+              </p>
+            </div>
           </div>
         </div>
       </CardContent>

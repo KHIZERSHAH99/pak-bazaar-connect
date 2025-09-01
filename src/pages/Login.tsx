@@ -23,16 +23,16 @@ const Login: React.FC = () => {
 
       {/* Floating Icons Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 text-primary/10 animate-pulse">
+        <div className="absolute top-20 left-20 text-primary/10 animate-float">
           <Package className="w-16 h-16" />
         </div>
-        <div className="absolute top-40 right-32 text-primary/10 animate-pulse animation-delay-200">
+        <div className="absolute top-40 right-32 text-primary/10 animate-float animation-delay-200">
           <ShoppingCart className="w-12 h-12" />
         </div>
-        <div className="absolute bottom-32 left-32 text-primary/10 animate-pulse animation-delay-400">
+        <div className="absolute bottom-32 left-32 text-primary/10 animate-float animation-delay-400">
           <Building className="w-14 h-14" />
         </div>
-        <div className="absolute bottom-20 right-20 text-primary/10 animate-pulse animation-delay-600">
+        <div className="absolute bottom-20 right-20 text-primary/10 animate-float animation-delay-600">
           <Users className="w-12 h-12" />
         </div>
       </div>

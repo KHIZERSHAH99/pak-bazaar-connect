@@ -84,5 +84,23 @@ enabled = true
 port = 54333
 
 # Configure edge functions
+[functions.chatbot]
+verify_jwt = true
+
+[functions.cleanup-screenshots]
+verify_jwt = true
+
+[functions.increment-ad-spend]
+verify_jwt = true
+
 [functions.notifications]
 verify_jwt = true
+
+[functions.rate-limit-check]
+verify_jwt = true
+
+[functions.send-otp]
+verify_jwt = false
+
+[functions.verify-otp]
+verify_jwt = false

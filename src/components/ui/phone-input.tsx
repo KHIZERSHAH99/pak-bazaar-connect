@@ -134,7 +134,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           id={id}
           type="tel"
           inputMode="numeric"
-          pattern="[0-9]*"
+          pattern="03[0-9]{2}-?[0-9]{7}"
           value={displayValue}
           onChange={handleChange}
           onFocus={() => setFocused(true)}

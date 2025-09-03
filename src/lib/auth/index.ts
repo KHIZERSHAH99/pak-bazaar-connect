@@ -138,7 +138,7 @@ const signInWithPhone = async (phoneNumber: string, password: string) => {
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('id, email, role, phone_number, normalized_phone')
-      .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${phoneNumber},phone_number.eq.${normalizedPhone},email.like.%${normalizedPhone}@phone.auth`)
+      .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${phoneNumber},phone_number.eq.${normalizedPhone},email.like.%${normalizedPhone}@phone-auth.pk`)
       .limit(1)
       .maybeSingle();
 
@@ -231,8 +231,8 @@ const signUpWithPhone = async (
     throw new Error('An account with this phone number already exists');
   }
 
-  // Create unique email for Supabase auth
-  const uniqueEmail = `${normalizedPhone}@phone.auth`;
+  // Create unique email for Supabase auth with valid domain
+  const uniqueEmail = `${normalizedPhone}@phone-auth.pk`;
 
   const { data, error } = await supabase.auth.signUp({
     email: uniqueEmail,

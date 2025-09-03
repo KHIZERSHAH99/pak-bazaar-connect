@@ -15,7 +15,6 @@ export const usePhoneSignupForm = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<UserRole>('wholesaler');
   const [isPhoneBlocked, setIsPhoneBlocked] = useState(false);
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -138,14 +137,6 @@ export const usePhoneSignupForm = () => {
     }
   };
   
-  const handlePhoneVerified = () => {
-    setIsPhoneVerified(true);
-    toast({
-      title: 'Phone Verified!',
-      description: 'Your phone number has been successfully verified.',
-    });
-  };
-  
   const onSubmit = async (values: FormValues) => {
     console.log('Form submission started for role:', selectedRole);
     console.log('Form values:', values);
@@ -263,13 +254,11 @@ export const usePhoneSignupForm = () => {
     selectedRole,
     totalSteps,
     isPhoneBlocked,
-    isPhoneVerified,
     getStepTitle,
     nextStep,
     prevStep,
     handleRoleSelect,
     handlePhoneBlocked,
-    handlePhoneVerified,
     onSubmit
   };
 };

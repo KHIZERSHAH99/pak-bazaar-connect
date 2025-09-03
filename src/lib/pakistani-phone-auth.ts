@@ -200,7 +200,7 @@ export const phoneSignUp = async (
     }
 
     // Create a unique email for Supabase auth
-    const uniqueEmail = `${normalizedPhone}@phone.auth`;
+    const uniqueEmail = `${normalizedPhone}@pak-auth.local`;
 
     // Create account in Supabase Auth
     const { data, error } = await supabase.auth.signUp({

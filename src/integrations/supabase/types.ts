@@ -1028,47 +1028,6 @@ export type Database = {
           },
         ]
       }
-      otp_verifications: {
-        Row: {
-          attempts_count: number | null
-          created_at: string | null
-          expires_at: string
-          id: string
-          is_verified: boolean | null
-          otp_code: string
-          phone_number: string
-          user_id: string | null
-        }
-        Insert: {
-          attempts_count?: number | null
-          created_at?: string | null
-          expires_at: string
-          id?: string
-          is_verified?: boolean | null
-          otp_code: string
-          phone_number: string
-          user_id?: string | null
-        }
-        Update: {
-          attempts_count?: number | null
-          created_at?: string | null
-          expires_at?: string
-          id?: string
-          is_verified?: boolean | null
-          otp_code?: string
-          phone_number?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "otp_verifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       password_security_events: {
         Row: {
           created_at: string
@@ -1696,10 +1655,6 @@ export type Database = {
       check_user_exists: {
         Args: { p_email?: string; p_phone?: string }
         Returns: Json
-      }
-      cleanup_expired_otps: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
       }
       cleanup_old_product_views: {
         Args: Record<PropertyKey, never>

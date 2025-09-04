@@ -52,7 +52,7 @@ export const enhancedSignIn = async (emailOrPhone: string, password: string) => 
     
     // Determine if input is email or phone
     const isEmail = emailOrPhone.includes('@');
-    const loginEmail = isEmail ? emailOrPhone : `${emailOrPhone.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
+    const loginEmail = isEmail ? emailOrPhone : `${emailOrPhone.replace(/[^0-9]/g, '')}@pakbazaarconnect.com`;
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email: loginEmail.toLowerCase().trim(),

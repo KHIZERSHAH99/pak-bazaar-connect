@@ -50,7 +50,7 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       
       // Try multiple email formats for phone-based accounts
       const emailFormats = [
-        `${normalizedPhone}@phone.auth`,
+        `${normalizedPhone}@pakbazaarconnect.com`,
         `${normalizedPhone}@temp-phone-auth.com`,
         `${normalizedPhone}@phone-auth.com`
       ];
@@ -153,8 +153,8 @@ export const registerUser = async (
       }
       
       phoneNumber = phoneValidation.sanitizedValue;
-      // Use consistent email format for phone-based auth
-      authEmail = `${phoneNumber}@phone.auth`;
+      // Use consistent email format for phone-based auth - real-looking domain
+      authEmail = `${phoneNumber}@pakbazaarconnect.com`;
       
       // Check phone uniqueness
       const phoneExists = await checkFieldUniqueness('phone', phoneNumber);

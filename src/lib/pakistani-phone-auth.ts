@@ -199,8 +199,8 @@ export const phoneSignUp = async (
       throw new Error('An account with this phone number already exists');
     }
 
-    // Create a unique email for Supabase auth - using real-looking domain
-    const uniqueEmail = `${normalizedPhone}@pakbazaarconnect.com`;
+    // Create a unique email for Supabase auth - using actual domain
+    const uniqueEmail = `${normalizedPhone}@pakbazaarconnect.store`;
 
     // Create account in Supabase Auth
     const { data, error } = await supabase.auth.signUp({

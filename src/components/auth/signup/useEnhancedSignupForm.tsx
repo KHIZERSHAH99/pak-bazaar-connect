@@ -182,8 +182,8 @@ export const useEnhancedSignupForm = () => {
         description: 'Please wait while we set up your account...',
       });
       
-      // Create a unique email using phone number for Supabase auth - using real-looking domain
-      const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@pakbazaarconnect.com`;
+      // Create a unique email using phone number for Supabase auth - using actual domain
+      const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@pakbazaarconnect.store`;
       
       // Call enhanced signup with form data
       await enhancedSignUp(tempEmail, values.password, selectedRole, values);

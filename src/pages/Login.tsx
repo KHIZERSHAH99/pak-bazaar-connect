@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import PakistaniLoginForm from '@/components/auth/PakistaniLoginForm';
-import { TestLogin } from '@/components/auth/TestLogin';
+import { UnifiedLoginForm } from '@/components/auth/UnifiedLoginForm';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Shield, Users, TrendingUp, Star, Package, ShoppingCart, Building } from 'lucide-react';
 
 const Login: React.FC = () => {
-  const [showDebug] = useState(false);
-
-  // Check if we should show debug panel (only in development or for debugging)
-  const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('lovable.app');
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
       {/* Background Patterns */}
@@ -53,25 +46,8 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
-          {isDev ? (
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login" className="font-poppins">Regular Login</TabsTrigger>
-                <TabsTrigger value="test" className="font-poppins">Test Accounts</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login">
-                <PakistaniLoginForm />
-              </TabsContent>
-              
-              <TabsContent value="test">
-                <TestLogin />
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <PakistaniLoginForm />
-          )}
+        <div className="sm:mx-auto sm:w-full sm:max-w-2xl flex justify-center">
+          <UnifiedLoginForm />
 
           {/* Features Section */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">

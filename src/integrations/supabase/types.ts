@@ -1397,6 +1397,7 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          auth_type: string | null
           business_name: string | null
           business_type: string | null
           can_switch_roles: boolean | null
@@ -1404,9 +1405,11 @@ export type Database = {
           cnic_image: string | null
           contact_name: string | null
           created_at: string | null
+          display_identifier: string | null
           email: string
           id: string
           industry: string | null
+          is_email_user: boolean | null
           is_suspended: boolean | null
           last_commission_payment: string | null
           last_order_data: Json | null
@@ -1436,6 +1439,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          auth_type?: string | null
           business_name?: string | null
           business_type?: string | null
           can_switch_roles?: boolean | null
@@ -1443,9 +1447,11 @@ export type Database = {
           cnic_image?: string | null
           contact_name?: string | null
           created_at?: string | null
+          display_identifier?: string | null
           email: string
           id: string
           industry?: string | null
+          is_email_user?: boolean | null
           is_suspended?: boolean | null
           last_commission_payment?: string | null
           last_order_data?: Json | null
@@ -1475,6 +1481,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          auth_type?: string | null
           business_name?: string | null
           business_type?: string | null
           can_switch_roles?: boolean | null
@@ -1482,9 +1489,11 @@ export type Database = {
           cnic_image?: string | null
           contact_name?: string | null
           created_at?: string | null
+          display_identifier?: string | null
           email?: string
           id?: string
           industry?: string | null
+          is_email_user?: boolean | null
           is_suspended?: boolean | null
           last_commission_payment?: string | null
           last_order_data?: Json | null
@@ -1677,6 +1686,10 @@ export type Database = {
         Args: { p_email: string; p_phone_number: string }
         Returns: Json
       }
+      authenticate_user_by_identifier: {
+        Args: { identifier: string }
+        Returns: Json
+      }
       authenticate_user_by_phone: {
         Args: { user_phone: string }
         Returns: Json
@@ -1846,6 +1859,10 @@ export type Database = {
           p_status: string
         }
         Returns: undefined
+      }
+      validate_auth_input: {
+        Args: { input_value: string }
+        Returns: Json
       }
       validate_pakistani_phone: {
         Args: { phone_input: string }

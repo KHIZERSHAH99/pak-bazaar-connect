@@ -47,7 +47,31 @@ const Login: React.FC = () => {
         </div>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-2xl flex justify-center">
-          <UnifiedLoginForm />
+          <div className="flex flex-col items-center space-y-6">
+            <UnifiedLoginForm />
+            
+            {/* Test Credentials */}
+            <div className="w-full max-w-md bg-card/80 backdrop-blur-sm p-4 rounded-lg border border-border/50">
+              <h3 className="font-semibold text-sm text-foreground mb-3">Test Accounts:</h3>
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <div className="p-2 bg-background/60 rounded border border-border/30">
+                  <p className="font-medium text-foreground">Wholesaler Account:</p>
+                  <p>Email: wholesaler1@test.com</p>
+                  <p>Password: wholesaler123</p>
+                </div>
+                <div className="p-2 bg-background/60 rounded border border-border/30">
+                  <p className="font-medium text-foreground">Seller Account:</p>
+                  <p>Email: seller1@test.com</p>
+                  <p>Password: seller123</p>
+                </div>
+                <div className="p-2 bg-background/60 rounded border border-border/30">
+                  <p className="font-medium text-foreground">Phone Account:</p>
+                  <p>Phone: 03001234567</p>
+                  <p>Password: phone123</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Features Section */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">

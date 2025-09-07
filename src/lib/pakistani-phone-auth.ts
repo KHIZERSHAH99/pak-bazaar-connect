@@ -196,7 +196,7 @@ export const phoneSignUp = async (
     }
 
     if (existingUser) {
-      throw new Error('An account with this phone number already exists');
+      throw new Error('An account with this phone number already exists. Please sign in instead.');
     }
 
     // Create a unique email for Supabase auth - using the domain that works
@@ -227,12 +227,19 @@ export const phoneSignUp = async (
     if (error) {
       console.error('Supabase signup error:', error);
       
-      if (error.message.includes('User already registered')) {
-        throw new Error('An account with this information already exists');
+      // Check for duplicate user error - this is the actual error message from Supabase
+      if (error.message.includes('User already registered') || 
+          error.message.includes('duplicate key value') ||
+          error.message.includes('already exists')) {
+        throw new Error('An account with this phone number already exists. Please sign in instead.');
       } else if (error.message.includes('Password should be at least')) {
         throw new Error('Password must be at least 6 characters long');
+      } else if (error.message.includes('Invalid email')) {
+        // This means the phone format created an invalid email - shouldn't happen but handle it
+        throw new Error('Invalid phone number format. Please check and try again.');
       } else {
-        throw new Error('Registration failed. Please try again.');
+        // Pass through the actual error message for better debugging
+        throw new Error(error.message || 'Registration failed. Please try again.');
       }
     }
 

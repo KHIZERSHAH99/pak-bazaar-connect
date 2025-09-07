@@ -79,7 +79,13 @@ const PakistaniSignupForm: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Signup error:', error);
-      showAuthError(error, 'signup');
+      // Display the specific error message
+      const errorMessage = error?.message || 'Registration failed. Please try again.';
+      toast({
+        title: 'Registration Error',
+        description: errorMessage,
+        variant: 'destructive'
+      });
     } finally {
       setIsLoading(false);
     }

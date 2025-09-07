@@ -32,12 +32,7 @@ const ShopDetails: React.FC = () => {
         data,
         error
       } = await supabase.from('shops').select(`
-          *,
-          cities!shops_city_id_fkey (
-            id,
-            name,
-            province
-          )
+          *
         `).eq('id', shopId).single();
       if (error) throw error;
       setShop(data);
@@ -68,12 +63,7 @@ const ShopDetails: React.FC = () => {
             address,
             postal_code,
             logo,
-            owner_id,
-            cities!shops_city_id_fkey (
-              id,
-              name,
-              province
-            )
+            owner_id
           ),
           categories!products_category_id_fkey (
             id,

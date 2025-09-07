@@ -41,22 +41,17 @@ const Products: React.FC = () => {
         .from('products')
         .select(`
           *,
-          shops!products_shop_id_fkey (
-            id,
-            name,
-            contact,
-            address,
-            postal_code,
-            logo,
-            owner_id,
-            commission_rate,
-            created_at,
-            cities!shops_city_id_fkey (
+            shops!products_shop_id_fkey (
               id,
               name,
-              province
-            )
-          ),
+              contact,
+              address,
+              postal_code,
+              logo,
+              owner_id,
+              commission_rate,
+              created_at
+            ),
           categories!products_category_id_fkey (
             id,
             name,
@@ -92,9 +87,10 @@ const Products: React.FC = () => {
       // Filter by city if selected (client-side filtering since it's a nested field)
       let filteredData = data || [];
       if (selectedCity !== 'all') {
-        filteredData = filteredData.filter(product => 
-          product.shops?.cities?.id === selectedCity
-        );
+        // City filtering disabled as cities relationship doesn't exist
+        // filteredData = filteredData.filter(product => 
+        //   product.shops?.cities?.id === selectedCity
+        // );
       }
 
       setProducts(filteredData);

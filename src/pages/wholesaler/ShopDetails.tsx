@@ -135,11 +135,6 @@ const ShopDetails: React.FC = () => {
                       <MapPin className="h-4 w-4 mr-2" />
                       <span className="font-poppins">{shop.address}</span>
                     </div>
-                    {shop.cities && (
-                      <div className="flex items-center">
-                        <span className="font-poppins">{shop.cities?.name}, {shop.cities?.province}</span>
-                      </div>
-                    )}
                     <div className="flex items-center">
                       <Phone className="h-4 w-4 mr-2" />
                       <span className="font-poppins">{shop.contact}</span>

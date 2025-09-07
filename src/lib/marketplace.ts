@@ -334,10 +334,7 @@ export const getProductsByShopPublic = async (shopId: string): Promise<Product[]
 export const getCompanyProfile = async (userId: string): Promise<CompanyProfile | null> => {
   const { data, error } = await supabase
     .from('company_profiles')
-    .select(`
-      *,
-      cities (id, name, province)
-    `)
+    .select('*')
     .eq('user_id', userId)
     .single();
   

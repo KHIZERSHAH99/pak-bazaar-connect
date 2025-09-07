@@ -33,14 +33,7 @@ const BrowseShops: React.FC = () => {
       
       const { data, error } = await supabase
         .from('shops')
-        .select(`
-          *,
-          cities!shops_city_id_fkey (
-            id,
-            name,
-            province
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) {

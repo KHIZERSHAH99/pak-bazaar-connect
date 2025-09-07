@@ -1719,6 +1719,10 @@ export type Database = {
         Args: { p_email?: string; p_phone?: string }
         Returns: Json
       }
+      cleanup_expired_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_otps: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1798,6 +1802,10 @@ export type Database = {
       }
       get_profile_summary: {
         Args: { profile_id: string }
+        Returns: Json
+      }
+      get_security_stats: {
+        Args: Record<PropertyKey, never>
         Returns: Json
       }
       get_user_role: {

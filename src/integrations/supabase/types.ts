@@ -1675,7 +1675,14 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      security_dashboard: {
+        Row: {
+          checked_at: string | null
+          metric: string | null
+          value: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_order_tracking: {
@@ -1716,7 +1723,23 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_old_audit_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_old_auth_attempts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_old_otp_records: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_old_product_views: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_old_sms_logs: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }

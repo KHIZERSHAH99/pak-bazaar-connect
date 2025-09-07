@@ -52,7 +52,9 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       const emailFormats = [
         `${normalizedPhone}@phone.auth`,
         `${normalizedPhone}@temp-phone-auth.com`,
-        `${normalizedPhone}@phone-auth.com`
+        `${normalizedPhone}@phone-auth.com`,
+        `${normalizedPhone}@pakbazaarconnect.store`,
+        `${normalizedPhone}@phone.auth.local`
       ];
       
       console.log('Checking for phone-based auth with possible emails:', emailFormats);

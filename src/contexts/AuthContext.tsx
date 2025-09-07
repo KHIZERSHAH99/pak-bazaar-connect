@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { authenticateUser, registerUser, signOutUser } from '@/lib/auth/consolidated';
 import { getUserProfile } from '@/lib/auth/profile';
+import { ensureProfileSync } from '@/lib/auth/profile-sync';
 import { UserRole } from '@/lib/types';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
 
@@ -81,9 +82,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         if (session?.user && event === 'SIGNED_IN') {
-          // Defer profile fetching to avoid deadlocks
-          setTimeout(() => {
+          // Defer profile operations to avoid deadlocks
+          setTimeout(async () => {
             if (mounted) {
+              // Ensure profile sync
+              await ensureProfileSync(session.user.id, session.user.email || '', session.user.user_metadata);
               fetchProfile(session.user.id);
             }
           }, 0);
@@ -105,7 +108,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        fetchProfile(session.user.id);
+        // Ensure profile sync
+        ensureProfileSync(session.user.id, session.user.email || '', session.user.user_metadata).then(() => {
+          fetchProfile(session.user.id);
+        });
       }
       
       setLoading(false);

@@ -1069,6 +1069,42 @@ export type Database = {
           },
         ]
       }
+      password_policy_config: {
+        Row: {
+          check_leaked_passwords: boolean | null
+          created_at: string | null
+          id: string
+          min_length: number | null
+          require_lowercase: boolean | null
+          require_numbers: boolean | null
+          require_special: boolean | null
+          require_uppercase: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          check_leaked_passwords?: boolean | null
+          created_at?: string | null
+          id?: string
+          min_length?: number | null
+          require_lowercase?: boolean | null
+          require_numbers?: boolean | null
+          require_special?: boolean | null
+          require_uppercase?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          check_leaked_passwords?: boolean | null
+          created_at?: string | null
+          id?: string
+          min_length?: number | null
+          require_lowercase?: boolean | null
+          require_numbers?: boolean | null
+          require_special?: boolean | null
+          require_uppercase?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       password_security_events: {
         Row: {
           created_at: string
@@ -1675,14 +1711,7 @@ export type Database = {
       }
     }
     Views: {
-      security_dashboard: {
-        Row: {
-          checked_at: string | null
-          metric: string | null
-          value: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       add_order_tracking: {
@@ -1804,6 +1833,14 @@ export type Database = {
         Args: { profile_id: string }
         Returns: Json
       }
+      get_security_dashboard: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          checked_at: string
+          metric: string
+          value: number
+        }[]
+      }
       get_security_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -1908,6 +1945,10 @@ export type Database = {
       validate_pakistani_phone: {
         Args: { phone_input: string }
         Returns: boolean
+      }
+      validate_password_strength: {
+        Args: { password: string }
+        Returns: Json
       }
       verify_otp: {
         Args: { provided_otp: string; user_phone: string }

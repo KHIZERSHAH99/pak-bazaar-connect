@@ -1692,7 +1692,7 @@ export type Database = {
       }
       authenticate_user_by_phone: {
         Args:
-          | { phone_number: string; user_password: string }
+          | { p_password: string; p_phone_number: string }
           | { user_phone: string }
         Returns: Json
       }

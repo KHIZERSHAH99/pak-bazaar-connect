@@ -50,10 +50,11 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       
       // Try multiple email formats for phone-based accounts
       const emailFormats = [
+        `phone-${normalizedPhone}@pakbazaarconnect.store`, // New format with prefix
+        `${normalizedPhone}@pakbazaarconnect.store`, // Legacy format
         `${normalizedPhone}@phone.auth`,
         `${normalizedPhone}@temp-phone-auth.com`,
         `${normalizedPhone}@phone-auth.com`,
-        `${normalizedPhone}@pakbazaarconnect.store`,
         `${normalizedPhone}@phone.auth.local`
       ];
       

@@ -156,8 +156,8 @@ export const registerUser = async (
       }
       
       phoneNumber = phoneValidation.sanitizedValue;
-      // Use consistent email format for phone-based auth
-      authEmail = `${phoneNumber}@pakbazaarconnect.store`;
+      // Use consistent email format for phone-based auth - prefix with "phone-" to ensure valid email
+      authEmail = `phone-${phoneNumber}@pakbazaarconnect.store`;
       
       // Check phone uniqueness
       const phoneExists = await checkFieldUniqueness('phone', phoneNumber);
@@ -189,16 +189,19 @@ export const registerUser = async (
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
+          email: authEmail, // Include the actual email being used
           role,
-          phone_number: phoneNumber,
-          normalized_phone: phoneNumber,
+          phone_number: phoneNumber || '',
+          normalized_phone: phoneNumber || '',
           contact_name: businessData.contactName || 'User',
           business_name: businessData.businessName || 'Business',
           business_type: businessData.businessType || 'Retailer',
           address: businessData.address || '',
           city: businessData.city || '',
           postal_code: businessData.postalCode || '',
-          industry: businessData.industry || ''
+          industry: businessData.industry || '',
+          auth_type: isPhone ? 'phone' : 'email', // Mark the auth type
+          display_identifier: emailOrPhone // Store original input for display
         }
       }
     });

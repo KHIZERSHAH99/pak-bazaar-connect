@@ -209,6 +209,7 @@ export const phoneSignUp = async (
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
+          email: uniqueEmail, // Add the actual email being used
           role: role,
           phone_number: normalizedPhone,
           normalized_phone: normalizedPhone,
@@ -219,7 +220,9 @@ export const phoneSignUp = async (
           city: businessData.city || '',
           postal_code: businessData.postalCode || '',
           industry: businessData.industry || '',
-          phone_verified: false // Will be verified via OTP
+          phone_verified: false, // Will be verified via OTP
+          auth_type: 'phone', // Mark this as a phone-based account
+          display_identifier: formatPakistaniPhone(normalizedPhone) // For display purposes
         }
       }
     });

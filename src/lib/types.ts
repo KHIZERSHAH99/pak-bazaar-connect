@@ -42,7 +42,9 @@ export interface Category {
 export interface City {
   id: string;
   name: string;
-  province: string;
+  province?: string;
+  province_id?: string;
+  is_major?: boolean;
   created_at?: string;
 }
 

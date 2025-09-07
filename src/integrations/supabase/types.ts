@@ -175,24 +175,35 @@ export type Database = {
       }
       cities: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
+          is_major: boolean | null
           name: string
-          province: string
+          province_id: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
+          is_major?: boolean | null
           name: string
-          province: string
+          province_id?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
+          is_major?: boolean | null
           name?: string
-          province?: string
+          province_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cities_province_id_fkey"
+            columns: ["province_id"]
+            isOneToOne: false
+            referencedRelation: "provinces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       commission_records: {
         Row: {
@@ -415,15 +426,7 @@ export type Database = {
           website?: string | null
           whatsapp?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "company_profiles_city_id_fkey"
-            columns: ["city_id"]
-            isOneToOne: false
-            referencedRelation: "cities"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       coupon_usage: {
         Row: {
@@ -902,15 +905,22 @@ export type Database = {
         Row: {
           auto_delete_screenshot_at: string | null
           buyer_address: string | null
+          buyer_area: string | null
+          buyer_city: string | null
           buyer_id: string
           buyer_name: string | null
           buyer_phone: string | null
+          buyer_postal_code: string | null
+          buyer_province: string | null
+          buyer_street_address: string | null
           carrier_name: string | null
           commission_id: string | null
           confirmed_at: string | null
           created_at: string | null
           delivered_at: string | null
           delivery_confirmed_by: string | null
+          delivery_instructions: string | null
+          delivery_partner: string | null
           estimated_delivery: string | null
           id: string
           internal_notes: string | null
@@ -918,6 +928,7 @@ export type Database = {
           last_status_update: string | null
           order_notes: string | null
           packed_at: string | null
+          packed_by: string | null
           payment_method: string | null
           payment_screenshot: string | null
           priority_level: number | null
@@ -925,27 +936,39 @@ export type Database = {
           rejected_at: string | null
           rejection_reason: string | null
           requires_attention: boolean | null
+          return_address: string | null
           returned_at: string | null
           screenshot_uploaded_at: string | null
           shipped_at: string | null
+          shipped_by: string | null
+          shipping_cost: number | null
+          shipping_method: string | null
           shop_id: string
           status: string
           total_amount: number
           tracking_number: string | null
+          tracking_url: string | null
           wholesaler_notes: string | null
         }
         Insert: {
           auto_delete_screenshot_at?: string | null
           buyer_address?: string | null
+          buyer_area?: string | null
+          buyer_city?: string | null
           buyer_id: string
           buyer_name?: string | null
           buyer_phone?: string | null
+          buyer_postal_code?: string | null
+          buyer_province?: string | null
+          buyer_street_address?: string | null
           carrier_name?: string | null
           commission_id?: string | null
           confirmed_at?: string | null
           created_at?: string | null
           delivered_at?: string | null
           delivery_confirmed_by?: string | null
+          delivery_instructions?: string | null
+          delivery_partner?: string | null
           estimated_delivery?: string | null
           id?: string
           internal_notes?: string | null
@@ -953,6 +976,7 @@ export type Database = {
           last_status_update?: string | null
           order_notes?: string | null
           packed_at?: string | null
+          packed_by?: string | null
           payment_method?: string | null
           payment_screenshot?: string | null
           priority_level?: number | null
@@ -960,27 +984,39 @@ export type Database = {
           rejected_at?: string | null
           rejection_reason?: string | null
           requires_attention?: boolean | null
+          return_address?: string | null
           returned_at?: string | null
           screenshot_uploaded_at?: string | null
           shipped_at?: string | null
+          shipped_by?: string | null
+          shipping_cost?: number | null
+          shipping_method?: string | null
           shop_id: string
           status?: string
           total_amount: number
           tracking_number?: string | null
+          tracking_url?: string | null
           wholesaler_notes?: string | null
         }
         Update: {
           auto_delete_screenshot_at?: string | null
           buyer_address?: string | null
+          buyer_area?: string | null
+          buyer_city?: string | null
           buyer_id?: string
           buyer_name?: string | null
           buyer_phone?: string | null
+          buyer_postal_code?: string | null
+          buyer_province?: string | null
+          buyer_street_address?: string | null
           carrier_name?: string | null
           commission_id?: string | null
           confirmed_at?: string | null
           created_at?: string | null
           delivered_at?: string | null
           delivery_confirmed_by?: string | null
+          delivery_instructions?: string | null
+          delivery_partner?: string | null
           estimated_delivery?: string | null
           id?: string
           internal_notes?: string | null
@@ -988,6 +1024,7 @@ export type Database = {
           last_status_update?: string | null
           order_notes?: string | null
           packed_at?: string | null
+          packed_by?: string | null
           payment_method?: string | null
           payment_screenshot?: string | null
           priority_level?: number | null
@@ -995,13 +1032,18 @@ export type Database = {
           rejected_at?: string | null
           rejection_reason?: string | null
           requires_attention?: boolean | null
+          return_address?: string | null
           returned_at?: string | null
           screenshot_uploaded_at?: string | null
           shipped_at?: string | null
+          shipped_by?: string | null
+          shipping_cost?: number | null
+          shipping_method?: string | null
           shop_id?: string
           status?: string
           total_amount?: number
           tracking_number?: string | null
+          tracking_url?: string | null
           wholesaler_notes?: string | null
         }
         Relationships: [
@@ -1559,6 +1601,27 @@ export type Database = {
         }
         Relationships: []
       }
+      provinces: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       role_requests: {
         Row: {
           created_at: string | null
@@ -1582,6 +1645,122 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      seller_addresses: {
+        Row: {
+          address_type: string
+          area: string | null
+          city: string
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string | null
+          id: string
+          instructions: string | null
+          is_default: boolean | null
+          label: string | null
+          postal_code: string
+          province: string
+          street_address: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address_type?: string
+          area?: string | null
+          city: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          instructions?: string | null
+          is_default?: boolean | null
+          label?: string | null
+          postal_code: string
+          province: string
+          street_address: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address_type?: string
+          area?: string | null
+          city?: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          instructions?: string | null
+          is_default?: boolean | null
+          label?: string | null
+          postal_code?: string
+          province?: string
+          street_address?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      shipping_details: {
+        Row: {
+          actual_delivery: string | null
+          courier_name: string
+          created_at: string | null
+          created_by: string | null
+          dimensions: string | null
+          estimated_delivery: string | null
+          id: string
+          notes: string | null
+          order_id: string
+          package_count: number | null
+          shipping_cost: number | null
+          shipping_label_url: string | null
+          tracking_number: string | null
+          tracking_url: string | null
+          weight_kg: number | null
+        }
+        Insert: {
+          actual_delivery?: string | null
+          courier_name: string
+          created_at?: string | null
+          created_by?: string | null
+          dimensions?: string | null
+          estimated_delivery?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          package_count?: number | null
+          shipping_cost?: number | null
+          shipping_label_url?: string | null
+          tracking_number?: string | null
+          tracking_url?: string | null
+          weight_kg?: number | null
+        }
+        Update: {
+          actual_delivery?: string | null
+          courier_name?: string
+          created_at?: string | null
+          created_by?: string | null
+          dimensions?: string | null
+          estimated_delivery?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          package_count?: number | null
+          shipping_cost?: number | null
+          shipping_label_url?: string | null
+          tracking_number?: string | null
+          tracking_url?: string | null
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_details_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shop_favorites: {
         Row: {
@@ -1641,22 +1820,7 @@ export type Database = {
           owner_id?: string
           postal_code?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "fk_shops_city_id"
-            columns: ["city_id"]
-            isOneToOne: false
-            referencedRelation: "cities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shops_city_id_fkey"
-            columns: ["city_id"]
-            isOneToOne: false
-            referencedRelation: "cities"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       sms_logs: {
         Row: {

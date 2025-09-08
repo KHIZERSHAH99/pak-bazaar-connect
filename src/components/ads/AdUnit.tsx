@@ -40,7 +40,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
 
       const adScript = document.createElement('script');
       adScript.type = 'text/javascript';
-      adScript.src = '//www.topcreativeformat.com/c5d37aafee0d5222fecd53027a5eaa65/invoke.js';
+      adScript.src = '//www.topcreativeformat.com/98a934445fa1d2aa5fd6e25b30250461/invoke.js';
       adContainerRef.current.appendChild(adScript);
     }
 

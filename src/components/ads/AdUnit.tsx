@@ -23,7 +23,10 @@ const AdUnit: React.FC<AdUnitProps> = ({
   const adContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Load Adsteera ad unit
+    let adLoaded = false;
+    let fallbackTimer: NodeJS.Timeout;
+
+    // Try loading Adsteera ad unit first
     if (adContainerRef.current) {
       const script = document.createElement('script');
       script.type = 'text/javascript';
@@ -41,11 +44,43 @@ const AdUnit: React.FC<AdUnitProps> = ({
       const adScript = document.createElement('script');
       adScript.type = 'text/javascript';
       adScript.src = '//www.topcreativeformat.com/98a934445fa1d2aa5fd6e25b30250461/invoke.js';
+      
+      // Set up fallback to HilltopAds if Adsteera doesn't load
+      adScript.onload = () => {
+        adLoaded = true;
+      };
+      
+      adScript.onerror = () => {
+        // Adsteera failed, use HilltopAds fallback
+        loadHilltopAdsFallback();
+      };
+      
       adContainerRef.current.appendChild(adScript);
+      
+      // Fallback timer in case Adsteera loads but doesn't display properly
+      fallbackTimer = setTimeout(() => {
+        if (!adLoaded && adContainerRef.current) {
+          loadHilltopAdsFallback();
+        }
+      }, 3000);
+    }
+
+    function loadHilltopAdsFallback() {
+      if (adContainerRef.current) {
+        // Clear Adsteera attempts
+        adContainerRef.current.innerHTML = '';
+        
+        // Add HilltopAds container
+        const hilltopContainer = document.createElement('div');
+        hilltopContainer.className = 'hilltop-ad-fallback';
+        hilltopContainer.setAttribute('data-ad-slot', slotId);
+        adContainerRef.current.appendChild(hilltopContainer);
+      }
     }
 
     return () => {
       // Cleanup
+      clearTimeout(fallbackTimer);
       if (adContainerRef.current) {
         adContainerRef.current.innerHTML = '';
       }

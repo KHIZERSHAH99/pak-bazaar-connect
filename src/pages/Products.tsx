@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
+import InContentAd from '@/components/ads/InContentAd';
+import StickyAdUnit from '@/components/ads/StickyAdUnit';
 import { Product } from '@/lib/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -171,34 +173,43 @@ const Products: React.FC = () => {
     >
       
       <div className="container mx-auto px-4 py-8">
-        <div className="flex gap-8">
-          <div className="flex-1">
-            <ProductsHeader />
-            
-            <ProductsFilters
-              categories={categories}
-              cities={cities}
-              selectedCategory={selectedCategory}
-              selectedCity={selectedCity}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              searchTerm={searchTerm}
-              onCategoryChange={handleCategoryChange}
-              onCityChange={handleCityChange}
-              onPriceChange={handlePriceChange}
-              onSearchChange={setSearchTerm}
-              onClearFilters={clearFilters}
-            />
-
-            
-            <ProductsGrid products={products} loading={loading} />
+        <ProductsHeader />
+        
+        {/* Top Banner Ad */}
+        <InContentAd slotId="products-top-banner" />
+        
+        <ProductsFilters
+          categories={categories}
+          cities={cities}
+          selectedCategory={selectedCategory}
+          selectedCity={selectedCity}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          searchTerm={searchTerm}
+          onCategoryChange={handleCategoryChange}
+          onCityChange={handleCityChange}
+          onPriceChange={handlePriceChange}
+          onSearchChange={setSearchTerm}
+          onClearFilters={clearFilters}
+        />
+        
+        <div className="relative">
+          {/* Sticky Side Ads - Hidden on mobile */}
+          <div className="hidden xl:block">
+            <div className="fixed left-4 top-1/3 z-10">
+              <StickyAdUnit slotId="products-left-sidebar" position="left" />
+            </div>
+            <div className="fixed right-4 top-1/3 z-10">
+              <StickyAdUnit slotId="products-right-sidebar" position="right" />
+            </div>
           </div>
           
-          {/* Sidebar with ad */}
-          <div className="hidden lg:block w-80">
-            <div className="sticky top-8">
-              
-            </div>
+          {/* Main Content */}
+          <div className="xl:px-48">
+            <ProductsGrid products={products} loading={loading} />
+            
+            {/* Bottom Ad */}
+            <InContentAd slotId="products-bottom" className="mt-12" />
           </div>
         </div>
 

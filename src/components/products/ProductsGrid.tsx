@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import AdUnit from '@/components/ads/AdUnit';
 import { Product } from '@/lib/types';
 import ProductCard from './ProductCard';
 
@@ -40,8 +41,21 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+        {products.map((product, index) => (
+          <React.Fragment key={product.id}>
+            <ProductCard product={product} />
+            {/* Insert ad after every 12 products */}
+            {(index + 1) % 12 === 0 && index !== products.length - 1 && (
+              <div className="col-span-1">
+                <AdUnit 
+                  slotId={`grid-ad-${Math.floor((index + 1) / 12)}`}
+                  format="native"
+                  size="medium-rectangle"
+                  className="h-full"
+                />
+              </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
       

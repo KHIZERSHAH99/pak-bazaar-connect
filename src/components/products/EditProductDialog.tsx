@@ -11,10 +11,11 @@ import { Product } from '@/lib/types';
 import { updateProduct, uploadImage } from '@/lib/products';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Package, Info, Image, DollarSign, Settings } from 'lucide-react';
+import { Loader2, Package, Info, Image, DollarSign, Settings, TrendingDown } from 'lucide-react';
 import ProductSpecificationFields from './ProductSpecificationFields';
 import ProductCategorySelector from './ProductCategorySelector';
 import MultipleImageUpload from './MultipleImageUpload';
+import PricingTierManager from './PricingTierManager';
 
 interface EditProductDialogProps {
   isOpen: boolean;
@@ -268,26 +269,30 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="basic" className="flex items-center gap-2">
-                <Info className="w-4 h-4" />
-                Basic
+                <Info className="w-3 h-3" />
+                <span className="hidden sm:inline">Basic</span>
               </TabsTrigger>
               <TabsTrigger value="details" className="flex items-center gap-2">
-                <Package className="w-4 h-4" />
-                Details
+                <Package className="w-3 h-3" />
+                <span className="hidden sm:inline">Details</span>
               </TabsTrigger>
               <TabsTrigger value="specifications" className="flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                Specs
+                <Settings className="w-3 h-3" />
+                <span className="hidden sm:inline">Specs</span>
               </TabsTrigger>
               <TabsTrigger value="images" className="flex items-center gap-2">
-                <Image className="w-4 h-4" />
-                Images
+                <Image className="w-3 h-3" />
+                <span className="hidden sm:inline">Images</span>
               </TabsTrigger>
               <TabsTrigger value="pricing" className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
-                Pricing
+                <DollarSign className="w-3 h-3" />
+                <span className="hidden sm:inline">Pricing</span>
+              </TabsTrigger>
+              <TabsTrigger value="tiers" className="flex items-center gap-2">
+                <TrendingDown className="w-3 h-3" />
+                <span className="hidden sm:inline">Tiers</span>
               </TabsTrigger>
             </TabsList>
             
@@ -556,6 +561,28 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
                   disabled={isSubmitting}
                 />
               </div>
+            </TabsContent>
+
+            {/* Pricing Tiers Tab */}
+            <TabsContent value="tiers" className="space-y-4">
+              {product ? (
+                <PricingTierManager
+                  productId={product.id}
+                  basePrice={parseFloat(formData.price) || product.price}
+                  onUpdate={() => {
+                    // Refresh product data if needed
+                    toast({
+                      title: "Pricing Updated",
+                      description: "Pricing tiers have been updated successfully"
+                    });
+                  }}
+                />
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <TrendingDown className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>Save the product first to manage pricing tiers</p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
           

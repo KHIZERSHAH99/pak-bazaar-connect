@@ -584,11 +584,8 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
                   productId={product.id}
                   basePrice={parseFloat(formData.price) || product.price}
                   onUpdate={() => {
-                    // Refresh product data if needed
-                    toast({
-                      title: "Pricing Updated",
-                      description: "Pricing tiers have been updated successfully"
-                    });
+                    // Just show a toast, don't trigger form submission
+                    console.log('Pricing tiers updated');
                   }}
                 />
               ) : (

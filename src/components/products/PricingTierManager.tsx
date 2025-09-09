@@ -167,7 +167,12 @@ const PricingTierManager: React.FC<PricingTierManagerProps> = ({
           {!isAddingNew && (
             <Button
               size="sm"
-              onClick={() => setIsAddingNew(true)}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsAddingNew(true);
+              }}
             >
               <Plus className="h-4 w-4 mr-1" />
               Add Tier
@@ -224,14 +229,27 @@ const PricingTierManager: React.FC<PricingTierManagerProps> = ({
               </div>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={handleAddTier}>
+              <Button 
+                size="sm" 
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleAddTier();
+                }}
+              >
                 <Save className="h-4 w-4 mr-1" />
                 Save
               </Button>
               <Button 
                 size="sm" 
                 variant="outline"
-                onClick={() => setIsAddingNew(false)}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsAddingNew(false);
+                }}
               >
                 <X className="h-4 w-4 mr-1" />
                 Cancel
@@ -296,7 +314,12 @@ const PricingTierManager: React.FC<PricingTierManagerProps> = ({
                     <div className="flex gap-2">
                       <Button 
                         size="sm" 
-                        onClick={() => handleUpdateTier(tier.id)}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleUpdateTier(tier.id);
+                        }}
                       >
                         <Save className="h-4 w-4 mr-1" />
                         Save
@@ -304,7 +327,12 @@ const PricingTierManager: React.FC<PricingTierManagerProps> = ({
                       <Button 
                         size="sm" 
                         variant="outline"
-                        onClick={() => setEditingTier(null)}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setEditingTier(null);
+                        }}
                       >
                         <X className="h-4 w-4 mr-1" />
                         Cancel
@@ -337,14 +365,24 @@ const PricingTierManager: React.FC<PricingTierManagerProps> = ({
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => startEdit(tier)}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          startEdit(tier);
+                        }}
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setDeletingTier(tier.id)}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDeletingTier(tier.id);
+                        }}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>

@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import TieredPricingDisplay from './TieredPricingDisplay';
 import PriceCalculator from './PriceCalculator';
 import { usePricingTiers } from '@/hooks/usePricingTiers';
+import EnhancedVariationPicker from './variations/EnhancedVariationPicker';
 
 interface EnhancedProductDetailProps {
   product: Product;
@@ -37,6 +38,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [currentUnitPrice, setCurrentUnitPrice] = useState(product.price);
   const [totalAmount, setTotalAmount] = useState((product.moq || 1) * product.price);
+  const [selectedVariations, setSelectedVariations] = useState<any>({});
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -207,14 +209,25 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 )}
               </div>
 
-              {/* Tiered Pricing Display */}
-              {!tiersLoading && (
-                <TieredPricingDisplay
-                  tiers={tiers}
-                  currentQuantity={quantity}
-                  basePrice={product.price}
-                />
-              )}
+            {/* Product Variations */}
+            <EnhancedVariationPicker
+              productId={product.id}
+              basePrice={product.price}
+              onVariationChange={(variations, totalPrice) => {
+                setSelectedVariations(variations);
+                setCurrentUnitPrice(totalPrice);
+                setTotalAmount(totalPrice * quantity);
+              }}
+            />
+
+            {/* Tiered Pricing Display */}
+            {!tiersLoading && (
+              <TieredPricingDisplay
+                tiers={tiers}
+                currentQuantity={quantity}
+                basePrice={currentUnitPrice}
+              />
+            )}
 
               {product.lead_time_days && (
                 <div className="flex items-center gap-2 text-sm">
@@ -230,12 +243,15 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
             <div className="space-y-4">
               <PriceCalculator
                 tiers={tiers}
-                basePrice={product.price}
+                basePrice={currentUnitPrice}
                 moq={product.moq}
                 onQuantityChange={(qty, unitPrice, total) => {
                   setQuantity(qty);
-                  setCurrentUnitPrice(unitPrice);
-                  setTotalAmount(total);
+                  // Keep the variation-adjusted price if applicable
+                  if (Object.keys(selectedVariations).length === 0) {
+                    setCurrentUnitPrice(unitPrice);
+                  }
+                  setTotalAmount(unitPrice * qty);
                 }}
               />
 

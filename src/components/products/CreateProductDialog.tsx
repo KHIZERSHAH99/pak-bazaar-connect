@@ -16,6 +16,9 @@ import { Loader2, Upload, Package, Info, Image, DollarSign, Settings } from 'luc
 import ProductSpecificationFields from './ProductSpecificationFields';
 import ProductCategorySelector from './ProductCategorySelector';
 import MultipleImageUpload from './MultipleImageUpload';
+import VariationManager from './variations/VariationManager';
+import SizeChart from './variations/SizeChart';
+import PricingTierManager from './PricingTierManager';
 
 interface CreateProductDialogProps {
   isOpen: boolean;
@@ -309,7 +312,7 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-5 h-8 sm:h-10">
+            <TabsList className="grid w-full grid-cols-7 h-8 sm:h-10">
               <TabsTrigger value="basic" className="text-xs px-1 sm:px-2 sm:text-sm">
                 <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
                 <span className="hidden sm:inline">Basic</span>
@@ -329,6 +332,14 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
               <TabsTrigger value="pricing" className="text-xs px-1 sm:px-2 sm:text-sm">
                 <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
                 <span className="hidden sm:inline">Pricing</span>
+              </TabsTrigger>
+              <TabsTrigger value="variations" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Variations</span>
+              </TabsTrigger>
+              <TabsTrigger value="tiers" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Tiers</span>
               </TabsTrigger>
             </TabsList>
             
@@ -626,6 +637,22 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                   placeholder="e.g., 30cm x 20cm x 10cm"
                   disabled={isSubmitting}
                 />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="variations" className="space-y-4">
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  Save the product first to add variations and size charts. You can add them from the edit dialog after creating the product.
+                </p>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="tiers" className="space-y-4">
+              <div className="p-4 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  Save the product first to add pricing tiers. You can add them from the edit dialog after creating the product.
+                </p>
               </div>
             </TabsContent>
           </Tabs>

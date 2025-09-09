@@ -118,16 +118,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {product.name}
           </h3>
           
-          {/* Price */}
-          <div className="flex items-center justify-between flex-shrink-0">
-            <span className="text-lg lg:text-xl font-bold text-primary font-poppins">
-              PKR {product.price.toLocaleString()}
-            </span>
-            {product.moq && product.moq > 1 && (
-              <Badge variant="outline" className="text-[10px] text-muted-foreground border-border px-1.5 py-0.5 h-auto">
-                MOQ: {product.moq}
+          {/* Price with Tier Indicator */}
+          <div className="space-y-1 flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <span className="text-lg lg:text-xl font-bold text-primary font-poppins">
+                PKR {product.price.toLocaleString()}
+              </span>
+              {product.moq && product.moq > 1 && (
+                <Badge variant="outline" className="text-[10px] text-muted-foreground border-border px-1.5 py-0.5 h-auto">
+                  MOQ: {product.moq}
+                </Badge>
+              )}
+            </div>
+            {/* Bulk pricing indicator */}
+            <div className="flex items-center gap-1">
+              <Badge className="text-[10px] bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 px-1.5 py-0.5 h-auto">
+                Bulk discounts available
               </Badge>
-            )}
+            </div>
           </div>
 
           {/* Supplier Info */}

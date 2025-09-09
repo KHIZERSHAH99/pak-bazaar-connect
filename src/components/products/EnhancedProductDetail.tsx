@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,9 @@ import { useToast } from '@/hooks/use-toast';
 import FavoriteButton from '@/components/favorites/FavoriteButton';
 import EnhancedOrderForm from '@/components/orders/EnhancedOrderForm';
 import { useNavigate } from 'react-router-dom';
+import TieredPricingDisplay from './TieredPricingDisplay';
+import PriceCalculator from './PriceCalculator';
+import { usePricingTiers } from '@/hooks/usePricingTiers';
 
 interface EnhancedProductDetailProps {
   product: Product;
@@ -32,11 +35,12 @@ interface EnhancedProductDetailProps {
 const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, onBack }) => {
   const [quantity, setQuantity] = useState(product.moq || 1);
   const [showOrderForm, setShowOrderForm] = useState(false);
+  const [currentUnitPrice, setCurrentUnitPrice] = useState(product.price);
+  const [totalAmount, setTotalAmount] = useState((product.moq || 1) * product.price);
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const totalAmount = quantity * product.price;
+  const { tiers, loading: tiersLoading } = usePricingTiers(product.id);
 
   const handleQuantityChange = (value: string) => {
     const newQuantity = parseInt(value) || 1;
@@ -177,26 +181,39 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
               />
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-primary">
-                  PKR {product.price.toLocaleString()}
-                </span>
-                <span className="text-sm text-muted-foreground">per unit</span>
+            {/* Pricing Information */}
+            <div className="space-y-6">
+              {/* Base Price Display */}
+              <div className="space-y-4">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-primary">
+                    PKR {product.price.toLocaleString()}
+                  </span>
+                  <span className="text-sm text-muted-foreground">per unit (base price)</span>
+                </div>
+
+                {product.moq && product.moq > 1 && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Package className="h-4 w-4" />
+                    <span>Minimum Order: {product.moq} units</span>
+                  </div>
+                )}
+
+                {product.stock_quantity && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>{product.stock_quantity} units in stock</span>
+                  </div>
+                )}
               </div>
 
-              {product.moq && product.moq > 1 && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Package className="h-4 w-4" />
-                  <span>Minimum Order: {product.moq} units</span>
-                </div>
-              )}
-
-              {product.stock_quantity && (
-                <div className="flex items-center gap-2 text-sm">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span>{product.stock_quantity} units in stock</span>
-                </div>
+              {/* Tiered Pricing Display */}
+              {!tiersLoading && (
+                <TieredPricingDisplay
+                  tiers={tiers}
+                  currentQuantity={quantity}
+                  basePrice={product.price}
+                />
               )}
 
               {product.lead_time_days && (
@@ -209,27 +226,18 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
 
             <Separator />
 
-            {/* Order Section */}
+            {/* Price Calculator and Order Section */}
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <Label htmlFor="quantity">Quantity</Label>
-                  <Input
-                    id="quantity"
-                    type="number"
-                    min={product.moq || 1}
-                    value={quantity}
-                    onChange={(e) => handleQuantityChange(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-muted-foreground">Total Amount</p>
-                  <p className="text-2xl font-bold text-primary">
-                    PKR {totalAmount.toLocaleString()}
-                  </p>
-                </div>
-              </div>
+              <PriceCalculator
+                tiers={tiers}
+                basePrice={product.price}
+                moq={product.moq}
+                onQuantityChange={(qty, unitPrice, total) => {
+                  setQuantity(qty);
+                  setCurrentUnitPrice(unitPrice);
+                  setTotalAmount(total);
+                }}
+              />
 
               <Button 
                 onClick={handleOrderClick}
@@ -237,7 +245,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 size="lg"
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
-                Place Order
+                Place Order - PKR {totalAmount.toLocaleString()}
               </Button>
             </div>
           </div>

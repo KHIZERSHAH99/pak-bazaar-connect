@@ -16,6 +16,8 @@ import ProductSpecificationFields from './ProductSpecificationFields';
 import ProductCategorySelector from './ProductCategorySelector';
 import MultipleImageUpload from './MultipleImageUpload';
 import PricingTierManager from './PricingTierManager';
+import VariationManager from './variations/VariationManager';
+import SizeChart from './variations/SizeChart';
 
 interface EditProductDialogProps {
   isOpen: boolean;

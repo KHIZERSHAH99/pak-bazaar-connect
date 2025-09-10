@@ -248,7 +248,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 onQuantityChange={(qty, unitPrice, total) => {
                   setQuantity(qty);
                   // Keep the variation-adjusted price if applicable
-                  if (Object.keys(selectedVariations).length === 0) {
+                  if (!selectedVariations || Object.keys(selectedVariations).length === 0) {
                     setCurrentUnitPrice(unitPrice);
                   }
                   setTotalAmount(unitPrice * qty);

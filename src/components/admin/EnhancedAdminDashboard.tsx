@@ -153,12 +153,6 @@ export const EnhancedAdminDashboard: React.FC = () => {
             <CardDescription>Platform management tools</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Link to="/dashboard/ad-approvals">
-              <Button className="w-full justify-start" variant="outline">
-                <FileText className="h-4 w-4 mr-2" />
-                Review Advertisements
-              </Button>
-            </Link>
             <Link to="/admin">
               <Button className="w-full justify-start" variant="outline">
                 <Shield className="h-4 w-4 mr-2" />

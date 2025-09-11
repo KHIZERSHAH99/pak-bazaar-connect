@@ -37,7 +37,6 @@ import DashboardShops from '@/pages/dashboard/DashboardShops';
 import DashboardProducts from '@/pages/dashboard/DashboardProducts';
 import DashboardOrders from '@/pages/dashboard/DashboardOrders';
 import DashboardChat from '@/pages/dashboard/DashboardChat';
-import DashboardAdApprovals from '@/pages/dashboard/DashboardAdApprovals';
 import DashboardBrowseShops from '@/pages/dashboard/DashboardBrowseShops';
 import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
 import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrders';
@@ -170,11 +169,6 @@ const App = () => {
                         </ProtectedRoute>
                       } />
                       
-                      <Route path="/dashboard/ad-approvals" element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                          <DashboardAdApprovals />
-                        </ProtectedRoute>
-                      } />
                       
                       <Route path="/dashboard/browse-shops" element={
                         <ProtectedRoute allowedRoles={['seller']}>

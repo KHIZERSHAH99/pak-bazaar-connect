@@ -61,12 +61,6 @@ const QuickActions: React.FC = () => {
           variant: 'default' as const
         },
         {
-          label: 'Ad Approvals',
-          icon: <MessageSquare className="h-4 w-4" />,
-          href: '/dashboard/ad-approvals',
-          variant: 'outline' as const
-        },
-        {
           label: 'Support Chat',
           icon: <MessageSquare className="h-4 w-4" />,
           href: '/dashboard/chat',

@@ -54,12 +54,6 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
     ];
 
     const adminItems: NavItem[] = [
-      { 
-        name: 'Ad Approvals', 
-        path: '/dashboard/ad-approvals', 
-        icon: <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />,
-        badge: 'Admin'
-      },
     ];
 
     const wholesalerItems: NavItem[] = [

@@ -36,7 +36,6 @@ import DashboardProducts from '@/pages/dashboard/DashboardProducts';
 import DashboardOrders from '@/pages/dashboard/DashboardOrders';
 import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrders';
 import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
-import DashboardAdApprovals from '@/pages/dashboard/DashboardAdApprovals';
 import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
 import DashboardAnalytics from '@/pages/dashboard/DashboardAnalytics';
 import DashboardChat from '@/pages/dashboard/DashboardChat';
@@ -53,10 +52,8 @@ import WholesalerOrders from '@/pages/wholesaler/WholesalerOrders';
 import Shops from '@/pages/wholesaler/Shops';
 import WholesalerProducts from '@/pages/wholesaler/Products';
 
-// Admin pages
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import AdminPanel from '@/pages/admin/AdminPanel';
-import AdApprovals from '@/pages/admin/AdApprovals';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -99,9 +96,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="wholesaler"><DashboardProducts /></ProtectedRoute>} />
         <Route path="/dashboard/orders" element={<ProtectedRoute><DashboardOrders /></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />
-        <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><DashboardSellerOrders /></ProtectedRoute>} />
-        
-        <Route path="/dashboard/ad-approvals" element={<ProtectedRoute requiredRole="admin"><DashboardAdApprovals /></ProtectedRoute>} />
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
         <Route path="/dashboard/chat" element={<ProtectedRoute><DashboardChat /></ProtectedRoute>} />
@@ -119,10 +113,8 @@ const AppRoutes: React.FC = () => {
         <Route path="/wholesaler/products" element={<ProtectedRoute requiredRole="wholesaler"><WholesalerProducts /></ProtectedRoute>} />
         
 
-        {/* Admin routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/panel" element={<ProtectedRoute requiredRole="admin"><AdminPanel /></ProtectedRoute>} />
-        <Route path="/admin/ad-approvals" element={<ProtectedRoute requiredRole="admin"><AdApprovals /></ProtectedRoute>} />
 
         {/* 404 route */}
         <Route path="*" element={<NotFound />} />

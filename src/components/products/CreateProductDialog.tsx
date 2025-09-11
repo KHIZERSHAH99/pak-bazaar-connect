@@ -16,9 +16,8 @@ import { Loader2, Upload, Package, Info, Image, DollarSign, Settings } from 'luc
 import ProductSpecificationFields from './ProductSpecificationFields';
 import ProductCategorySelector from './ProductCategorySelector';
 import MultipleImageUpload from './MultipleImageUpload';
-import VariationManager from './variations/VariationManager';
-import SizeChart from './variations/SizeChart';
-import PricingTierManager from './PricingTierManager';
+import InlineVariationManager, { InlineVariation } from './InlineVariationManager';
+import InlinePricingTiers, { InlinePricingTier } from './InlinePricingTiers';
 
 interface CreateProductDialogProps {
   isOpen: boolean;
@@ -641,19 +640,19 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
             </TabsContent>
 
             <TabsContent value="variations" className="space-y-4">
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  Save the product first to add variations and size charts. You can add them from the edit dialog after creating the product.
-                </p>
-              </div>
+              <InlineVariationManager
+                variations={inlineVariations}
+                onChange={setInlineVariations}
+                basePrice={parseFloat(formData.price) || 0}
+              />
             </TabsContent>
 
             <TabsContent value="tiers" className="space-y-4">
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  Save the product first to add pricing tiers. You can add them from the edit dialog after creating the product.
-                </p>
-              </div>
+              <InlinePricingTiers
+                tiers={inlineTiers}
+                onChange={setInlineTiers}
+                basePrice={parseFloat(formData.price) || 0}
+              />
             </TabsContent>
           </Tabs>
           

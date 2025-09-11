@@ -285,7 +285,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="basic" className="flex items-center gap-2">
                 <Info className="w-3 h-3" />
                 <span className="hidden sm:inline">Basic</span>
@@ -297,6 +297,10 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
               <TabsTrigger value="specifications" className="flex items-center gap-2">
                 <Settings className="w-3 h-3" />
                 <span className="hidden sm:inline">Specs</span>
+              </TabsTrigger>
+              <TabsTrigger value="variations" className="flex items-center gap-2">
+                <Package className="w-3 h-3" />
+                <span className="hidden sm:inline">Variations</span>
               </TabsTrigger>
               <TabsTrigger value="images" className="flex items-center gap-2">
                 <Image className="w-3 h-3" />
@@ -577,6 +581,33 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
                   disabled={isSubmitting}
                 />
               </div>
+            </TabsContent>
+
+            {/* Variations Tab */}
+            <TabsContent value="variations" className="space-y-4">
+              {product ? (
+                <>
+                  <VariationManager 
+                    productId={product.id} 
+                    basePrice={parseFloat(formData.price) || product.price}
+                    onUpdate={() => {
+                      console.log('Variations updated');
+                    }}
+                  />
+                  <SizeChart 
+                    productId={product.id} 
+                    editable={true}
+                    onUpdate={() => {
+                      console.log('Size chart updated');
+                    }}
+                  />
+                </>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>Save the product first to manage variations and size charts</p>
+                </div>
+              )}
             </TabsContent>
 
             {/* Pricing Tiers Tab */}

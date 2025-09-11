@@ -66,6 +66,8 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
   const [specifications, setSpecifications] = useState<Array<{id: string; name: string; value: string}>>([]);
   const [images, setImages] = useState<Array<{id: string; file: File; preview: string; isPrimary: boolean}>>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [inlineVariations, setInlineVariations] = useState<any[]>([]);
+  const [inlineTiers, setInlineTiers] = useState<any[]>([]);
   
   const { toast } = useToast();
 

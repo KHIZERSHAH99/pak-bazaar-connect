@@ -3,7 +3,6 @@ import { supabase as supabaseClient } from '@/integrations/supabase/client';
 import * as authModule from './auth';
 import * as shopsModule from './shops';
 import * as productsModule from './products';
-import * as adsModule from './ads';
 import * as ordersModule from './orders';
 import * as chatModule from './chat';
 import * as storageModule from './storage';
@@ -19,7 +18,6 @@ export type {
   Profile,
   Shop,
   Product,
-  Ad,
   Order,
   Commission,
   ChatMessage,
@@ -53,13 +51,6 @@ export const {
   deleteProduct
 } = productsModule;
 
-export const {
-  getAdsByWholesaler,
-  getActiveAds,
-  createAd,
-  getPendingAds,
-  approveAd
-} = adsModule;
 
 export const {
   createOrder,

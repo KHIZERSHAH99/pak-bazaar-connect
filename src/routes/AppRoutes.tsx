@@ -36,7 +36,6 @@ import DashboardProducts from '@/pages/dashboard/DashboardProducts';
 import DashboardOrders from '@/pages/dashboard/DashboardOrders';
 import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrders';
 import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
-import DashboardAds from '@/pages/dashboard/DashboardAds';
 import DashboardAdApprovals from '@/pages/dashboard/DashboardAdApprovals';
 import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
 import DashboardAnalytics from '@/pages/dashboard/DashboardAnalytics';
@@ -53,7 +52,6 @@ import ShopProducts from '@/pages/seller/ShopProducts';
 import WholesalerOrders from '@/pages/wholesaler/WholesalerOrders';
 import Shops from '@/pages/wholesaler/Shops';
 import WholesalerProducts from '@/pages/wholesaler/Products';
-import Advertisements from '@/pages/wholesaler/Advertisements';
 
 // Admin pages
 import AdminDashboard from '@/pages/admin/AdminDashboard';
@@ -102,7 +100,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/orders" element={<ProtectedRoute><DashboardOrders /></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />
         <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><DashboardSellerOrders /></ProtectedRoute>} />
-        <Route path="/dashboard/ads" element={<ProtectedRoute requiredRole="wholesaler"><DashboardAds /></ProtectedRoute>} />
+        
         <Route path="/dashboard/ad-approvals" element={<ProtectedRoute requiredRole="admin"><DashboardAdApprovals /></ProtectedRoute>} />
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
@@ -119,7 +117,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/wholesaler/orders" element={<ProtectedRoute requiredRole="wholesaler"><WholesalerOrders /></ProtectedRoute>} />
         <Route path="/wholesaler/shops" element={<ProtectedRoute requiredRole="wholesaler"><Shops /></ProtectedRoute>} />
         <Route path="/wholesaler/products" element={<ProtectedRoute requiredRole="wholesaler"><WholesalerProducts /></ProtectedRoute>} />
-        <Route path="/wholesaler/advertisements" element={<ProtectedRoute requiredRole="wholesaler"><Advertisements /></ProtectedRoute>} />
+        
 
         {/* Admin routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />

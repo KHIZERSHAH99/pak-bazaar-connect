@@ -74,11 +74,6 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
         icon: <Package className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
-        name: 'Advertisements', 
-        path: '/dashboard/ads', 
-        icon: <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
-      },
-      { 
         name: 'Orders', 
         path: '/dashboard/wholesaler-orders', 
         icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 

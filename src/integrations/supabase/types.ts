@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_ip_whitelist: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          ip_address: unknown
+          is_active: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          ip_address: unknown
+          is_active?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          ip_address?: unknown
+          is_active?: boolean | null
+        }
+        Relationships: []
+      }
       admin_sessions: {
         Row: {
           created_at: string | null
@@ -572,6 +599,33 @@ export type Database = {
           valid_from?: string
           valid_until?: string
           wholesaler_id?: string
+        }
+        Relationships: []
+      }
+      csrf_tokens: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          token: string
+          used: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          token: string
+          used?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          token?: string
+          used?: boolean | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -2223,45 +2277,27 @@ export type Database = {
           business_name: string | null
           business_type: string | null
           city: string | null
-          cnic_image: string | null
           created_at: string | null
-          email_masked: string | null
           id: string | null
-          ntn_number: string | null
-          phone_masked: string | null
           role: string | null
-          selfie_image: string | null
-          strn_number: string | null
           verification_status: string | null
         }
         Insert: {
           business_name?: string | null
           business_type?: string | null
           city?: string | null
-          cnic_image?: never
           created_at?: string | null
-          email_masked?: never
           id?: string | null
-          ntn_number?: never
-          phone_masked?: never
           role?: string | null
-          selfie_image?: never
-          strn_number?: never
           verification_status?: string | null
         }
         Update: {
           business_name?: string | null
           business_type?: string | null
           city?: string | null
-          cnic_image?: never
           created_at?: string | null
-          email_masked?: never
           id?: string | null
-          ntn_number?: never
-          phone_masked?: never
           role?: string | null
-          selfie_image?: never
-          strn_number?: never
           verification_status?: string | null
         }
         Relationships: []
@@ -2371,6 +2407,10 @@ export type Database = {
       detect_unusual_access_patterns: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      generate_csrf_token: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       generate_otp: {
         Args: Record<PropertyKey, never>
@@ -2539,6 +2579,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      validate_admin_access: {
+        Args: { p_ip_address?: unknown }
+        Returns: boolean
+      }
       validate_admin_session: {
         Args: { p_session_token: string }
         Returns: boolean
@@ -2550,6 +2594,10 @@ export type Database = {
           input_type: string
           normalized_value: string
         }[]
+      }
+      validate_csrf_token: {
+        Args: { p_token: string }
+        Returns: boolean
       }
       validate_pakistani_phone: {
         Args: { phone_input: string }

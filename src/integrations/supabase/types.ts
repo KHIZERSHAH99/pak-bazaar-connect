@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_sessions: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          ip_address: unknown | null
+          last_activity: string | null
+          session_token: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          ip_address?: unknown | null
+          last_activity?: string | null
+          session_token: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          last_activity?: string | null
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ads: {
         Row: {
           budget_cap: number | null
@@ -254,6 +287,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "commission_records_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       commission_settings: {
@@ -284,6 +324,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_settings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -335,6 +382,13 @@ export type Database = {
             columns: ["wholesaler_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_transactions_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -637,6 +691,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "monthly_commissions_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       notifications: {
@@ -673,6 +734,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -715,6 +783,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_actions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -810,6 +885,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       order_status_history: {
@@ -855,6 +937,13 @@ export type Database = {
             columns: ["changed_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
           {
@@ -1062,6 +1151,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "orders_delivery_confirmed_by_fkey"
+            columns: ["delivery_confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_shop_id_fkey"
             columns: ["shop_id"]
             isOneToOne: false
@@ -1107,6 +1203,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "otp_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1174,36 +1277,45 @@ export type Database = {
       payment_methods: {
         Row: {
           account_number: string | null
+          account_number_encrypted: string | null
           account_title: string | null
           bank_name: string | null
           created_at: string | null
+          easypaisa_encrypted: string | null
           easypaisa_number: string | null
           id: string
           is_active: boolean | null
+          jazzcash_encrypted: string | null
           jazzcash_number: string | null
           updated_at: string | null
           wholesaler_id: string
         }
         Insert: {
           account_number?: string | null
+          account_number_encrypted?: string | null
           account_title?: string | null
           bank_name?: string | null
           created_at?: string | null
+          easypaisa_encrypted?: string | null
           easypaisa_number?: string | null
           id?: string
           is_active?: boolean | null
+          jazzcash_encrypted?: string | null
           jazzcash_number?: string | null
           updated_at?: string | null
           wholesaler_id: string
         }
         Update: {
           account_number?: string | null
+          account_number_encrypted?: string | null
           account_title?: string | null
           bank_name?: string | null
           created_at?: string | null
+          easypaisa_encrypted?: string | null
           easypaisa_number?: string | null
           id?: string
           is_active?: boolean | null
+          jazzcash_encrypted?: string | null
           jazzcash_number?: string | null
           updated_at?: string | null
           wholesaler_id?: string
@@ -1214,6 +1326,13 @@ export type Database = {
             columns: ["wholesaler_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_methods_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1659,9 +1778,12 @@ export type Database = {
           business_type: string | null
           can_switch_roles: boolean | null
           city: string | null
+          cnic_encrypted: string | null
           cnic_image: string | null
           contact_name: string | null
           created_at: string | null
+          data_retention_consent: boolean | null
+          data_retention_date: string | null
           display_identifier: string | null
           email: string
           id: string
@@ -1677,12 +1799,14 @@ export type Database = {
           otp_attempts: number | null
           otp_code: string | null
           otp_expires_at: string | null
+          phone_encrypted: string | null
           phone_number: string | null
           phone_verified: boolean | null
           postal_code: string | null
           profile_image: string | null
           role: string
           role_switch_count: number | null
+          selfie_encrypted: string | null
           selfie_image: string | null
           status: string | null
           strn_number: string | null
@@ -1701,9 +1825,12 @@ export type Database = {
           business_type?: string | null
           can_switch_roles?: boolean | null
           city?: string | null
+          cnic_encrypted?: string | null
           cnic_image?: string | null
           contact_name?: string | null
           created_at?: string | null
+          data_retention_consent?: boolean | null
+          data_retention_date?: string | null
           display_identifier?: string | null
           email: string
           id: string
@@ -1719,12 +1846,14 @@ export type Database = {
           otp_attempts?: number | null
           otp_code?: string | null
           otp_expires_at?: string | null
+          phone_encrypted?: string | null
           phone_number?: string | null
           phone_verified?: boolean | null
           postal_code?: string | null
           profile_image?: string | null
           role?: string
           role_switch_count?: number | null
+          selfie_encrypted?: string | null
           selfie_image?: string | null
           status?: string | null
           strn_number?: string | null
@@ -1743,9 +1872,12 @@ export type Database = {
           business_type?: string | null
           can_switch_roles?: boolean | null
           city?: string | null
+          cnic_encrypted?: string | null
           cnic_image?: string | null
           contact_name?: string | null
           created_at?: string | null
+          data_retention_consent?: boolean | null
+          data_retention_date?: string | null
           display_identifier?: string | null
           email?: string
           id?: string
@@ -1761,12 +1893,14 @@ export type Database = {
           otp_attempts?: number | null
           otp_code?: string | null
           otp_expires_at?: string | null
+          phone_encrypted?: string | null
           phone_number?: string | null
           phone_verified?: boolean | null
           postal_code?: string | null
           profile_image?: string | null
           role?: string
           role_switch_count?: number | null
+          selfie_encrypted?: string | null
           selfie_image?: string | null
           status?: string | null
           strn_number?: string | null
@@ -1798,6 +1932,36 @@ export type Database = {
           created_at?: string | null
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          created_at: string | null
+          endpoint: string
+          id: string
+          ip_address: unknown | null
+          request_count: number | null
+          user_id: string | null
+          window_start: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          ip_address?: unknown | null
+          request_count?: number | null
+          user_id?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          ip_address?: unknown | null
+          request_count?: number | null
+          user_id?: string | null
+          window_start?: string | null
         }
         Relationships: []
       }
@@ -2054,7 +2218,62 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profiles_public: {
+        Row: {
+          business_name: string | null
+          business_type: string | null
+          city: string | null
+          cnic_image: string | null
+          created_at: string | null
+          email_masked: string | null
+          id: string | null
+          ntn_number: string | null
+          phone_masked: string | null
+          role: string | null
+          selfie_image: string | null
+          strn_number: string | null
+          verification_status: string | null
+        }
+        Insert: {
+          business_name?: string | null
+          business_type?: string | null
+          city?: string | null
+          cnic_image?: never
+          created_at?: string | null
+          email_masked?: never
+          id?: string | null
+          ntn_number?: never
+          phone_masked?: never
+          role?: string | null
+          selfie_image?: never
+          strn_number?: never
+          verification_status?: string | null
+        }
+        Update: {
+          business_name?: string | null
+          business_type?: string | null
+          city?: string | null
+          cnic_image?: never
+          created_at?: string | null
+          email_masked?: never
+          id?: string | null
+          ntn_number?: never
+          phone_masked?: never
+          role?: string | null
+          selfie_image?: never
+          strn_number?: never
+          verification_status?: string | null
+        }
+        Relationships: []
+      }
+      security_metrics: {
+        Row: {
+          measured_at: string | null
+          metric: string | null
+          value: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_order_tracking: {
@@ -2087,6 +2306,16 @@ export type Database = {
         Args: { user_phone: string }
         Returns: Json
       }
+      check_rate_limit: {
+        Args: {
+          p_endpoint: string
+          p_ip_address: unknown
+          p_max_requests?: number
+          p_user_id: string
+          p_window_minutes?: number
+        }
+        Returns: boolean
+      }
       check_user_exists: {
         Args: { p_email?: string; p_phone?: string }
         Returns: Json
@@ -2104,6 +2333,10 @@ export type Database = {
         Returns: undefined
       }
       cleanup_old_auth_attempts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_old_data: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2131,6 +2364,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      delete_old_verification_documents: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       detect_unusual_access_patterns: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -2155,6 +2392,19 @@ export type Database = {
       get_effective_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_payment_methods_secure: {
+        Args: { shop_id: string }
+        Returns: {
+          account_number_masked: string
+          account_title: string
+          bank_name: string
+          easypaisa_masked: string
+          id: string
+          is_active: boolean
+          jazzcash_masked: string
+          wholesaler_id: string
+        }[]
       }
       get_product_analytics: {
         Args: { p_shop_ids: string[]; p_start_date?: string }
@@ -2238,6 +2488,10 @@ export type Database = {
         Args: { p_details?: Json; p_event_type: string; p_user_id: string }
         Returns: undefined
       }
+      mask_sensitive_data: {
+        Args: { field_type: string; field_value: string }
+        Returns: string
+      }
       monitor_product_view_patterns: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -2284,6 +2538,10 @@ export type Database = {
           p_status: string
         }
         Returns: undefined
+      }
+      validate_admin_session: {
+        Args: { p_session_token: string }
+        Returns: boolean
       }
       validate_auth_input: {
         Args: { input_value: string }

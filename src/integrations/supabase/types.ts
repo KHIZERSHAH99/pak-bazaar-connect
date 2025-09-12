@@ -2176,6 +2176,10 @@ export type Database = {
         Args: { profile_id: string }
         Returns: Json
       }
+      get_safe_profile_data: {
+        Args: { user_id: string }
+        Returns: Json
+      }
       get_security_dashboard: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2235,6 +2239,10 @@ export type Database = {
         Returns: undefined
       }
       monitor_product_view_patterns: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      monitor_profile_access: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }

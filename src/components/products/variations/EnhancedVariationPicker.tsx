@@ -46,7 +46,8 @@ const EnhancedVariationPicker: React.FC<EnhancedVariationPickerProps> = ({
       (sum, variation) => sum + variation.price_adjustment,
       0
     );
-    const finalPrice = basePrice + totalAdjustment;
+    // Ensure final price is never less than 1
+    const finalPrice = Math.max(basePrice + totalAdjustment, 1);
     setCurrentPrice(finalPrice);
 
     // Notify parent of selection change

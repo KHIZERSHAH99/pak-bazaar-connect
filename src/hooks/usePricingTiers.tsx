@@ -106,7 +106,10 @@ export const usePricingTiers = (productId: string | undefined) => {
   };
 
   const calculatePrice = (quantity: number, fallbackPrice: number = 0): number => {
-    if (tiers.length === 0) return fallbackPrice;
+    // Ensure fallback price is never 0
+    const validFallbackPrice = fallbackPrice > 0 ? fallbackPrice : 100;
+    
+    if (tiers.length === 0) return validFallbackPrice;
 
     // Find the applicable tier based on quantity
     let applicableTier = tiers.find(tier => 
@@ -123,8 +126,8 @@ export const usePricingTiers = (productId: string | undefined) => {
     }
 
     // Get the price, ensuring it's never 0
-    const price = applicableTier?.unit_price || tiers[0]?.unit_price || fallbackPrice;
-    return price > 0 ? price : fallbackPrice;
+    const price = applicableTier?.unit_price || tiers[0]?.unit_price || validFallbackPrice;
+    return price > 0 ? price : validFallbackPrice;
   };
 
   return {

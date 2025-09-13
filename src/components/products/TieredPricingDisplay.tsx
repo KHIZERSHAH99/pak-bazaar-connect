@@ -25,12 +25,15 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
   className
 }) => {
   const sortedTiers = useMemo(() => {
+    // Ensure we have a valid base price (never 0)
+    const validBasePrice = basePrice > 0 ? basePrice : 100;
+    
     if (!tiers || tiers.length === 0) {
       // Create default tiers if none exist
       return [
-        { id: '1', min_quantity: 1, max_quantity: 99, unit_price: basePrice },
-        { id: '2', min_quantity: 100, max_quantity: 999, unit_price: basePrice * 0.95 },
-        { id: '3', min_quantity: 1000, max_quantity: null, unit_price: basePrice * 0.90 }
+        { id: '1', min_quantity: 1, max_quantity: 99, unit_price: validBasePrice },
+        { id: '2', min_quantity: 100, max_quantity: 999, unit_price: validBasePrice * 0.95 },
+        { id: '3', min_quantity: 1000, max_quantity: null, unit_price: validBasePrice * 0.90 }
       ];
     }
     
@@ -38,7 +41,7 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
     return [...tiers]
       .map(tier => ({
         ...tier,
-        unit_price: tier.unit_price > 0 ? tier.unit_price : basePrice
+        unit_price: tier.unit_price > 0 ? tier.unit_price : validBasePrice
       }))
       .sort((a, b) => a.min_quantity - b.min_quantity);
   }, [tiers, basePrice]);

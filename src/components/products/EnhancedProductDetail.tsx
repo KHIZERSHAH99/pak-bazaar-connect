@@ -36,8 +36,8 @@ interface EnhancedProductDetailProps {
 const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, onBack }) => {
   const [quantity, setQuantity] = useState(product.moq || 1);
   const [showOrderForm, setShowOrderForm] = useState(false);
-  const [currentUnitPrice, setCurrentUnitPrice] = useState(product.price);
-  const [totalAmount, setTotalAmount] = useState((product.moq || 1) * product.price);
+  const [currentUnitPrice, setCurrentUnitPrice] = useState(product.price > 0 ? product.price : 100);
+  const [totalAmount, setTotalAmount] = useState((product.price > 0 ? product.price : 100) * (product.moq || 1));
   const [selectedVariations, setSelectedVariations] = useState<any>({});
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -215,8 +215,10 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
               basePrice={product.price}
               onVariationChange={(variations, totalPrice) => {
                 setSelectedVariations(variations);
-                setCurrentUnitPrice(totalPrice);
-                setTotalAmount(totalPrice * quantity);
+                // Ensure price is never 0
+                const validPrice = totalPrice > 0 ? totalPrice : (product.price > 0 ? product.price : 100);
+                setCurrentUnitPrice(validPrice);
+                setTotalAmount(validPrice * quantity);
               }}
             />
 
@@ -248,12 +250,20 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 onQuantityChange={(qty, unitPrice, total) => {
                   setQuantity(qty);
                   // Ensure unit price is never 0
-                  const finalUnitPrice = unitPrice > 0 ? unitPrice : (currentUnitPrice || product.price);
-                  // Keep the variation-adjusted price if applicable
+                  const safeUnitPrice = unitPrice > 0 ? unitPrice : (product.price > 0 ? product.price : 100);
+                  const finalUnitPrice = safeUnitPrice > 0 ? safeUnitPrice : 100;
+                  
+                  // Only update unit price if no variations are selected
                   if (!selectedVariations || Object.keys(selectedVariations).length === 0) {
                     setCurrentUnitPrice(finalUnitPrice);
                   }
-                  setTotalAmount(finalUnitPrice * qty);
+                  
+                  // Calculate total with the current unit price (which may include variation adjustments)
+                  const actualUnitPrice = (selectedVariations && Object.keys(selectedVariations).length > 0) 
+                    ? currentUnitPrice 
+                    : finalUnitPrice;
+                    
+                  setTotalAmount(actualUnitPrice * qty);
                 }}
               />
 

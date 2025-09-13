@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
+import { guestSessionManager } from '@/lib/security/guest-session';
 
 export interface Order {
   id: string;
@@ -40,9 +41,16 @@ export const createOrder = async (orderData: {
 }): Promise<Order> => {
   const user = await getCurrentUser();
   
-  // Allow guest orders
+  // Allow guest orders with rate limiting
   if (!user && !orderData.isGuestOrder) {
     throw new Error('User not authenticated');
+  }
+  
+  // Check guest order rate limit
+  if (!user && orderData.isGuestOrder) {
+    if (!guestSessionManager.canPlaceOrder()) {
+      throw new Error('Too many orders placed. Please wait before placing another order.');
+    }
   }
   
   // Validate input
@@ -71,19 +79,27 @@ export const createOrder = async (orderData: {
     throw new Error('You cannot order from your own shop');
   }
   
+  // Prepare order data with guest session if needed
+  const orderPayload: any = {
+    buyer_id: user?.id || '00000000-0000-0000-0000-000000000000', // Special UUID for guest orders
+    shop_id: orderData.shopId,
+    total_amount: orderData.totalAmount,
+    payment_method: orderData.paymentMethod || 'bank_transfer',
+    buyer_name: orderData.buyerName,
+    buyer_phone: orderData.buyerPhone,
+    buyer_address: orderData.buyerAddress,
+    is_guest_order: !user,
+    status: 'pending'
+  };
+  
+  // Add guest session ID for guest orders
+  if (!user) {
+    orderPayload.guest_session_id = guestSessionManager.getSessionId();
+  }
+  
   const { data, error } = await supabase
     .from('orders')
-    .insert([{
-      buyer_id: user?.id || '00000000-0000-0000-0000-000000000000', // Special UUID for guest orders
-      shop_id: orderData.shopId,
-      total_amount: orderData.totalAmount,
-      payment_method: orderData.paymentMethod || 'bank_transfer',
-      buyer_name: orderData.buyerName,
-      buyer_phone: orderData.buyerPhone,
-      buyer_address: orderData.buyerAddress,
-      is_guest_order: !user,
-      status: 'pending'
-    }])
+    .insert([orderPayload])
     .select(`
       *,
       shops!shop_id(id, name, contact, address, owner_id)
@@ -93,6 +109,11 @@ export const createOrder = async (orderData: {
   if (error) {
     console.error('Error creating order:', error);
     throw new Error(`Failed to create order: ${error.message}`);
+  }
+  
+  // Increment guest order count if successful
+  if (!user) {
+    guestSessionManager.incrementOrderCount();
   }
   
   return data as Order;

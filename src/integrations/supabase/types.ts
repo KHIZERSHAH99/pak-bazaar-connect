@@ -1065,6 +1065,7 @@ export type Database = {
           delivery_instructions: string | null
           delivery_partner: string | null
           estimated_delivery: string | null
+          guest_session_id: string | null
           id: string
           internal_notes: string | null
           is_guest_order: boolean | null
@@ -1113,6 +1114,7 @@ export type Database = {
           delivery_instructions?: string | null
           delivery_partner?: string | null
           estimated_delivery?: string | null
+          guest_session_id?: string | null
           id?: string
           internal_notes?: string | null
           is_guest_order?: boolean | null
@@ -1161,6 +1163,7 @@ export type Database = {
           delivery_instructions?: string | null
           delivery_partner?: string | null
           estimated_delivery?: string | null
+          guest_session_id?: string | null
           id?: string
           internal_notes?: string | null
           is_guest_order?: boolean | null
@@ -1332,14 +1335,17 @@ export type Database = {
         Row: {
           account_number: string | null
           account_number_encrypted: string | null
+          account_number_masked: string | null
           account_title: string | null
           bank_name: string | null
           created_at: string | null
           easypaisa_encrypted: string | null
+          easypaisa_masked: string | null
           easypaisa_number: string | null
           id: string
           is_active: boolean | null
           jazzcash_encrypted: string | null
+          jazzcash_masked: string | null
           jazzcash_number: string | null
           updated_at: string | null
           wholesaler_id: string
@@ -1347,14 +1353,17 @@ export type Database = {
         Insert: {
           account_number?: string | null
           account_number_encrypted?: string | null
+          account_number_masked?: string | null
           account_title?: string | null
           bank_name?: string | null
           created_at?: string | null
           easypaisa_encrypted?: string | null
+          easypaisa_masked?: string | null
           easypaisa_number?: string | null
           id?: string
           is_active?: boolean | null
           jazzcash_encrypted?: string | null
+          jazzcash_masked?: string | null
           jazzcash_number?: string | null
           updated_at?: string | null
           wholesaler_id: string
@@ -1362,14 +1371,17 @@ export type Database = {
         Update: {
           account_number?: string | null
           account_number_encrypted?: string | null
+          account_number_masked?: string | null
           account_title?: string | null
           bank_name?: string | null
           created_at?: string | null
           easypaisa_encrypted?: string | null
+          easypaisa_masked?: string | null
           easypaisa_number?: string | null
           id?: string
           is_active?: boolean | null
           jazzcash_encrypted?: string | null
+          jazzcash_masked?: string | null
           jazzcash_number?: string | null
           updated_at?: string | null
           wholesaler_id?: string
@@ -2270,6 +2282,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          ip_address: unknown | null
+          last_activity: string | null
+          session_token: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          ip_address?: unknown | null
+          last_activity?: string | null
+          session_token: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          ip_address?: unknown | null
+          last_activity?: string | null
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       profiles_public: {
@@ -2341,6 +2401,10 @@ export type Database = {
       check_account_lockout: {
         Args: { user_phone: string }
         Returns: Json
+      }
+      check_guest_order_rate_limit: {
+        Args: { p_ip_address: unknown; p_session_id: string }
+        Returns: boolean
       }
       check_rate_limit: {
         Args: {
@@ -2470,6 +2534,23 @@ export type Database = {
         Args: { user_id: string }
         Returns: Json
       }
+      get_safe_profile_summary: {
+        Args: { profile_id: string }
+        Returns: Json
+      }
+      get_secure_payment_methods: {
+        Args: { shop_id: string }
+        Returns: {
+          account_number_masked: string
+          account_title: string
+          bank_name: string
+          easypaisa_masked: string
+          id: string
+          is_active: boolean
+          jazzcash_masked: string
+          wholesaler_id: string
+        }[]
+      }
       get_security_dashboard: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2537,6 +2618,10 @@ export type Database = {
         Returns: undefined
       }
       monitor_profile_access: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      monitor_security_events: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }

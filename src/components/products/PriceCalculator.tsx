@@ -44,14 +44,30 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   }, [tiers, basePrice]);
 
   const calculations = useMemo(() => {
-    const currentTier = sortedTiers.find(tier => 
+    // Find the applicable tier based on quantity
+    let currentTier = sortedTiers.find(tier => 
       quantity >= tier.min_quantity && 
       (tier.max_quantity === null || quantity <= tier.max_quantity)
-    ) || sortedTiers[0];
+    );
+    
+    // If no tier found, use the last tier for quantities beyond max
+    if (!currentTier && sortedTiers.length > 0) {
+      const lastTier = sortedTiers[sortedTiers.length - 1];
+      if (quantity >= lastTier.min_quantity) {
+        currentTier = lastTier;
+      }
+    }
+    
+    // Fall back to first tier if still no tier found
+    currentTier = currentTier || sortedTiers[0];
 
-    const unitPrice = currentTier.unit_price;
+    // Ensure unit price is never 0 - use basePrice as fallback
+    const unitPrice = currentTier.unit_price > 0 ? currentTier.unit_price : basePrice;
     const totalPrice = quantity * unitPrice;
-    const baseTotal = quantity * sortedTiers[0].unit_price;
+    
+    // Calculate savings based on the first tier or base price
+    const baseUnitPrice = sortedTiers[0]?.unit_price > 0 ? sortedTiers[0].unit_price : basePrice;
+    const baseTotal = quantity * baseUnitPrice;
     const savings = baseTotal - totalPrice;
     const savingsPercent = baseTotal > 0 ? (savings / baseTotal) * 100 : 0;
 
@@ -68,7 +84,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
       nextTier,
       unitsToNextTier
     };
-  }, [quantity, sortedTiers]);
+  }, [quantity, sortedTiers, basePrice]);
 
   useEffect(() => {
     if (onQuantityChange) {

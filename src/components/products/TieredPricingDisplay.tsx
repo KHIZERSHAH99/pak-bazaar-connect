@@ -33,14 +33,32 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
         { id: '3', min_quantity: 1000, max_quantity: null, unit_price: basePrice * 0.90 }
       ];
     }
-    return [...tiers].sort((a, b) => a.min_quantity - b.min_quantity);
+    
+    // Sort tiers and ensure no zero prices
+    return [...tiers]
+      .map(tier => ({
+        ...tier,
+        unit_price: tier.unit_price > 0 ? tier.unit_price : basePrice
+      }))
+      .sort((a, b) => a.min_quantity - b.min_quantity);
   }, [tiers, basePrice]);
 
   const activeTier = useMemo(() => {
-    return sortedTiers.find(tier => 
+    // Find the applicable tier
+    let tier = sortedTiers.find(tier => 
       currentQuantity >= tier.min_quantity && 
       (tier.max_quantity === null || currentQuantity <= tier.max_quantity)
-    ) || sortedTiers[0];
+    );
+    
+    // If quantity exceeds all tiers, use the last tier
+    if (!tier && sortedTiers.length > 0) {
+      const lastTier = sortedTiers[sortedTiers.length - 1];
+      if (currentQuantity >= lastTier.min_quantity) {
+        tier = lastTier;
+      }
+    }
+    
+    return tier || sortedTiers[0];
   }, [sortedTiers, currentQuantity]);
 
   const calculateSavings = (tier: PricingTier) => {

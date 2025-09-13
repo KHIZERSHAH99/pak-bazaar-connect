@@ -42,7 +42,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { tiers, loading: tiersLoading } = usePricingTiers(product.id);
+  const { tiers, loading: tiersLoading, calculatePrice } = usePricingTiers(product.id);
 
   const handleQuantityChange = (value: string) => {
     const newQuantity = parseInt(value) || 1;
@@ -243,15 +243,17 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
             <div className="space-y-4">
               <PriceCalculator
                 tiers={tiers}
-                basePrice={currentUnitPrice}
+                basePrice={currentUnitPrice || product.price}
                 moq={product.moq}
                 onQuantityChange={(qty, unitPrice, total) => {
                   setQuantity(qty);
+                  // Ensure unit price is never 0
+                  const finalUnitPrice = unitPrice > 0 ? unitPrice : (currentUnitPrice || product.price);
                   // Keep the variation-adjusted price if applicable
                   if (!selectedVariations || Object.keys(selectedVariations).length === 0) {
-                    setCurrentUnitPrice(unitPrice);
+                    setCurrentUnitPrice(finalUnitPrice);
                   }
-                  setTotalAmount(unitPrice * qty);
+                  setTotalAmount(finalUnitPrice * qty);
                 }}
               />
 

@@ -105,15 +105,26 @@ export const usePricingTiers = (productId: string | undefined) => {
     }
   };
 
-  const calculatePrice = (quantity: number): number => {
-    if (tiers.length === 0) return 0;
+  const calculatePrice = (quantity: number, fallbackPrice: number = 0): number => {
+    if (tiers.length === 0) return fallbackPrice;
 
-    const applicableTier = tiers.find(tier => 
+    // Find the applicable tier based on quantity
+    let applicableTier = tiers.find(tier => 
       quantity >= tier.min_quantity && 
       (tier.max_quantity === null || quantity <= tier.max_quantity)
     );
+    
+    // If quantity exceeds all tiers, use the last tier
+    if (!applicableTier && tiers.length > 0) {
+      const lastTier = tiers[tiers.length - 1];
+      if (quantity >= lastTier.min_quantity) {
+        applicableTier = lastTier;
+      }
+    }
 
-    return applicableTier?.unit_price || tiers[0]?.unit_price || 0;
+    // Get the price, ensuring it's never 0
+    const price = applicableTier?.unit_price || tiers[0]?.unit_price || fallbackPrice;
+    return price > 0 ? price : fallbackPrice;
   };
 
   return {

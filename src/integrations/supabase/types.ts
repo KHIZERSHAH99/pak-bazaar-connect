@@ -308,6 +308,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "commission_records_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders_with_safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "commission_records_wholesaler_id_fkey"
             columns: ["wholesaler_id"]
             isOneToOne: false
@@ -405,6 +412,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "commission_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders_with_safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "commission_transactions_wholesaler_id_fkey"
             columns: ["wholesaler_id"]
             isOneToOne: false
@@ -454,6 +468,13 @@ export type Database = {
             columns: ["transaction_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "orders_with_safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -547,6 +568,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_usage_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders_with_safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -833,6 +861,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "order_actions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders_with_safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "order_actions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -894,6 +929,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders_with_safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "order_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
@@ -930,6 +972,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders_with_safe_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1007,6 +1056,13 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders_with_safe_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       order_tracking: {
@@ -1040,6 +1096,13 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_tracking_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders_with_safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2169,6 +2232,13 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "shipping_details_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders_with_safe_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       shop_favorites: {
@@ -2332,6 +2402,88 @@ export type Database = {
       }
     }
     Views: {
+      orders_with_safe_profiles: {
+        Row: {
+          auto_delete_screenshot_at: string | null
+          buyer_address: string | null
+          buyer_area: string | null
+          buyer_city: string | null
+          buyer_id: string | null
+          buyer_name: string | null
+          buyer_phone: string | null
+          buyer_postal_code: string | null
+          buyer_profile: Json | null
+          buyer_province: string | null
+          buyer_street_address: string | null
+          carrier_name: string | null
+          commission_id: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          delivered_at: string | null
+          delivery_confirmed_by: string | null
+          delivery_instructions: string | null
+          delivery_partner: string | null
+          estimated_delivery: string | null
+          guest_session_id: string | null
+          id: string | null
+          internal_notes: string | null
+          is_guest_order: boolean | null
+          last_status_update: string | null
+          order_notes: string | null
+          packed_at: string | null
+          packed_by: string | null
+          payment_method: string | null
+          payment_screenshot: string | null
+          priority_level: number | null
+          processing_started_at: string | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          requires_attention: boolean | null
+          return_address: string | null
+          returned_at: string | null
+          screenshot_uploaded_at: string | null
+          shipped_at: string | null
+          shipped_by: string | null
+          shipping_cost: number | null
+          shipping_method: string | null
+          shop_id: string | null
+          status: string | null
+          total_amount: number | null
+          tracking_number: string | null
+          tracking_url: string | null
+          wholesaler_notes: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_orders_shop_id"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_delivery_confirmed_by_fkey"
+            columns: ["delivery_confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_delivery_confirmed_by_fkey"
+            columns: ["delivery_confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles_public: {
         Row: {
           business_name: string | null
@@ -2527,6 +2679,10 @@ export type Database = {
         }[]
       }
       get_profile_summary: {
+        Args: { profile_id: string }
+        Returns: Json
+      }
+      get_public_profile_info: {
         Args: { profile_id: string }
         Returns: Json
       }

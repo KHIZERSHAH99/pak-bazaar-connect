@@ -88,7 +88,7 @@ export const requestOTP = async (phoneNumber: string): Promise<{ success: boolea
     
     // In production, send OTP via SMS service (Jazz/Telenor API)
     // For development, return OTP in response
-    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname.includes('lovable.app');
+    const isDevelopment = window.location.hostname === 'localhost';
     
     return {
       success: true,

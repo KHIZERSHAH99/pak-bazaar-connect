@@ -10,7 +10,7 @@ const Login: React.FC = () => {
   const [showDebug] = useState(false);
 
   // Check if we should show debug panel (only in development or for debugging)
-  const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('lovable.app');
+  const isDev = window.location.hostname === 'localhost';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">

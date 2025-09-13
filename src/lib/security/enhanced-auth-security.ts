@@ -291,8 +291,7 @@ class AuthSecurityManager {
     ];
 
     const isDev = process.env.NODE_ENV === 'development' || 
-                  window.location.hostname === 'localhost' || 
-                  window.location.hostname.includes('lovable.app');
+                  window.location.hostname === 'localhost';
     
     if (!isDev) {
       // Block demo credentials in production

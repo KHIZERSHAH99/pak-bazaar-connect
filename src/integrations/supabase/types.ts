@@ -2118,6 +2118,39 @@ export type Database = {
         }
         Relationships: []
       }
+      security_events: {
+        Row: {
+          created_at: string | null
+          details: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          resolved: boolean | null
+          severity: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          resolved?: boolean | null
+          severity?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          resolved?: boolean | null
+          severity?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       seller_addresses: {
         Row: {
           address_type: string
@@ -2601,6 +2634,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_security_status: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       check_user_exists: {
         Args: { p_email?: string; p_phone?: string }
         Returns: Json
@@ -2634,6 +2671,10 @@ export type Database = {
         Returns: undefined
       }
       cleanup_old_sms_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_sensitive_data: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2693,6 +2734,10 @@ export type Database = {
       get_effective_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_order_details_secure: {
+        Args: { p_order_id: string }
+        Returns: Json
       }
       get_payment_methods_secure: {
         Args: { shop_id: string }

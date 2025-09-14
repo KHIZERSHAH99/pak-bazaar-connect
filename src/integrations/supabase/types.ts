@@ -2402,6 +2402,31 @@ export type Database = {
       }
     }
     Views: {
+      commission_summary_secure: {
+        Row: {
+          avg_rate: number | null
+          last_commission_date: string | null
+          total_commission: number | null
+          total_records: number | null
+          wholesaler_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_records_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_records_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders_with_safe_profiles: {
         Row: {
           auto_delete_screenshot_at: string | null
@@ -2528,6 +2553,10 @@ export type Database = {
         Args: { p_notes?: string; p_order_id: string; p_status: string }
         Returns: string
       }
+      archive_old_commission_records: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       associate_phone_with_account: {
         Args: { p_email: string; p_phone_number: string }
         Returns: Json
@@ -2545,6 +2574,10 @@ export type Database = {
       calculate_monthly_commissions: {
         Args: { target_month?: string }
         Returns: undefined
+      }
+      can_access_commission_data: {
+        Args: { p_wholesaler_id: string }
+        Returns: boolean
       }
       can_request_otp: {
         Args: { user_phone: string }
@@ -2639,6 +2672,18 @@ export type Database = {
           normalized_phone: string
           phone_number: string
           role: string
+        }[]
+      }
+      get_commission_data_secure: {
+        Args: { p_wholesaler_id: string }
+        Returns: {
+          commission_amount: string
+          commission_rate: number
+          created_at: string
+          id: string
+          order_id: string
+          sale_amount: string
+          status: string
         }[]
       }
       get_current_commission_rate: {

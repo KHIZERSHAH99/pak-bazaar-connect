@@ -62,7 +62,7 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       
       // Use RPC function to find user by phone (avoids RLS issues)
       const { data: profileData, error: profileError } = await supabase
-        .rpc('find_user_by_phone', { phone_input: normalizedPhone });
+        .rpc('get_user_by_phone', { phone_input: normalizedPhone });
       
       if (profileError) {
         console.error('Profile query error:', profileError);
@@ -93,8 +93,8 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
         // If no format worked, use the primary format for the error
         authEmail = emailFormats[0];
       } else {
-        console.log('Profile found:', { email: profile.email, phone: profile.phone_number });
-        authEmail = profile.email;
+        console.log('Profile found:', { email: profile.user_email, role: profile.user_role });
+        authEmail = profile.user_email;
       }
     } else if (isEmail) {
       authEmail = normalizedInput.toLowerCase();

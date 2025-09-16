@@ -2844,6 +2844,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_user_by_phone: {
+        Args: { phone_input: string }
+        Returns: {
+          user_email: string
+          user_role: string
+        }[]
+      }
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string

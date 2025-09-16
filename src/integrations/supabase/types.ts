@@ -827,6 +827,33 @@ export type Database = {
           },
         ]
       }
+      operation_rate_limits: {
+        Row: {
+          count: number | null
+          created_at: string | null
+          id: string
+          operation: string
+          user_id: string | null
+          window_start: string | null
+        }
+        Insert: {
+          count?: number | null
+          created_at?: string | null
+          id?: string
+          operation: string
+          user_id?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          count?: number | null
+          created_at?: string | null
+          id?: string
+          operation?: string
+          user_id?: string | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
       order_actions: {
         Row: {
           action: string
@@ -2622,6 +2649,14 @@ export type Database = {
       }
       check_guest_order_rate_limit: {
         Args: { p_ip_address: unknown; p_session_id: string }
+        Returns: boolean
+      }
+      check_operation_rate_limit: {
+        Args: {
+          p_max_attempts?: number
+          p_operation: string
+          p_window_minutes?: number
+        }
         Returns: boolean
       }
       check_rate_limit: {

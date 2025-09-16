@@ -60,17 +60,16 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       
       console.log('Checking for phone-based auth with possible emails:', emailFormats);
       
-      // Try to find user by normalized phone in profiles
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email, id, role, phone_number, normalized_phone')
-        .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${normalizedPhone}`)
-        .maybeSingle();
+      // Use RPC function to find user by phone (avoids RLS issues)
+      const { data: profileData, error: profileError } = await supabase
+        .rpc('find_user_by_phone', { phone_input: normalizedPhone });
       
-      if (profileError && profileError.code !== 'PGRST116') {
+      if (profileError) {
         console.error('Profile query error:', profileError);
         throw new Error('Failed to verify phone number');
       }
+      
+      const profile = profileData?.[0] || null;
       
       if (!profile) {
         console.log('No profile found for phone:', normalizedPhone);

@@ -1,42 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, Phone, MapPin, Building, Calendar, CreditCard, ShoppingBag, Shield, Star, Edit, Camera } from 'lucide-react';
+import { ShoppingBag, Shield, Star } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import ProfileImageUpload from './ProfileImageUpload';
 import ProfileEditor from './ProfileEditor';
 import BusinessDetailsEditor from './BusinessDetailsEditor';
 import AccountInfo from './AccountInfo';
+
 const EnhancedUserProfile: React.FC = () => {
-  const {
-    profile
-  } = useAuth();
-  const {
-    toast
-  } = useToast();
+  const { profile } = useAuth();
+  const { toast } = useToast();
   const [orderStats, setOrderStats] = useState({
     totalOrders: 0,
     completedOrders: 0,
     pendingOrders: 0
   });
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (profile) {
       fetchOrderStats();
     }
   }, [profile]);
+
   const fetchOrderStats = async () => {
     if (!profile) return;
     try {
-      const {
-        data: orders,
-        error
-      } = await supabase.from('orders').select('status').eq('buyer_id', profile.id);
+      const { data: orders, error } = await supabase
+        .from('orders')
+        .select('status')
+        .eq('buyer_id', profile.id);
+
       if (error) throw error;
+
       const stats = orders?.reduce((acc, order) => {
         acc.totalOrders++;
         if (order.status === 'completed') acc.completedOrders++;
@@ -51,6 +49,7 @@ const EnhancedUserProfile: React.FC = () => {
         completedOrders: 0,
         pendingOrders: 0
       };
+
       setOrderStats(stats);
     } catch (error: any) {
       console.error('Error fetching order stats:', error);
@@ -58,6 +57,7 @@ const EnhancedUserProfile: React.FC = () => {
       setLoading(false);
     }
   };
+
   const handleProfileUpdate = () => {
     toast({
       title: "Profile updated",
@@ -65,8 +65,11 @@ const EnhancedUserProfile: React.FC = () => {
     });
     // Refresh profile data if needed
   };
+
   if (!profile) return null;
-  return <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header Section */}
@@ -77,57 +80,49 @@ const EnhancedUserProfile: React.FC = () => {
             </p>
           </div>
 
-          {/* Profile Overview Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Profile Image Card */}
-            <div className="lg:col-span-1">
-              <ProfileImageUpload profile={profile} onImageUpdate={handleProfileUpdate} />
-            </div>
-
-            {/* Quick Stats Cards */}
-            <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="text-center py-[50px] mx-0 px-0 my-0">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="bg-blue-100 dark:bg-blue-800/50 p-3 rounded-full">
-                      <ShoppingBag className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                    </div>
+          {/* Profile Overview Cards - Updated to remove profile image */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="text-center py-8">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-blue-100 dark:bg-blue-800/50 p-3 rounded-full">
+                    <ShoppingBag className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
-                    {loading ? '...' : orderStats.totalOrders}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 font-poppins">Total Orders</p>
-                </CardContent>
-              </Card>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
+                  {loading ? '...' : orderStats.totalOrders}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 font-poppins">Total Orders</p>
+              </CardContent>
+            </Card>
 
-              <Card className="text-center py-[50px]">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="bg-green-100 dark:bg-green-800/50 p-3 rounded-full">
-                      <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
-                    </div>
+            <Card className="text-center py-8">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-green-100 dark:bg-green-800/50 p-3 rounded-full">
+                    <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
-                    {loading ? '...' : orderStats.completedOrders}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 font-poppins">Completed</p>
-                </CardContent>
-              </Card>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
+                  {loading ? '...' : orderStats.completedOrders}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 font-poppins">Completed</p>
+              </CardContent>
+            </Card>
 
-              <Card className="text-center mx-0 my-0 py-[50px]">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="bg-orange-100 dark:bg-orange-800/50 p-3 rounded-full">
-                      <Star className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-                    </div>
+            <Card className="text-center py-8">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-orange-100 dark:bg-orange-800/50 p-3 rounded-full">
+                    <Star className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="text-lg px-3 py-1 font-poppins capitalize">
-                    {profile.role}
-                  </Badge>
-                  <p className="text-gray-600 dark:text-gray-300 font-poppins mt-2">Account Type</p>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+                <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="text-lg px-3 py-1 font-poppins capitalize">
+                  {profile.role}
+                </Badge>
+                <p className="text-gray-600 dark:text-gray-300 font-poppins mt-2">Account Type</p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Main Profile Information */}
@@ -144,9 +139,11 @@ const EnhancedUserProfile: React.FC = () => {
           </div>
 
           {/* Business Details (if applicable) */}
-          {(profile.role === 'wholesaler' || profile.role === 'seller') && <div className="space-y-6">
+          {(profile.role === 'wholesaler' || profile.role === 'seller') && (
+            <div className="space-y-6">
               <BusinessDetailsEditor profile={profile} onProfileUpdate={handleProfileUpdate} />
-            </div>}
+            </div>
+          )}
 
           {/* Verification Status */}
           <Card className="overflow-hidden border-none shadow-md">
@@ -190,6 +187,8 @@ const EnhancedUserProfile: React.FC = () => {
           </Card>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default EnhancedUserProfile;

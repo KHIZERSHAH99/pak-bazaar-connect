@@ -1959,7 +1959,6 @@ export type Database = {
           phone_number: string | null
           phone_verified: boolean | null
           postal_code: string | null
-          profile_image: string | null
           role: string
           role_switch_count: number | null
           selfie_encrypted: string | null
@@ -2006,7 +2005,6 @@ export type Database = {
           phone_number?: string | null
           phone_verified?: boolean | null
           postal_code?: string | null
-          profile_image?: string | null
           role?: string
           role_switch_count?: number | null
           selfie_encrypted?: string | null
@@ -2053,7 +2051,6 @@ export type Database = {
           phone_number?: string | null
           phone_verified?: boolean | null
           postal_code?: string | null
-          profile_image?: string | null
           role?: string
           role_switch_count?: number | null
           selfie_encrypted?: string | null

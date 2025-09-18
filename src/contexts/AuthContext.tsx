@@ -27,7 +27,7 @@ export interface Profile {
   verification_status?: string;
   is_suspended?: boolean;
   suspension_reason?: string;
-  profile_image?: string;
+  
 }
 
 interface AuthContextType {

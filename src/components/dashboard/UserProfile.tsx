@@ -21,11 +21,6 @@ const UserProfile: React.FC = () => {
   return (
     <div className="mb-3 sm:mb-4 flex flex-col items-center p-3 sm:p-4 rounded-lg border border-border/50 bg-white/[0.31]">
       <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-primary/20 mb-2">
-        <AvatarImage 
-          src={profile.profile_image} 
-          alt="Profile" 
-          className="object-cover"
-        />
         <AvatarFallback className="bg-primary text-xs sm:text-sm font-bold text-slate-50">
           {profile.email?.substring(0, 2).toUpperCase() || "U"}
         </AvatarFallback>

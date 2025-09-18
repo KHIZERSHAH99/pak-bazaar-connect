@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, X, Paperclip } from 'lucide-react';
-import { createMessage, getConversationMessages } from '@/lib/messaging';
+import { createMessage, getConversationMessages } from '@/lib/messaging-db';
 import { getCurrentUser } from '@/lib/auth';
 
 interface ChatWindowProps {

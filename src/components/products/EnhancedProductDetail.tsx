@@ -15,7 +15,8 @@ import {
   CheckCircle, 
   AlertCircle,
   Truck,
-  Shield
+  Shield,
+  MessageSquare
 } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,6 +28,7 @@ import TieredPricingDisplay from './TieredPricingDisplay';
 import PriceCalculator from './PriceCalculator';
 import { usePricingTiers } from '@/hooks/usePricingTiers';
 import EnhancedVariationPicker from './variations/EnhancedVariationPicker';
+import MessageButton from '@/components/messaging/MessageButton';
 
 interface EnhancedProductDetailProps {
   product: Product;
@@ -267,14 +269,25 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 }}
               />
 
-              <Button 
-                onClick={handleOrderClick}
-                className="w-full"
-                size="lg"
-              >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Place Order - PKR {totalAmount.toLocaleString()}
-              </Button>
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleOrderClick}
+                  className="w-full"
+                  size="lg"
+                >
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Place Order - PKR {totalAmount.toLocaleString()}
+                </Button>
+
+                {/* Add Message Button for retailers to contact wholesalers */}
+                {product.shops?.owner_id && user && profile?.role === 'seller' && product.shops.owner_id !== user.id && (
+                  <MessageButton 
+                    sellerId={product.shops.owner_id}
+                    sellerName={product.shops.name || "Wholesaler"}
+                    productId={product.id}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -95,6 +95,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/shops" element={<ProtectedRoute requiredRole="wholesaler"><DashboardShops /></ProtectedRoute>} />
         <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="wholesaler"><DashboardProducts /></ProtectedRoute>} />
         <Route path="/dashboard/orders" element={<ProtectedRoute><DashboardOrders /></ProtectedRoute>} />
+        <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><DashboardSellerOrders /></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />

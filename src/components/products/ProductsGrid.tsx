@@ -12,6 +12,22 @@ interface ProductsGridProps {
 
 const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
   const [productsPerRow, setProductsPerRow] = useState(6);
+  
+  useEffect(() => {
+    const updateProductsPerRow = () => {
+      const width = window.innerWidth;
+      if (width < 640) setProductsPerRow(2); // mobile
+      else if (width < 768) setProductsPerRow(3); // sm
+      else if (width < 1024) setProductsPerRow(4); // md/lg
+      else if (width < 1280) setProductsPerRow(5); // xl
+      else setProductsPerRow(6); // 2xl
+    };
+
+    updateProductsPerRow();
+    window.addEventListener('resize', updateProductsPerRow);
+    return () => window.removeEventListener('resize', updateProductsPerRow);
+  }, []);
+  
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -38,21 +54,6 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
       </div>
     );
   }
-
-  useEffect(() => {
-    const updateProductsPerRow = () => {
-      const width = window.innerWidth;
-      if (width < 640) setProductsPerRow(2); // mobile
-      else if (width < 768) setProductsPerRow(3); // sm
-      else if (width < 1024) setProductsPerRow(4); // md/lg
-      else if (width < 1280) setProductsPerRow(5); // xl
-      else setProductsPerRow(6); // 2xl
-    };
-
-    updateProductsPerRow();
-    window.addEventListener('resize', updateProductsPerRow);
-    return () => window.removeEventListener('resize', updateProductsPerRow);
-  }, []);
 
   // Group products into rows
   const productRows: Product[][] = [];

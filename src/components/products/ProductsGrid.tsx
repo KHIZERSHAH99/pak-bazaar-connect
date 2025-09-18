@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import AdUnit from '@/components/ads/AdUnit';
 import { Product } from '@/lib/types';
@@ -11,6 +11,7 @@ interface ProductsGridProps {
 }
 
 const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
+  const [productsPerRow, setProductsPerRow] = useState(6);
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -38,26 +39,61 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
     );
   }
 
+  useEffect(() => {
+    const updateProductsPerRow = () => {
+      const width = window.innerWidth;
+      if (width < 640) setProductsPerRow(2); // mobile
+      else if (width < 768) setProductsPerRow(3); // sm
+      else if (width < 1024) setProductsPerRow(4); // md/lg
+      else if (width < 1280) setProductsPerRow(5); // xl
+      else setProductsPerRow(6); // 2xl
+    };
+
+    updateProductsPerRow();
+    window.addEventListener('resize', updateProductsPerRow);
+    return () => window.removeEventListener('resize', updateProductsPerRow);
+  }, []);
+
+  // Group products into rows
+  const productRows: Product[][] = [];
+  for (let i = 0; i < products.length; i += productsPerRow) {
+    productRows.push(products.slice(i, Math.min(i + productsPerRow, products.length)));
+  }
+
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
-        {products.map((product, index) => (
-          <React.Fragment key={product.id}>
-            <ProductCard product={product} />
-            {/* Insert ad after every 12 products */}
-            {(index + 1) % 12 === 0 && index !== products.length - 1 && (
-              <div className="col-span-1">
-                <AdUnit 
-                  slotId={`grid-ad-${Math.floor((index + 1) / 12)}`}
-                  format="native"
-                  size="medium-rectangle"
-                  className="h-full"
-                />
+      {productRows.map((row, rowIndex) => (
+        <React.Fragment key={`row-${rowIndex}`}>
+          {/* Product Row */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
+            {row.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+            {/* Fill empty cells in incomplete rows */}
+            {row.length < productsPerRow && Array.from({ length: productsPerRow - row.length }).map((_, idx) => (
+              <div key={`empty-${idx}`} className="hidden sm:block" />
+            ))}
+          </div>
+          
+          {/* Ad Row - After every 2 product rows */}
+          {(rowIndex + 1) % 2 === 0 && rowIndex !== productRows.length - 1 && (
+            <div className="w-full bg-gray-50 rounded-lg p-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
+                {Array.from({ length: productsPerRow }).map((_, adIndex) => (
+                  <div key={`ad-${rowIndex}-${adIndex}`} className="bg-white rounded-lg shadow-sm">
+                    <AdUnit 
+                      slotId={`grid-ad-${rowIndex}-${adIndex}`}
+                      format="native"
+                      size="medium-rectangle"
+                      className="h-full"
+                    />
+                  </div>
+                ))}
               </div>
-            )}
-          </React.Fragment>
-        ))}
-      </div>
+            </div>
+          )}
+        </React.Fragment>
+      ))}
       
       <div className="text-center py-4">
         <p className="text-sm text-gray-600 font-poppins">

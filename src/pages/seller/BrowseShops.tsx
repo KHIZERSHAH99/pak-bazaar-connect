@@ -75,10 +75,11 @@ const BrowseShops: React.FC = () => {
   };
 
   const getShopImageSrc = (logo?: string) => {
-    if (logo && !logo.includes('placeholder.svg')) {
+    if (logo && !logo.includes('placeholder.svg') && logo.trim() !== '') {
       return logo;
     }
-    return `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop&auto=format`;
+    // Use PakBazaar Connect logo as default
+    return '/pbc-logo.png';
   };
 
   return (

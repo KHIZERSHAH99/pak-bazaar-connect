@@ -1,0 +1,143 @@
+import { supabase } from '@/integrations/supabase/client';
+
+interface AnalyticsEvent {
+  event_type: string;
+  event_data?: any;
+  page_url?: string;
+  referrer?: string;
+  user_agent?: string;
+  session_id?: string;
+}
+
+class AnalyticsTracker {
+  private sessionId: string;
+  private userId: string | null = null;
+
+  constructor() {
+    this.sessionId = this.getOrCreateSessionId();
+    this.initializeUserId();
+  }
+
+  private getOrCreateSessionId(): string {
+    let sessionId = sessionStorage.getItem('analytics_session_id');
+    if (!sessionId) {
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      sessionStorage.setItem('analytics_session_id', sessionId);
+    }
+    return sessionId;
+  }
+
+  private async initializeUserId() {
+    const { data: { user } } = await supabase.auth.getUser();
+    this.userId = user?.id || null;
+  }
+
+  async track(event: AnalyticsEvent): Promise<void> {
+    try {
+      await supabase.from('analytics_events').insert({
+        user_id: this.userId,
+        event_type: event.event_type,
+        event_data: event.event_data || {},
+        page_url: event.page_url || window.location.href,
+        referrer: event.referrer || document.referrer,
+        user_agent: event.user_agent || navigator.userAgent,
+        session_id: this.sessionId
+      });
+    } catch (error) {
+      console.error('Analytics tracking error:', error);
+    }
+  }
+
+  // Track page views
+  async trackPageView(pageName?: string): Promise<void> {
+    await this.track({
+      event_type: 'page_view',
+      event_data: { page_name: pageName || document.title }
+    });
+  }
+
+  // Track product views
+  async trackProductView(productId: string, productName: string): Promise<void> {
+    await this.track({
+      event_type: 'product_view',
+      event_data: { product_id: productId, product_name: productName }
+    });
+  }
+
+  // Track order events
+  async trackOrderCreated(orderId: string, amount: number): Promise<void> {
+    await this.track({
+      event_type: 'order_created',
+      event_data: { order_id: orderId, amount }
+    });
+  }
+
+  async trackOrderConfirmed(orderId: string): Promise<void> {
+    await this.track({
+      event_type: 'order_confirmed',
+      event_data: { order_id: orderId }
+    });
+  }
+
+  // Track search
+  async trackSearch(query: string, resultsCount: number): Promise<void> {
+    await this.track({
+      event_type: 'search',
+      event_data: { query, results_count: resultsCount }
+    });
+  }
+
+  // Track user actions
+  async trackButtonClick(buttonName: string, context?: any): Promise<void> {
+    await this.track({
+      event_type: 'button_click',
+      event_data: { button_name: buttonName, context }
+    });
+  }
+
+  // Get analytics data
+  async getAnalyticsSummary(userId?: string, days: number = 30) {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    let query = supabase
+      .from('analytics_events')
+      .select('*')
+      .gte('created_at', startDate.toISOString());
+
+    if (userId) {
+      query = query.eq('user_id', userId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching analytics:', error);
+      return null;
+    }
+
+    // Process data into summary
+    const summary = {
+      total_events: data?.length || 0,
+      page_views: data?.filter(e => e.event_type === 'page_view').length || 0,
+      product_views: data?.filter(e => e.event_type === 'product_view').length || 0,
+      orders_created: data?.filter(e => e.event_type === 'order_created').length || 0,
+      unique_sessions: new Set(data?.map(e => e.session_id)).size || 0,
+      events_by_type: {} as Record<string, number>,
+      daily_stats: {} as Record<string, number>
+    };
+
+    // Count events by type
+    data?.forEach(event => {
+      summary.events_by_type[event.event_type] = (summary.events_by_type[event.event_type] || 0) + 1;
+      
+      const date = new Date(event.created_at).toLocaleDateString();
+      summary.daily_stats[date] = (summary.daily_stats[date] || 0) + 1;
+    });
+
+    return summary;
+  }
+}
+
+// Export singleton instance
+export const analytics = new AnalyticsTracker();

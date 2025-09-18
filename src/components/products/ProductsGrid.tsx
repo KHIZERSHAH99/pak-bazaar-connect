@@ -11,16 +11,17 @@ interface ProductsGridProps {
 }
 
 const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
-  const [productsPerRow, setProductsPerRow] = useState(6);
+  const [productsPerRow, setProductsPerRow] = useState(4);
   
   useEffect(() => {
     const updateProductsPerRow = () => {
       const width = window.innerWidth;
-      if (width < 640) setProductsPerRow(2); // mobile
-      else if (width < 768) setProductsPerRow(3); // sm
-      else if (width < 1024) setProductsPerRow(4); // md/lg
-      else if (width < 1280) setProductsPerRow(5); // xl
-      else setProductsPerRow(6); // 2xl
+      if (width < 640) setProductsPerRow(2); // mobile phones
+      else if (width < 768) setProductsPerRow(2); // small tablets
+      else if (width < 1024) setProductsPerRow(3); // tablets
+      else if (width < 1280) setProductsPerRow(3); // small laptops
+      else if (width < 1536) setProductsPerRow(4); // laptops
+      else setProductsPerRow(4); // desktop PCs
     };
 
     updateProductsPerRow();
@@ -65,8 +66,8 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
     <div className="space-y-4">
       {productRows.map((row, rowIndex) => (
         <React.Fragment key={`row-${rowIndex}`}>
-          {/* Product Row */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
+          {/* Product Row - Optimized for different devices */}
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
             {row.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -79,7 +80,7 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
           {/* Ad Row - After every 2 product rows */}
           {(rowIndex + 1) % 2 === 0 && rowIndex !== productRows.length - 1 && (
             <div className="w-full bg-gray-50 rounded-lg p-2">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
                 {Array.from({ length: productsPerRow }).map((_, adIndex) => (
                   <div key={`ad-${rowIndex}-${adIndex}`} className="bg-white rounded-lg shadow-sm">
                     <AdUnit 

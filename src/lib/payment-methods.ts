@@ -73,7 +73,7 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
   }
 
   try {
-    // First get the shop to find the owner
+    // First get the shop to find the owner - using anon key for public access
     console.log('📋 Step 1: Getting shop details for ID:', shopId);
     const { data: shop, error: shopError } = await supabase
       .from('shops')
@@ -97,7 +97,7 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
       ownerId: shop.owner_id
     });
 
-    // Then get the payment methods for the shop owner
+    // Then get the payment methods for the shop owner - using anon key for public access
     console.log('📋 Step 2: Getting payment methods for owner:', shop.owner_id);
     const { data: paymentMethods, error: paymentError } = await supabase
       .from('payment_methods')

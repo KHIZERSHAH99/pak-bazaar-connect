@@ -2741,6 +2741,20 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_active_products_list: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          image: string
+          is_active: boolean
+          moq: number
+          name: string
+          price: number
+          shop_id: string
+          shop_logo: string
+          shop_name: string
+        }[]
+      }
       get_available_phones: {
         Args: Record<PropertyKey, never>
         Returns: {

@@ -282,13 +282,9 @@ export const deleteProduct = async (productId: string): Promise<void> => {
 
 export const getActiveProducts = async (limit: number = 20): Promise<Product[]> => {
   try {
+    // Use the new RPC function to avoid RLS issues
     const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('is_active', true)
-      .eq('verification_status', 'approved')
-      .order('created_at', { ascending: false })
-      .limit(limit);
+      .rpc('get_active_products_list');
 
     if (error) {
       console.error('Error fetching active products:', error);
@@ -299,18 +295,17 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
       return [];
     }
 
-    // Get shops and categories separately
-    const [shopsData, categoriesData] = await Promise.all([
-      supabase.from('shops').select('*'),
-      supabase.from('categories').select('*')
-    ]);
-
-    const shops = shopsData.data || [];
+    // Get categories separately
+    const categoriesData = await supabase.from('categories').select('*');
     const categories = categoriesData.data || [];
 
     return data.map(product => ({
       ...product,
-      shops: shops.find(shop => shop.id === product.shop_id) || null,
+      shops: product.shop_name ? {
+        id: product.shop_id,
+        name: product.shop_name,
+        logo: product.shop_logo
+      } : null,
       categories: categories.find(cat => cat.id === product.category_id) || null
     })) as Product[];
   } catch (error) {

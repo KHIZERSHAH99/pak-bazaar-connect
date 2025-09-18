@@ -299,15 +299,30 @@ export const getActiveProducts = async (limit: number = 20): Promise<Product[]> 
     const categoriesData = await supabase.from('categories').select('*');
     const categories = categoriesData.data || [];
 
-    return data.map(product => ({
-      ...product,
+    // Map the RPC data to the Product type
+    const products = data.map(product => ({
+      id: product.id,
+      name: product.name,
+      description: product.description || '',
+      price: product.price,
+      image: product.image,
+      shop_id: product.shop_id,
+      is_active: product.is_active,
+      category_id: product.category_id,
+      moq: product.moq || 1,
+      verification_status: product.verification_status || 'approved',
+      sample_available: product.sample_available || false,
+      sample_price: product.sample_price || null,
+      created_at: product.created_at,
       shops: product.shop_name ? {
         id: product.shop_id,
         name: product.shop_name,
         logo: product.shop_logo
       } : null,
       categories: categories.find(cat => cat.id === product.category_id) || null
-    })) as Product[];
+    }));
+
+    return products as Product[];
   } catch (error) {
     console.error('Error in getActiveProducts:', error);
     return [];

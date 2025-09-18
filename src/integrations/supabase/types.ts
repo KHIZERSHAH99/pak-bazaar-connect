@@ -2744,15 +2744,21 @@ export type Database = {
       get_active_products_list: {
         Args: Record<PropertyKey, never>
         Returns: {
+          category_id: string
+          created_at: string
+          description: string
           id: string
           image: string
           is_active: boolean
           moq: number
           name: string
           price: number
+          sample_available: boolean
+          sample_price: number
           shop_id: string
           shop_logo: string
           shop_name: string
+          verification_status: string
         }[]
       }
       get_available_phones: {

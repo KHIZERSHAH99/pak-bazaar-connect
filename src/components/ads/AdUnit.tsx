@@ -65,9 +65,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
       adContainer.appendChild(adScript);
       
       // Clear existing content and add new container
-      while (parentElement.firstChild) {
-        parentElement.removeChild(parentElement.firstChild);
-      }
+      parentElement.textContent = '';
       parentElement.appendChild(adContainer);
     }
 
@@ -77,9 +75,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
         if (adContainerRef.current) {
           // Remove children one by one to avoid React issues
           const parent = adContainerRef.current;
-          while (parent.firstChild) {
-            parent.removeChild(parent.firstChild);
-          }
+          parent.textContent = '';
         }
         
         // Clean up global options

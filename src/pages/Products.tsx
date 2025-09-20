@@ -176,7 +176,7 @@ const Products: React.FC = () => {
         <ProductsHeader />
         
         {/* Top Banner Ad */}
-        <InContentAd slotId="products-top-banner" />
+        <InContentAd slotId="98a934445fa1d2aa5fd6e25b30250461" />
         
         <ProductsFilters
           categories={categories}
@@ -197,10 +197,10 @@ const Products: React.FC = () => {
           {/* Sticky Side Ads - Hidden on mobile */}
           <div className="hidden xl:block">
             <div className="fixed left-4 top-1/3 z-10">
-              <StickyAdUnit slotId="products-left-sidebar" position="left" />
+              <StickyAdUnit slotId="98a934445fa1d2aa5fd6e25b30250461" position="left" />
             </div>
             <div className="fixed right-4 top-1/3 z-10">
-              <StickyAdUnit slotId="products-right-sidebar" position="right" />
+              <StickyAdUnit slotId="98a934445fa1d2aa5fd6e25b30250461" position="right" />
             </div>
           </div>
           
@@ -209,7 +209,7 @@ const Products: React.FC = () => {
             <ProductsGrid products={products} loading={loading} />
             
             {/* Bottom Ad */}
-            <InContentAd slotId="products-bottom" className="mt-12" />
+            <InContentAd slotId="98a934445fa1d2aa5fd6e25b30250461" className="mt-12" />
           </div>
         </div>
 

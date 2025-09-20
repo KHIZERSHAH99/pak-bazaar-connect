@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 declare global {
@@ -21,26 +21,41 @@ const AdUnit: React.FC<AdUnitProps> = ({
   className 
 }) => {
   const adContainerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Load Adsteera ad unit
-    if (adContainerRef.current) {
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.innerHTML = `
-        atOptions = {
-          'key' : '${slotId}',
-          'format' : '${format}',
-          'height' : ${getSizeHeight(size)},
-          'width' : ${getSizeWidth(size)},
-          'params' : {}
-        };
-      `;
-      adContainerRef.current.appendChild(script);
-
+    if (adContainerRef.current && typeof window !== 'undefined') {
+      // Clear previous content
+      adContainerRef.current.innerHTML = '';
+      
+      // Create ad container div
+      const adDiv = document.createElement('div');
+      adDiv.id = `adsteera-${slotId}`;
+      adContainerRef.current.appendChild(adDiv);
+      
+      // Set global options
+      window.atOptions = {
+        'key': slotId,
+        'format': format,
+        'height': getSizeHeight(size),
+        'width': getSizeWidth(size),
+        'params': {}
+      };
+      
+      // Load the Adsteera script
       const adScript = document.createElement('script');
       adScript.type = 'text/javascript';
-      adScript.src = '//www.topcreativeformat.com/98a934445fa1d2aa5fd6e25b30250461/invoke.js';
+      adScript.src = `//www.topcreativeformat.com/${slotId}/invoke.js`;
+      adScript.async = true;
+      adScript.onload = () => {
+        setIsLoading(false);
+      };
+      adScript.onerror = () => {
+        console.error(`Failed to load ad: ${slotId}`);
+        setIsLoading(false);
+      };
+      
       adContainerRef.current.appendChild(adScript);
     }
 
@@ -49,6 +64,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
       if (adContainerRef.current) {
         adContainerRef.current.innerHTML = '';
       }
+      delete window.atOptions;
     };
   }, [slotId, format, size]);
 
@@ -76,13 +92,25 @@ const AdUnit: React.FC<AdUnitProps> = ({
     <div 
       ref={adContainerRef}
       className={cn(
-        "ad-unit flex items-center justify-center bg-muted/20 rounded-lg overflow-hidden",
+        "ad-unit relative min-h-[50px]",
+        size === 'leaderboard' && 'min-h-[90px]',
+        size === 'medium-rectangle' && 'min-h-[250px]',
+        size === 'skyscraper' && 'min-h-[600px]',
+        size === 'mobile-banner' && 'min-h-[50px]',
         className
       )}
       data-ad-slot={slotId}
       data-ad-format={format}
+      style={{
+        minWidth: `${getSizeWidth(size)}px`,
+        display: 'block'
+      }}
     >
-      <div className="text-xs text-muted-foreground">Advertisement</div>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/10 rounded-lg">
+          <span className="text-xs text-muted-foreground">Loading ad...</span>
+        </div>
+      )}
     </div>
   );
 };

@@ -64,7 +64,8 @@ const AdUnit: React.FC<AdUnitProps> = ({
       if (adContainerRef.current) {
         adContainerRef.current.innerHTML = '';
       }
-      delete window.atOptions;
+      // Set to undefined instead of deleting (avoids strict mode error)
+      window.atOptions = undefined;
     };
   }, [slotId, format, size]);
 

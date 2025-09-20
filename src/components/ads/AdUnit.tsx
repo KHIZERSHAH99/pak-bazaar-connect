@@ -24,15 +24,21 @@ const AdUnit: React.FC<AdUnitProps> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let adContainer: HTMLDivElement | null = null;
+    let adScript: HTMLScriptElement | null = null;
+    
     // Load Adsteera ad unit
     if (adContainerRef.current && typeof window !== 'undefined') {
-      // Clear previous content
-      adContainerRef.current.innerHTML = '';
+      const parentElement = adContainerRef.current;
       
-      // Create ad container div
+      // Create a new container for the ad
+      adContainer = document.createElement('div');
+      adContainer.id = `adsteera-container-${slotId}`;
+      
+      // Create ad div
       const adDiv = document.createElement('div');
       adDiv.id = `adsteera-${slotId}`;
-      adContainerRef.current.appendChild(adDiv);
+      adContainer.appendChild(adDiv);
       
       // Set global options
       window.atOptions = {
@@ -43,8 +49,8 @@ const AdUnit: React.FC<AdUnitProps> = ({
         'params': {}
       };
       
-      // Load the Adsteera script
-      const adScript = document.createElement('script');
+      // Create and load the Adsteera script
+      adScript = document.createElement('script');
       adScript.type = 'text/javascript';
       adScript.src = `//www.topcreativeformat.com/${slotId}/invoke.js`;
       adScript.async = true;
@@ -56,16 +62,31 @@ const AdUnit: React.FC<AdUnitProps> = ({
         setIsLoading(false);
       };
       
-      adContainerRef.current.appendChild(adScript);
+      adContainer.appendChild(adScript);
+      
+      // Clear existing content and add new container
+      while (parentElement.firstChild) {
+        parentElement.removeChild(parentElement.firstChild);
+      }
+      parentElement.appendChild(adContainer);
     }
 
     return () => {
-      // Cleanup
-      if (adContainerRef.current) {
-        adContainerRef.current.innerHTML = '';
+      // Safer cleanup
+      try {
+        if (adContainerRef.current) {
+          // Remove children one by one to avoid React issues
+          const parent = adContainerRef.current;
+          while (parent.firstChild) {
+            parent.removeChild(parent.firstChild);
+          }
+        }
+        
+        // Clean up global options
+        window.atOptions = undefined;
+      } catch (error) {
+        console.warn('AdUnit cleanup error:', error);
       }
-      // Set to undefined instead of deleting (avoids strict mode error)
-      window.atOptions = undefined;
     };
   }, [slotId, format, size]);
 

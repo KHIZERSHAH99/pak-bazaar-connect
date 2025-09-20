@@ -24,64 +24,60 @@ const AdUnit: React.FC<AdUnitProps> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let adContainer: HTMLDivElement | null = null;
-    let adScript: HTMLScriptElement | null = null;
-    
-    // Load Adsteera ad unit
-    if (adContainerRef.current && typeof window !== 'undefined') {
-      const parentElement = adContainerRef.current;
-      
-      // Create a new container for the ad
-      adContainer = document.createElement('div');
-      adContainer.id = `adsteera-container-${slotId}`;
-      
-      // Create ad div
-      const adDiv = document.createElement('div');
-      adDiv.id = `adsteera-${slotId}`;
-      adContainer.appendChild(adDiv);
-      
-      // Set global options
-      window.atOptions = {
-        'key': slotId,
-        'format': format,
-        'height': getSizeHeight(size),
-        'width': getSizeWidth(size),
-        'params': {}
+    if (!adContainerRef.current || typeof window === 'undefined') return;
+
+    const parent = adContainerRef.current;
+
+    // Create a sandboxed iframe for the ad to isolate DOM mutations
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('title', `adframe-${slotId}`);
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+    iframe.style.border = '0';
+    iframe.style.width = `${getSizeWidth(size)}px`;
+    iframe.style.height = `${getSizeHeight(size)}px`;
+
+    // Clear and append iframe once
+    parent.textContent = '';
+    parent.appendChild(iframe);
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (doc) {
+      const atOptions = {
+        key: slotId,
+        format,
+        height: getSizeHeight(size),
+        width: getSizeWidth(size),
+        params: {}
+      } as any;
+
+      doc.open();
+      doc.write(`<!DOCTYPE html><html><head><base target="_top" /><style>html,body{margin:0;padding:0;}</style></head><body><div id="adsteera-${slotId}"></div><script>window.atOptions = ${JSON.stringify(atOptions)};<\/script><script src="//www.topcreativeformat.com/${slotId}/invoke.js" async><\/script></body></html>`);
+      doc.close();
+
+      // We can't always detect load reliably; hide loader after a short delay
+      const t = window.setTimeout(() => setIsLoading(false), 1200);
+
+      return () => {
+        window.clearTimeout(t);
+        try {
+          // Reset iframe instead of manipulating DOM children to avoid NotFoundError
+          iframe.src = 'about:blank';
+          iframe.remove();
+        } catch (error) {
+          // no-op
+        }
       };
-      
-      // Create and load the Adsteera script
-      adScript = document.createElement('script');
-      adScript.type = 'text/javascript';
-      adScript.src = `//www.topcreativeformat.com/${slotId}/invoke.js`;
-      adScript.async = true;
-      adScript.onload = () => {
-        setIsLoading(false);
-      };
-      adScript.onerror = () => {
-        console.error(`Failed to load ad: ${slotId}`);
-        setIsLoading(false);
-      };
-      
-      adContainer.appendChild(adScript);
-      
-      // Clear existing content and add new container
-      parentElement.textContent = '';
-      parentElement.appendChild(adContainer);
     }
 
+    // Fallback if doc is not available
+    setIsLoading(false);
+
     return () => {
-      // Safer cleanup
       try {
-        if (adContainerRef.current) {
-          // Remove children one by one to avoid React issues
-          const parent = adContainerRef.current;
-          parent.textContent = '';
-        }
-        
-        // Clean up global options
-        window.atOptions = undefined;
+        parent.textContent = '';
       } catch (error) {
-        console.warn('AdUnit cleanup error:', error);
+        // no-op
       }
     };
   }, [slotId, format, size]);

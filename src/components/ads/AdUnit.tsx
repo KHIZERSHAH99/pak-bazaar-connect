@@ -1,6 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
+// Resolve human-friendly slot names to real provider slot keys
+const DEFAULT_SLOT = '98a934445fa1d2aa5fd6e25b30250461';
+const NAMED_SLOTS: Record<string, string> = {
+  'homepage-top': DEFAULT_SLOT,
+  'homepage-middle': DEFAULT_SLOT,
+  'homepage-bottom': DEFAULT_SLOT,
+  'products-top': DEFAULT_SLOT,
+  'grid': DEFAULT_SLOT,
+  'sticky': DEFAULT_SLOT,
+};
+
+const resolveSlot = (id: string) => {
+  const hex32 = /^[a-f0-9]{32}$/i;
+  if (hex32.test(id)) return id;
+  return NAMED_SLOTS[id] || DEFAULT_SLOT;
+};
+
 interface AdUnitProps {
   slotId: string;
   format?: 'display' | 'native' | 'video' | 'banner';
@@ -22,6 +39,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
     if (!adHostRef.current || typeof window === 'undefined') return;
 
     const host = adHostRef.current;
+    const resolvedSlot = resolveSlot(slotId);
     
     // Check if iframe already exists (guard against double mounting)
     if (iframeRef.current && host.contains(iframeRef.current)) {
@@ -30,7 +48,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
 
     // Create a sandboxed iframe for the ad to isolate DOM mutations
     const iframe = document.createElement('iframe');
-    iframe.setAttribute('title', `adframe-${slotId}`);
+    iframe.setAttribute('title', `adframe-${resolvedSlot}`);
     iframe.setAttribute('scrolling', 'no');
     iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups');
     iframe.style.border = '0';
@@ -47,7 +65,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
     if (doc) {
       const atOptions = {
-        key: slotId,
+        key: resolvedSlot,
         format,
         height: getSizeHeight(size),
         width: getSizeWidth(size),
@@ -62,9 +80,9 @@ const AdUnit: React.FC<AdUnitProps> = ({
   <style>html,body{margin:0;padding:0;overflow:hidden;}</style>
 </head>
 <body>
-  <div id="adsteera-${slotId}"></div>
+  <div id="adsteera-${resolvedSlot}"></div>
   <script>window.atOptions = ${JSON.stringify(atOptions)};<\/script>
-  <script src="//www.topcreativeformat.com/${slotId}/invoke.js" async><\/script>
+  <script src="//www.topcreativeformat.com/${resolvedSlot}/invoke.js" async><\/script>
 </body>
 </html>`);
       doc.close();

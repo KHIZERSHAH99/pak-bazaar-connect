@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Shield, Users, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const UrduHeroSection = () => {
   const { t, language } = useLanguage();
-  
+  const { user } = useAuth();
   return (
     <section className="relative py-16 md:py-24 lg:py-32 bg-gradient-to-b from-pakistani_green-50 to-white dark:from-pakistani_green-900/20 dark:to-gray-950 overflow-hidden">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
@@ -30,12 +31,12 @@ const UrduHeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link to="/signup">
+            <Link to={user ? "/dashboard" : "/signup"}>
               <Button 
                 size="lg" 
                 className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white px-8 py-6 text-lg font-poppins shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
               >
-                {t('signup')}
+                {user ? t('dashboard') : t('signup')}
                 <ArrowRight className="ml-2 rtl:ml-0 rtl:mr-2 h-5 w-5" />
               </Button>
             </Link>

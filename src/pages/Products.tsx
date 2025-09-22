@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import InContentAd from '@/components/ads/InContentAd';
-import StickyAdUnit from '@/components/ads/StickyAdUnit';
+import AdUnit from '@/components/ads/AdUnit';
 import { Product } from '@/lib/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -176,7 +175,13 @@ const Products: React.FC = () => {
         <ProductsHeader />
         
         {/* Top Banner Ad */}
-        <InContentAd slotId="98a934445fa1d2aa5fd6e25b30250461" />
+        <div className="mb-6 flex justify-center">
+          <AdUnit 
+            slotId="98a934445fa1d2aa5fd6e25b30250461"
+            format="display"
+            size="leaderboard"
+          />
+        </div>
         
         <ProductsFilters
           categories={categories}
@@ -194,22 +199,36 @@ const Products: React.FC = () => {
         />
         
         <div className="relative">
-          {/* Sticky Side Ads - Hidden on mobile */}
-          <div className="hidden xl:block">
-            <div className="fixed left-4 top-1/3 z-10">
-              <StickyAdUnit slotId="98a934445fa1d2aa5fd6e25b30250461" position="left" />
+          {/* Sticky Side Ads - Large screens only */}
+          <div className="hidden 2xl:block">
+            <div className="fixed left-4 top-1/2 -translate-y-1/2 z-10">
+              <AdUnit 
+                slotId="98a934445fa1d2aa5fd6e25b30250461"
+                format="display"
+                size="skyscraper"
+              />
             </div>
-            <div className="fixed right-4 top-1/3 z-10">
-              <StickyAdUnit slotId="98a934445fa1d2aa5fd6e25b30250461" position="right" />
+            <div className="fixed right-4 top-1/2 -translate-y-1/2 z-10">
+              <AdUnit 
+                slotId="98a934445fa1d2aa5fd6e25b30250461"
+                format="display"
+                size="skyscraper"
+              />
             </div>
           </div>
           
-          {/* Main Content */}
-          <div className="xl:px-48">
+          {/* Main Content - Full width on smaller screens, with padding on 2xl */}
+          <div className="2xl:px-48">
             <ProductsGrid products={products} loading={loading} />
             
             {/* Bottom Ad */}
-            <InContentAd slotId="98a934445fa1d2aa5fd6e25b30250461" className="mt-12" />
+            <div className="mt-12 flex justify-center">
+              <AdUnit 
+                slotId="98a934445fa1d2aa5fd6e25b30250461"
+                format="display"
+                size="leaderboard"
+              />
+            </div>
           </div>
         </div>
 

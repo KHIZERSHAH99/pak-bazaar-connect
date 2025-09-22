@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Loader2 } from 'lucide-react';
 import AdUnit from '@/components/ads/AdUnit';
 import { Product } from '@/lib/types';
@@ -11,23 +10,6 @@ interface ProductsGridProps {
 }
 
 const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
-  const [productsPerRow, setProductsPerRow] = useState(4);
-  
-  useEffect(() => {
-    const updateProductsPerRow = () => {
-      const width = window.innerWidth;
-      if (width < 640) setProductsPerRow(2); // mobile phones
-      else if (width < 768) setProductsPerRow(2); // small tablets
-      else if (width < 1024) setProductsPerRow(3); // tablets
-      else if (width < 1280) setProductsPerRow(3); // small laptops
-      else if (width < 1536) setProductsPerRow(4); // laptops
-      else setProductsPerRow(4); // desktop PCs
-    };
-
-    updateProductsPerRow();
-    window.addEventListener('resize', updateProductsPerRow);
-    return () => window.removeEventListener('resize', updateProductsPerRow);
-  }, []);
   
   if (loading) {
     return (
@@ -56,49 +38,32 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
     );
   }
 
-  // Group products into rows
-  const productRows: Product[][] = [];
-  for (let i = 0; i < products.length; i += productsPerRow) {
-    productRows.push(products.slice(i, Math.min(i + productsPerRow, products.length)));
-  }
-
   return (
-    <div className="space-y-4">
-      {productRows.map((row, rowIndex) => (
-        <React.Fragment key={`row-${rowIndex}`}>
-          {/* Product Row - Optimized for different devices */}
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
-            {row.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-            {/* Fill empty cells in incomplete rows */}
-            {row.length < productsPerRow && Array.from({ length: productsPerRow - row.length }).map((_, idx) => (
-              <div key={`empty-${idx}`} className="hidden sm:block" />
-            ))}
-          </div>
-          
-          {/* Ad Row - After every 2 product rows */}
-          {(rowIndex + 1) % 2 === 0 && rowIndex !== productRows.length - 1 && (
-            <div className="w-full bg-gray-50 rounded-lg p-2">
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
-                {Array.from({ length: productsPerRow }).map((_, adIndex) => (
-                  <div key={`ad-${rowIndex}-${adIndex}`} className="bg-white rounded-lg shadow-sm">
-                    <AdUnit 
-                      slotId={`grid-ad-${rowIndex}-${adIndex}`}
-                      format="native"
-                      size="medium-rectangle"
-                      className="h-full"
-                    />
-                  </div>
-                ))}
+    <div className="space-y-8">
+      {/* Main Product Grid - Better spacing and card sizes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
+        {products.map((product, index) => (
+          <React.Fragment key={product.id}>
+            <ProductCard product={product} />
+            
+            {/* Insert horizontal ad banner after every 6 products */}
+            {(index + 1) % 6 === 0 && index !== products.length - 1 && (
+              <div className="col-span-full">
+                <div className="bg-background/50 rounded-lg p-4 flex justify-center">
+                  <AdUnit 
+                    slotId="homepage-middle"
+                    format="display"
+                    size="leaderboard"
+                  />
+                </div>
               </div>
-            </div>
-          )}
-        </React.Fragment>
-      ))}
+            )}
+          </React.Fragment>
+        ))}
+      </div>
       
       <div className="text-center py-4">
-        <p className="text-sm text-gray-600 font-poppins">
+        <p className="text-sm text-muted-foreground font-poppins">
           Showing {products.length} products
         </p>
       </div>

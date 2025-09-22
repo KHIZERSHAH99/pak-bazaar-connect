@@ -145,7 +145,19 @@ export const useSignupForm = () => {
       // Create a temporary email using phone number for Supabase auth
       const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
       
-      await signUp(tempEmail, values.password, selectedRole);
+      // Prepare business data from form values
+      const businessData = {
+        phoneNumber: values.phoneNumber,
+        contactName: values.contactName,
+        businessName: values.businessName,
+        businessType: values.businessType,
+        address: values.address,
+        city: values.city,
+        postalCode: values.postalCode || '',
+        industry: values.industry || ''
+      };
+      
+      await signUp(tempEmail, values.password, selectedRole, businessData);
       
       toast({
         title: 'Account created successfully!',

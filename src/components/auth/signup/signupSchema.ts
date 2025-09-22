@@ -14,7 +14,7 @@ export const formSchema = z.object({
   
   password: z.string()
     .min(8, 'Password must be at least 8 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number')
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])/, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')
     .refine(val => !/^(password|123456|admin|test)/i.test(val), 'Password cannot be a common weak password'),
   
   confirmPassword: z.string(),

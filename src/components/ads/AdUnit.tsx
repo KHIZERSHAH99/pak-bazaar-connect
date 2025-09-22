@@ -77,6 +77,15 @@ const AdUnit: React.FC<AdUnitProps> = ({
     const host = adHostRef.current;
     const resolvedSlot = resolveSlot(slotId, size);
     
+    // Debug logging
+    console.log('[AdUnit] Initializing ad:', {
+      slotId,
+      resolvedSlot,
+      size,
+      format,
+      domain: window.location.hostname
+    });
+    
     // Check if iframe already exists (guard against double mounting)
     if (iframeRef.current && host.contains(iframeRef.current)) {
       return;
@@ -89,7 +98,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
     const iframe = document.createElement('iframe');
     iframe.setAttribute('title', `adframe-${resolvedSlot}`);
     iframe.setAttribute('scrolling', 'no');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-presentation allow-top-navigation-by-user-activation');
     iframe.style.border = '0';
     iframe.style.width = '100%';
     iframe.style.height = '100%';
@@ -152,7 +161,11 @@ const AdUnit: React.FC<AdUnitProps> = ({
           const checkTimer = window.setTimeout(() => {
             const iframeDoc = iframeRef.current?.contentDocument;
             if (iframeDoc && !iframeDoc.querySelector('ins, iframe, div[id*="container"]')) {
-              console.warn(`Ad unit ${resolvedSlot} may not have loaded. Check ad blocker or network.`);
+              console.warn(`[AdUnit] Ad unit ${resolvedSlot} may not have loaded. Possible causes:
+- Ad blocker is active
+- Domain not approved in Adsterra (current: ${window.location.hostname})
+- Network connectivity issues
+- Invalid slot ID`);
             }
           }, 3000);
           

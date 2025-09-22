@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import AdUnit from '@/components/ads/AdUnit';
+import AdDebugPanel from '@/components/ads/AdDebugPanel';
 import { Product } from '@/lib/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +22,7 @@ const Products: React.FC = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showDebug, setShowDebug] = useState(false);
 
   const { toast } = useToast();
 
@@ -174,10 +176,10 @@ const Products: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <ProductsHeader />
         
-        {/* Top Banner Ad */}
+        {/* Top Banner Ad - 728x90 */}
         <div className="mb-6 flex justify-center">
           <AdUnit 
-            slotId="98a934445fa1d2aa5fd6e25b30250461"
+            slotId="987a9a316732abab62bdd80e2baaaa93"
             format="display"
             size="leaderboard"
           />
@@ -199,18 +201,18 @@ const Products: React.FC = () => {
         />
         
         <div className="relative">
-          {/* Sticky Side Ads - Large screens only */}
+          {/* Sticky Side Ads - 160x600 - Large screens only */}
           <div className="hidden 2xl:block">
             <div className="fixed left-4 top-1/2 -translate-y-1/2 z-10">
               <AdUnit 
-                slotId="98a934445fa1d2aa5fd6e25b30250461"
+                slotId="e30a2bc2dccbb1f927dfa1de88c6da80"
                 format="display"
                 size="skyscraper"
               />
             </div>
             <div className="fixed right-4 top-1/2 -translate-y-1/2 z-10">
               <AdUnit 
-                slotId="98a934445fa1d2aa5fd6e25b30250461"
+                slotId="e30a2bc2dccbb1f927dfa1de88c6da80"
                 format="display"
                 size="skyscraper"
               />
@@ -221,10 +223,10 @@ const Products: React.FC = () => {
           <div className="2xl:px-48">
             <ProductsGrid products={products} loading={loading} />
             
-            {/* Bottom Ad */}
+            {/* Bottom Ad - 728x90 */}
             <div className="mt-12 flex justify-center">
               <AdUnit 
-                slotId="98a934445fa1d2aa5fd6e25b30250461"
+                slotId="987a9a316732abab62bdd80e2baaaa93"
                 format="display"
                 size="leaderboard"
               />
@@ -242,7 +244,23 @@ const Products: React.FC = () => {
             <ArrowUp className="w-5 h-5" />
           </Button>
         </div>
+        
+        {/* Debug Toggle Button - Development Only */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="fixed bottom-20 right-6 z-50">
+            <Button
+              onClick={() => setShowDebug(!showDebug)}
+              variant="outline"
+              size="sm"
+            >
+              {showDebug ? 'Hide' : 'Show'} Ad Debug
+            </Button>
+          </div>
+        )}
       </div>
+      
+      {/* Ad Debug Panel */}
+      {showDebug && <AdDebugPanel onClose={() => setShowDebug(false)} />}
     </Layout>
   );
 };

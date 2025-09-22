@@ -13,7 +13,7 @@ const InContentAd: React.FC<InContentAdProps> = ({ slotId, className }) => {
       <div className="w-full max-w-[728px]">
         <AdUnit 
           slotId={slotId}
-          format="native"
+          format="display"
           size="leaderboard"
           className="mx-auto"
         />

@@ -51,11 +51,13 @@ const Navbar = () => {
   };
   return <>
       {/* Top Banner */}
-      <div className="bg-pakistani_green-700 text-white py-2 px-4 text-center relative overflow-hidden">
+      <div className="bg-pakistani_green-700 text-white py-1.5 md:py-2 px-3 md:px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center opacity-5">
-          <Flag className="w-40 h-40 text-white" />
+          <Flag className="w-24 md:w-40 h-24 md:h-40 text-white" />
         </div>
-        
+        <p className="text-xs md:text-sm font-medium relative z-10">
+          Welcome to Pakistan's Premier B2B Marketplace
+        </p>
       </div>
 
       {/* Main Navbar */}
@@ -125,9 +127,10 @@ const Navbar = () => {
                 </div>}
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <Button variant="ghost" size="icon-sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
+            {/* Mobile Menu Button and Language Toggle */}
+            <div className="md:hidden flex items-center gap-2">
+              <LanguageToggle />
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
                 {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>

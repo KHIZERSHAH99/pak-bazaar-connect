@@ -30,14 +30,14 @@ const FeaturedProducts = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-white dark:bg-gray-900">
+    <section className="py-12 md:py-20 bg-white dark:bg-gray-900">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 font-poppins">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 font-poppins">
             Featured Products
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 font-poppins">
+          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6 md:mb-8 font-poppins px-2">
             Discover top-quality products from verified suppliers across Pakistan
           </p>
           <Link to="/products">
@@ -50,7 +50,7 @@ const FeaturedProducts = () => {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[...Array(4)].map((_, index) => (
               <Card key={index} className="overflow-hidden">
                 <div className="h-48 bg-muted animate-pulse"></div>
@@ -63,7 +63,7 @@ const FeaturedProducts = () => {
             ))}
           </div>
         ) : products.length > 0 ? (
-          <LazyLoadWrapper height="400px" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <LazyLoadWrapper height="400px" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {products.map((product) => (
               <Link key={product.id} to={`/product/${product.id}`}>
                 <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-pakistani_green-300/30 dark:bg-gray-800/80 dark:hover:shadow-pakistani_green-700/40 hover:scale-[1.02] hover:-translate-y-1">

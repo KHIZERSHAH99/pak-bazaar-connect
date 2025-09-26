@@ -34,8 +34,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   };
 
   return (
-    <div className="md:hidden fixed inset-0 top-[3.5rem] z-50 bg-background animate-slide-in-right">
-      <div className="px-4 py-4 space-y-4 h-full overflow-y-auto">
+    <div className="md:hidden fixed inset-x-0 top-[3.5rem] bottom-0 z-50 bg-background animate-slide-in-right overflow-hidden">
+      <div className="px-4 py-4 space-y-4 h-full overflow-y-auto overflow-x-hidden max-w-full">
         {/* Main Navigation */}
         <div className="space-y-2">
           <Link to="/" onClick={handleLinkClick}>

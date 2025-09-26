@@ -24,7 +24,7 @@ const Layout: React.FC<LayoutProps> = ({
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200">
+    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200 overflow-x-hidden">
       <SEOHead 
         title={title}
         description={description}
@@ -32,7 +32,7 @@ const Layout: React.FC<LayoutProps> = ({
       />
       <Navbar />
       
-      <main className="flex-grow">
+      <main className="flex-grow overflow-x-hidden">
         {children}
       </main>
       

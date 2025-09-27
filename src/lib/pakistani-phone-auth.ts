@@ -183,19 +183,8 @@ export const phoneSignUp = async (
       throw new Error('Please enter a valid Pakistani mobile number (03XX-XXXXXXX)');
     }
 
-    // Check if phone already exists using the secure function
-    const { data: phoneExists, error: checkError } = await supabase.rpc('check_phone_exists', {
-      p_phone: normalizedPhone
-    });
-
-    if (checkError) {
-      console.error('Phone check error:', checkError);
-      throw new Error('Registration failed');
-    }
-
-    if (phoneExists) {
-      throw new Error('An account with this phone number already exists. Please sign in instead.');
-    }
+    // Skip pre-check - let Supabase handle duplicate detection
+    // This simplifies the flow and avoids database function issues
 
     // Create a unique email for Supabase auth - prefix with "phone-" to ensure valid email format
     const uniqueEmail = `phone-${normalizedPhone}@pakbazaarconnect.store`;

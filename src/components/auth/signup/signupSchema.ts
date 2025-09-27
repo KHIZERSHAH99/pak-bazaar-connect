@@ -4,13 +4,8 @@ import { z } from 'zod';
 // Enhanced validation schema with stronger security requirements
 export const formSchema = z.object({
   phoneNumber: z.string()
-    .regex(/^(\+92|0)?3[0-9]{2}[0-9]{7}$/, 'Please enter a valid Pakistani mobile number (03XX-XXXXXXX)')
-    .refine(val => {
-      const networkCodes = ['300', '301', '302', '303', '304', '305', '306', '307', '308', '309', '310', '311', '312', '313', '314', '315', '316', '317', '318', '319', '320', '321', '322', '323', '324', '325', '330', '331', '332', '333', '334', '335', '336', '337', '338', '339', '340', '341', '342', '343', '344', '345', '346', '347', '348', '349'];
-      const normalized = val.replace(/[^0-9]/g, '');
-      const prefix = normalized.slice(-10, -7);
-      return networkCodes.includes(prefix);
-    }, 'Please enter a valid Pakistani mobile network number'),
+    .transform(val => val.replace(/[^0-9]/g, '')) // Remove all non-digits first
+    .refine(val => /^03[0-9]{9}$/.test(val), 'Please enter a valid Pakistani mobile number'),
   
   password: z.string()
     .min(6, 'Password must be at least 6 characters'),

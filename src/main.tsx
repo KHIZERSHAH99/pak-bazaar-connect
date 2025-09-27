@@ -4,10 +4,10 @@ import { CartProvider } from '@/contexts/CartContext'
 import App from './App.tsx'
 import './index.css'
 import './styles/urdu.css'
-// import { applyCSP } from './lib/security/content-security-policy'
+import { applyCSP } from './lib/security/content-security-policy'
 
-// Temporarily disable CSP for ad testing
-// applyCSP();
+// Apply Content Security Policy headers for security
+applyCSP();
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

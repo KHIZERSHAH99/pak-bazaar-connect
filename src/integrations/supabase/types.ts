@@ -2812,7 +2812,6 @@ export type Database = {
       profiles_public: {
         Row: {
           business_name: string | null
-          business_type: string | null
           city: string | null
           created_at: string | null
           id: string | null
@@ -2821,7 +2820,6 @@ export type Database = {
         }
         Insert: {
           business_name?: string | null
-          business_type?: string | null
           city?: string | null
           created_at?: string | null
           id?: string | null
@@ -2830,7 +2828,6 @@ export type Database = {
         }
         Update: {
           business_name?: string | null
-          business_type?: string | null
           city?: string | null
           created_at?: string | null
           id?: string | null
@@ -2921,6 +2918,10 @@ export type Database = {
           p_operation: string
           p_window_minutes?: number
         }
+        Returns: boolean
+      }
+      check_profile_rate_limit: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       check_rate_limit: {

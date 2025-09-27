@@ -182,8 +182,9 @@ export const useEnhancedSignupForm = () => {
         description: 'Please wait while we set up your account...',
       });
       
-      // Create a temporary email using phone number for Supabase auth
-      const tempEmail = `${values.phoneNumber.replace(/[^0-9]/g, '')}@temp-phone-auth.com`;
+      // Create a deterministic phone-based email for Supabase auth (auto-confirmed)
+      const phoneDigits = values.phoneNumber.replace(/[^0-9]/g, '');
+      const tempEmail = `phone-${phoneDigits}@pakbazaarconnect.store`;
       
       // Call enhanced signup with form data
       await enhancedSignUp(tempEmail, values.password, selectedRole, values);

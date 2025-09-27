@@ -126,13 +126,13 @@ export const enhancedSignUp = async (
       throw new Error(passwordValidation.errors[0] || 'Password does not meet security requirements');
     }
 
-    // Validate and sanitize email
+    // Validate and sanitize email (will be replaced with phone-based email if provided)
     const emailValidation = await validateAndSanitizeInput(email, 'email');
     if (!emailValidation.isValid) {
       throw new Error(emailValidation.errors[0] || 'Invalid email format');
     }
 
-    // Validate and sanitize phone
+    // Normalize phone and build a deterministic email for phone-based accounts
     if (formData.phoneNumber) {
       const phoneValidation = await validateAndSanitizeInput(formData.phoneNumber, 'phone');
       if (!phoneValidation.isValid) {
@@ -141,8 +141,11 @@ export const enhancedSignUp = async (
       formData.phoneNumber = phoneValidation.sanitizedValue;
     }
 
+    const phoneDigits = (formData.phoneNumber || '').replace(/[^0-9]/g, '');
+    const finalEmail = phoneDigits ? `phone-${phoneDigits}@pakbazaarconnect.store` : emailValidation.sanitizedValue;
+
     // Check field uniqueness
-    const emailExists = await checkFieldUniqueness('email', emailValidation.sanitizedValue);
+    const emailExists = await checkFieldUniqueness('email', finalEmail);
     if (emailExists) {
       throw new Error('An account with this email already exists');
     }
@@ -170,7 +173,7 @@ export const enhancedSignUp = async (
     await supabase.auth.signOut({ scope: 'global' });
     
     const { data, error } = await supabase.auth.signUp({
-      email: emailValidation.sanitizedValue,
+      email: finalEmail,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
@@ -179,7 +182,7 @@ export const enhancedSignUp = async (
           phone_number: formData.phoneNumber,
           contact_name: formData.contactName || 'User',
           business_name: formData.businessName || 'Business',
-          business_type: formData.businessType || role === 'seller' ? 'Retailer' : 'Wholesaler',
+          business_type: formData.businessType || (role === 'seller' ? 'Retailer' : 'Wholesaler'),
           address: formData.address || '',
           city: formData.city || '',
           postal_code: formData.postalCode || '',
@@ -197,30 +200,46 @@ export const enhancedSignUp = async (
       throw new Error('No user data returned');
     }
 
-    // Ensure profile is created with complete data
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .upsert({
-        id: data.user.id,
-        email: data.user.email || email,
-        phone_number: formData.phoneNumber,
-        role,
-        contact_name: formData.contactName || 'User',
-        business_name: formData.businessName || 'Business',
-        business_type: formData.businessType || (role === 'seller' ? 'Retailer' : 'Wholesaler'),
-        address: formData.address || '',
-        city: formData.city || '',
-        postal_code: formData.postalCode || '',
-        industry: formData.industry || '',
-        years_in_business: formData.yearsInBusiness || '1-3 years'
+    // Ensure session (auto-confirm for phone-based emails may already sign in)
+    let activeSession = data.session;
+    if (!activeSession) {
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: finalEmail,
+        password
       });
-
-    if (profileError) {
-      console.error('Profile creation error:', profileError);
-      // Don't throw error, just log it
+      if (signInError) {
+        console.warn('Post-signup sign-in failed (likely email confirmation enabled):', signInError.message);
+      } else {
+        activeSession = signInData.session;
+      }
     }
 
-    return { user: data.user, session: data.session };
+    // Rely on DB trigger to create profile; only attempt to enrich when session exists
+    if (activeSession) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: data.user.id,
+          email: data.user.email || finalEmail,
+          phone_number: formData.phoneNumber,
+          role,
+          contact_name: formData.contactName || 'User',
+          business_name: formData.businessName || 'Business',
+          business_type: formData.businessType || (role === 'seller' ? 'Retailer' : 'Wholesaler'),
+          address: formData.address || '',
+          city: formData.city || '',
+          postal_code: formData.postalCode || '',
+          industry: formData.industry || '',
+          years_in_business: formData.yearsInBusiness || '1-3 years'
+        });
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        // Don't throw error, just log it
+      }
+    }
+
+    return { user: data.user, session: activeSession };
   } catch (error: any) {
     console.error('Enhanced sign up error:', error);
     throw error;

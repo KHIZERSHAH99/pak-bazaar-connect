@@ -1,7 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { UserRole } from './types';
-import { validatePasswordSecurity } from './security/enhanced-password-security';
 import { validateAndSanitizeInput, checkFieldUniqueness } from './security/simple-validation';
 import { checkLoginRateLimit, checkSignupRateLimit, enhancedRateLimiter } from './security/enhanced-rate-limiting';
 import { checkDemoCredentialSecurity, validateBusinessCredentials, logCredentialSecurityEvent } from './security/demo-credential-blocker';
@@ -120,10 +119,9 @@ export const enhancedSignUp = async (
       throw new Error(error);
     }
 
-    // Validate password security
-    const passwordValidation = await validatePasswordSecurity(password);
-    if (!passwordValidation.isValid) {
-      throw new Error(passwordValidation.errors[0] || 'Password does not meet security requirements');
+    // Simple password check (keep signup easy)
+    if (!password || password.length < 6) {
+      throw new Error('Password must be at least 6 characters');
     }
 
     // Validate and sanitize email (will be replaced with phone-based email if provided)

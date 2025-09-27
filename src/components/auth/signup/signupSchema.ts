@@ -13,8 +13,7 @@ export const formSchema = z.object({
     }, 'Please enter a valid Pakistani mobile network number'),
   
   password: z.string()
-    .min(8, 'Password must be at least 8 characters')
-    .refine(val => !/^(password|123456|admin|test|12345678)/i.test(val), 'Please choose a stronger password'),
+    .min(6, 'Password must be at least 6 characters'),
   
   confirmPassword: z.string(),
   

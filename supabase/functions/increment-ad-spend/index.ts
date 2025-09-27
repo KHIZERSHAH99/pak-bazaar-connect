@@ -124,8 +124,9 @@ serve(async (req) => {
     )
   } catch (error) {
     console.error('Edge function error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Failed to increment ad spend';
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400 

@@ -103,10 +103,12 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error('Error processing request:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorStack = error instanceof Error ? error.stack : undefined;
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'Unknown error occurred',
-        stack: Deno.env.get('SUPABASE_ENV') === 'development' ? error.stack : undefined
+        error: errorMessage,
+        stack: Deno.env.get('SUPABASE_ENV') === 'development' ? errorStack : undefined
       }),
       { 
         status: 500, 

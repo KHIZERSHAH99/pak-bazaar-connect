@@ -125,9 +125,10 @@ serve(async (req) => {
     
   } catch (error) {
     console.error("Error processing notification:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to process notification';
     
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,

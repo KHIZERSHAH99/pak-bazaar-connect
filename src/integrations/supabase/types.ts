@@ -2920,6 +2920,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_phone_exists: {
+        Args: { p_phone: string }
+        Returns: boolean
+      }
       check_profile_rate_limit: {
         Args: Record<PropertyKey, never>
         Returns: boolean

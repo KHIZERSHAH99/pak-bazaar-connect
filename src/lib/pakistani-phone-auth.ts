@@ -183,19 +183,17 @@ export const phoneSignUp = async (
       throw new Error('Please enter a valid Pakistani mobile number (03XX-XXXXXXX)');
     }
 
-    // Check if phone already exists
-    const { data: existingUser, error: checkError } = await supabase
-      .from('profiles')
-      .select('id, phone_verified')
-      .eq('normalized_phone', normalizedPhone)
-      .maybeSingle();
+    // Check if phone already exists using the secure function
+    const { data: phoneExists, error: checkError } = await supabase.rpc('check_phone_exists', {
+      p_phone: normalizedPhone
+    });
 
-    if (checkError && checkError.code !== 'PGRST116') {
+    if (checkError) {
       console.error('Phone check error:', checkError);
       throw new Error('Registration failed');
     }
 
-    if (existingUser) {
+    if (phoneExists) {
       throw new Error('An account with this phone number already exists. Please sign in instead.');
     }
 

@@ -205,20 +205,35 @@ export const useEnhancedSignupForm = () => {
     } catch (error: any) {
       console.error('Signup error:', error);
       
-      let errorMsg = 'Account creation failed. Please try again.';
+      let errorMsg = 'Registration failed. Please try again.';
       
-      if (error.message) {
-        if (error.message.includes('User already registered') || error.message.includes('already exists')) {
-          errorMsg = `This phone number is already registered. Please try logging in instead.`;
-        } else if (error.message.includes('Invalid phone')) {
-          errorMsg = 'Please enter a valid phone number.';
-        } else if (error.message.includes('Password')) {
-          errorMsg = 'Password must be at least 8 characters long.';
-        } else if (error.message.includes('network') || error.message.includes('fetch')) {
-          errorMsg = 'Network error. Please check your connection.';
+      // Parse detailed error messages
+      if (error?.code === '23505') {
+        // Unique constraint violation from database
+        if (error.details?.includes('phone')) {
+          errorMsg = 'This phone number is already registered. Please use a different phone number.';
+        } else if (error.details?.includes('email')) {
+          errorMsg = 'This email is already registered. Please use a different email.';
         } else {
-          errorMsg = error.message;
+          errorMsg = 'This account already exists. Please try logging in instead.';
         }
+      } else if (error?.code === 'user_already_exists' || error?.message?.includes('already registered')) {
+        errorMsg = 'This phone number is already registered. Please use a different number or log in.';
+      } else if (error?.message?.includes('Invalid phone')) {
+        errorMsg = 'Please enter a valid Pakistani phone number (03XX-XXXXXXX).';
+      } else if (error?.message?.includes('Password')) {
+        errorMsg = error.message; // Show the actual password error
+      } else if (error?.message?.includes('address')) {
+        errorMsg = 'Address must be at least 8 characters long.';
+      } else if (error?.message?.includes('business')) {
+        errorMsg = 'Please enter a valid business name (minimum 5 characters).';
+      } else if (error?.message?.includes('network') || error?.message?.includes('fetch')) {
+        errorMsg = 'Network error. Please check your internet connection and try again.';
+      } else if (error?.message?.includes('validation')) {
+        errorMsg = error.message; // Show validation errors directly
+      } else if (error?.message) {
+        // Use the actual error message if it's informative
+        errorMsg = error.message;
       }
       
       setErrorMessage(errorMsg);
@@ -229,9 +244,9 @@ export const useEnhancedSignupForm = () => {
         variant: 'destructive',
       });
       
-      // If it's a phone error, go back to step 2
-      if (errorMsg.includes('phone') && currentStep > 2) {
-        setCurrentStep(2);
+      // If it's a phone error, go back to step 1 (account info)
+      if (errorMsg.includes('phone') && currentStep > 1) {
+        setCurrentStep(1);
       }
       
     } finally {

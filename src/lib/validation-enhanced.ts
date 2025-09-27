@@ -111,31 +111,27 @@ export const validatePostalCodeFormat = (postalCode: string): boolean => {
   return postalCodeRegex.test(postalCode.trim());
 };
 
-// Real phone uniqueness check (now works with actual database column)
+// Real phone uniqueness check using RPC function for better reliability
 export const checkPhoneExists = async (phone: string, excludeUserId?: string): Promise<boolean> => {
+  if (!phone || phone.trim() === '') return false;
+  
   try {
-    if (!phone || phone.trim() === '') return false;
-    
     const cleanPhone = phone.replace(/[\s-]/g, '');
     
-    let query = supabase
-      .from('profiles')
-      .select('id')
-      .eq('phone_number', cleanPhone)
-      .limit(1);
-    
-    if (excludeUserId) {
-      query = query.neq('id', excludeUserId);
-    }
-    
-    const { data, error } = await query;
+    // Use the RPC function which has SECURITY DEFINER to bypass RLS
+    const { data, error } = await supabase.rpc('check_user_exists', { 
+      p_phone: cleanPhone 
+    });
     
     if (error) {
-      console.error('Phone check error:', error);
+      console.error('Phone check RPC error:', error);
+      // Don't block the user if check fails, just return false
       return false;
     }
     
-    return Boolean(data && data.length > 0);
+    // Type assertion since we know the RPC returns this structure
+    const result = data as { phone_exists: boolean } | null;
+    return result?.phone_exists || false;
   } catch (error) {
     console.error('Phone check error:', error);
     return false;

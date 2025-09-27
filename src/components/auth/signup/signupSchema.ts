@@ -14,8 +14,7 @@ export const formSchema = z.object({
   
   password: z.string()
     .min(8, 'Password must be at least 8 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])/, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')
-    .refine(val => !/^(password|123456|admin|test)/i.test(val), 'Password cannot be a common weak password'),
+    .refine(val => !/^(password|123456|admin|test|12345678)/i.test(val), 'Please choose a stronger password'),
   
   confirmPassword: z.string(),
   
@@ -33,7 +32,7 @@ export const formSchema = z.object({
   businessType: z.enum(['Manufacturer', 'Wholesaler', 'Distributor', 'Retailer', 'Other']),
   
   address: z.string()
-    .min(15, 'Please enter your complete business address (minimum 15 characters)')
+    .min(8, 'Please enter your business address (minimum 8 characters)')
     .max(200, 'Address must not exceed 200 characters')
     .regex(/^[a-zA-Z0-9\s\u0600-\u06FF,.-/#]+$/, 'Address contains invalid characters'),
   

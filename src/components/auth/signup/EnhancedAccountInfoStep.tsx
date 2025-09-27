@@ -65,29 +65,29 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
     checkPhone();
   }, [debouncedPhone, form, onPhoneBlocked]);
 
-  // Password strength validation
+  // Password strength validation - simplified
   const getPasswordStrength = (password: string) => {
-    if (!password) return { strength: 0, message: '' };
+    if (!password) return { strength: 0, message: 'Enter a password' };
     
     let strength = 0;
-    let issues = [];
+    let message = 'Too short';
     
-    if (password.length >= 8) strength++;
-    else issues.push('at least 8 characters');
+    if (password.length >= 8) {
+      strength = 2;
+      message = 'Acceptable';
+    }
     
-    if (/[A-Z]/.test(password)) strength++;
-    else issues.push('uppercase letter');
+    if (password.length >= 12) {
+      strength = 3;
+      message = 'Good';
+    }
     
-    if (/[a-z]/.test(password)) strength++;
-    else issues.push('lowercase letter');
+    if (password.length >= 16) {
+      strength = 4;
+      message = 'Strong';
+    }
     
-    if (/\d/.test(password)) strength++;
-    else issues.push('number');
-    
-    return {
-      strength,
-      message: issues.length > 0 ? `Missing: ${issues.join(', ')}` : 'Strong password'
-    };
+    return { strength, message };
   };
 
   const passwordStrength = getPasswordStrength(password || '');
@@ -202,10 +202,12 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
                       key={i}
                       className={`h-1 w-full rounded ${
                         i <= passwordStrength.strength
-                          ? passwordStrength.strength <= 2
+                          ? passwordStrength.strength < 2
                             ? 'bg-red-500'
-                            : passwordStrength.strength === 3
+                            : passwordStrength.strength === 2
                             ? 'bg-yellow-500'
+                            : passwordStrength.strength === 3
+                            ? 'bg-blue-500'
                             : 'bg-green-500'
                           : 'bg-gray-200'
                       }`}
@@ -213,10 +215,11 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
                   ))}
                 </div>
                 <p className={`${
-                  passwordStrength.strength <= 2 ? 'text-red-600' :
-                  passwordStrength.strength === 3 ? 'text-yellow-600' : 'text-green-600'
+                  passwordStrength.strength < 2 ? 'text-red-600' :
+                  passwordStrength.strength === 2 ? 'text-yellow-600' :
+                  passwordStrength.strength === 3 ? 'text-blue-600' : 'text-green-600'
                 }`}>
-                  {passwordStrength.message}
+                  {passwordStrength.message} (minimum 8 characters required)
                 </p>
               </div>
             )}

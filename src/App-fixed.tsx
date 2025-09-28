@@ -15,7 +15,7 @@ import FixedLogin from '@/pages/FixedLogin';
 import FixedSignup from '@/pages/FixedSignup';
 import Profile from '@/pages/Profile';
 import Stats from '@/pages/Stats';
-import Chat from '@/pages/Chat';
+
 import Products from '@/pages/Products';
 
 import Features from '@/pages/Features';
@@ -36,7 +36,7 @@ import AdminDashboard from '@/pages/admin/AdminDashboard';
 import DashboardShops from '@/pages/dashboard/DashboardShops';
 import DashboardProducts from '@/pages/dashboard/DashboardProducts';
 import DashboardOrders from '@/pages/dashboard/DashboardOrders';
-import DashboardChat from '@/pages/dashboard/DashboardChat';
+
 import DashboardBrowseShops from '@/pages/dashboard/DashboardBrowseShops';
 import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
 import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrders';
@@ -104,11 +104,6 @@ const App = () => {
                         </ProtectedRoute>
                       } />
                       
-                      <Route path="/chat" element={
-                        <ProtectedRoute>
-                          <Chat />
-                        </ProtectedRoute>
-                      } />
                       
                       <Route path="/messages" element={
                         <ProtectedRoute>
@@ -162,13 +157,6 @@ const App = () => {
                           <DashboardOrders />
                         </ProtectedRoute>
                       } />
-                      
-                      <Route path="/dashboard/chat" element={
-                        <ProtectedRoute>
-                          <DashboardChat />
-                        </ProtectedRoute>
-                      } />
-                      
                       
                       <Route path="/dashboard/browse-shops" element={
                         <ProtectedRoute allowedRoles={['seller']}>

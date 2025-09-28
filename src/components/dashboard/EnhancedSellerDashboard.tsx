@@ -50,13 +50,6 @@ const EnhancedSellerDashboard: React.FC = () => {
       icon: Store,
       action: () => navigate('/dashboard/browse-shops'),
       color: 'bg-green-500'
-    },
-    {
-      title: 'Message Support',
-      description: 'Get help with your orders',
-      icon: MessageSquare,
-      action: () => navigate('/dashboard/chat'),
-      color: 'bg-purple-500'
     }
   ];
 
@@ -262,26 +255,6 @@ const EnhancedSellerDashboard: React.FC = () => {
         <div className="space-y-6">
           <NotificationCenter />
           
-          {/* Help & Support */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-poppins text-sm">Need Help?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 mb-3">
-                Get support with your orders or account
-              </p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full"
-                onClick={() => navigate('/dashboard/chat')}
-              >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Chat Support
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

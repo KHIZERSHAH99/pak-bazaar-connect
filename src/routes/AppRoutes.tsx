@@ -11,7 +11,7 @@ import Dashboard from '@/pages/Dashboard';
 import Profile from '@/pages/Profile';
 import Products from '@/pages/Products';
 import ProductDetail from '@/pages/ProductDetail';
-import Chat from '@/pages/Chat';
+
 import NotFound from '@/pages/NotFound';
 import Stats from '@/pages/Stats';
 
@@ -38,7 +38,7 @@ import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrde
 import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
 import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
 import DashboardAnalytics from '@/pages/dashboard/DashboardAnalytics';
-import DashboardChat from '@/pages/dashboard/DashboardChat';
+
 import DashboardBrowseShops from '@/pages/dashboard/DashboardBrowseShops';
 
 // Seller pages
@@ -67,7 +67,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/product/:id" element={<ProductDetail />} />
         
         <Route path="/features" element={<Features />} />
-        <Route path="/chat" element={<Chat />} />
         <Route path="/stats" element={<Stats />} />
         
         {/* Legal pages */}
@@ -99,7 +98,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
-        <Route path="/dashboard/chat" element={<ProtectedRoute><DashboardChat /></ProtectedRoute>} />
         <Route path="/dashboard/browse-shops" element={<ProtectedRoute requiredRole="seller"><DashboardBrowseShops /></ProtectedRoute>} />
 
         {/* Seller routes */}

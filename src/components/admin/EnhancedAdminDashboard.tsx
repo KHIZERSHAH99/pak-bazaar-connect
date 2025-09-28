@@ -159,12 +159,6 @@ export const EnhancedAdminDashboard: React.FC = () => {
                 Full Admin Panel
               </Button>
             </Link>
-            <Link to="/dashboard/chat">
-              <Button className="w-full justify-start" variant="outline">
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Support Chat
-              </Button>
-            </Link>
             <Button 
               className="w-full justify-start" 
               variant="outline"

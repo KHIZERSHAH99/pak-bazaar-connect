@@ -45,12 +45,6 @@ const QuickActions: React.FC = () => {
           href: '/dashboard/seller-orders',
           variant: 'outline' as const
         },
-        {
-          label: 'Support',
-          icon: <MessageSquare className="h-4 w-4" />,
-          href: '/dashboard/chat',
-          variant: 'outline' as const
-        }
       ];
     } else if (profile?.role === 'admin') {
       return [
@@ -59,12 +53,6 @@ const QuickActions: React.FC = () => {
           icon: <BarChart3 className="h-4 w-4" />,
           href: '/admin',
           variant: 'default' as const
-        },
-        {
-          label: 'Support Chat',
-          icon: <MessageSquare className="h-4 w-4" />,
-          href: '/dashboard/chat',
-          variant: 'outline' as const
         }
       ];
     }

@@ -1,32 +1,41 @@
 import { supabase } from '@/integrations/supabase/client';
 
 // Demo credentials that should be blocked in production
-const DEMO_CREDENTIALS = [
-  'admin@test.com',
-  'wholesaler1@test.com',
-  'seller1@test.com',
-  'test@example.com',
-  'demo@test.com',
-  'admin@demo.com',
-  'user@test.com'
-];
+// These are stored as environment variables in production
+const getDemoCredentials = () => {
+  // In production, these should come from environment variables
+  // to avoid hardcoding sensitive information
+  const envDemoEmails = process.env.BLOCKED_EMAILS?.split(',') || [];
+  const envDemoPhones = process.env.BLOCKED_PHONES?.split(',') || [];
+  
+  // Fallback to minimal set for development only
+  if (window.location.hostname === 'localhost') {
+    return {
+      emails: ['test@example.com', 'demo@example.com'],
+      phones: ['03000000000'],
+      passwords: ['password', '123456']
+    };
+  }
+  
+  // In production, use environment-based configuration
+  return {
+    emails: envDemoEmails.length > 0 ? envDemoEmails : [],
+    phones: envDemoPhones.length > 0 ? envDemoPhones : [],
+    passwords: [] // Never store weak passwords, check dynamically
+  };
+};
 
-const DEMO_PHONES = [
-  '03000000000',
-  '03111111111',
-  '03222222222',
-  '03333333333',
-  '03444444444',
-  '03555555555'
-];
-
-const WEAK_PASSWORDS = [
-  'password',
-  '123456',
-  'admin',
-  'test',
-  'demo',
-  'user'
+// Common weak password patterns to check
+const WEAK_PASSWORD_PATTERNS = [
+  /^password/i,
+  /^123456/,
+  /^admin/i,
+  /^test/i,
+  /^demo/i,
+  /^user/i,
+  /^qwerty/i,
+  /^abc123/i,
+  /^letmein/i
 ];
 
 export interface SecurityCheckResult {
@@ -51,8 +60,10 @@ export const checkDemoCredentialSecurity = (
     return { isBlocked: false };
   }
 
+  const demoCredentials = getDemoCredentials();
+
   // Block demo emails in production
-  if (email && DEMO_CREDENTIALS.includes(email.toLowerCase())) {
+  if (email && demoCredentials.emails.includes(email.toLowerCase())) {
     return {
       isBlocked: true,
       reason: 'Demo credentials are not allowed in production',
@@ -65,7 +76,7 @@ export const checkDemoCredentialSecurity = (
   }
 
   // Block demo phone numbers in production
-  if (phone && DEMO_PHONES.includes(phone.replace(/[\s-+()]/g, ''))) {
+  if (phone && demoCredentials.phones.includes(phone.replace(/[\s-+()]/g, ''))) {
     return {
       isBlocked: true,
       reason: 'Demo phone numbers are not allowed in production',
@@ -78,16 +89,23 @@ export const checkDemoCredentialSecurity = (
   }
 
   // Block weak/demo passwords in production
-  if (password && WEAK_PASSWORDS.includes(password.toLowerCase())) {
-    return {
-      isBlocked: true,
-      reason: 'Demo passwords are not allowed in production',
-      suggestions: [
-        'Create a strong password with at least 8 characters',
-        'Include uppercase, lowercase, numbers, and symbols',
-        'Avoid common words and patterns'
-      ]
-    };
+  if (password) {
+    // Check against common weak password patterns
+    const isWeakPassword = WEAK_PASSWORD_PATTERNS.some(pattern => 
+      pattern.test(password)
+    ) || password.length < 8;
+    
+    if (isWeakPassword) {
+      return {
+        isBlocked: true,
+        reason: 'This password is too weak for production use',
+        suggestions: [
+          'Create a strong password with at least 8 characters',
+          'Include uppercase, lowercase, numbers, and symbols',
+          'Avoid common words and patterns'
+        ]
+      };
+    }
   }
 
   // Check for test/demo patterns in email

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
@@ -9,21 +9,12 @@ interface LiveAdUnitProps {
   className?: string;
 }
 
-interface AdData {
-  id: string;
-  headline: string;
-  image: string;
-  url: string;
-  type: string;
-  impressionUrl?: string;
-}
-
 const LiveAdUnit: React.FC<LiveAdUnitProps> = ({ 
   placement, 
   size = 'banner',
   className 
 }) => {
-  const [ad, setAd] = useState<AdData | null>(null);
+  const adContainerRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,115 +34,121 @@ const LiveAdUnit: React.FC<LiveAdUnitProps> = ({
   };
 
   useEffect(() => {
-    const fetchAd = async () => {
+    const loadAdsterraAd = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const { data, error } = await supabase.functions.invoke('fetch-ads', {
+        // Fetch ad configuration from edge function
+        const { data, error: fetchError } = await supabase.functions.invoke('fetch-ads', {
           body: { placement, size }
         });
 
-        if (error) throw error;
+        if (fetchError) throw fetchError;
 
         if (data?.success && data?.ad) {
-          setAd(data.ad);
+          const { key, scriptUrl, width, height } = data.ad;
           
-          // Track impression if URL provided
-          if (data.ad.impressionUrl) {
-            const img = new Image();
-            img.src = data.ad.impressionUrl;
+          if (adContainerRef.current) {
+            // Clear previous content
+            adContainerRef.current.innerHTML = '';
+            
+            // Create Adsterra ad container
+            const adDiv = document.createElement('div');
+            adDiv.id = `adsterra-${placement}-${Date.now()}`;
+            adDiv.style.width = `${width}px`;
+            adDiv.style.height = `${height}px`;
+            adDiv.style.display = 'block';
+            adDiv.style.margin = '0 auto';
+            adContainerRef.current.appendChild(adDiv);
+            
+            // Create and inject Adsterra script
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.async = true;
+            
+            // Set up atOptions before loading the script
+            const atOptions = {
+              'key': key,
+              'format': 'iframe',
+              'height': height,
+              'width': width,
+              'params': {}
+            };
+            
+            // Add atOptions to window
+            (window as any)[`atOptions_${key}`] = atOptions;
+            
+            // Create inline script to set atOptions
+            const inlineScript = document.createElement('script');
+            inlineScript.type = 'text/javascript';
+            inlineScript.innerHTML = `
+              atOptions = {
+                'key' : '${key}',
+                'format' : 'iframe',
+                'height' : ${height},
+                'width' : ${width},
+                'params' : {}
+              };
+            `;
+            adDiv.appendChild(inlineScript);
+            
+            // Load Adsterra invoke script
+            const invokeScript = document.createElement('script');
+            invokeScript.type = 'text/javascript';
+            invokeScript.src = `https:${scriptUrl}`;
+            invokeScript.async = true;
+            
+            invokeScript.onload = () => {
+              setLoading(false);
+              console.log('Adsterra ad loaded successfully');
+            };
+            
+            invokeScript.onerror = () => {
+              console.error('Failed to load Adsterra script');
+              setError('Failed to load advertisement');
+              setLoading(false);
+            };
+            
+            adDiv.appendChild(invokeScript);
           }
         } else {
-          throw new Error('No ads available');
+          throw new Error('No ad configuration available');
         }
       } catch (err) {
-        console.error('Error fetching ad:', err);
-        setError('Unable to load ad');
-        
-        // Fallback to static ad
-        setAd({
-          id: 'fallback',
-          headline: 'Advertise Here',
-          image: '/placeholder.svg',
-          url: '/contact',
-          type: 'display'
-        });
-      } finally {
+        console.error('Error loading Adsterra ad:', err);
+        setError('Unable to load advertisement');
         setLoading(false);
       }
     };
 
-    fetchAd();
+    loadAdsterraAd();
+    
+    // Cleanup function
+    return () => {
+      if (adContainerRef.current) {
+        adContainerRef.current.innerHTML = '';
+      }
+    };
   }, [placement, size]);
 
-  const handleAdClick = async () => {
-    if (!ad) return;
-
-    // Track click
-    try {
-      await supabase.from('ad_clicks').insert({
-        ad_id: ad.id,
-        placement,
-        clicked_at: new Date().toISOString()
-      });
-    } catch (err) {
-      console.error('Error tracking ad click:', err);
-    }
-
-    // Open ad URL
-    window.open(ad.url, '_blank', 'noopener,noreferrer');
-  };
-
-  if (loading) {
-    return (
-      <div className={cn(
-        "flex items-center justify-center bg-muted/30 rounded-lg",
-        getSizeStyles(),
-        className
-      )}>
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
-  if (error && !ad) {
+  if (error) {
+    // Don't show error UI, just hide the ad space
     return null;
   }
-
-  if (!ad) return null;
 
   return (
     <div className={cn("relative overflow-hidden rounded-lg", className)}>
       <div 
+        ref={adContainerRef}
         className={cn(
-          "cursor-pointer transition-opacity hover:opacity-90",
+          "relative",
           getSizeStyles()
         )}
-        onClick={handleAdClick}
       >
-        {ad.type === 'display' ? (
-          <div className="relative w-full h-full">
-            <img 
-              src={ad.image} 
-              alt={ad.headline}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-            {ad.headline && (
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                <p className="text-white text-sm font-medium truncate">
-                  {ad.headline}
-                </p>
-              </div>
-            )}
-            <div className="absolute top-1 right-1 bg-black/50 text-white text-xs px-1 py-0.5 rounded">
-              Ad
-            </div>
-          </div>
-        ) : (
-          <div className="w-full h-full bg-muted flex items-center justify-center">
-            <p className="text-muted-foreground">Ad Space</p>
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-muted/30">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         )}
       </div>

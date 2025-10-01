@@ -12,7 +12,9 @@ export const CSP_DIRECTIVES = {
     "https://*.highperformanceformat.com",
     "https://*.revenuecpmgate.com",
     "https://www.topcreativeformat.com",
-    "https://*.topcreativeformat.com"
+    "https://*.topcreativeformat.com",
+    "https://syndication.realsrv.com",
+    "https://*.realsrv.com"
   ],
   'script-src': [
     "'self'",
@@ -41,7 +43,9 @@ export const CSP_DIRECTIVES = {
     "https://*.highperformanceformat.com",
     "https://*.revenuecpmgate.com",
     "https://www.topcreativeformat.com",
-    "https://*.topcreativeformat.com"
+    "https://*.topcreativeformat.com",
+    "https://syndication.realsrv.com",
+    "https://*.realsrv.com"
   ],
   'font-src': [
     "'self'",
@@ -58,7 +62,9 @@ export const CSP_DIRECTIVES = {
     "https://*.highperformanceformat.com",
     "https://*.revenuecpmgate.com",
     "https://www.topcreativeformat.com",
-    "https://*.topcreativeformat.com"
+    "https://*.topcreativeformat.com",
+    "https://syndication.realsrv.com",
+    "https://*.realsrv.com"
   ],
   'media-src': [
     "'self'",

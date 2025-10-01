@@ -104,23 +104,29 @@ const AdUnit: React.FC<AdUnitProps> = ({
     container.style.height = '100%';
     host.appendChild(container);
 
-    // Inline script to set atOptions right before loading the network script
-    const optionsScript = document.createElement('script');
-    optionsScript.type = 'text/javascript';
-    optionsScript.text = `window.atOptions = ${JSON.stringify({
+    // Set atOptions programmatically to avoid inline script issues and CSP blockers
+    (window as any).atOptions = {
       key: resolvedSlot,
       format: 'iframe',
       height: getSizeHeight(size),
       width: getSizeWidth(size),
       params: {}
-    })};`;
+    };
 
     // Network loader script (use the latest Adsterra domain)
     const loaderScript = document.createElement('script');
     loaderScript.src = `//www.topcreativeformat.com/${resolvedSlot}/invoke.js`;
     loaderScript.async = true;
+    loaderScript.onload = () => {
+      setIsLoading(false);
+    };
+    loaderScript.onerror = () => {
+      setIsLoading(false);
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`[AdUnit] Failed to load ad script for slot ${resolvedSlot}`);
+      }
+    };
 
-    container.appendChild(optionsScript);
     container.appendChild(loaderScript);
 
     // Hide loader when ad DOM appears or after timeout

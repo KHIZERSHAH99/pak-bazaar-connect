@@ -23,8 +23,3 @@ export interface Transaction {
   completed_at?: string;
 }
 
-export interface CommissionRate {
-  id: string;
-  role: string;
-  rate: number;
-}

@@ -5,10 +5,9 @@ import { Users, MessageSquare, DollarSign, Settings, Eye } from 'lucide-react';
 import { getRoleRequests, approveRoleRequest } from '@/lib/supabase';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import CommissionDashboard from '@/components/admin/CommissionDashboard';
 
 const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('commissions');
+  const [activeTab, setActiveTab] = useState('role-requests');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -44,11 +43,7 @@ const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-4">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="commissions" className="font-poppins">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Commissions
-              </TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="role-requests" className="font-poppins">
                 <Users className="h-4 w-4 mr-2" />
                 Role Requests
@@ -62,10 +57,6 @@ const AdminDashboard: React.FC = () => {
                 Settings
               </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="commissions">
-              <CommissionDashboard />
-            </TabsContent>
 
             <TabsContent value="role-requests">
               <div className="space-y-4">

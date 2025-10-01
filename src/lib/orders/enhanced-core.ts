@@ -3,7 +3,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { validateOrderCreation, validateOrderStatusChange } from '@/lib/business/order-validation';
 import { verifyPaymentScreenshot } from '@/lib/business/payment-verification';
-import { createCommissionRecord } from '@/lib/business/commission-calculator';
 import { auditLogger } from '@/lib/security/audit-logger';
 import { transactionLogger } from '@/lib/security/transaction-logger';
 import { securityMonitor } from '@/lib/security/monitoring';
@@ -171,23 +170,14 @@ export const confirmOrderWithBusinessLogic = async (orderId: string, notes?: str
     throw new Error(`Failed to confirm order: ${error.message}`);
   }
 
-  // Create commission record
-  const commissionId = await createCommissionRecord(
-    orderId,
-    order.shops.owner_id,
-    order.total_amount
-  );
-
   // Log transaction
   await transactionLogger.logOrderStatusChange(orderId, 'pending', 'confirmed', {
-    wholesalerNotes: notes,
-    commissionId
+    wholesalerNotes: notes
   });
 
   await auditLogger.logInfo('order_confirmed_successfully', 'orders', {
     orderId,
-    wholesalerId: user.id,
-    commissionId
+    wholesalerId: user.id
   });
 
   return order;

@@ -91,12 +91,10 @@ export const {
 // New payment functions
 export const {
   getPaymentMethods,
-  calculateCommission,
   createTransaction,
   updateTransactionStatus,
   getUserTransactions,
-  processPayment,
-  getCommissionRates
+  processPayment
 } = paymentModule;
 
 // --- Enhanced role management functions ---

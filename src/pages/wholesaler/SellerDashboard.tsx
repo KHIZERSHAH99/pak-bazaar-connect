@@ -2,16 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useToast } from '@/hooks/use-toast';
-import { Commission, getOrdersForWholesaler, getWholesalerCommissions } from '@/lib/supabase';
+import { getOrdersForWholesaler } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import CommissionSummary from '@/components/CommissionSummary';
 import { LineChart, TrendingUp, Users, BarChart3 } from 'lucide-react';
 import { LineChart as RechartsLine, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { format } from 'date-fns';
 
 const SellerDashboard: React.FC = () => {
   const { toast } = useToast();
-  const [commissions, setCommissions] = useState<Commission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<any[]>([]);
   const [salesData, setSalesData] = useState<any[]>([]);
@@ -20,9 +18,6 @@ const SellerDashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        
-        const commissionsData = await getWholesalerCommissions();
-        setCommissions(commissionsData as any[]);
         
         const ordersData = await getOrdersForWholesaler();
         setOrders(ordersData);
@@ -65,7 +60,7 @@ const SellerDashboard: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Seller Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Monitor your sales performance and platform fees</p>
+            <p className="text-muted-foreground mt-1">Monitor your sales performance</p>
           </div>
         </div>
 
@@ -126,11 +121,6 @@ const SellerDashboard: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-            
-            <div className="mt-6">
-              <h2 className="text-lg font-semibold mb-4">Platform Fees & Commissions</h2>
-              <CommissionSummary commissions={commissions} />
-            </div>
           </>
         )}
       </div>

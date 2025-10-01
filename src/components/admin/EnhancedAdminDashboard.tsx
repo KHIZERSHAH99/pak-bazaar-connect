@@ -7,7 +7,6 @@ import { Users, ShoppingBag, FileText, TrendingUp, AlertTriangle, CheckCircle, S
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SecurityMonitor } from '@/components/security/SecurityMonitor';
-import { EnhancedCommissionTracker } from '@/components/commission/EnhancedCommissionTracker';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { fixPhoneUserData, validatePhoneData } from '@/lib/fix-phone-data';
@@ -48,20 +47,18 @@ export const EnhancedAdminDashboard: React.FC = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      const [users, orders, ads, roleRequests, commissions] = await Promise.all([
+      const [users, orders, ads, roleRequests] = await Promise.all([
         supabase.from('profiles').select('id, role, created_at', { count: 'exact' }),
         supabase.from('orders').select('id, status, total_amount, created_at', { count: 'exact' }),
         supabase.from('ads').select('id, status, created_at', { count: 'exact' }),
-        supabase.from('role_requests').select('id, user_id, requested_role, status, created_at').eq('status', 'pending'),
-        supabase.from('commission_records').select('id, amount, created_at', { count: 'exact' })
+        supabase.from('role_requests').select('id, user_id, requested_role, status, created_at').eq('status', 'pending')
       ]);
 
       return {
         totalUsers: users.count || 0,
         totalOrders: orders.count || 0,
         totalAds: ads.count || 0,
-        pendingRoleRequests: roleRequests.data?.length || 0,
-        totalCommissions: commissions.count || 0
+        pendingRoleRequests: roleRequests.data?.length || 0
       };
     }
   });
@@ -86,7 +83,7 @@ export const EnhancedAdminDashboard: React.FC = () => {
         <p className="text-muted-foreground font-poppins">Comprehensive platform management and monitoring</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -128,17 +125,6 @@ export const EnhancedAdminDashboard: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">{stats?.pendingRoleRequests || 0}</div>
             <p className="text-xs text-muted-foreground">Role requests</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Commissions</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalCommissions || 0}</div>
-            <p className="text-xs text-muted-foreground">Total records</p>
           </CardContent>
         </Card>
       </div>
@@ -232,10 +218,7 @@ export const EnhancedAdminDashboard: React.FC = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SecurityMonitor />
-        <EnhancedCommissionTracker />
-      </div>
+      <SecurityMonitor />
     </div>
   );
 };

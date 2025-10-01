@@ -23,9 +23,23 @@ const PLACEMENT_MAPPING: Record<string, string> = {
   'mobile-banner': ADSTERRA_SLOTS.BANNER_320x50,
 };
 
-// Allowed production hosts for ad rendering
-const ALLOWED_HOSTS = ['pakbazaarconnect.store', 'www.pakbazaarconnect.store'];
-const isProductionDomain = () => typeof window !== 'undefined' && ALLOWED_HOSTS.includes(window.location.hostname);
+// Allowed hosts for ad rendering (production + preview/local)
+const isAllowedDomain = () => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  const params = new URLSearchParams(window.location.search);
+  const force = params.get('ads') === '1' || params.get('ad_debug') === '1';
+  if (force) return true;
+  const ALLOWED_HOSTS = [
+    'pakbazaarconnect.store',
+    'www.pakbazaarconnect.store',
+    'localhost',
+    '127.0.0.1'
+  ];
+  if (ALLOWED_HOSTS.includes(host)) return true;
+  // allow Lovable preview domains
+  return host.endsWith('.lovableproject.com');
+};
 
 const resolveSlot = (id: string, size?: string) => {
   // Check if it's a direct slot key
@@ -82,12 +96,12 @@ const AdUnit: React.FC<AdUnitProps> = ({
     const host = adHostRef.current;
     const resolvedSlot = resolveSlot(slotId, size);
 
-    // Only render ads on production domain
-    if (!isProductionDomain()) {
+    // Only render ads on allowed domains (production, preview, or override via ?ads=1)
+    if (!isAllowedDomain()) {
       setDisabledByDomain(true);
       setIsLoading(false);
       if (process.env.NODE_ENV === 'development') {
-        console.debug('[AdUnit] Ad disabled on non-production domain', window.location.hostname);
+        console.debug('[AdUnit] Ads disabled for domain', window.location.hostname);
       }
       return;
     } else {
@@ -225,7 +239,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
       )}
       {disabledByDomain && !isLoading && (
         <div className="absolute inset-0 flex items-center justify-center rounded-lg pointer-events-none">
-          <span className="text-xs text-muted-foreground">Ad will appear on pakbazaarconnect.store</span>
+          <span className="text-xs text-muted-foreground">Ads disabled on this domain. Append ?ads=1 to URL to test.</span>
         </div>
       )}
     </div>

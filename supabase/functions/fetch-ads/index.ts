@@ -57,12 +57,61 @@ Deno.serve(async (req) => {
         width: 728,
         height: 90
       },
+      'products-bottom': {
+        id: 'atOptions-products-bottom',
+        key: '987a9a316732abab62bdd80e2baaaa93',
+        format: 'iframe',
+        width: 728,
+        height: 90
+      },
       'products-sidebar': {
         id: 'atOptions-products-sidebar',
         key: 'dc821d5d4f93dd96c264f15f5eb69085',
         format: 'iframe', 
         width: 160,
         height: 600
+      },
+      'products-left-sidebar': {
+        id: 'atOptions-products-left-sidebar',
+        key: 'dc821d5d4f93dd96c264f15f5eb69085',
+        format: 'iframe',
+        width: 160,
+        height: 600
+      },
+      'products-right-sidebar': {
+        id: 'atOptions-products-right-sidebar',
+        key: 'dc821d5d4f93dd96c264f15f5eb69085',
+        format: 'iframe',
+        width: 160,
+        height: 600
+      },
+      'product-detail-top': {
+        id: 'atOptions-product-detail-top',
+        key: '987a9a316732abab62bdd80e2baaaa93',
+        format: 'iframe',
+        width: 728,
+        height: 90
+      },
+      'product-detail-bottom': {
+        id: 'atOptions-product-detail-bottom',
+        key: '987a9a316732abab62bdd80e2baaaa93',
+        format: 'iframe',
+        width: 728,
+        height: 90
+      },
+      'blog-top': {
+        id: 'atOptions-blog-top',
+        key: '987a9a316732abab62bdd80e2baaaa93',
+        format: 'iframe',
+        width: 728,
+        height: 90
+      },
+      'blog-bottom': {
+        id: 'atOptions-blog-bottom',
+        key: '987a9a316732abab62bdd80e2baaaa93',
+        format: 'iframe',
+        width: 728,
+        height: 90
       }
     }
 

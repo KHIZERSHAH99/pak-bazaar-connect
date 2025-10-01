@@ -104,30 +104,48 @@ const AdUnit: React.FC<AdUnitProps> = ({
     container.style.height = '100%';
     host.appendChild(container);
 
-    // Set atOptions programmatically to avoid inline script issues and CSP blockers
-    (window as any).atOptions = {
-      key: resolvedSlot,
-      format: 'iframe',
-      height: getSizeHeight(size),
-      width: getSizeWidth(size),
-      params: {}
-    };
+    // Handle Native Banner differently
+    if (resolvedSlot === ADSTERRA_SLOTS.NATIVE) {
+      // Native banner needs a container with specific ID
+      const nativeContainer = document.createElement('div');
+      nativeContainer.id = `container-${resolvedSlot}`;
+      container.appendChild(nativeContainer);
 
-    // Network loader script (use the latest Adsterra domain)
-    const loaderScript = document.createElement('script');
-    loaderScript.src = `//www.topcreativeformat.com/${resolvedSlot}/invoke.js`;
-    loaderScript.async = true;
-    loaderScript.onload = () => {
-      setIsLoading(false);
-    };
-    loaderScript.onerror = () => {
-      setIsLoading(false);
-      if (process.env.NODE_ENV === 'development') {
-        console.error(`[AdUnit] Failed to load ad script for slot ${resolvedSlot}`);
-      }
-    };
+      const nativeScript = document.createElement('script');
+      nativeScript.src = `//pl27701721.revenuecpmgate.com/${resolvedSlot}/invoke.js`;
+      nativeScript.async = true;
+      nativeScript.setAttribute('data-cfasync', 'false');
+      nativeScript.onload = () => setIsLoading(false);
+      nativeScript.onerror = () => {
+        setIsLoading(false);
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`[AdUnit] Failed to load native ad script for slot ${resolvedSlot}`);
+        }
+      };
+      container.appendChild(nativeScript);
+    } else {
+      // Set atOptions for iframe banners
+      (window as any).atOptions = {
+        key: resolvedSlot,
+        format: 'iframe',
+        height: getSizeHeight(size),
+        width: getSizeWidth(size),
+        params: {}
+      };
 
-    container.appendChild(loaderScript);
+      // Use correct Adsterra domain for banner ads
+      const loaderScript = document.createElement('script');
+      loaderScript.src = `//www.highperformanceformat.com/${resolvedSlot}/invoke.js`;
+      loaderScript.async = true;
+      loaderScript.onload = () => setIsLoading(false);
+      loaderScript.onerror = () => {
+        setIsLoading(false);
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`[AdUnit] Failed to load ad script for slot ${resolvedSlot}`);
+        }
+      };
+      container.appendChild(loaderScript);
+    }
 
     // Hide loader when ad DOM appears or after timeout
     const checkInterval = window.setInterval(() => {

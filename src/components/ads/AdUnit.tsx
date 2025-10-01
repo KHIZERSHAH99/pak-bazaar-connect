@@ -126,7 +126,7 @@ const AdUnit: React.FC<AdUnitProps> = ({
       container.appendChild(nativeContainer);
 
       const nativeScript = document.createElement('script');
-      nativeScript.src = `//pl27701721.revenuecpmgate.com/${resolvedSlot}/invoke.js`;
+      nativeScript.src = `https://pl27701721.revenuecpmgate.com/${resolvedSlot}/invoke.js`;
       nativeScript.async = true;
       nativeScript.setAttribute('data-cfasync', 'false');
       nativeScript.onload = () => setIsLoading(false);

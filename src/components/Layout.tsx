@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import SEOHead from '@/components/ui/seo-head';
 import { usePageAnalytics } from '@/hooks/usePageAnalytics';
+import AdDebugPanel from '@/components/ads/AdDebugPanel';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,8 @@ const Layout: React.FC<LayoutProps> = ({
     usePageAnalytics();
   }
 
+  const showAdDebug = typeof window !== 'undefined' && (new URLSearchParams(window.location.search).get('ad_debug') === '1');
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200 overflow-x-hidden">
       <SEOHead 
@@ -37,6 +40,7 @@ const Layout: React.FC<LayoutProps> = ({
       </main>
       
       <Footer />
+      {showAdDebug && <AdDebugPanel />}
     </div>
   );
 };

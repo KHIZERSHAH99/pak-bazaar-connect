@@ -10,7 +10,9 @@ export const CSP_DIRECTIVES = {
     "https://www.highperformanceformat.com",
     "https://pl27701721.revenuecpmgate.com",
     "https://*.highperformanceformat.com",
-    "https://*.revenuecpmgate.com"
+    "https://*.revenuecpmgate.com",
+    "https://www.topcreativeformat.com",
+    "https://*.topcreativeformat.com"
   ],
   'script-src': [
     "'self'",
@@ -19,7 +21,9 @@ export const CSP_DIRECTIVES = {
     "https://sxzxyuxtqqflahzncfre.supabase.co",
     "https://*.supabase.co",
     "https://www.highperformanceformat.com",
-    "https://pl27701721.revenuecpmgate.com"
+    "https://pl27701721.revenuecpmgate.com",
+    "https://www.topcreativeformat.com",
+    "https://*.topcreativeformat.com"
   ],
   'style-src': [
     "'self'",
@@ -35,7 +39,9 @@ export const CSP_DIRECTIVES = {
     "https://www.highperformanceformat.com",
     "https://pl27701721.revenuecpmgate.com",
     "https://*.highperformanceformat.com",
-    "https://*.revenuecpmgate.com"
+    "https://*.revenuecpmgate.com",
+    "https://www.topcreativeformat.com",
+    "https://*.topcreativeformat.com"
   ],
   'font-src': [
     "'self'",
@@ -50,7 +56,9 @@ export const CSP_DIRECTIVES = {
     "https://www.highperformanceformat.com",
     "https://pl27701721.revenuecpmgate.com",
     "https://*.highperformanceformat.com",
-    "https://*.revenuecpmgate.com"
+    "https://*.revenuecpmgate.com",
+    "https://www.topcreativeformat.com",
+    "https://*.topcreativeformat.com"
   ],
   'media-src': [
     "'self'",

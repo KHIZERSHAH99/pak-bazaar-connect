@@ -76,22 +76,8 @@ const LiveAdUnit: React.FC<LiveAdUnitProps> = ({
               'params': {}
             };
             
-            // Add atOptions to window
-            (window as any)[`atOptions_${key}`] = atOptions;
-            
-            // Create inline script to set atOptions
-            const inlineScript = document.createElement('script');
-            inlineScript.type = 'text/javascript';
-            inlineScript.innerHTML = `
-              atOptions = {
-                'key' : '${key}',
-                'format' : 'iframe',
-                'height' : ${height},
-                'width' : ${width},
-                'params' : {}
-              };
-            `;
-            adDiv.appendChild(inlineScript);
+            // Set atOptions directly on window
+            (window as any).atOptions = atOptions;
             
             // Load Adsterra invoke script
             const invokeScript = document.createElement('script');

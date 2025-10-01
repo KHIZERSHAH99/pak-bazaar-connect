@@ -5,31 +5,13 @@
 
 export const CSP_DIRECTIVES = {
   'default-src': ["'self'"],
-  'frame-src': [
-    "'self'",
-    "https://www.highperformanceformat.com",
-    "https://pl27701721.revenuecpmgate.com",
-    "https://*.highperformanceformat.com",
-    "https://*.revenuecpmgate.com",
-    "https://www.topcreativeformat.com",
-    "https://*.topcreativeformat.com",
-    "https://syndication.realsrv.com",
-    "https://*.realsrv.com"
-  ],
+  'frame-src': ["'self'"],
   'script-src': [
     "'self'",
     "'unsafe-inline'", // Required for React in development
     "'unsafe-eval'", // Required for development tools
     "https://sxzxyuxtqqflahzncfre.supabase.co",
-    "https://*.supabase.co",
-    "https://www.highperformanceformat.com",
-    "https://*.highperformanceformat.com",
-    "https://pl27701721.revenuecpmgate.com",
-    "https://*.revenuecpmgate.com",
-    "https://www.topcreativeformat.com",
-    "https://*.topcreativeformat.com",
-    "https://syndication.realsrv.com",
-    "https://*.realsrv.com"
+    "https://*.supabase.co"
   ],
   'style-src': [
     "'self'",
@@ -41,15 +23,7 @@ export const CSP_DIRECTIVES = {
     "data:",
     "blob:",
     "https://sxzxyuxtqqflahzncfre.supabase.co",
-    "https://*.supabase.co",
-    "https://www.highperformanceformat.com",
-    "https://pl27701721.revenuecpmgate.com",
-    "https://*.highperformanceformat.com",
-    "https://*.revenuecpmgate.com",
-    "https://www.topcreativeformat.com",
-    "https://*.topcreativeformat.com",
-    "https://syndication.realsrv.com",
-    "https://*.realsrv.com"
+    "https://*.supabase.co"
   ],
   'font-src': [
     "'self'",
@@ -60,15 +34,7 @@ export const CSP_DIRECTIVES = {
     "https://sxzxyuxtqqflahzncfre.supabase.co",
     "https://*.supabase.co",
     "wss://sxzxyuxtqqflahzncfre.supabase.co",
-    "wss://*.supabase.co",
-    "https://www.highperformanceformat.com",
-    "https://pl27701721.revenuecpmgate.com",
-    "https://*.highperformanceformat.com",
-    "https://*.revenuecpmgate.com",
-    "https://www.topcreativeformat.com",
-    "https://*.topcreativeformat.com",
-    "https://syndication.realsrv.com",
-    "https://*.realsrv.com"
+    "wss://*.supabase.co"
   ],
   'media-src': [
     "'self'",

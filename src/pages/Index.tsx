@@ -1,7 +1,6 @@
 
 import React from 'react';
 import Layout from '@/components/Layout';
-import InContentAd from '@/components/ads/InContentAd';
 import UrduHeroSection from '@/components/home/UrduHeroSection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
@@ -12,20 +11,8 @@ const Index: React.FC = () => {
     <Layout>
       <div className="min-h-screen">
         <UrduHeroSection />
-        
-        {/* Homepage Top Ad */}
-        <InContentAd slotId="homepage-top" />
-        
         <FeaturedProducts />
-        
-        {/* Homepage Middle Ad */}
-        <InContentAd slotId="homepage-middle" />
-        
         <WhyChooseUsSection />
-        
-        {/* Homepage Bottom Ad */}
-        <InContentAd slotId="homepage-bottom" />
-        
         <CallToActionSection />
       </div>
     </Layout>

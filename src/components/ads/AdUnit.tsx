@@ -72,124 +72,64 @@ const AdUnit: React.FC<AdUnitProps> = ({
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
-    if (!adHostRef.current || typeof window === 'undefined') return;
+    if (!adHostRef.current || typeof document === 'undefined') return;
 
     const host = adHostRef.current;
     const resolvedSlot = resolveSlot(slotId, size);
-    
-    // Debug logging
-    console.log('[AdUnit] Initializing ad:', {
-      slotId,
-      resolvedSlot,
-      size,
-      format,
-      domain: window.location.hostname
-    });
-    
-    // Check if iframe already exists (guard against double mounting)
-    if (iframeRef.current && host.contains(iframeRef.current)) {
-      return;
-    }
-    
-    // Check if we should use native format
-    const isNative = format === 'native' && resolvedSlot === ADSTERRA_SLOTS.NATIVE;
 
-    // Create a sandboxed iframe for the ad to isolate DOM mutations
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('title', `adframe-${resolvedSlot}`);
-    iframe.setAttribute('scrolling', 'no');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-presentation allow-top-navigation-by-user-activation');
-    iframe.style.border = '0';
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    iframe.style.display = 'block';
-    
-    // Store reference
-    iframeRef.current = iframe;
-    
-    // Replace children of the host (not the React root)
-    host.replaceChildren(iframe);
+    // Reset host
+    host.innerHTML = '';
+    setIsLoading(true);
 
-    const doc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (doc) {
-      if (isNative) {
-        // Native banner format
-        doc.open();
-        doc.write(`<!DOCTYPE html>
-<html>
-<head>
-  <base target="_top" />
-  <style>html,body{margin:0;padding:0;overflow:hidden;}</style>
-</head>
-<body>
-  <script async="async" data-cfasync="false" src="//pl27701721.revenuecpmgate.com/${resolvedSlot}/invoke.js"><\/script>
-  <div id="container-${resolvedSlot}"></div>
-</body>
-</html>`);
-        doc.close();
-      } else {
-        // Standard iframe format
-        const atOptions = {
-          key: resolvedSlot,
-          format: 'iframe', // Always use iframe format as per Adsterra docs
-          height: getSizeHeight(size),
-          width: getSizeWidth(size),
-          params: {}
-        };
+    // Create a local container so the network script writes in-place
+    const container = document.createElement('div');
+    container.style.width = '100%';
+    container.style.height = '100%';
+    host.appendChild(container);
 
-        doc.open();
-        doc.write(`<!DOCTYPE html>
-<html>
-<head>
-  <base target="_top" />
-  <style>html,body{margin:0;padding:0;overflow:hidden;}</style>
-</head>
-<body>
-  <script>window.atOptions = ${JSON.stringify(atOptions)};<\/script>
-  <script src="//www.highperformanceformat.com/${resolvedSlot}/invoke.js" async><\/script>
-</body>
-</html>`);
-        doc.close();
-      }
+    // Inline script to set atOptions right before loading the network script
+    const optionsScript = document.createElement('script');
+    optionsScript.type = 'text/javascript';
+    optionsScript.text = `window.atOptions = ${JSON.stringify({
+      key: resolvedSlot,
+      format: 'iframe',
+      height: getSizeHeight(size),
+      width: getSizeWidth(size),
+      params: {}
+    })};`;
 
-      // Hide loader after a delay
-      const timer = window.setTimeout(() => {
+    // Network loader script (use the latest Adsterra domain)
+    const loaderScript = document.createElement('script');
+    loaderScript.src = `//www.topcreativeformat.com/${resolvedSlot}/invoke.js`;
+    loaderScript.async = true;
+
+    container.appendChild(optionsScript);
+    container.appendChild(loaderScript);
+
+    // Hide loader when ad DOM appears or after timeout
+    const checkInterval = window.setInterval(() => {
+      const hasAd = container.querySelector('iframe, ins, a, img');
+      if (hasAd) {
         setIsLoading(false);
-        
-        // Development warning if ad doesn't load
-        if (process.env.NODE_ENV === 'development') {
-          const checkTimer = window.setTimeout(() => {
-            const iframeDoc = iframeRef.current?.contentDocument;
-            if (iframeDoc && !iframeDoc.querySelector('ins, iframe, div[id*="container"]')) {
-              console.warn(`[AdUnit] Ad unit ${resolvedSlot} may not have loaded. Possible causes:
-- Ad blocker is active
-- Domain not approved in Adsterra (current: ${window.location.hostname})
-- Network connectivity issues
-- Invalid slot ID`);
-            }
-          }, 3000);
-          
-          return () => window.clearTimeout(checkTimer);
-        }
-      }, 1200);
+        window.clearInterval(checkInterval);
+      }
+    }, 300);
 
-      return () => {
-        window.clearTimeout(timer);
-        if (iframeRef.current) {
-          try {
-            // Clean up iframe
-            iframeRef.current.src = 'about:blank';
-            iframeRef.current.remove();
-            iframeRef.current = null;
-          } catch (error) {
-            // Silently handle cleanup errors
-          }
-        }
-      };
-    }
+    const failTimer = window.setTimeout(() => {
+      setIsLoading(false);
+      window.clearInterval(checkInterval);
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`[AdUnit] Ad may not have loaded for slot ${resolvedSlot} on ${window.location.hostname}`);
+      }
+    }, 5000);
 
-    // Fallback if doc is not available
-    setIsLoading(false);
+    return () => {
+      window.clearInterval(checkInterval);
+      window.clearTimeout(failTimer);
+      try {
+        host.innerHTML = '';
+      } catch {}
+    };
   }, [slotId, format, size]);
 
   const getSizeWidth = (size: string): number => {

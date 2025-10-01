@@ -6,7 +6,6 @@ import Layout from '@/components/Layout';
 import { getProductById } from '@/lib/products';
 import { Product } from '@/lib/types';
 import EnhancedProductDetail from '@/components/products/EnhancedProductDetail';
-import LiveAdUnit from '@/components/ads/LiveAdUnit';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -90,21 +89,7 @@ const ProductDetail: React.FC = () => {
 
   return (
     <Layout>
-      {/* Product Detail Top Ad - Live from Adsterra */}
-      <div className="container mx-auto px-4 pt-8">
-        <div className="flex justify-center mb-6">
-          <LiveAdUnit placement="product-detail-top" size="leaderboard" />
-        </div>
-      </div>
-      
       <EnhancedProductDetail product={product} onBack={handleBackToProducts} />
-      
-      {/* Product Detail Bottom Ad - Live from Adsterra */}
-      <div className="container mx-auto px-4 pb-8">
-        <div className="flex justify-center mt-8">
-          <LiveAdUnit placement="product-detail-bottom" size="rectangle" />
-        </div>
-      </div>
     </Layout>
   );
 };

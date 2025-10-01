@@ -14,66 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      ad_clicks: {
-        Row: {
-          ad_id: string
-          clicked_at: string | null
-          id: string
-          placement: string | null
-          session_id: string | null
-          user_id: string | null
-        }
-        Insert: {
-          ad_id: string
-          clicked_at?: string | null
-          id?: string
-          placement?: string | null
-          session_id?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          ad_id?: string
-          clicked_at?: string | null
-          id?: string
-          placement?: string | null
-          session_id?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      ad_impressions: {
-        Row: {
-          ad_id: string
-          created_at: string | null
-          id: string
-          placement: string | null
-          session_id: string | null
-          size: string | null
-          source: string | null
-          user_id: string | null
-        }
-        Insert: {
-          ad_id: string
-          created_at?: string | null
-          id?: string
-          placement?: string | null
-          session_id?: string | null
-          size?: string | null
-          source?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          ad_id?: string
-          created_at?: string | null
-          id?: string
-          placement?: string | null
-          session_id?: string | null
-          size?: string | null
-          source?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       admin_ip_whitelist: {
         Row: {
           created_at: string | null

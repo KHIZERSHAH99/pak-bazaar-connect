@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, User, ArrowRight, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import LiveAdUnit from '@/components/ads/LiveAdUnit';
 
 const Blog = () => {
   const blogPosts = [
@@ -76,15 +75,8 @@ const Blog = () => {
           </div>
         </div>
 
-        {/* Top Blog Ad - Live from Adsterra */}
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-center">
-            <LiveAdUnit placement="blog-top" size="leaderboard" />
-          </div>
-        </div>
-
         {/* Blog Posts */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {blogPosts.map((post) => (
               <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -158,11 +150,6 @@ const Blog = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-          
-          {/* Bottom Blog Ad - Live from Adsterra */}
-          <div className="mt-16 flex justify-center">
-            <LiveAdUnit placement="blog-bottom" size="rectangle" />
           </div>
         </div>
       </div>

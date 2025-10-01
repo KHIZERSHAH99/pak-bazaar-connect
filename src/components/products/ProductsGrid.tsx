@@ -1,6 +1,6 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
-import AdUnit from '@/components/ads/AdUnit';
+import LiveAdUnit from '@/components/ads/LiveAdUnit';
 import { Product } from '@/lib/types';
 import ProductCard from './ProductCard';
 
@@ -46,13 +46,12 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
           <React.Fragment key={product.id}>
             <ProductCard product={product} />
             
-            {/* Insert horizontal ad banner after every 6 products - 728x90 */}
+            {/* Insert horizontal ad banner after every 6 products - Live from Adsterra */}
             {(index + 1) % 6 === 0 && index !== products.length - 1 && (
               <div className="col-span-full">
                 <div className="bg-background/50 rounded-lg p-4 flex justify-center">
-                  <AdUnit 
-                    slotId="987a9a316732abab62bdd80e2baaaa93"
-                    format="display"
+                  <LiveAdUnit 
+                    placement={`products-inline-${Math.floor((index + 1) / 6)}`}
                     size="leaderboard"
                   />
                 </div>

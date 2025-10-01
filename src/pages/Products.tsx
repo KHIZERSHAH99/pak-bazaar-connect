@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import AdUnit from '@/components/ads/AdUnit';
+import LiveAdUnit from '@/components/ads/LiveAdUnit';
 import AdDebugPanel from '@/components/ads/AdDebugPanel';
 import { Product } from '@/lib/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -176,11 +176,10 @@ const Products: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <ProductsHeader />
         
-        {/* Top Banner Ad - 728x90 */}
+        {/* Top Banner Ad - Live from Adsterra */}
         <div className="mb-6 flex justify-center">
-          <AdUnit 
-            slotId="987a9a316732abab62bdd80e2baaaa93"
-            format="display"
+          <LiveAdUnit 
+            placement="products-top"
             size="leaderboard"
           />
         </div>
@@ -201,19 +200,17 @@ const Products: React.FC = () => {
         />
         
         <div className="relative">
-          {/* Sticky Side Ads - 160x600 - Large screens only */}
+          {/* Sticky Side Ads - Live from Adsterra - Large screens only */}
           <div className="hidden 2xl:block">
             <div className="fixed left-4 top-1/2 -translate-y-1/2 z-10">
-              <AdUnit 
-                slotId="e30a2bc2dccbb1f927dfa1de88c6da80"
-                format="display"
+              <LiveAdUnit 
+                placement="products-left-sidebar"
                 size="skyscraper"
               />
             </div>
             <div className="fixed right-4 top-1/2 -translate-y-1/2 z-10">
-              <AdUnit 
-                slotId="e30a2bc2dccbb1f927dfa1de88c6da80"
-                format="display"
+              <LiveAdUnit 
+                placement="products-right-sidebar"
                 size="skyscraper"
               />
             </div>
@@ -223,11 +220,10 @@ const Products: React.FC = () => {
           <div className="2xl:px-48">
             <ProductsGrid products={products} loading={loading} />
             
-            {/* Bottom Ad - 728x90 */}
+            {/* Bottom Ad - Live from Adsterra */}
             <div className="mt-12 flex justify-center">
-              <AdUnit 
-                slotId="987a9a316732abab62bdd80e2baaaa93"
-                format="display"
+              <LiveAdUnit 
+                placement="products-bottom"
                 size="leaderboard"
               />
             </div>

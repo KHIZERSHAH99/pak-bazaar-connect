@@ -23,6 +23,10 @@ const PLACEMENT_MAPPING: Record<string, string> = {
   'mobile-banner': ADSTERRA_SLOTS.BANNER_320x50,
 };
 
+// Allowed production hosts for ad rendering
+const ALLOWED_HOSTS = ['pakbazaarconnect.store', 'www.pakbazaarconnect.store'];
+const isProductionDomain = () => typeof window !== 'undefined' && ALLOWED_HOSTS.includes(window.location.hostname);
+
 const resolveSlot = (id: string, size?: string) => {
   // Check if it's a direct slot key
   if (Object.values(ADSTERRA_SLOTS).includes(id)) {
@@ -70,12 +74,25 @@ const AdUnit: React.FC<AdUnitProps> = ({
   const adHostRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [disabledByDomain, setDisabledByDomain] = useState(false);
 
   useEffect(() => {
     if (!adHostRef.current || typeof document === 'undefined') return;
 
     const host = adHostRef.current;
     const resolvedSlot = resolveSlot(slotId, size);
+
+    // Only render ads on production domain
+    if (!isProductionDomain()) {
+      setDisabledByDomain(true);
+      setIsLoading(false);
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('[AdUnit] Ad disabled on non-production domain', window.location.hostname);
+      }
+      return;
+    } else {
+      setDisabledByDomain(false);
+    }
 
     // Reset host
     host.innerHTML = '';
@@ -176,10 +193,15 @@ const AdUnit: React.FC<AdUnitProps> = ({
         }}
       />
       
-      {/* Loading overlay - React manages this */}
+      {/* Loading/disabled overlays */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-muted/10 rounded-lg pointer-events-none">
           <span className="text-xs text-muted-foreground">Loading ad...</span>
+        </div>
+      )}
+      {disabledByDomain && !isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center rounded-lg pointer-events-none">
+          <span className="text-xs text-muted-foreground">Ad will appear on pakbazaarconnect.store</span>
         </div>
       )}
     </div>

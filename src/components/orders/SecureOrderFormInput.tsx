@@ -65,12 +65,14 @@ export const SecureOrderFormInput: React.FC<SecureOrderFormInputProps> = ({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="flex items-center gap-2">
-        {label}
-        {required && <span className="text-red-500">*</span>}
-        {isSecure && <Shield className="h-3 w-3 text-green-600" />}
-        {isValidating && <div className="h-3 w-3 border border-primary rounded-full animate-spin border-t-transparent" />}
-      </Label>
+      {type !== 'phone' && (
+        <Label htmlFor={id} className="flex items-center gap-2">
+          {label}
+          {required && <span className="text-red-500">*</span>}
+          {isSecure && <Shield className="h-3 w-3 text-green-600" />}
+          {isValidating && <div className="h-3 w-3 border border-primary rounded-full animate-spin border-t-transparent" />}
+        </Label>
+      )}
       
       {type === 'textarea' ? (
         <Textarea

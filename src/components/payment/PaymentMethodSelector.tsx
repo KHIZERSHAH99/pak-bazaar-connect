@@ -39,6 +39,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         return <Smartphone className="h-6 w-6" />;
       case 'bank_transfer':
         return <Building2 className="h-6 w-6" />;
+      case 'cash_on_delivery':
+        return <Banknote className="h-6 w-6" />;
       default:
         return <CreditCard className="h-6 w-6" />;
     }
@@ -52,6 +54,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         return 'from-green-500 to-teal-500';
       case 'bank transfer':
         return 'from-blue-500 to-indigo-500';
+      case 'cash on delivery':
+        return 'from-gray-600 to-gray-700';
       default:
         return 'from-pakistani_green-500 to-pakistani_green-600';
     }

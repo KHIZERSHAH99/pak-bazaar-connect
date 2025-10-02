@@ -1,8 +1,9 @@
 
 import React from "react";
+import CODBadge from "./CODBadge";
 import { useAuth } from "@/contexts/AuthContext";
 
-// Renders the top dashboard toolbar with the role
+// Renders the top dashboard toolbar with the role and payment info
 const DashboardHeader: React.FC = () => {
   const { profile } = useAuth();
 
@@ -16,6 +17,12 @@ const DashboardHeader: React.FC = () => {
           Manage your business operations
         </p>
       </div>
+      {/* Show COD badge if user is seller/wholesaler */}
+      {(profile?.role === "seller" || profile?.role === "wholesaler") && (
+        <div>
+          <CODBadge />
+        </div>
+      )}
     </div>
   );
 };

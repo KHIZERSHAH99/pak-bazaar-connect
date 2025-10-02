@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/auth';
 export interface EnhancedOrderData {
   shopId: string;
   totalAmount: number;
-  paymentMethod?: 'bank_transfer' | 'jazzcash' | 'easypaisa';
+  paymentMethod?: 'bank_transfer' | 'jazzcash' | 'easypaisa' | 'cash_on_delivery';
   buyerName?: string;
   buyerPhone?: string;
   buyerAddress?: string;

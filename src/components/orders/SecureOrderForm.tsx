@@ -207,7 +207,6 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
                 <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
                 <SelectItem value="jazzcash">JazzCash</SelectItem>
                 <SelectItem value="easypaisa">EasyPaisa</SelectItem>
-                <SelectItem value="cod">Cash on Delivery</SelectItem>
               </SelectContent>
             </Select>
           </div>

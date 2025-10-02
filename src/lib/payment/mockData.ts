@@ -29,15 +29,6 @@ export const mockPaymentMethods: PaymentMethod[] = [
     processing_fee: 0.005,
     min_amount: 1000,
     max_amount: 10000000
-  },
-  {
-    id: '4',
-    name: 'Cash on Delivery',
-    type: 'cash_on_delivery',
-    is_active: true,
-    processing_fee: 0.0,
-    min_amount: 100,
-    max_amount: 100000
   }
 ];
 

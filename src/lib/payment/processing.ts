@@ -43,10 +43,6 @@ export const processPayment = async (
           reference: `BANK-${Date.now()}`,
         };
 
-      case 'cash_on_delivery':
-        // COD is marked as pending until delivery confirmation
-        return { success: true, reference: `COD-${Date.now()}` };
-
       default:
         throw new Error('Unsupported payment method');
     }

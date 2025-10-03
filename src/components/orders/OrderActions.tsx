@@ -39,7 +39,6 @@ const OrderActions: React.FC<OrderActionsProps> = ({ order, onOrderUpdate }) => 
         confirmed_at: updatedOrderData.confirmed_at || order.confirmed_at,
         rejected_at: updatedOrderData.rejected_at || order.rejected_at,
         wholesaler_notes: updatedOrderData.wholesaler_notes || order.wholesaler_notes,
-        commission_id: updatedOrderData.commission_id || order.commission_id,
         shops: order.shops ? {
           id: order.shops.id,
           name: order.shops.name,
@@ -96,7 +95,6 @@ const OrderActions: React.FC<OrderActionsProps> = ({ order, onOrderUpdate }) => 
         confirmed_at: updatedOrderData.confirmed_at || order.confirmed_at,
         rejected_at: updatedOrderData.rejected_at || order.rejected_at,
         wholesaler_notes: updatedOrderData.wholesaler_notes || order.wholesaler_notes,
-        commission_id: updatedOrderData.commission_id || order.commission_id,
         shops: order.shops ? {
           id: order.shops.id,
           name: order.shops.name,

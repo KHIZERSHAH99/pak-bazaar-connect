@@ -11,9 +11,6 @@ export {
   getSellerOrders 
 } from './queries';
 
-export { 
-  getWholesalerMonthlySales 
-} from './analytics';
 
 export { 
   sendOrderMessage, 

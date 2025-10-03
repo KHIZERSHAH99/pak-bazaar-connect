@@ -2,18 +2,14 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { TestTube } from 'lucide-react';
-import { runComprehensiveBackendTests } from '@/lib/orders/test-utils';
 
 const BackendTestButton: React.FC = () => {
   const [testing, setTesting] = useState(false);
 
   const handleTest = async () => {
     setTesting(true);
-    try {
-      await runComprehensiveBackendTests();
-    } finally {
-      setTesting(false);
-    }
+    console.log('Backend tests deprecated - commission functionality removed');
+    setTesting(false);
   };
 
   // Only show in development
@@ -30,7 +26,7 @@ const BackendTestButton: React.FC = () => {
       className="flex items-center gap-2"
     >
       <TestTube className="h-4 w-4" />
-      {testing ? 'Testing...' : 'Test Backend'}
+      {testing ? 'Testing...' : 'Test Backend (Deprecated)'}
     </Button>
   );
 };

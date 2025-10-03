@@ -37,7 +37,6 @@ const convertToOrder = (rawData: any): Order | null => {
       confirmed_at: rawData.confirmed_at || null,
       rejected_at: rawData.rejected_at || null,
       wholesaler_notes: rawData.wholesaler_notes || null,
-      commission_id: rawData.commission_id || null,
       shops: (rawData.shops && typeof rawData.shops === 'object') ? {
         id: String(rawData.shops.id || ''),
         name: String(rawData.shops.name || ''),

@@ -6,7 +6,7 @@ import { Users, Globe, TrendingUp, Heart } from 'lucide-react';
 const statsData = [
   { number: '10,000+', label: 'Active Businesses', icon: <Users className="h-5 w-5" aria-hidden="true" /> },
   { number: '500+', label: 'Cities Covered', icon: <Globe className="h-5 w-5" aria-hidden="true" /> },
-  { number: '2.5%', label: 'Low Commission', icon: <TrendingUp className="h-5 w-5" aria-hidden="true" /> },
+  { number: '0%', label: 'Platform Fee', icon: <TrendingUp className="h-5 w-5" aria-hidden="true" /> },
   { number: '24/7', label: 'Support', icon: <Heart className="h-5 w-5" aria-hidden="true" /> },
 ];
 

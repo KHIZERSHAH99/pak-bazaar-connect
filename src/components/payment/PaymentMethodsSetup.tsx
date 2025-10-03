@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Building, Smartphone, Plus, Edit, Check } from 'lucide-react';
-import { getWholesalerPaymentMethods, createPaymentMethod } from '@/lib/enhanced-payment';
+import { getWholesalerPaymentMethods, createPaymentMethod } from '@/lib/payment-helpers';
 import { PaymentMethodInfo } from '@/types/enhanced-payment';
 import { useAuth } from '@/contexts/AuthContext';
 

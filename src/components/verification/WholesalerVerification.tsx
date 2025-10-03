@@ -159,7 +159,6 @@ export const WholesalerVerification: React.FC = () => {
                   <li>Increase buyer trust and credibility</li>
                   <li>Access to premium features</li>
                   <li>Higher visibility in search results</li>
-                  <li>Reduced commission rates</li>
                 </ul>
               </div>
             </div>

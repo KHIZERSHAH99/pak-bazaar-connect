@@ -32,7 +32,7 @@ const NotificationCenter: React.FC = () => {
       // Cast the data to proper types
       const typedNotifications: Notification[] = (data || []).map((item: any) => ({
         ...item,
-        type: item.type as 'order_status' | 'commission' | 'suspension' | 'general'
+        type: item.type as 'order_status' | 'suspension' | 'general'
       }));
       setNotifications(typedNotifications);
       setUnreadCount(typedNotifications.filter(n => !n.read_at).length);
@@ -82,8 +82,6 @@ const NotificationCenter: React.FC = () => {
     switch (type) {
       case 'order_status':
         return <Package className="h-4 w-4 text-blue-500" />;
-      case 'commission':
-        return <DollarSign className="h-4 w-4 text-green-500" />;
       case 'suspension':
         return <AlertTriangle className="h-4 w-4 text-red-500" />;
       default:

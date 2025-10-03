@@ -249,24 +249,6 @@ export const updateOrderStatus = async (
   }
 };
 
-export const getWholesalerCommissions = async () => {
-  const user = await getCurrentUser();
-  
-  if (!user) return [];
-  
-  const { data, error } = await supabase
-    .from('commission_transactions')
-    .select('*')
-    .eq('wholesaler_id', user.id)
-    .order('created_at', { ascending: false });
-  
-  if (error) {
-    console.error('Error fetching commissions:', error);
-    return [];
-  }
-  
-  return data;
-};
 
 export const getOrderById = async (orderId: string): Promise<Order | null> => {
   try {

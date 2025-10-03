@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Package, CheckCircle, Truck } from 'lucide-react';
-import { confirmOrderDelivery } from '@/lib/enhanced-payment';
+import { confirmOrderDelivery } from '@/lib/payment-helpers';
 import { Order } from '@/lib/types';
 
 interface DeliveryConfirmationProps {

@@ -133,16 +133,6 @@ export class RoleSecurityManager {
         issues.push('Recent security violations detected');
       }
 
-      // Check for outstanding commission payments (for wholesalers)
-      const { data: overdueCommissions } = await supabase
-        .from('monthly_commissions')
-        .select('*')
-        .eq('wholesaler_id', userId)
-        .eq('payment_status', 'overdue');
-
-      if (overdueCommissions && overdueCommissions.length > 0) {
-        issues.push('Outstanding commission payments');
-      }
 
     } catch (error) {
       console.error('Error checking account standing:', error);

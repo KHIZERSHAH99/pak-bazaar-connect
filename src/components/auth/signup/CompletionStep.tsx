@@ -31,11 +31,6 @@ const CompletionStep: React.FC = () => {
         </ul>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800 font-poppins">
-          <strong>Commission Structure:</strong> We charge a low 2.5% commission on successful sales to maintain and improve the platform.
-        </p>
-      </div>
     </div>
   );
 };

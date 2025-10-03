@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { XCircle, AlertTriangle } from 'lucide-react';
-import { rejectOrderWithReason } from '@/lib/enhanced-payment';
+import { rejectOrderWithReason } from '@/lib/payment-helpers';
 import { Order } from '@/lib/types';
 
 interface OrderRejectionFormProps {

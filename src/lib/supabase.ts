@@ -57,7 +57,6 @@ export const {
   getOrdersForWholesaler,
   getOrdersForSeller,
   updateOrderStatus,
-  getWholesalerCommissions,
   getOrderById
 } = ordersModule;
 

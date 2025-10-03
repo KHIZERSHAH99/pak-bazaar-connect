@@ -364,241 +364,6 @@ export type Database = {
           },
         ]
       }
-      commission_records: {
-        Row: {
-          commission_amount: number
-          commission_rate: number | null
-          created_at: string | null
-          id: string
-          order_id: string
-          paid_at: string | null
-          sale_amount: number
-          status: string | null
-          wholesaler_id: string
-        }
-        Insert: {
-          commission_amount: number
-          commission_rate?: number | null
-          created_at?: string | null
-          id?: string
-          order_id: string
-          paid_at?: string | null
-          sale_amount: number
-          status?: string | null
-          wholesaler_id: string
-        }
-        Update: {
-          commission_amount?: number
-          commission_rate?: number | null
-          created_at?: string | null
-          id?: string
-          order_id?: string
-          paid_at?: string | null
-          sale_amount?: number
-          status?: string | null
-          wholesaler_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "commission_records_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: true
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_records_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: true
-            referencedRelation: "orders_with_safe_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_records_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_records_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_records_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "public_wholesaler_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      commission_settings: {
-        Row: {
-          commission_percentage: number | null
-          created_at: string | null
-          created_by: string | null
-          effective_from: string | null
-          id: string
-        }
-        Insert: {
-          commission_percentage?: number | null
-          created_at?: string | null
-          created_by?: string | null
-          effective_from?: string | null
-          id?: string
-        }
-        Update: {
-          commission_percentage?: number | null
-          created_at?: string | null
-          created_by?: string | null
-          effective_from?: string | null
-          id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "commission_settings_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_settings_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_settings_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "public_wholesaler_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      commission_transactions: {
-        Row: {
-          commission_amount: number
-          commission_rate: number
-          created_at: string | null
-          id: string
-          order_amount: number
-          order_id: string
-          paid_at: string | null
-          status: string
-          wholesaler_id: string
-        }
-        Insert: {
-          commission_amount: number
-          commission_rate?: number
-          created_at?: string | null
-          id?: string
-          order_amount: number
-          order_id: string
-          paid_at?: string | null
-          status?: string
-          wholesaler_id: string
-        }
-        Update: {
-          commission_amount?: number
-          commission_rate?: number
-          created_at?: string | null
-          id?: string
-          order_amount?: number
-          order_id?: string
-          paid_at?: string | null
-          status?: string
-          wholesaler_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "commission_transactions_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: true
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_transactions_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: true
-            referencedRelation: "orders_with_safe_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_transactions_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_transactions_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_transactions_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "public_wholesaler_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      commissions: {
-        Row: {
-          commission_amount: number
-          created_at: string | null
-          id: string
-          payout_amount: number
-          sale_amount: number
-          seller_id: string
-          transaction_id: string
-        }
-        Insert: {
-          commission_amount: number
-          created_at?: string | null
-          id?: string
-          payout_amount: number
-          sale_amount: number
-          seller_id: string
-          transaction_id: string
-        }
-        Update: {
-          commission_amount?: number
-          created_at?: string | null
-          id?: string
-          payout_amount?: number
-          sale_amount?: number
-          seller_id?: string
-          transaction_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "commissions_transaction_id_fkey"
-            columns: ["transaction_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commissions_transaction_id_fkey"
-            columns: ["transaction_id"]
-            isOneToOne: false
-            referencedRelation: "orders_with_safe_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       company_profiles: {
         Row: {
           address: string
@@ -721,13 +486,6 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "coupon_usage_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders_with_safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -919,67 +677,6 @@ export type Database = {
           },
         ]
       }
-      monthly_commissions: {
-        Row: {
-          commission_amount: number | null
-          commission_percentage: number | null
-          created_at: string | null
-          due_date: string | null
-          id: string
-          month: string
-          paid_at: string | null
-          payment_status: string | null
-          total_sales: number | null
-          wholesaler_id: string
-        }
-        Insert: {
-          commission_amount?: number | null
-          commission_percentage?: number | null
-          created_at?: string | null
-          due_date?: string | null
-          id?: string
-          month: string
-          paid_at?: string | null
-          payment_status?: string | null
-          total_sales?: number | null
-          wholesaler_id: string
-        }
-        Update: {
-          commission_amount?: number | null
-          commission_percentage?: number | null
-          created_at?: string | null
-          due_date?: string | null
-          id?: string
-          month?: string
-          paid_at?: string | null
-          payment_status?: string | null
-          total_sales?: number | null
-          wholesaler_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "monthly_commissions_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_commissions_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_commissions_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "public_wholesaler_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       notifications: {
         Row: {
           created_at: string | null
@@ -1093,13 +790,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "order_actions_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders_with_safe_profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "order_actions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -1168,13 +858,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "order_items_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders_with_safe_profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "order_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
@@ -1211,13 +894,6 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "order_messages_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders_with_safe_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1309,13 +985,6 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "order_status_history_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders_with_safe_profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       order_tracking: {
@@ -1351,13 +1020,6 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "order_tracking_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders_with_safe_profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       orders: {
@@ -1373,7 +1035,6 @@ export type Database = {
           buyer_province: string | null
           buyer_street_address: string | null
           carrier_name: string | null
-          commission_id: string | null
           confirmed_at: string | null
           created_at: string | null
           delivered_at: string | null
@@ -1422,7 +1083,6 @@ export type Database = {
           buyer_province?: string | null
           buyer_street_address?: string | null
           carrier_name?: string | null
-          commission_id?: string | null
           confirmed_at?: string | null
           created_at?: string | null
           delivered_at?: string | null
@@ -1471,7 +1131,6 @@ export type Database = {
           buyer_province?: string | null
           buyer_street_address?: string | null
           carrier_name?: string | null
-          commission_id?: string | null
           confirmed_at?: string | null
           created_at?: string | null
           delivered_at?: string | null
@@ -2228,7 +1887,6 @@ export type Database = {
           industry: string | null
           is_email_user: boolean | null
           is_suspended: boolean | null
-          last_commission_payment: string | null
           last_order_data: Json | null
           last_otp_request: string | null
           last_role_switch: string | null
@@ -2274,7 +1932,6 @@ export type Database = {
           industry?: string | null
           is_email_user?: boolean | null
           is_suspended?: boolean | null
-          last_commission_payment?: string | null
           last_order_data?: Json | null
           last_otp_request?: string | null
           last_role_switch?: string | null
@@ -2320,7 +1977,6 @@ export type Database = {
           industry?: string | null
           is_email_user?: boolean | null
           is_suspended?: boolean | null
-          last_commission_payment?: string | null
           last_order_data?: Json | null
           last_otp_request?: string | null
           last_role_switch?: string | null
@@ -2571,13 +2227,6 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "shipping_details_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders_with_safe_profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       shop_favorites: {
@@ -2748,127 +2397,6 @@ export type Database = {
       }
     }
     Views: {
-      commission_summary_secure: {
-        Row: {
-          avg_rate: number | null
-          last_commission_date: string | null
-          total_commission: number | null
-          total_records: number | null
-          wholesaler_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "commission_records_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_records_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commission_records_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "public_wholesaler_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      orders_with_safe_profiles: {
-        Row: {
-          auto_delete_screenshot_at: string | null
-          buyer_address: string | null
-          buyer_area: string | null
-          buyer_city: string | null
-          buyer_id: string | null
-          buyer_name: string | null
-          buyer_phone: string | null
-          buyer_postal_code: string | null
-          buyer_profile: Json | null
-          buyer_province: string | null
-          buyer_street_address: string | null
-          carrier_name: string | null
-          commission_id: string | null
-          confirmed_at: string | null
-          created_at: string | null
-          delivered_at: string | null
-          delivery_confirmed_by: string | null
-          delivery_instructions: string | null
-          delivery_partner: string | null
-          estimated_delivery: string | null
-          guest_session_id: string | null
-          id: string | null
-          internal_notes: string | null
-          is_guest_order: boolean | null
-          last_status_update: string | null
-          order_notes: string | null
-          packed_at: string | null
-          packed_by: string | null
-          payment_method: string | null
-          payment_screenshot: string | null
-          priority_level: number | null
-          processing_started_at: string | null
-          rejected_at: string | null
-          rejection_reason: string | null
-          requires_attention: boolean | null
-          return_address: string | null
-          returned_at: string | null
-          screenshot_uploaded_at: string | null
-          shipped_at: string | null
-          shipped_by: string | null
-          shipping_cost: number | null
-          shipping_method: string | null
-          shop_id: string | null
-          status: string | null
-          total_amount: number | null
-          tracking_number: string | null
-          tracking_url: string | null
-          wholesaler_notes: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_orders_shop_id"
-            columns: ["shop_id"]
-            isOneToOne: false
-            referencedRelation: "shops"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orders_delivery_confirmed_by_fkey"
-            columns: ["delivery_confirmed_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orders_delivery_confirmed_by_fkey"
-            columns: ["delivery_confirmed_by"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orders_delivery_confirmed_by_fkey"
-            columns: ["delivery_confirmed_by"]
-            isOneToOne: false
-            referencedRelation: "public_wholesaler_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orders_shop_id_fkey"
-            columns: ["shop_id"]
-            isOneToOne: false
-            referencedRelation: "shops"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profiles_public: {
         Row: {
           business_name: string | null
@@ -2951,10 +2479,6 @@ export type Database = {
           | { p_password: string; p_phone_number: string }
           | { user_phone: string }
         Returns: Json
-      }
-      calculate_monthly_commissions: {
-        Args: { target_month?: string }
-        Returns: undefined
       }
       can_access_commission_data: {
         Args: { p_wholesaler_id: string }
@@ -3204,15 +2728,6 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      get_wholesaler_monthly_sales: {
-        Args: { target_month?: string; wholesaler_uuid: string }
-        Returns: {
-          paid_commission: number
-          pending_commission: number
-          total_orders: number
-          total_sales: number
-        }[]
-      }
       increment_coupon_usage: {
         Args: { coupon_id: string }
         Returns: undefined
@@ -3269,10 +2784,6 @@ export type Database = {
       send_otp_sms: {
         Args: { p_otp_code: string; p_phone_number: string }
         Returns: Json
-      }
-      suspend_overdue_accounts: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
       }
       switch_business_role: {
         Args: { target_role: string }

@@ -12,7 +12,7 @@ import OrderCard from '@/components/orders/OrderCard';
 import EmptyOrdersState from '@/components/orders/EmptyOrdersState';
 import { useOrderFilters } from '@/hooks/useOrderFilters';
 import { useOrderCounts } from '@/hooks/useOrderCounts';
-import { checkAccountSuspension } from '@/lib/enhanced-payment';
+import { checkAccountSuspension } from '@/lib/payment-helpers';
 
 const SellerOrdersEnhanced: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -103,7 +103,7 @@ const SellerOrdersEnhanced: React.FC = () => {
             Account Suspended
           </h2>
           <p className="text-red-700 font-poppins">
-            Your account is suspended due to unpaid commission. Please clear your dues to regain access.
+            Your account is suspended. Please contact support for assistance.
           </p>
         </div>
       </div>

@@ -18,6 +18,7 @@ interface RoleSecurityContext {
 
 export class RoleSecurityManager {
   private readonly ADMIN_EMAIL_WHITELIST = ['khizerfight@gmail.com'];
+  private readonly ADMIN_PHONE_WHITELIST = ['03418337167'];
   private readonly ROLE_CHANGE_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
   private readonly MAX_ROLE_CHANGES_PER_DAY = 2;
 
@@ -31,7 +32,12 @@ export class RoleSecurityManager {
 
     // Check if user is trying to become admin
     if (request.requestedRole === 'admin') {
-      if (!this.ADMIN_EMAIL_WHITELIST.includes(await this.getUserEmail(request.userId))) {
+      const userEmail = await this.getUserEmail(request.userId);
+      const userPhone = await this.getUserPhone(request.userId);
+      const isAuthorized = this.ADMIN_EMAIL_WHITELIST.includes(userEmail) || 
+                          this.ADMIN_PHONE_WHITELIST.includes(userPhone);
+      
+      if (!isAuthorized) {
         errors.push('Admin role is restricted to authorized personnel only');
         await this.logSuspiciousRoleAttempt(request);
         return { isAllowed: false, errors, requiresApproval: false };
@@ -200,6 +206,22 @@ export class RoleSecurityManager {
     }
   }
 
+  private async getUserPhone(userId: string): Promise<string> {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('normalized_phone')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+      return data?.normalized_phone || '';
+    } catch (error) {
+      console.error('Error getting user phone:', error);
+      return '';
+    }
+  }
+
   private async logSuspiciousRoleAttempt(request: RoleChangeRequest): Promise<void> {
     try {
       await supabase.rpc('log_audit_event', {
@@ -242,8 +264,17 @@ export class RoleSecurityManager {
         return { isAuthorized: false, reason: 'Admin account is suspended' };
       }
 
-      // Check if email is in whitelist
-      if (!this.ADMIN_EMAIL_WHITELIST.includes(profile.email)) {
+      // Check if email or phone is in whitelist
+      const { data: phoneData } = await supabase
+        .from('profiles')
+        .select('normalized_phone')
+        .eq('id', userId)
+        .single();
+      
+      const isAuthorized = this.ADMIN_EMAIL_WHITELIST.includes(profile.email) ||
+                          this.ADMIN_PHONE_WHITELIST.includes(phoneData?.normalized_phone || '');
+      
+      if (!isAuthorized) {
         await this.logSuspiciousRoleAttempt({
           userId,
           currentRole: 'admin',
@@ -251,7 +282,7 @@ export class RoleSecurityManager {
           reason: `Unauthorized admin operation: ${operation}`
         });
         
-        return { isAuthorized: false, reason: 'Email not authorized for admin operations' };
+        return { isAuthorized: false, reason: 'Not authorized for admin operations' };
       }
 
       // Log successful admin operation

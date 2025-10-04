@@ -52,7 +52,6 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
     name: '',
     contact: '',
     address: '',
-    postal_code: '',
     city_id: '',
     logo: ''
   });
@@ -92,7 +91,6 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
         name: shop.name || '',
         contact: shop.contact || '',
         address: shop.address || '',
-        postal_code: shop.postal_code || '',
         city_id: shop.city_id || '',
         logo: shop.logo || ''
       });
@@ -116,7 +114,7 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
         name: formData.name,
         contact: formData.contact,
         address: formData.address,
-        postal_code: formData.postal_code,
+        postal_code: '',
         city_id: formData.city_id || undefined,
         logo: logoUrl || undefined
       };
@@ -201,17 +199,6 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               placeholder="Enter complete address"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="postal-code" className="font-poppins">Postal Code *</Label>
-            <Input
-              id="postal-code"
-              value={formData.postal_code}
-              onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
-              placeholder="Enter postal code"
               required
             />
           </div>

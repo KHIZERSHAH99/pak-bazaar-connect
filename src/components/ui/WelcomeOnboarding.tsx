@@ -47,10 +47,10 @@ const WelcomeOnboarding: React.FC<WelcomeOnboardingProps> = ({
         },
         {
           icon: <TrendingUp className="h-8 w-8 text-green-600" />,
-          title: 'Create Advertisements',
-          description: 'Promote your business with targeted ads to reach more potential buyers.',
-          action: 'Create Ads',
-          link: '/dashboard/ads'
+          title: 'Manage Orders',
+          description: 'Track and manage your orders efficiently from your dashboard.',
+          action: 'View Orders',
+          link: '/dashboard/wholesaler-orders'
         }
       ];
     } else if (userRole === 'seller') {

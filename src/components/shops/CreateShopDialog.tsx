@@ -25,7 +25,6 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
     name: '',
     contact: '',
     address: '',
-    postal_code: '',
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -52,12 +51,6 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
       newErrors.address = 'Address is required';
     } else if (formData.address.length < 10 || formData.address.length > 500) {
       newErrors.address = 'Address must be between 10 and 500 characters';
-    }
-
-    if (!formData.postal_code.trim()) {
-      newErrors.postal_code = 'Postal code is required';
-    } else if (!/^\d{5}$/.test(formData.postal_code)) {
-      newErrors.postal_code = 'Pakistani postal code must be 5 digits';
     }
 
     setErrors(newErrors);
@@ -125,7 +118,7 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
         name: formData.name.trim(),
         contact: formData.contact.trim(),
         address: formData.address.trim(),
-        postal_code: formData.postal_code.trim(),
+        postal_code: '',
         logo: logoUrl,
       };
 
@@ -156,7 +149,6 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
       name: '',
       contact: '',
       address: '',
-      postal_code: '',
     });
     setLogoFile(null);
     setLogoPreview(null);
@@ -215,21 +207,7 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
               disabled={isSubmitting}
               rows={3}
             />
-            {errors.address && <p className="text-sm text-destructive mt-1">{errors.address}</p>}
-          </div>
-          
-          <div>
-            <Label htmlFor="postal_code">Postal Code *</Label>
-            <Input
-              id="postal_code"
-              name="postal_code"
-              value={formData.postal_code}
-              onChange={handleInputChange}
-              placeholder="5-digit postal code"
-              disabled={isSubmitting}
-              maxLength={5}
-            />
-            {errors.postal_code && <p className="text-sm text-destructive mt-1">{errors.postal_code}</p>}
+            {errors.address && <p className="text-sm text-descriptive mt-1">{errors.address}</p>}
           </div>
           
           <div>

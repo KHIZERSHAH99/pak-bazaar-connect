@@ -82,16 +82,16 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
         },
         {
           icon: <Gift className="h-12 w-12 text-purple-600" />,
-          title: 'Create Promotions',
-          subtitle: 'Boost Your Sales',
-          description: 'Create discount coupons and promotional ads to attract more customers and increase your sales.',
-          action: 'Start Promoting',
-          link: '/dashboard/ads',
+          title: 'Manage Orders',
+          subtitle: 'Track Your Business',
+          description: 'Efficiently manage incoming orders, track deliveries, and grow your wholesale business.',
+          action: 'View Orders',
+          link: '/dashboard/wholesaler-orders',
           benefits: [
-            'Create discount coupons',
-            'Run promotional campaigns',
-            'Target specific customers',
-            'Track promotion performance'
+            'Track all orders',
+            'Update order status',
+            'Communicate with buyers',
+            'Monitor your sales'
           ]
         }
       ];

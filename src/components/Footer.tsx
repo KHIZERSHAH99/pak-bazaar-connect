@@ -34,10 +34,10 @@ const Footer = () => {
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-pakistani_green-600" />
                 <a 
-                  href="mailto:khizercoding.com" 
+                  href="mailto:info@pakbazaarconnect.store" 
                   className="text-sm text-muted-foreground hover:text-pakistani_green-600 transition-colors font-poppins"
                 >
-                  khizercoding.com
+                  info@pakbazaarconnect.store
                 </a>
               </div>
               <div className="flex items-center gap-3">

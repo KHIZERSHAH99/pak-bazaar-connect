@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, MessageSquare, DollarSign, Settings, Eye } from 'lucide-react';
 import { getRoleRequests, approveRoleRequest } from '@/lib/supabase';
@@ -10,6 +11,7 @@ const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('role-requests');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: roleRequests = [], isLoading } = useQuery({
     queryKey: ['role-requests'],
@@ -109,7 +111,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="border rounded-lg p-6 text-center">
                     <h3 className="font-medium mb-4 font-poppins">Wholesaler View</h3>
                     <button
-                      onClick={() => window.open('/dashboard?preview=wholesaler', '_blank')}
+                      onClick={() => navigate('/dashboard/wholesaler-preview')}
                       className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-poppins"
                     >
                       Preview Dashboard
@@ -118,7 +120,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="border rounded-lg p-6 text-center">
                     <h3 className="font-medium mb-4 font-poppins">Seller View</h3>
                     <button
-                      onClick={() => window.open('/dashboard?preview=seller', '_blank')}
+                      onClick={() => navigate('/dashboard/seller-preview')}
                       className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-poppins"
                     >
                       Preview Dashboard

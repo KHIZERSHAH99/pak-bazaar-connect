@@ -40,6 +40,8 @@ import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
 import DashboardAnalytics from '@/pages/dashboard/DashboardAnalytics';
 
 import DashboardBrowseShops from '@/pages/dashboard/DashboardBrowseShops';
+import DashboardWholesalerPreview from '@/pages/dashboard/DashboardWholesalerPreview';
+import DashboardSellerPreview from '@/pages/dashboard/DashboardSellerPreview';
 
 // Seller pages
 import SellerOrders from '@/pages/seller/SellerOrders';
@@ -99,6 +101,8 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
         <Route path="/dashboard/browse-shops" element={<ProtectedRoute requiredRole="seller"><DashboardBrowseShops /></ProtectedRoute>} />
+        <Route path="/dashboard/wholesaler-preview" element={<ProtectedRoute requiredRole="admin"><DashboardWholesalerPreview /></ProtectedRoute>} />
+        <Route path="/dashboard/seller-preview" element={<ProtectedRoute requiredRole="admin"><DashboardSellerPreview /></ProtectedRoute>} />
         
         {/* Redirect old chat route to dashboard */}
         <Route path="/dashboard/chat" element={<Navigate to="/dashboard" replace />} />

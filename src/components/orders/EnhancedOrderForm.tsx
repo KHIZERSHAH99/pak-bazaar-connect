@@ -13,6 +13,7 @@ import { getPaymentMethodsForShop } from '@/lib/payment-methods';
 import { getProductById } from '@/lib/products';
 import { PaymentMethodInfo, PaymentMethod } from '@/lib/types';
 import { calculateShippingCost, ShippingCalculation } from '@/lib/shipping';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface EnhancedOrderFormProps {
   shopId: string;
@@ -33,6 +34,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   productId,
   productWeight = 0
 }) => {
+  const { t } = useLanguage();
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodInfo | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('bank_transfer');
   const [screenshot, setScreenshot] = useState<File | null>(null);
@@ -232,23 +234,23 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           <div className="space-y-2 p-4 border border-green-200 rounded-lg bg-gray-50">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="h-5 w-5 text-green-600" />
-              <p className="font-medium text-green-800">Bank Transfer Details:</p>
+              <p className="font-medium text-green-800">{t('bankTransferDetails')}:</p>
             </div>
             <div className="space-y-1 text-sm my-[17px]">
               <p className="font-extrabold text-[#000b06] py-px text-base mx-0 px-0">
-                <span className="font-medium">Bank:</span> {paymentMethods.bank_name}
+                <span className="font-medium">{t('bank')}:</span> {paymentMethods.bank_name}
               </p>
               <p className="text-[#000a00] my-0 font-extrabold py-[3px] text-base">
-                <span className="font-medium">Account Number:</span> {paymentMethods.account_number}
+                <span className="font-medium">{t('accountNumber')}:</span> {paymentMethods.account_number}
               </p>
               {paymentMethods.account_title && (
                 <p className="text-[#000a00] my-px py-0 font-extrabold text-base">
-                  <span className="font-medium">Account Title:</span> {paymentMethods.account_title}
+                  <span className="font-medium">{t('accountTitle')}:</span> {paymentMethods.account_title}
                 </p>
               )}
             </div>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
-              💡 Transfer the exact amount (PKR {grandTotal.toLocaleString()}) and upload the payment screenshot below
+              💡 {t('transferExactAmount').replace('{amount}', grandTotal.toLocaleString())}
             </div>
           </div>
         ) : null;
@@ -257,13 +259,13 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           <div className="space-y-2 p-4 bg-orange-50 border border-orange-200 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="h-5 w-5 text-orange-600" />
-              <p className="font-medium text-orange-800">JazzCash Details:</p>
+              <p className="font-medium text-orange-800">{t('jazzcashDetails')}:</p>
             </div>
             <p className="font-extrabold text-lg py-[6px] text-red-700">
-              <span className="font-medium">Mobile Number:</span> {paymentMethods.jazzcash_number}
+              <span className="font-medium">{t('mobileNumber')}:</span> {paymentMethods.jazzcash_number}
             </p>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
-              💡 Send PKR {grandTotal.toLocaleString()} to this JazzCash number and upload the payment screenshot
+              💡 {t('sendToJazzcash').replace('{amount}', grandTotal.toLocaleString())}
             </div>
           </div>
         ) : null;
@@ -272,13 +274,13 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
           <div className="space-y-2 p-4 bg-teal-50 border border-teal-200 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="h-5 w-5 text-teal-600" />
-              <p className="font-medium text-teal-800">EasyPaisa Details:</p>
+              <p className="font-medium text-teal-800">{t('easypaisaDetails')}:</p>
             </div>
             <p className="text-base py-[11px] font-semibold text-[#00c96f]">
-              <span className="font-medium">Mobile Number:</span> {paymentMethods.easypaisa_number}
+              <span className="font-medium">{t('mobileNumber')}:</span> {paymentMethods.easypaisa_number}
             </p>
             <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
-              💡 Send PKR {grandTotal.toLocaleString()} to this EasyPaisa number and upload the payment screenshot
+              💡 {t('sendToEasypaisa').replace('{amount}', grandTotal.toLocaleString())}
             </div>
           </div>
         ) : null;
@@ -294,18 +296,18 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="font-poppins">Create Order - {resolvedShopName}</CardTitle>
+        <CardTitle className="font-poppins">{t('createOrder')} - {resolvedShopName}</CardTitle>
         <div className="space-y-1">
           <p className="text-base text-muted-foreground">
-            Product Total: PKR {totalAmount.toLocaleString()}
+            {t('productTotal')}: PKR {totalAmount.toLocaleString()}
           </p>
           {shippingInfo && (
             <p className="text-base text-muted-foreground">
-              Shipping: PKR {shippingInfo.cost.toLocaleString()} ({shippingInfo.message})
+              {t('shipping')}: PKR {shippingInfo.cost.toLocaleString()} ({shippingInfo.message})
             </p>
           )}
           <p className="text-xl font-bold text-primary">
-            Grand Total: PKR {(totalAmount + (shippingInfo?.cost || 0)).toLocaleString()}
+            {t('grandTotal')}: PKR {(totalAmount + (shippingInfo?.cost || 0)).toLocaleString()}
           </p>
         </div>
       </CardHeader>
@@ -313,21 +315,21 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Buyer Information */}
           <div className="space-y-4">
-            <h3 className="font-semibold font-poppins">Buyer Information</h3>
+            <h3 className="font-semibold font-poppins">{t('buyerInformation')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <SecureOrderFormInput
                 id="buyerName"
-                label="Full Name"
+                label={t('fullName')}
                 value={buyerInfo.name}
                 onChange={(value) => setBuyerInfo({ ...buyerInfo, name: value })}
-                placeholder="Enter your full name"
+                placeholder={t('enterFullName')}
                 required
                 validation="text"
                 maxLength={100}
               />
               <SecureOrderFormInput
                 id="buyerPhone"
-                label="Phone Number"
+                label={t('pakistaniMobileNumber')}
                 value={buyerInfo.phone}
                 onChange={(value) => setBuyerInfo({ ...buyerInfo, phone: value })}
                 type="phone"
@@ -338,7 +340,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
               />
               <SecureOrderFormInput
                 id="buyerCity"
-                label="City"
+                label={t('city')}
                 value={buyerInfo.city}
                 onChange={(value) => setBuyerInfo({ ...buyerInfo, city: value })}
                 placeholder="e.g., Karachi, Lahore"
@@ -349,11 +351,11 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             </div>
             <SecureOrderFormInput
               id="buyerAddress"
-              label="Street Address"
+              label={t('streetAddress')}
               value={buyerInfo.address}
               onChange={(value) => setBuyerInfo({ ...buyerInfo, address: value })}
               type="textarea"
-              placeholder="House/Flat no., Street, Area"
+              placeholder={t('enterStreetAddress')}
               required
               validation="description"
               maxLength={500}
@@ -365,16 +367,16 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             <div className="space-y-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <h3 className="font-semibold font-poppins flex items-center gap-2">
                 <Truck className="h-4 w-4" />
-                Shipping Details
+                {t('shippingDetails')}
               </h3>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Shipping Cost:</span>
+                  <span className="text-muted-foreground">{t('shippingCost')}:</span>
                   <span className="font-semibold">PKR {shippingInfo.cost.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Estimated Delivery:</span>
-                  <span className="font-semibold">{shippingInfo.delivery_days} days</span>
+                  <span className="text-muted-foreground">{t('estimatedDelivery')}:</span>
+                  <span className="font-semibold">{shippingInfo.delivery_days} {t('days')}</span>
                 </div>
                 <p className="text-xs text-blue-700">{shippingInfo.message}</p>
               </div>
@@ -383,13 +385,13 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
           {/* Payment Method Selection */}
           <div className="space-y-4">
-            <h3 className="font-semibold font-poppins">Payment Method</h3>
+            <h3 className="font-semibold font-poppins">{t('paymentMethod')}</h3>
             
             {isLoadingPaymentMethods ? (
               <div className="p-4 bg-muted rounded-lg flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <p className="text-sm text-muted-foreground font-poppins">
-                  Loading payment methods...
+                  {t('loadingPaymentMethods')}
                 </p>
               </div>
             ) : paymentMethodsError ? (
@@ -397,7 +399,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
                 <div className="flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-red-600" />
                   <p className="text-sm text-red-800 font-poppins">
-                    Error: {paymentMethodsError}
+                    {t('error')}: {paymentMethodsError}
                   </p>
                 </div>
               </div>
@@ -406,7 +408,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
                 <div className="flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-yellow-600" />
                   <p className="text-sm text-yellow-800 font-poppins">
-                    No payment methods available for this shop. Please contact the wholesaler to set up payment methods.
+                    {t('noPaymentMethods')}
                   </p>
                 </div>
               </div>
@@ -414,7 +416,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
               <>
                 <Select value={selectedMethod} onValueChange={(value: PaymentMethod) => setSelectedMethod(value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select payment method" />
+                    <SelectValue placeholder={t('selectPaymentMethod')} />
                   </SelectTrigger>
                   <SelectContent>
                     {paymentMethods?.bank_name && paymentMethods?.account_number && (
@@ -451,15 +453,15 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
 
           {/* Payment Screenshot Upload */}
           <div className="space-y-4">
-            <h3 className="font-semibold font-poppins">Payment Screenshot *</h3>
+            <h3 className="font-semibold font-poppins">{t('paymentScreenshot')} *</h3>
             {!screenshot ? (
               <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
                 <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <Label htmlFor="screenshot" className="cursor-pointer">
                   <span className="text-primary hover:text-primary/80">
-                    Click to upload payment screenshot
+                    {t('clickToUpload')}
                   </span>
-                  <p className="text-sm text-muted-foreground mt-1">PNG, JPG up to 100KB</p>
+                  <p className="text-sm text-muted-foreground mt-1">{t('maxFileSize').replace('{size}', '2MB')}</p>
                 </Label>
                 <Input 
                   id="screenshot" 
@@ -472,14 +474,14 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             ) : (
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-sm font-medium text-foreground">✓ Payment screenshot uploaded</p>
+                  <p className="text-sm font-medium text-foreground">✓ {t('paymentScreenshot')} uploaded</p>
                   <Button 
                     type="button" 
                     variant="outline" 
                     size="sm" 
                     onClick={removeScreenshot}
                   >
-                    Remove
+                    {t('delete')}
                   </Button>
                 </div>
                 {screenshotPreview && (
@@ -504,14 +506,14 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
               onClick={onCancel} 
               className="flex-1"
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button 
               type="submit" 
               disabled={isSubmitting || !hasAnyPaymentMethod} 
               className="flex-1"
             >
-              {isSubmitting ? 'Creating Order...' : 'Create Order'}
+              {isSubmitting ? t('creatingOrder') : t('createOrder')}
             </Button>
           </div>
         </form>

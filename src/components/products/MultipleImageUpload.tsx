@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload, X, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { MAX_PRODUCT_IMAGE_SIZE_KB } from '@/lib/constants';
 
 interface ImagePreview {
   id: string;
@@ -42,10 +43,10 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
     const newImages: ImagePreview[] = [];
     
     files.forEach(file => {
-      if (file.size > 100 * 1024) {
+      if (file.size > MAX_PRODUCT_IMAGE_SIZE_KB * 1024) {
         toast({
           title: 'File too large',
-          description: `${file.name} is too large. Maximum size is 100KB`,
+          description: `${file.name} is too large. Maximum size is ${MAX_PRODUCT_IMAGE_SIZE_KB / 1024}MB`,
           variant: 'destructive',
         });
         return;
@@ -171,7 +172,7 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
       )}
       
       <p className="text-xs text-muted-foreground">
-        Each image must be less than 100KB. The first image will be used as the primary product image.
+        Each image must be less than 5MB. The first image will be used as the primary product image.
       </p>
     </div>
   );

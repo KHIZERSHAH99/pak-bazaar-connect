@@ -74,8 +74,8 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
     // Check file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       toast({
-        title: 'File too large',
-        description: 'Logo image must be less than 5MB',
+        title: t('fileTooLarge'),
+        description: t('logoMaxSize'),
         variant: 'destructive',
       });
       return;
@@ -84,8 +84,8 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
     // Check file type
     if (!file.type.startsWith('image/')) {
       toast({
-        title: 'Invalid file type',
-        description: 'Logo must be an image file',
+        title: t('invalidFileType'),
+        description: t('logoMustBeImage'),
         variant: 'destructive',
       });
       return;
@@ -127,8 +127,8 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
       await createShop(shopData);
       
       toast({
-        title: 'Success',
-        description: 'Shop created successfully!',
+        title: t('success'),
+        description: t('shopCreatedSuccessfully'),
       });
       
       resetForm();
@@ -137,8 +137,8 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
     } catch (error: any) {
       console.error('Failed to create shop:', error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to create shop. Please try again.',
+        title: t('error'),
+        description: error.message || t('failedToCreateShop'),
         variant: 'destructive',
       });
     } finally {
@@ -173,20 +173,20 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="name">Shop Name *</Label>
+            <Label htmlFor="name">{t('shopName')} *</Label>
             <Input
               id="name"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Enter shop name"
+              placeholder={t('enterShopName')}
               disabled={isSubmitting}
             />
             {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
           </div>
           
           <div>
-            <Label htmlFor="contact">Contact Number *</Label>
+            <Label htmlFor="contact">{t('contactNumber')} *</Label>
             <Input
               id="contact"
               name="contact"
@@ -199,13 +199,13 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
           </div>
           
           <div>
-            <Label htmlFor="address">Address *</Label>
+            <Label htmlFor="address">{t('address')} *</Label>
             <Textarea
               id="address"
               name="address"
               value={formData.address}
               onChange={handleInputChange}
-              placeholder="Enter complete shop address"
+              placeholder={t('enterCompleteAddress')}
               disabled={isSubmitting}
               rows={3}
             />
@@ -213,7 +213,7 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
           </div>
           
           <div>
-            <Label htmlFor="logo">Shop Logo (optional, max 5MB)</Label>
+            <Label htmlFor="logo">{t('shopLogo')}</Label>
             <div className="mt-1">
               <Input
                 id="logo"
@@ -241,7 +241,7 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
               onClick={handleClose}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button 
               type="submit"
@@ -249,11 +249,11 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
+                  <Loader2 className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2 animate-spin" />
+                  {t('creating')}
                 </>
               ) : (
-                'Create Shop'
+                t('createShop')
               )}
             </Button>
           </DialogFooter>

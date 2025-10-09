@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Eye, MessageSquare, ShoppingCart, TrendingUp, Users, Clock, DollarSign } from 'lucide-react';
 import { getSellerAnalytics } from '@/lib/analytics';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AnalyticsData {
@@ -28,6 +29,7 @@ interface OrdersByStatus {
 
 const ComprehensiveAnalytics: React.FC = () => {
   const { profile } = useAuth();
+  const { t } = useLanguage();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState('7d');

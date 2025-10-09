@@ -129,8 +129,8 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
       await updateShop(shop.id, cleanedUpdates);
 
       toast({
-        title: "Shop updated",
-        description: "Your shop information has been updated successfully.",
+        title: t('shopUpdated'),
+        description: t('shopUpdatedSuccessfully'),
       });
 
       onShopUpdated();
@@ -138,8 +138,8 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
     } catch (error: any) {
       console.error('Error updating shop:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to update shop. Please try again.",
+        title: t('error'),
+        description: error.message || t('failedToUpdateShop'),
         variant: "destructive",
       });
     } finally {
@@ -152,8 +152,8 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
         toast({
-          title: "File too large",
-          description: "Please select an image smaller than 5MB.",
+          title: t('fileTooLarge'),
+          description: t('selectImageSmaller'),
           variant: "destructive",
         });
         return;
@@ -173,43 +173,43 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="shop-name" className="font-poppins">Shop Name *</Label>
+            <Label htmlFor="shop-name" className="font-poppins">{t('shopName')} *</Label>
             <Input
               id="shop-name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter shop name"
+              placeholder={t('enterShopName')}
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="contact" className="font-poppins">Contact Number *</Label>
+            <Label htmlFor="contact" className="font-poppins">{t('contactNumber')} *</Label>
             <Input
               id="contact"
               value={formData.contact}
               onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-              placeholder="Enter contact number"
+              placeholder={t('contactNumber')}
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="address" className="font-poppins">Address *</Label>
+            <Label htmlFor="address" className="font-poppins">{t('address')} *</Label>
             <Textarea
               id="address"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              placeholder="Enter complete address"
+              placeholder={t('enterCompleteAddress')}
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="city" className="font-poppins">City</Label>
+            <Label htmlFor="city" className="font-poppins">{t('city')}</Label>
             <Select value={formData.city_id} onValueChange={(value) => setFormData({ ...formData, city_id: value })}>
               <SelectTrigger>
-                <SelectValue placeholder="Select city" />
+                <SelectValue placeholder={t('selectCity')} />
               </SelectTrigger>
               <SelectContent>
                 {cities.map((city) => (
@@ -222,13 +222,13 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
           </div>
 
           <div>
-            <Label htmlFor="logo" className="font-poppins">Shop Logo</Label>
+            <Label htmlFor="logo" className="font-poppins">{t('shopLogo')}</Label>
             <Input
               id="logo"
               type="file"
               accept="image/*"
               onChange={handleLogoChange}
-              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pakistani_green-50 file:text-pakistani_green-700 hover:file:bg-pakistani_green-100"
+              className="file:mr-4 rtl:file:mr-0 rtl:file:ml-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pakistani_green-50 file:text-pakistani_green-700 hover:file:bg-pakistani_green-100"
             />
             {formData.logo && (
               <div className="mt-2">
@@ -249,14 +249,14 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
               disabled={isSubmitting}
               className="flex-1 font-poppins"
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
               className="flex-1 bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
             >
-              {isSubmitting ? 'Updating...' : 'Update Shop'}
+              {isSubmitting ? t('updating') : t('updateShop')}
             </Button>
           </div>
         </form>

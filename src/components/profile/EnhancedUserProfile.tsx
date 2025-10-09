@@ -94,7 +94,7 @@ const EnhancedUserProfile: React.FC = () => {
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
                   {loading ? '...' : orderStats.totalOrders}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 font-poppins">Total Orders</p>
+                <p className="text-gray-600 dark:text-gray-300 font-poppins">{t('totalOrders')}</p>
               </CardContent>
             </Card>
 
@@ -108,7 +108,7 @@ const EnhancedUserProfile: React.FC = () => {
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
                   {loading ? '...' : orderStats.completedOrders}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 font-poppins">Completed</p>
+                <p className="text-gray-600 dark:text-gray-300 font-poppins">{t('completed')}</p>
               </CardContent>
             </Card>
 
@@ -122,7 +122,7 @@ const EnhancedUserProfile: React.FC = () => {
                 <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="text-lg px-3 py-1 font-poppins capitalize">
                   {profile.role}
                 </Badge>
-                <p className="text-gray-600 dark:text-gray-300 font-poppins mt-2">Account Type</p>
+                <p className="text-gray-600 dark:text-gray-300 font-poppins mt-2">{t('accountType')}</p>
               </CardContent>
             </Card>
           </div>

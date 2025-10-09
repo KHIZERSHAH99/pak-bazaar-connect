@@ -16,6 +16,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { Order, OrderStatus } from '@/lib/types';
 import { 
@@ -31,6 +32,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 const EnhancedOrderManagement: React.FC = () => {
   const { profile } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [analytics, setAnalytics] = useState<any>(null);
@@ -69,8 +71,8 @@ const EnhancedOrderManagement: React.FC = () => {
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
-        title: "Error",
-        description: "Failed to fetch orders. Please try again.",
+        title: t('error'),
+        description: t('failedToFetchOrders'),
         variant: "destructive"
       });
     } finally {
@@ -121,16 +123,16 @@ const EnhancedOrderManagement: React.FC = () => {
     try {
       await updateOrderStatusEnhanced(orderId, newStatus);
       toast({
-        title: "Status Updated",
-        description: `Order status changed to ${newStatus}`,
+        title: t('statusUpdated'),
+        description: t('orderStatusChanged').replace('{status}', newStatus),
       });
       fetchOrders();
       fetchAnalytics();
     } catch (error) {
       console.error('Error updating status:', error);
       toast({
-        title: "Error",
-        description: "Failed to update order status",
+        title: t('error'),
+        description: t('failedToUpdateStatus'),
         variant: "destructive"
       });
     }

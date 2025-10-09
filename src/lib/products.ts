@@ -40,9 +40,9 @@ export const createProduct = async (productData: {
       .from('shops')
       .select('owner_id')
       .eq('id', productData.shop_id)
-      .single();
+      .maybeSingle();
 
-    if (shopError) {
+    if (shopError || !shop) {
       throw new Error('Failed to verify shop ownership');
     }
 
@@ -97,7 +97,7 @@ export const getProductsByShop = async (shopId: string): Promise<Product[]> => {
 
     // Get shop and category info separately
     const [shopData, categoryData] = await Promise.all([
-      supabase.from('shops').select('*').eq('id', shopId).single(),
+      supabase.from('shops').select('*').eq('id', shopId).maybeSingle(),
       supabase.from('categories').select('*')
     ]);
 
@@ -191,9 +191,9 @@ export const updateProduct = async (
       .from('products')
       .select('*')
       .eq('id', productId)
-      .single();
+      .maybeSingle();
 
-    if (productError) {
+    if (productError || !product) {
       throw new Error('Product not found');
     }
 
@@ -202,9 +202,9 @@ export const updateProduct = async (
       .from('shops')
       .select('owner_id')
       .eq('id', product.shop_id)
-      .single();
+      .maybeSingle();
 
-    if (shopError) {
+    if (shopError || !shop) {
       throw new Error('Shop not found');
     }
 
@@ -244,9 +244,9 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       .from('products')
       .select('*')
       .eq('id', productId)
-      .single();
+      .maybeSingle();
 
-    if (productError) {
+    if (productError || !product) {
       throw new Error('Product not found');
     }
 
@@ -255,9 +255,9 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       .from('shops')
       .select('owner_id')
       .eq('id', product.shop_id)
-      .single();
+      .maybeSingle();
 
-    if (shopError) {
+    if (shopError || !shop) {
       throw new Error('Shop not found');
     }
 
@@ -351,8 +351,8 @@ export const getProductById = async (productId: string): Promise<Product | null>
 
     // Get related data separately
     const [shopData, categoryData, specsData, imagesData, pricingData] = await Promise.all([
-      supabase.from('shops').select('*').eq('id', data.shop_id).single(),
-      data.category_id ? supabase.from('categories').select('*').eq('id', data.category_id).single() : null,
+      supabase.from('shops').select('*').eq('id', data.shop_id).maybeSingle(),
+      data.category_id ? supabase.from('categories').select('*').eq('id', data.category_id).maybeSingle() : null,
       supabase.from('product_specifications').select('*').eq('product_id', productId),
       supabase.from('product_images').select('*').eq('product_id', productId),
       supabase.from('product_pricing_tiers').select('*').eq('product_id', productId)

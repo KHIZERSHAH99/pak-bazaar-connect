@@ -24,7 +24,11 @@ export const createShop = async (shopData: {
         owner_id: user.id,
       })
       .select('*')
-      .single();
+      .maybeSingle();
+
+    if (!data) {
+      throw new Error('Failed to create shop - no data returned');
+    }
 
     if (error) {
       console.error('Shop creation error:', error);
@@ -91,14 +95,11 @@ export const getShopById = async (shopId: string): Promise<Shop | null> => {
       .from('shops')
       .select('*')
       .eq('id', shopId)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return null; // Shop not found
-      }
       console.error('Error fetching shop by ID:', error);
-      throw error;
+      return null;
     }
 
     return data as Shop;
@@ -130,9 +131,9 @@ export const updateShop = async (
       .from('shops')
       .select('owner_id')
       .eq('id', shopId)
-      .single();
+      .maybeSingle();
 
-    if (shopError) {
+    if (shopError || !shop) {
       throw new Error('Shop not found');
     }
 
@@ -145,7 +146,11 @@ export const updateShop = async (
       .update(updates)
       .eq('id', shopId)
       .select('*')
-      .single();
+      .maybeSingle();
+
+    if (!data) {
+      throw new Error('Failed to update shop - no data returned');
+    }
 
     if (error) {
       console.error('Shop update error:', error);
@@ -171,9 +176,9 @@ export const deleteShop = async (shopId: string): Promise<void> => {
       .from('shops')
       .select('owner_id')
       .eq('id', shopId)
-      .single();
+      .maybeSingle();
 
-    if (shopError) {
+    if (shopError || !shop) {
       throw new Error('Shop not found');
     }
 

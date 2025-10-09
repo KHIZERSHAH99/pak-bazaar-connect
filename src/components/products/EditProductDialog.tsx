@@ -358,33 +358,18 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="stock_quantity">Stock Quantity</Label>
-                  <Input
-                    id="stock_quantity"
-                    name="stock_quantity"
-                    type="number"
-                    min="0"
-                    value={formData.stock_quantity}
-                    onChange={handleInputChange}
-                    placeholder="Available quantity"
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="units_per_package">Units per Package</Label>
-                  <Input
-                    id="units_per_package"
-                    name="units_per_package"
-                    type="number"
-                    min="1"
-                    value={formData.units_per_package}
-                    onChange={handleInputChange}
-                    placeholder="1"
-                    disabled={isSubmitting}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="units_per_package">Units per Package</Label>
+                <Input
+                  id="units_per_package"
+                  name="units_per_package"
+                  type="number"
+                  min="1"
+                  value={formData.units_per_package}
+                  onChange={handleInputChange}
+                  placeholder="1"
+                  disabled={isSubmitting}
+                />
               </div>
 
               <div>

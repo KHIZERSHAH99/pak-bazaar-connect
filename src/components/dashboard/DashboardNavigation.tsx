@@ -12,7 +12,8 @@ import {
   Settings,
   Store,
   FileText,
-  BarChart3
+  BarChart3,
+  Truck
 } from 'lucide-react';
 
 interface NavItem {
@@ -65,7 +66,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
       { 
         name: 'Shipping', 
         path: '/dashboard/shipping', 
-        icon: <Package className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
+        icon: <Truck className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'Orders', 

@@ -20,7 +20,7 @@ interface FileUploadProps {
 const FileUpload: React.FC<FileUploadProps> = ({
   onFileSelect,
   accept = "image/*",
-  maxSize = 1024, // 1MB default for product images
+  maxSize = 5120, // 5MB default for product images
   currentFile = null,
   preview = true,
   disabled = false,

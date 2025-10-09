@@ -11,7 +11,8 @@ export const GUEST_USER_UUID = '00000000-0000-0000-0000-000000000000';
  * File upload constants
  */
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'] as const;
-export const MAX_IMAGE_SIZE_KB = 1024; // 1MB
+export const MAX_PRODUCT_IMAGE_SIZE_KB = 5120; // 5MB for product images
+export const MAX_PROFILE_IMAGE_SIZE_KB = 1024; // 1MB for profile/logo images
 export const MAX_IMAGES_PER_PRODUCT = 5;
 
 /**

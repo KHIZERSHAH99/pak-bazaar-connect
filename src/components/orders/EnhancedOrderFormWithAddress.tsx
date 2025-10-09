@@ -313,8 +313,8 @@ export const EnhancedOrderFormWithAddress = ({
                     onValueChange={(value) => setFormData({ ...formData, city: value })}
                     required
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select city" />
+                    <SelectTrigger className="border-2">
+                      <SelectValue placeholder="Select city (required for shipping)" />
                     </SelectTrigger>
                     <SelectContent>
                       {filteredCities.map(city => (
@@ -324,6 +324,9 @@ export const EnhancedOrderFormWithAddress = ({
                       ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    City is required to calculate accurate shipping costs
+                  </p>
                 </div>
               </div>
 

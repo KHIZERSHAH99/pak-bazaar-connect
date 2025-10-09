@@ -232,13 +232,6 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 basePrice={currentUnitPrice}
               />
             )}
-
-              {product.lead_time_days && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Truck className="h-4 w-4" />
-                  <span>Lead time: {product.lead_time_days} days</span>
-                </div>
-              )}
             </div>
 
             <Separator />

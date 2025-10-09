@@ -33,6 +33,7 @@ import Analytics from '@/pages/Analytics';
 import DashboardSellerDashboard from '@/pages/dashboard/DashboardSellerDashboard';
 import DashboardShops from '@/pages/dashboard/DashboardShops';
 import DashboardProducts from '@/pages/dashboard/DashboardProducts';
+import DashboardShipping from '@/pages/dashboard/DashboardShipping';
 import DashboardOrders from '@/pages/dashboard/DashboardOrders';
 import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrders';
 import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
@@ -95,6 +96,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/seller-dashboard" element={<ProtectedRoute><DashboardSellerDashboard /></ProtectedRoute>} />
         <Route path="/dashboard/shops" element={<ProtectedRoute requiredRole="wholesaler"><DashboardShops /></ProtectedRoute>} />
         <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="wholesaler"><DashboardProducts /></ProtectedRoute>} />
+        <Route path="/dashboard/shipping" element={<ProtectedRoute requiredRole="wholesaler"><DashboardShipping /></ProtectedRoute>} />
         <Route path="/dashboard/orders" element={<ProtectedRoute><DashboardOrders /></ProtectedRoute>} />
         <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><DashboardSellerOrders /></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />

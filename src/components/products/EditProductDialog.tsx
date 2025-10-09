@@ -46,7 +46,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
     origin_country: '',
     package_weight: '',
     package_dimensions: '',
-    lead_time_days: '',
     stock_quantity: '',
     warranty_info: '',
     certifications: [] as string[],
@@ -78,7 +77,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         origin_country: (product as any).origin_country || '',
         package_weight: (product as any).package_weight?.toString() || '',
         package_dimensions: (product as any).package_dimensions || '',
-        lead_time_days: (product as any).lead_time_days?.toString() || '',
         stock_quantity: (product as any).stock_quantity?.toString() || '',
         warranty_info: (product as any).warranty_info || '',
         certifications: (product as any).certifications || [],
@@ -158,7 +156,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         origin_country: formData.origin_country || null,
         package_weight: formData.package_weight ? parseFloat(formData.package_weight) : null,
         package_dimensions: formData.package_dimensions || null,
-        lead_time_days: formData.lead_time_days ? parseInt(formData.lead_time_days) : null,
         stock_quantity: formData.stock_quantity ? parseInt(formData.stock_quantity) : null,
         warranty_info: formData.warranty_info || null,
         certifications: formData.certifications.length > 0 ? formData.certifications : null,
@@ -220,7 +217,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       origin_country: '',
       package_weight: '',
       package_dimensions: '',
-      lead_time_days: '',
       stock_quantity: '',
       warranty_info: '',
       certifications: [],
@@ -348,15 +344,15 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lead_time_days">Lead Time (Days)</Label>
+                  <Label htmlFor="stock_quantity">Stock Quantity</Label>
                   <Input
-                    id="lead_time_days"
-                    name="lead_time_days"
+                    id="stock_quantity"
+                    name="stock_quantity"
                     type="number"
-                    min="1"
-                    value={formData.lead_time_days}
+                    min="0"
+                    value={formData.stock_quantity}
                     onChange={handleInputChange}
-                    placeholder="e.g., 7"
+                    placeholder="e.g., 100"
                     disabled={isSubmitting}
                   />
                 </div>

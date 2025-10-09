@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +9,7 @@ import { Package } from 'lucide-react';
 
 const ShippingManagement: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [shops, setShops] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +38,7 @@ const ShippingManagement: React.FC = () => {
   if (loading) {
     return (
       <Card>
-        <CardContent className="p-6">Loading shops...</CardContent>
+        <CardContent className="p-6">{t('loading')}</CardContent>
       </Card>
     );
   }
@@ -48,7 +50,7 @@ const ShippingManagement: React.FC = () => {
           <div className="text-center py-8">
             <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">
-              You don't have any shops yet. Create a shop first to configure shipping.
+              {t('noShopsYet')}
             </p>
           </div>
         </CardContent>
@@ -63,7 +65,7 @@ const ShippingManagement: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Shipping Configuration</CardTitle>
+        <CardTitle>{t('shippingConfiguration')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue={shops[0].id}>

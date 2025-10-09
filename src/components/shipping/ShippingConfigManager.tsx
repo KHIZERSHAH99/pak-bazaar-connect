@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,6 +38,7 @@ const MAJOR_CITIES = [
 ];
 
 const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId }) => {
+  const { t } = useLanguage();
   const [config, setConfig] = useState<ShippingConfig>({
     shop_id: shopId,
     shipping_method: 'flat_rate',
@@ -102,16 +104,16 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
       }
 
       toast({
-        title: "Success",
-        description: "Shipping configuration saved successfully",
+        title: t('success'),
+        description: t('saveShippingConfig'),
       });
 
       await fetchShippingConfig();
     } catch (error: any) {
       console.error('Error saving shipping config:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to save shipping configuration",
+        title: t('error'),
+        description: error.message || t('error'),
         variant: "destructive",
       });
     } finally {
@@ -120,7 +122,7 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
   };
 
   if (loading) {
-    return <Card><CardContent className="p-6">Loading shipping configuration...</CardContent></Card>;
+    return <Card><CardContent className="p-6">{t('loadingShippingConfig')}</CardContent></Card>;
   }
 
   return (
@@ -128,16 +130,16 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Truck className="h-5 w-5" />
-          Shipping Configuration
+          {t('shippingConfiguration')}
         </CardTitle>
         <CardDescription>
-          Configure how shipping costs are calculated for your shop
+          {t('shippingConfigDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Shipping Method Selection */}
         <div className="space-y-2">
-          <Label>Shipping Calculation Method</Label>
+          <Label>{t('shippingMethod')}</Label>
           <Select
             value={config.shipping_method}
             onValueChange={(value: any) => setConfig({ ...config, shipping_method: value })}
@@ -177,7 +179,7 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
         {/* Flat Rate Settings */}
         {(config.shipping_method === 'flat_rate' || config.shipping_method === 'free_above_amount') && (
           <div className="space-y-2">
-            <Label>Flat Shipping Rate (PKR)</Label>
+            <Label>{t('flatRateCost')} (PKR)</Label>
             <Input
               type="number"
               value={config.flat_rate_cost || ''}
@@ -185,14 +187,14 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
               placeholder="150"
             />
             <p className="text-sm text-muted-foreground">
-              Standard shipping cost for all orders
+              {t('flatRate')}
             </p>
           </div>
         )}
 
         {/* Free Shipping Threshold */}
         <div className="space-y-2">
-          <Label>Free Shipping Above (PKR) - Optional</Label>
+          <Label>{t('freeShippingAbove')} (PKR)</Label>
           <Input
             type="number"
             value={config.free_shipping_above || ''}
@@ -200,7 +202,7 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
             placeholder="5000"
           />
           <p className="text-sm text-muted-foreground">
-            Offer free shipping for orders above this amount
+            {t('freeAboveAmount')}
           </p>
         </div>
 
@@ -210,24 +212,22 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
             <h4 className="font-medium">Weight-Based Pricing</h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Base Rate (PKR)</Label>
+                <Label>{t('baseRate')} (PKR)</Label>
                 <Input
                   type="number"
                   value={config.base_weight_rate || ''}
                   onChange={(e) => setConfig({ ...config, base_weight_rate: parseFloat(e.target.value) })}
                   placeholder="50"
                 />
-                <p className="text-xs text-muted-foreground">Starting cost</p>
               </div>
               <div className="space-y-2">
-                <Label>Per KG Rate (PKR)</Label>
+                <Label>{t('perKgRate')} (PKR)</Label>
                 <Input
                   type="number"
                   value={config.additional_weight_rate || ''}
                   onChange={(e) => setConfig({ ...config, additional_weight_rate: parseFloat(e.target.value) })}
                   placeholder="20"
                 />
-                <p className="text-xs text-muted-foreground">Cost per kilogram</p>
               </div>
             </div>
             <Alert>
@@ -262,7 +262,7 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
 
         {/* Estimated Delivery */}
         <div className="space-y-2">
-          <Label>Estimated Delivery Days</Label>
+          <Label>{t('estimatedDeliveryDays')}</Label>
           <Input
             type="number"
             value={config.estimated_delivery_days}
@@ -278,10 +278,10 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
             <div className="space-y-1">
               <Label className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-orange-500" />
-                Express Shipping Option
+                {t('expressShipping')}
               </Label>
               <p className="text-sm text-muted-foreground">
-                Offer faster delivery for an additional fee
+                {t('expressShipping')}
               </p>
             </div>
             <Switch
@@ -293,7 +293,7 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
           {config.express_shipping_available && (
             <div className="grid grid-cols-2 gap-4 pt-2">
               <div className="space-y-2">
-                <Label>Express Cost (PKR)</Label>
+                <Label>{t('expressCost')} (PKR)</Label>
                 <Input
                   type="number"
                   value={config.express_shipping_cost || ''}
@@ -302,7 +302,7 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
                 />
               </div>
               <div className="space-y-2">
-                <Label>Express Delivery Days</Label>
+                <Label>{t('expressDeliveryDays')}</Label>
                 <Input
                   type="number"
                   value={config.express_delivery_days}
@@ -318,9 +318,9 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
         {/* Active Status */}
         <div className="flex items-center justify-between p-4 border rounded-lg">
           <div className="space-y-1">
-            <Label>Enable Shipping Configuration</Label>
+            <Label>{t('enableShipping')}</Label>
             <p className="text-sm text-muted-foreground">
-              Activate this shipping configuration for your shop
+              {t('enableShipping')}
             </p>
           </div>
           <Switch
@@ -337,7 +337,7 @@ const ShippingConfigManager: React.FC<ShippingConfigManagerProps> = ({ shopId })
           size="lg"
         >
           <Save className="h-4 w-4 mr-2" />
-          {saving ? 'Saving...' : 'Save Shipping Configuration'}
+          {saving ? t('saving') : t('saveShippingConfig')}
         </Button>
       </CardContent>
     </Card>

@@ -243,7 +243,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="basic" className="flex items-center gap-2">
                 <Info className="w-3 h-3" />
                 <span className="hidden sm:inline">Basic</span>
@@ -263,10 +263,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
               <TabsTrigger value="pricing" className="flex items-center gap-2">
                 <DollarSign className="w-3 h-3" />
                 <span className="hidden sm:inline">Pricing</span>
-              </TabsTrigger>
-              <TabsTrigger value="tiers" className="flex items-center gap-2">
-                <TrendingDown className="w-3 h-3" />
-                <span className="hidden sm:inline">Tiers</span>
               </TabsTrigger>
             </TabsList>
             
@@ -428,7 +424,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
               />
             </TabsContent>
             
-            <TabsContent value="pricing" className="space-y-4">
+            <TabsContent value="pricing" className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="price">Price (PKR) *</Label>
@@ -527,6 +523,18 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
                   disabled={isSubmitting}
                 />
               </div>
+
+              {product && (
+                <div className="border-t pt-6 mt-6">
+                  <PricingTierManager
+                    productId={product.id}
+                    basePrice={parseFloat(formData.price) || product.price}
+                    onUpdate={() => {
+                      console.log('Pricing tiers updated');
+                    }}
+                  />
+                </div>
+              )}
             </TabsContent>
 
             {/* Variations Tab */}
@@ -552,25 +560,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
                 <div className="text-center py-8 text-muted-foreground">
                   <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
                   <p>Save the product first to manage variations and size charts</p>
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Pricing Tiers Tab */}
-            <TabsContent value="tiers" className="space-y-4">
-              {product ? (
-                <PricingTierManager
-                  productId={product.id}
-                  basePrice={parseFloat(formData.price) || product.price}
-                  onUpdate={() => {
-                    // Just show a toast, don't trigger form submission
-                    console.log('Pricing tiers updated');
-                  }}
-                />
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <TrendingDown className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p>Save the product first to manage pricing tiers</p>
                 </div>
               )}
             </TabsContent>

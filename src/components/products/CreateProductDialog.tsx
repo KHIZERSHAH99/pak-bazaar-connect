@@ -295,7 +295,7 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-6 h-8 sm:h-10">
+            <TabsList className="grid w-full grid-cols-5 h-8 sm:h-10">
               <TabsTrigger value="basic" className="text-xs px-1 sm:px-2 sm:text-sm">
                 <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
                 <span className="hidden sm:inline">Basic</span>
@@ -315,10 +315,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
               <TabsTrigger value="variations" className="text-xs px-1 sm:px-2 sm:text-sm">
                 <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
                 <span className="hidden sm:inline">Variations</span>
-              </TabsTrigger>
-              <TabsTrigger value="tiers" className="text-xs px-1 sm:px-2 sm:text-sm">
-                <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
-                <span className="hidden sm:inline">Tiers</span>
               </TabsTrigger>
             </TabsList>
             
@@ -508,12 +504,13 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
               />
             </TabsContent>
             
-            <TabsContent value="pricing" className="space-y-4">
+
+            <TabsContent value="pricing" className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="price">Price (PKR) *</Label>
+                  <Label htmlFor="base_price">Price (PKR) *</Label>
                   <Input
-                    id="price"
+                    id="base_price"
                     name="price"
                     type="number"
                     step="0.01"
@@ -527,9 +524,9 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                 </div>
 
                 <div>
-                  <Label htmlFor="moq">Minimum Order Quantity (MOQ)</Label>
+                  <Label htmlFor="pricing_moq">Minimum Order Quantity (MOQ)</Label>
                   <Input
-                    id="moq"
+                    id="pricing_moq"
                     name="moq"
                     type="number"
                     min="1"
@@ -544,19 +541,19 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Switch
-                    id="sample_available"
+                    id="pricing_sample_available"
                     checked={formData.sample_available}
                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, sample_available: checked }))}
                     disabled={isSubmitting}
                   />
-                  <Label htmlFor="sample_available">Sample available</Label>
+                  <Label htmlFor="pricing_sample_available">Sample available</Label>
                 </div>
 
                 {formData.sample_available && (
                   <div>
-                    <Label htmlFor="sample_price">Sample Price (PKR)</Label>
+                    <Label htmlFor="pricing_sample_price">Sample Price (PKR)</Label>
                     <Input
-                      id="sample_price"
+                      id="pricing_sample_price"
                       name="sample_price"
                       type="number"
                       step="0.01"
@@ -572,9 +569,9 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="package_weight">Package Weight (kg)</Label>
+                  <Label htmlFor="pricing_package_weight">Package Weight (kg)</Label>
                   <Input
-                    id="package_weight"
+                    id="pricing_package_weight"
                     name="package_weight"
                     type="number"
                     step="0.1"
@@ -586,9 +583,9 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="packaging_type">Packaging Type</Label>
+                  <Label htmlFor="pricing_packaging_type">Packaging Type</Label>
                   <Input
-                    id="packaging_type"
+                    id="pricing_packaging_type"
                     name="packaging_type"
                     value={formData.packaging_type}
                     onChange={handleInputChange}
@@ -599,14 +596,22 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
               </div>
 
               <div>
-                <Label htmlFor="package_dimensions">Package Dimensions (L x W x H)</Label>
+                <Label htmlFor="pricing_package_dimensions">Package Dimensions (L x W x H)</Label>
                 <Input
-                  id="package_dimensions"
+                  id="pricing_package_dimensions"
                   name="package_dimensions"
                   value={formData.package_dimensions}
                   onChange={handleInputChange}
                   placeholder="e.g., 30cm x 20cm x 10cm"
                   disabled={isSubmitting}
+                />
+              </div>
+
+              <div className="border-t pt-4 mt-6">
+                <InlinePricingTiers
+                  tiers={inlineTiers}
+                  onChange={setInlineTiers}
+                  basePrice={parseFloat(formData.price) || 0}
                 />
               </div>
             </TabsContent>
@@ -615,14 +620,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
               <InlineVariationManager
                 variations={inlineVariations}
                 onChange={setInlineVariations}
-                basePrice={parseFloat(formData.price) || 0}
-              />
-            </TabsContent>
-
-            <TabsContent value="tiers" className="space-y-4">
-              <InlinePricingTiers
-                tiers={inlineTiers}
-                onChange={setInlineTiers}
                 basePrice={parseFloat(formData.price) || 0}
               />
             </TabsContent>

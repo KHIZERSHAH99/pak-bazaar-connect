@@ -12,7 +12,6 @@ import { updateProduct, uploadImage } from '@/lib/products';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Package, Info, Image, DollarSign, Settings, TrendingDown } from 'lucide-react';
-import ProductSpecificationFields from './ProductSpecificationFields';
 import ProductCategorySelector from './ProductCategorySelector';
 import MultipleImageUpload from './MultipleImageUpload';
 import PricingTierManager from './PricingTierManager';
@@ -61,7 +60,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
     sample_price: '',
   });
   
-  const [specifications, setSpecifications] = useState<Array<{id: string; name: string; value: string}>>([]);
   const [images, setImages] = useState<Array<{id: string; file: File; preview: string; isPrimary: boolean}>>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -102,31 +100,12 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         }]);
       }
       
-      // Fetch specifications
-      fetchProductSpecifications(product.id);
+      // Specifications feature removed
     }
   }, [product]);
 
-  const fetchProductSpecifications = async (productId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('product_specifications')
-        .select('*')
-        .eq('product_id', productId);
+  // Removed fetchProductSpecifications - specs feature no longer needed
 
-      if (error) throw error;
-      
-      const specs = data?.map(spec => ({
-        id: spec.id,
-        name: spec.spec_name,
-        value: spec.spec_value
-      })) || [];
-      
-      setSpecifications(specs);
-    } catch (error) {
-      console.error('Error fetching specifications:', error);
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -194,27 +173,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       await updateProduct(product.id, updateData);
       
       // Update specifications
-      // First, delete existing specifications
-      await supabase
-        .from('product_specifications')
-        .delete()
-        .eq('product_id', product.id);
-      
-      // Then, insert new specifications
-      if (specifications.length > 0) {
-        for (const spec of specifications) {
-          if (spec.name && spec.value) {
-            await supabase
-              .from('product_specifications')
-              .insert({
-                product_id: product.id,
-                spec_name: spec.name,
-                spec_value: spec.value
-              });
-          }
-        }
-      }
-      
+      // Specifications feature removed - no longer saving specs
       toast({
         title: 'Product Updated',
         description: 'Your product has been updated successfully',
@@ -272,7 +231,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       sample_available: false,
       sample_price: '',
     });
-    setSpecifications([]);
     setImages([]);
   };
 
@@ -285,7 +243,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="basic" className="flex items-center gap-2">
                 <Info className="w-3 h-3" />
                 <span className="hidden sm:inline">Basic</span>
@@ -293,10 +251,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
               <TabsTrigger value="details" className="flex items-center gap-2">
                 <Package className="w-3 h-3" />
                 <span className="hidden sm:inline">Details</span>
-              </TabsTrigger>
-              <TabsTrigger value="specifications" className="flex items-center gap-2">
-                <Settings className="w-3 h-3" />
-                <span className="hidden sm:inline">Specs</span>
               </TabsTrigger>
               <TabsTrigger value="variations" className="flex items-center gap-2">
                 <Package className="w-3 h-3" />
@@ -463,14 +417,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
                 />
                 <Label htmlFor="customization_available">Customization available</Label>
               </div>
-            </TabsContent>
-            
-            <TabsContent value="specifications" className="space-y-4">
-              <ProductSpecificationFields
-                specifications={specifications}
-                onChange={setSpecifications}
-                disabled={isSubmitting}
-              />
             </TabsContent>
             
             <TabsContent value="images" className="space-y-4">

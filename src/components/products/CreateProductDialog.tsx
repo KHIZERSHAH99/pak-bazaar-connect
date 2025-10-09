@@ -13,7 +13,6 @@ import { getShopsByOwner, createProduct, uploadImage } from '@/lib/supabase';
 import { supabase } from '@/integrations/supabase/client';
 import { Shop } from '@/lib/types';
 import { Loader2, Upload, Package, Info, Image, DollarSign, Settings } from 'lucide-react';
-import ProductSpecificationFields from './ProductSpecificationFields';
 import ProductCategorySelector from './ProductCategorySelector';
 import MultipleImageUpload from './MultipleImageUpload';
 import InlineVariationManager, { InlineVariation } from './InlineVariationManager';
@@ -63,7 +62,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
     sample_price: '',
   });
   
-  const [specifications, setSpecifications] = useState<Array<{id: string; name: string; value: string}>>([]);
   const [images, setImages] = useState<Array<{id: string; file: File; preview: string; isPrimary: boolean}>>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [inlineVariations, setInlineVariations] = useState<any[]>([]);
@@ -195,21 +193,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
 
       const result = await createProduct(productData);
       
-      // Save specifications if any
-      if (specifications.length > 0) {
-        for (const spec of specifications) {
-          if (spec.name && spec.value) {
-            await supabase
-              .from('product_specifications')
-              .insert({
-                product_id: result.id,
-                spec_name: spec.name,
-                spec_value: spec.value
-              });
-          }
-        }
-      }
-      
       toast({
         title: 'Success',
         description: 'Product created successfully!',
@@ -255,7 +238,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
       sample_available: false,
       sample_price: '',
     });
-    setSpecifications([]);
     setImages([]);
     setErrors({});
   };
@@ -313,7 +295,7 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-7 h-8 sm:h-10">
+            <TabsList className="grid w-full grid-cols-6 h-8 sm:h-10">
               <TabsTrigger value="basic" className="text-xs px-1 sm:px-2 sm:text-sm">
                 <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
                 <span className="hidden sm:inline">Basic</span>
@@ -321,10 +303,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
               <TabsTrigger value="details" className="text-xs px-1 sm:px-2 sm:text-sm">
                 <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
                 <span className="hidden sm:inline">Details</span>
-              </TabsTrigger>
-              <TabsTrigger value="specifications" className="text-xs px-1 sm:px-2 sm:text-sm">
-                <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
-                <span className="hidden sm:inline">Specs</span>
               </TabsTrigger>
               <TabsTrigger value="images" className="text-xs px-1 sm:px-2 sm:text-sm">
                 <Image className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
@@ -519,14 +497,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                 />
                 <Label htmlFor="customization_available">Customization available</Label>
               </div>
-            </TabsContent>
-            
-            <TabsContent value="specifications" className="space-y-4">
-              <ProductSpecificationFields
-                specifications={specifications}
-                onChange={setSpecifications}
-                disabled={isSubmitting}
-              />
             </TabsContent>
             
             <TabsContent value="images" className="space-y-4">

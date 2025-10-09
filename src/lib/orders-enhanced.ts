@@ -38,7 +38,7 @@ export const fetchOrdersWithAnalytics = async (
       throw error;
     }
 
-    // Transform and filter data with proper typing
+    // Transform and filter data with proper typing and handle deleted shops
     const transformedData = (data || []).filter(item => {
       return item && 
              typeof item === 'object' && 
@@ -55,7 +55,14 @@ export const fetchOrdersWithAnalytics = async (
         address: item.shops.address || '',
         postal_code: item.shops.postal_code || '',
         owner_id: item.shops.owner_id
-      } : undefined
+      } : {
+        id: 'deleted',
+        name: 'Shop No Longer Available',
+        contact: 'N/A',
+        address: 'N/A',
+        postal_code: 'N/A',
+        owner_id: 'deleted'
+      }
     })) as Order[];
 
     return transformedData;

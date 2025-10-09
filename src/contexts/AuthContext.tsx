@@ -67,13 +67,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // State to trigger profile fetch
+  const [profileTrigger, setProfileTrigger] = useState<{ userId: string; email: string; metadata: any } | null>(null);
+
   // Initialize auth state
   useEffect(() => {
     let mounted = true;
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (!mounted) return;
 
         console.log('Auth state changed:', event, session?.user?.id);
@@ -82,14 +85,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         if (session?.user && event === 'SIGNED_IN') {
-          // Defer profile operations to avoid deadlocks
-          setTimeout(async () => {
-            if (mounted) {
-              // Ensure profile sync
-              await ensureProfileSync(session.user.id, session.user.email || '', session.user.user_metadata);
-              fetchProfile(session.user.id);
-            }
-          }, 0);
+          // Trigger profile fetch via state update (avoids deadlock)
+          setProfileTrigger({
+            userId: session.user.id,
+            email: session.user.email || '',
+            metadata: session.user.user_metadata
+          });
         } else {
           setProfile(null);
         }
@@ -122,6 +123,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       subscription.unsubscribe();
     };
   }, []);
+
+  // Separate effect for profile fetching (prevents deadlock)
+  useEffect(() => {
+    if (profileTrigger) {
+      const syncAndFetch = async () => {
+        await ensureProfileSync(profileTrigger.userId, profileTrigger.email, profileTrigger.metadata);
+        await fetchProfile(profileTrigger.userId);
+      };
+      syncAndFetch();
+    }
+  }, [profileTrigger]);
 
   // Auth methods
   const handleSignIn = async (phoneOrEmail: string, password: string): Promise<{ error?: string }> => {

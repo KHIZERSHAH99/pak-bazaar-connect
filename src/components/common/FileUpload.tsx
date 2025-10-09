@@ -34,6 +34,19 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   const validateFileContent = async (file: File): Promise<boolean> => {
     try {
+      // Validate MIME type for images
+      if (category === 'productImage' || category === 'shopLogo' || category === 'profileImage') {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          toast({
+            title: "Invalid file type",
+            description: "Only JPG, PNG, and WebP images are allowed",
+            variant: "destructive"
+          });
+          return false;
+        }
+      }
+
       // Enhanced security validation using the security manager
       const securityResult = await fileSecurityManager.performEnhancedValidation(file, category);
       

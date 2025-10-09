@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { guestSessionManager } from '@/lib/security/guest-session';
+import { GUEST_USER_UUID } from '@/lib/constants';
 
 export interface Order {
   id: string;
@@ -81,7 +82,7 @@ export const createOrder = async (orderData: {
   
   // Prepare order data with guest session if needed
   const orderPayload: any = {
-    buyer_id: user?.id || '00000000-0000-0000-0000-000000000000', // Special UUID for guest orders
+    buyer_id: user?.id || GUEST_USER_UUID,
     shop_id: orderData.shopId,
     total_amount: orderData.totalAmount,
     payment_method: orderData.paymentMethod || 'bank_transfer',

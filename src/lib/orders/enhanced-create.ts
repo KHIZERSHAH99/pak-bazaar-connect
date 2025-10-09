@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
+import { GUEST_USER_UUID } from '@/lib/constants';
 
 export interface EnhancedOrderData {
   shopId: string;
@@ -77,7 +78,7 @@ export const createOrderWithPaymentEnhanced = async (orderData: EnhancedOrderDat
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert([{
-        buyer_id: user?.id || '00000000-0000-0000-0000-000000000000',
+        buyer_id: user?.id || GUEST_USER_UUID,
         shop_id: orderData.shopId,
         total_amount: orderData.totalAmount,
         payment_method: orderData.paymentMethod || 'bank_transfer',

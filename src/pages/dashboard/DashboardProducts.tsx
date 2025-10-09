@@ -1,13 +1,15 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import ProductsManagement from '@/components/dashboard/ProductsManagement';
+import ProductsErrorBoundary from '@/components/ui/ProductsErrorBoundary';
 
 const DashboardProducts: React.FC = () => {
   return (
-    <DashboardLayout>
-      <ProductsManagement />
-    </DashboardLayout>
+    <ProductsErrorBoundary>
+      <DashboardLayout>
+        <ProductsManagement />
+      </DashboardLayout>
+    </ProductsErrorBoundary>
   );
 };
 

@@ -79,10 +79,10 @@ export const SecureOrderForm: React.FC<SecureOrderFormProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 102400) { // 100KB limit
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
         toast({
           title: "File Too Large",
-          description: "Payment screenshot must be less than 100KB.",
+          description: "Payment screenshot must be less than 2MB.",
           variant: "destructive",
         });
         return;

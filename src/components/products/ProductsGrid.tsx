@@ -2,6 +2,8 @@ import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { Product } from '@/lib/types';
 import ProductCard from './ProductCard';
+import { usePagination } from '@/hooks/usePagination';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 
 interface ProductsGridProps {
   products: Product[];
@@ -9,6 +11,16 @@ interface ProductsGridProps {
 }
 
 const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
+  const {
+    currentPage,
+    totalPages,
+    currentItems,
+    goToPage,
+    nextPage,
+    previousPage,
+    canGoNext,
+    canGoPrevious
+  } = usePagination({ items: products, itemsPerPage: 12 });
   
   if (loading) {
     return (
@@ -41,16 +53,24 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
     <div className="space-y-8">
       {/* Main Product Grid - Better spacing and card sizes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
-        {products.map((product) => (
+        {currentItems.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
       
       <div className="text-center py-4">
         <p className="text-sm text-muted-foreground font-poppins">
-          Showing {products.length} products
+          Showing {(currentPage - 1) * 12 + 1}-{Math.min(currentPage * 12, products.length)} of {products.length} products
         </p>
       </div>
+
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={goToPage}
+        canGoPrevious={canGoPrevious}
+        canGoNext={canGoNext}
+      />
     </div>
   );
 };

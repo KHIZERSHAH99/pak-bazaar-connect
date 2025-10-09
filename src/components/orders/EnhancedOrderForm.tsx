@@ -132,10 +132,10 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 100 * 1024) {
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
         toast({
           title: "File too large",
-          description: "Please upload an image smaller than 100KB",
+          description: "Payment screenshot must be less than 2MB",
           variant: "destructive"
         });
         return;

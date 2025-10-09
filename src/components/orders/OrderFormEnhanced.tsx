@@ -38,10 +38,10 @@ export const OrderFormEnhanced: React.FC<OrderFormEnhancedProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 102400) { // 100KB limit
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
         toast({
           title: "File Too Large",
-          description: "Payment screenshot must be less than 100KB",
+          description: "Payment screenshot must be less than 2MB",
           variant: "destructive"
         });
         return;
@@ -210,7 +210,7 @@ export const OrderFormEnhanced: React.FC<OrderFormEnhancedProps> = ({
                   <p className="text-sm text-gray-600">
                     {formData.paymentScreenshot ? formData.paymentScreenshot.name : 'Click to upload payment screenshot'}
                   </p>
-                  <p className="text-xs text-gray-500">Max 100KB</p>
+                  <p className="text-xs text-gray-500">Max 2MB</p>
                 </div>
               </label>
             </div>

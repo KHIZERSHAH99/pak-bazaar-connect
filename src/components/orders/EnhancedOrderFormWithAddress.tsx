@@ -110,10 +110,10 @@ export const EnhancedOrderFormWithAddress = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
         toast({
           title: "File too large",
-          description: "Payment screenshot must be less than 5MB",
+          description: "Payment screenshot must be less than 2MB",
           variant: "destructive"
         });
         return;

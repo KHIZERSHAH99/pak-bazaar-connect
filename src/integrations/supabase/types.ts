@@ -2167,6 +2167,74 @@ export type Database = {
         }
         Relationships: []
       }
+      shipping_configs: {
+        Row: {
+          additional_weight_rate: number | null
+          base_weight_rate: number | null
+          city_rates: Json | null
+          created_at: string | null
+          custom_rates: Json | null
+          estimated_delivery_days: number | null
+          express_delivery_days: number | null
+          express_shipping_available: boolean | null
+          express_shipping_cost: number | null
+          flat_rate_cost: number | null
+          free_shipping_above: number | null
+          id: string
+          is_active: boolean | null
+          max_free_weight: number | null
+          shipping_method: string
+          shop_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          additional_weight_rate?: number | null
+          base_weight_rate?: number | null
+          city_rates?: Json | null
+          created_at?: string | null
+          custom_rates?: Json | null
+          estimated_delivery_days?: number | null
+          express_delivery_days?: number | null
+          express_shipping_available?: boolean | null
+          express_shipping_cost?: number | null
+          flat_rate_cost?: number | null
+          free_shipping_above?: number | null
+          id?: string
+          is_active?: boolean | null
+          max_free_weight?: number | null
+          shipping_method?: string
+          shop_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          additional_weight_rate?: number | null
+          base_weight_rate?: number | null
+          city_rates?: Json | null
+          created_at?: string | null
+          custom_rates?: Json | null
+          estimated_delivery_days?: number | null
+          express_delivery_days?: number | null
+          express_shipping_available?: boolean | null
+          express_shipping_cost?: number | null
+          flat_rate_cost?: number | null
+          free_shipping_above?: number | null
+          id?: string
+          is_active?: boolean | null
+          max_free_weight?: number | null
+          shipping_method?: string
+          shop_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_configs_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shipping_details: {
         Row: {
           actual_delivery: string | null
@@ -2478,6 +2546,16 @@ export type Database = {
         Args:
           | { p_password: string; p_phone_number: string }
           | { user_phone: string }
+        Returns: Json
+      }
+      calculate_shipping_cost: {
+        Args: {
+          p_buyer_city?: string
+          p_is_express?: boolean
+          p_order_amount: number
+          p_shop_id: string
+          p_total_weight?: number
+        }
         Returns: Json
       }
       can_access_commission_data: {

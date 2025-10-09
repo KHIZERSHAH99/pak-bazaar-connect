@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingBag, Shield, Star } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import ProfileEditor from './ProfileEditor';
@@ -12,6 +13,7 @@ import AccountInfo from './AccountInfo';
 const EnhancedUserProfile: React.FC = () => {
   const { profile } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [orderStats, setOrderStats] = useState({
     totalOrders: 0,
     completedOrders: 0,
@@ -74,9 +76,9 @@ const EnhancedUserProfile: React.FC = () => {
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header Section */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">My Profile</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">{t('myProfile')}</h1>
             <p className="text-gray-600 dark:text-gray-300 font-poppins">
-              Manage your account information and preferences
+              {t('manageAccountInfo')}
             </p>
           </div>
 

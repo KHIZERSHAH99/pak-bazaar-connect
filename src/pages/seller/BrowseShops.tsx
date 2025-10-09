@@ -12,6 +12,7 @@ import { Shop } from '@/lib/types';
 import { Store, Package, Search, MapPin, Phone, Star, Users, Clock, Heart } from 'lucide-react';
 import ShopFavoriteButton from '@/components/shops/ShopFavoriteButton';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -22,6 +23,7 @@ const BrowseShops: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   // Debounce search term for better performance
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -88,13 +90,13 @@ const BrowseShops: React.FC = () => {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 font-poppins">Browse Wholesale Shops</h1>
-            <p className="text-gray-600 font-poppins mt-1">Discover verified wholesale suppliers across Pakistan</p>
+            <h1 className="text-3xl font-bold text-gray-900 font-poppins">{t('browseWholesaleShops')}</h1>
+            <p className="text-gray-600 font-poppins mt-1">{t('discoverVerifiedSuppliers')}</p>
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="secondary" className="bg-green-100 text-green-800">
-              <Store className="h-3 w-3 mr-1" />
-              {filteredShops.length} shops
+              <Store className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
+              {filteredShops.length} {t('shops')}
             </Badge>
           </div>
         </div>
@@ -106,7 +108,7 @@ const BrowseShops: React.FC = () => {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Search shops by name, location, or contact..."
+                  placeholder={t('searchShops')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-gray-50 border-gray-200 focus:border-primary font-poppins"
@@ -117,7 +119,7 @@ const BrowseShops: React.FC = () => {
                 onClick={() => setSearchTerm('')}
                 className="shrink-0"
               >
-                Clear
+                {t('clear')}
               </Button>
             </div>
           </CardContent>
@@ -126,16 +128,16 @@ const BrowseShops: React.FC = () => {
         {/* Shops Grid */}
         {loading ? (
           <div className="flex justify-center items-center py-12">
-            <LoadingSpinner size="lg" text="Loading shops..." />
+            <LoadingSpinner size="lg" text={t('loadingShops')} />
           </div>
         ) : filteredShops.length === 0 ? (
           <Card className="p-12 text-center bg-gray-50">
             <div className="flex justify-center mb-4">
               <Store className="h-16 w-16 text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">No shops found</h3>
+            <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">{t('noShopsFound')}</h3>
             <p className="text-gray-500 font-poppins">
-              {searchTerm ? 'No shops match your search. Try different keywords.' : 'There are no shops available at the moment.'}
+              {searchTerm ? t('noShopsMatchSearch') : t('noShopsAvailable')}
             </p>
           </Card>
         ) : (

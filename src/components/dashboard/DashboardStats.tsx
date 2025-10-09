@@ -2,11 +2,13 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendingUp, Users, ShoppingCart, DollarSign } from 'lucide-react';
 
 const DashboardStats: React.FC = () => {
   const { profile, loading } = useAuth();
+  const { t } = useLanguage();
 
   if (loading) {
     return (
@@ -31,28 +33,28 @@ const DashboardStats: React.FC = () => {
     if (profile?.role === 'wholesaler') {
       return [
         {
-          title: 'Total Products',
+          title: t('totalProducts'),
           value: '0',
           change: '+0%',
           icon: ShoppingCart,
           color: 'text-blue-600'
         },
         {
-          title: 'Active Orders',
+          title: t('activeOrders'),
           value: '0',
           change: '+0%',
           icon: TrendingUp,
           color: 'text-green-600'
         },
         {
-          title: 'Total Revenue',
+          title: t('totalRevenue'),
           value: 'PKR 0',
           change: '+0%',
           icon: DollarSign,
           color: 'text-yellow-600'
         },
         {
-          title: 'Customers',
+          title: t('customers'),
           value: '0',
           change: '+0%',
           icon: Users,
@@ -62,28 +64,28 @@ const DashboardStats: React.FC = () => {
     } else if (profile?.role === 'seller') {
       return [
         {
-          title: 'Orders Placed',
+          title: t('ordersPlaced'),
           value: '0',
           change: '+0%',
           icon: ShoppingCart,
           color: 'text-blue-600'
         },
         {
-          title: 'Pending Orders',
+          title: t('pendingOrders'),
           value: '0',
           change: '+0%',
           icon: TrendingUp,
           color: 'text-orange-600'
         },
         {
-          title: 'Total Spent',
+          title: t('totalSpent'),
           value: 'PKR 0',
           change: '+0%',
           icon: DollarSign,
           color: 'text-green-600'
         },
         {
-          title: 'Favorite Shops',
+          title: t('favoriteShops'),
           value: '0',
           change: '+0%',
           icon: Users,
@@ -93,28 +95,28 @@ const DashboardStats: React.FC = () => {
     } else if (profile?.role === 'admin') {
       return [
         {
-          title: 'Total Users',
+          title: t('totalUsers'),
           value: '0',
           change: '+0%',
           icon: Users,
           color: 'text-blue-600'
         },
         {
-          title: 'Active Orders',
+          title: t('activeOrders'),
           value: '0',
           change: '+0%',
           icon: ShoppingCart,
           color: 'text-green-600'
         },
         {
-          title: 'Platform Revenue',
+          title: t('platformRevenue'),
           value: 'PKR 0',
           change: '+0%',
           icon: DollarSign,
           color: 'text-purple-600'
         },
         {
-          title: 'Growth Rate',
+          title: t('growthRate'),
           value: '0%',
           change: '+0%',
           icon: TrendingUp,
@@ -142,7 +144,7 @@ const DashboardStats: React.FC = () => {
             <CardContent>
               <div className="text-2xl font-bold font-poppins">{stat.value}</div>
               <p className="text-xs text-muted-foreground font-poppins">
-                <span className="text-green-600">{stat.change}</span> from last month
+                <span className="text-green-600">{stat.change}</span> {t('fromLastMonth')}
               </p>
             </CardContent>
           </Card>

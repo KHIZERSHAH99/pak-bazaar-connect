@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { createShop, uploadImage } from '@/lib/supabase';
 import { Loader2 } from 'lucide-react';
 
@@ -31,6 +32,7 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -166,7 +168,7 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create New Shop</DialogTitle>
+          <DialogTitle>{t('createNewShop')}</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">

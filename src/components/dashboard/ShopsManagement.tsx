@@ -6,6 +6,7 @@ import { Store, Plus, Edit, MapPin, Phone, Package } from 'lucide-react';
 import { Shop } from '@/lib/types';
 import { getShopsByOwner } from '@/lib/shops';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import CreateShopDialog from '@/components/shops/CreateShopDialog';
 import EditShopDialog from '@/components/shops/EditShopDialog';
 import { useQuery } from '@tanstack/react-query';
@@ -13,9 +14,8 @@ const ShopsManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const { t } = useLanguage();
   const {
     data: shops = [],
     isLoading,
@@ -27,8 +27,8 @@ const ShopsManagement: React.FC = () => {
   const handleShopCreated = () => {
     refetch();
     toast({
-      title: "Shop created",
-      description: "Your shop has been created successfully."
+      title: t('shopCreatedSuccessfully'),
+      description: t('shopCreatedSuccessfully')
     });
   };
   const handleShopUpdated = () => {
@@ -46,11 +46,11 @@ const ShopsManagement: React.FC = () => {
   }
   return <div className="space-y-3 sm:space-y-4 py-2 sm:py-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-xl sm:text-2xl font-bold font-poppins text-gray-900">My Shops</h1>
+        <h1 className="text-xl sm:text-2xl font-bold font-poppins text-gray-900">{t('myShops')}</h1>
         <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-          <span className="hidden sm:inline">Create Shop</span>
-          <span className="sm:hidden">Create</span>
+          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 rtl:mr-0 rtl:ml-1 sm:rtl:mr-0 sm:rtl:ml-2" />
+          <span className="hidden sm:inline">{t('createShop')}</span>
+          <span className="sm:hidden">{t('create')}</span>
         </Button>
       </div>
 
@@ -58,14 +58,14 @@ const ShopsManagement: React.FC = () => {
           <CardContent className="flex flex-col items-center justify-center py-6 sm:py-8">
             <Store className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 mb-3" />
             <h3 className="text-sm sm:text-base font-medium text-gray-700 mb-2 font-poppins">
-              No shops yet
+              {t('noShopsYet')}
             </h3>
             <p className="text-xs sm:text-sm text-gray-600 mb-3 font-poppins text-center px-4">
-              Create your first shop to start selling products on our platform.
+              {t('createFirstShop')}
             </p>
             <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
-              <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-              Create Your First Shop
+              <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 rtl:mr-0 rtl:ml-1 sm:rtl:mr-0 sm:rtl:ml-2" />
+              {t('createYourFirstShop')}
             </Button>
           </CardContent>
         </Card> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -90,17 +90,17 @@ const ShopsManagement: React.FC = () => {
                 </div>
                 
                 <div className="flex items-start text-gray-600">
-                  <MapPin className="w-3 h-3 mr-1.5 mt-0.5" />
+                  <MapPin className="w-3 h-3 mr-1.5 rtl:mr-0 rtl:ml-1.5 mt-0.5" />
                   <div className="font-poppins">
                     <p className="text-xs sm:text-sm">{shop.address}</p>
-                    <p className="text-xs">Postal Code: {shop.postal_code}</p>
+                    <p className="text-xs">{t('postalCode')}: {shop.postal_code}</p>
                     {shop.cities && <p className="text-xs">{shop.cities.name}, {shop.cities.province}</p>}
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between pt-1">
                   {shop.is_verified && <Badge className="bg-green-100 text-green-800 font-poppins text-xs px-2 py-0.5">
-                      Verified
+                      {t('verified')}
                     </Badge>}
                 </div>
               </CardContent>

@@ -7,6 +7,7 @@ import { Edit, Trash2, Eye, EyeOff, Package } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { getProductsByWholesaler, updateProduct, deleteProduct } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import EditProductDialog from '@/components/products/EditProductDialog';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -15,6 +16,7 @@ const ProductsList: React.FC = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showInactive, setShowInactive] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
 
   const { data: allProducts = [], isLoading, error } = useQuery({
@@ -33,14 +35,14 @@ const ProductsList: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] });
       toast({
-        title: "Product updated",
-        description: "Product status has been updated successfully.",
+        title: t('productUpdated'),
+        description: t('productUpdated'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to update product status",
+        title: t('error'),
+        description: error.message || t('failedToUpdateProduct'),
         variant: "destructive",
       });
     },
@@ -51,14 +53,14 @@ const ProductsList: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] });
       toast({
-        title: "Product deleted",
-        description: "Product has been deleted successfully.",
+        title: t('productDeleted'),
+        description: t('productDeleted'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete product",
+        title: t('error'),
+        description: error.message || t('failedToUpdateProduct'),
         variant: "destructive",
       });
     },
@@ -84,18 +86,18 @@ const ProductsList: React.FC = () => {
 
   const getStatusBadge = (product: Product) => {
     if (!product.is_active) {
-      return <Badge variant="secondary">Inactive</Badge>;
+      return <Badge variant="secondary">{t('inactive')}</Badge>;
     }
     
     switch (product.verification_status) {
       case 'approved':
-        return <Badge className="bg-green-100 text-green-800">Approved</Badge>;
+        return <Badge className="bg-green-100 text-green-800">{t('approved')}</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800">{t('pending')}</Badge>;
       case 'rejected':
-        return <Badge variant="destructive">Rejected</Badge>;
+        return <Badge variant="destructive">{t('rejected')}</Badge>;
       default:
-        return <Badge variant="secondary">Unknown</Badge>;
+        return <Badge variant="secondary">{t('unknown')}</Badge>;
     }
   };
 
@@ -113,7 +115,7 @@ const ProductsList: React.FC = () => {
     return (
       <div className="text-center py-8">
         <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-red-600 font-poppins">Failed to load products</p>
+        <p className="text-red-600 font-poppins">{t('failedToLoadProducts')}</p>
       </div>
     );
   }
@@ -123,10 +125,10 @@ const ProductsList: React.FC = () => {
       <div className="text-center py-8">
         <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
         <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">
-          No products yet
+          {t('noProductsYet')}
         </h3>
         <p className="text-gray-600 font-poppins">
-          Start by adding your first product to your shop.
+          {t('startAddingProducts')}
         </p>
       </div>
     );
@@ -141,9 +143,9 @@ const ProductsList: React.FC = () => {
             onClick={() => setShowInactive(!showInactive)}
             className="text-sm"
           >
-            {showInactive ? 'Hide Inactive Products' : 'Show Inactive Products'}
+            {showInactive ? t('hideInactiveProducts') : t('showInactiveProducts')}
             {!showInactive && allProducts.filter(p => !p.is_active).length > 0 && (
-              <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+              <span className="ml-2 rtl:ml-0 rtl:mr-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
                 {allProducts.filter(p => !p.is_active).length}
               </span>
             )}
@@ -176,13 +178,13 @@ const ProductsList: React.FC = () => {
                   
                   {product.moq && product.moq > 1 && (
                     <p className="text-sm text-gray-600 font-poppins">
-                      MOQ: {product.moq} pieces
+                      {t('moq')}: {product.moq} {t('productsAvailable').split(' ')[0]}
                     </p>
                   )}
                   
                   {product.categories && (
                     <p className="text-sm text-gray-600 font-poppins">
-                      Category: {product.categories.name}
+                      {t('category')}: {product.categories.name}
                     </p>
                   )}
                 </div>
@@ -194,8 +196,8 @@ const ProductsList: React.FC = () => {
                     onClick={() => handleEdit(product)}
                     className="flex-1"
                   >
-                    <Edit className="w-4 h-4 mr-1" />
-                    Edit
+                    <Edit className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
+                    {t('edit')}
                   </Button>
                   
                   <Button
@@ -206,13 +208,13 @@ const ProductsList: React.FC = () => {
                   >
                     {product.is_active ? (
                       <>
-                        <EyeOff className="w-4 h-4 mr-1" />
-                        Hide
+                        <EyeOff className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
+                        {t('hide')}
                       </>
                     ) : (
                       <>
-                        <Eye className="w-4 h-4 mr-1" />
-                        Show
+                        <Eye className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
+                        {t('show')}
                       </>
                     )}
                   </Button>

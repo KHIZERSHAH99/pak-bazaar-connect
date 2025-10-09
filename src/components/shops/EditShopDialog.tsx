@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Shop, City } from '@/lib/types';
 import { updateShop } from '@/lib/shops';
 import { supabase } from '@/integrations/supabase/client';
@@ -58,6 +59,7 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [cities, setCities] = useState<City[]>([]);
 
   useEffect(() => {
@@ -166,7 +168,7 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-poppins">Edit Shop Details</DialogTitle>
+          <DialogTitle className="font-poppins">{t('editShopDetails')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

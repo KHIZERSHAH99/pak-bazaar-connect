@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import EnhancedSignupForm from '@/components/auth/EnhancedSignupForm';
+import SimpleSignupForm from '@/components/auth/SimpleSignupForm';
 import { Flag, ArrowLeft, Shield, Users, TrendingUp, Package, ShoppingCart, Building, Rocket, CheckCircle } from 'lucide-react';
 
 const Signup: React.FC = () => {
@@ -89,7 +89,7 @@ const Signup: React.FC = () => {
             </p>
           </div>
           
-          <EnhancedSignupForm />
+          <SimpleSignupForm />
           
           {/* Benefits Section */}
           <div className="mt-12 max-w-4xl mx-auto">

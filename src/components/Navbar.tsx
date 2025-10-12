@@ -87,25 +87,7 @@ const Navbar = () => {
                 <Link to="/dashboard/browse-shops">
                   <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins transition-all duration-200">
                     <Users className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
-                    {t('shops')}
-                  </Button>
-                </Link>
-                <Link to="/features">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
-                    <Zap className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
-                    {t('features')}
-                  </Button>
-                </Link>
-                <Link to="/blog">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
-                    <BookOpen className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
-                    {t('blog')}
-                  </Button>
-                </Link>
-                <Link to="/about">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
-                    <Users className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
-                    {t('about')}
+                    Wholesalers
                   </Button>
                 </Link>
               </div>

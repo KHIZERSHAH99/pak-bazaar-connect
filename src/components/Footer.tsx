@@ -89,7 +89,7 @@ const Footer = () => {
               <li>
                 <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
                   <Link to="/dashboard/browse-shops" className="text-sm text-muted-foreground hover:text-primary font-poppins transition-colors">
-                    Find Suppliers
+                    Find Wholesalers
                   </Link>
                 </Button>
               </li>
@@ -97,6 +97,13 @@ const Footer = () => {
                 <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
                   <Link to="/features" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
                     Features
+                  </Link>
+                </Button>
+              </li>
+              <li>
+                <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
+                  <Link to="/blog" className="text-sm text-muted-foreground hover:text-pakistani_green-600 font-poppins transition-colors">
+                    Blog
                   </Link>
                 </Button>
               </li>

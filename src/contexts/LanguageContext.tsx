@@ -22,7 +22,7 @@ const translations = {
     // Navigation
     'welcome': 'Welcome',
     'login': 'Login',
-    'signup': 'Become Wholesaler/Retailer',
+    'signup': 'Signup',
     'dashboard': 'Dashboard',
     'products': 'Products',
     'orders': 'Orders',
@@ -325,7 +325,7 @@ const translations = {
     // Navigation
     'welcome': 'خوش آمدید',
     'login': 'لاگ ان',
-    'signup': 'ہول سیلر/ریٹیلر بنیں',
+    'signup': 'سائن اَپ',
     'dashboard': 'ڈیش بورڈ',
     'products': 'مصنوعات',
     'orders': 'آرڈرز',

@@ -105,17 +105,17 @@ const SimpleSignupForm = () => {
   const selectedBusinessType = form.watch('businessType');
 
   return (
-    <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-white dark:bg-gray-900">
-      <CardHeader className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-500 dark:from-pakistani_green-900 dark:to-pakistani_green-950 text-white text-center pb-6">
+    <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-card">
+      <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-8 pt-8 text-center">
         <div className="flex justify-center mb-4">
-          <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm">
-            <Phone className="h-8 w-8" />
+          <div className="bg-primary-foreground/10 p-3 rounded-full backdrop-blur-sm border border-primary-foreground/20">
+            <Phone className="h-8 w-8 text-primary-foreground" />
           </div>
         </div>
-        <CardTitle className="text-2xl font-bold font-poppins text-white dark:text-pakistani_green-100">
+        <CardTitle className="text-3xl font-bold font-poppins text-primary-foreground">
           پاکستانی اکاؤنٹ
         </CardTitle>
-        <CardDescription className="text-green-50 dark:text-pakistani_green-200 font-poppins">
+        <CardDescription className="font-poppins text-primary-foreground/90 text-base mt-2">
           Create your Pakistani B2B business account
         </CardDescription>
       </CardHeader>

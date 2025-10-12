@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import SimpleSignupForm from '@/components/auth/SimpleSignupForm';
+import Layout from '@/components/Layout';
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -15,11 +16,13 @@ const Signup: React.FC = () => {
   }, [user, navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <SimpleSignupForm />
+    <Layout title="Signup - Pak Bazaar Connect">
+      <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
+        <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <SimpleSignupForm />
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

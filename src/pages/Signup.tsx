@@ -82,10 +82,10 @@ const Signup: React.FC = () => {
               <Shield className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent font-poppins">
-              Join Pakistan's Leading B2B Marketplace
+              Become a Wholesaler or Retailer
             </h1>
             <p className="text-muted-foreground mt-3 font-poppins text-base md:text-lg max-w-2xl mx-auto">
-              Connect with trusted buyers and suppliers across Pakistan
+              Join Pakistan's leading B2B marketplace and connect with trusted partners
             </p>
           </div>
           

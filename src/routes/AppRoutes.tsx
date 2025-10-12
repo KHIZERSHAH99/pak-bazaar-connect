@@ -6,7 +6,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 // Import all existing pages
 import Index from '@/pages/Index';
 import FixedLogin from '@/pages/FixedLogin';
-import FixedSignup from '@/pages/FixedSignup';
+import Signup from '@/pages/Signup';
 import Dashboard from '@/pages/Dashboard';
 import Profile from '@/pages/Profile';
 import Products from '@/pages/Products';
@@ -65,7 +65,7 @@ const AppRoutes: React.FC = () => {
         {/* Public routes */}
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<FixedLogin />} />
-        <Route path="/signup" element={<FixedSignup />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         

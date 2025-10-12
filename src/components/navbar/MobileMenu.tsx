@@ -64,7 +64,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               className="w-full justify-start h-12 text-foreground hover:bg-accent font-poppins"
             >
               <Users className="w-5 h-5 mr-3" />
-              Shops
+              Wholesalers
             </Button>
           </Link>
           

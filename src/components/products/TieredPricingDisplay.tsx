@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingDown, Package } from 'lucide-react';
+import { TrendingDown, Package, ChevronDown, ChevronUp } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 
 export interface PricingTier {
@@ -24,6 +25,7 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
   basePrice,
   className
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const sortedTiers = useMemo(() => {
     // Ensure we have a valid base price (never 0)
     const validBasePrice = basePrice > 0 ? basePrice : 100;
@@ -71,14 +73,25 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
   };
 
   return (
-    <Card className={cn("overflow-hidden", className)}>
-      <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-primary/10">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <TrendingDown className="h-5 w-5 text-primary" />
-          Bulk Pricing Tiers
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Card className={cn("overflow-hidden", className)}>
+        <CollapsibleTrigger className="w-full">
+          <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-primary/10 cursor-pointer hover:from-primary/10 hover:to-primary/15 transition-colors">
+            <CardTitle className="flex items-center justify-between text-lg">
+              <div className="flex items-center gap-2">
+                <TrendingDown className="h-5 w-5 text-primary" />
+                Bulk Pricing Tiers
+              </div>
+              {isOpen ? (
+                <ChevronUp className="h-5 w-5 text-primary" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-primary" />
+              )}
+            </CardTitle>
+          </CardHeader>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <CardContent className="p-0">
         <div className="divide-y divide-border">
           {sortedTiers.map((tier, index) => {
             const isActive = activeTier?.id === tier.id;
@@ -155,8 +168,10 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
             }%
           </p>
         </div>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 };
 

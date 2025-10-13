@@ -55,41 +55,43 @@ const SimpleSignupForm = () => {
         normalizedPhone = '+92' + normalizedPhone;
       }
 
-      // Sign up with Supabase
+      // Sign up using pseudo email derived from phone (avoids disabled phone provider)
+      const digitsOnly = normalizedPhone.replace(/\D/g, '');
+      const pseudoEmail = `phone-${digitsOnly}@pakbazaarconnect.store`;
+      const redirectUrl = `${window.location.origin}/dashboard`;
+
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        phone: normalizedPhone,
+        email: pseudoEmail,
         password: data.password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
-            role: data.businessType
+            role: data.businessType,
+            phone: normalizedPhone
           }
         }
       });
 
       if (signUpError) throw signUpError;
 
-      if (authData.user) {
-        // Create profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            phone: normalizedPhone,
-            role: data.businessType,
-            email: `${normalizedPhone}@placeholder.com`
-          });
-
-        if (profileError) {
-          console.error('Profile creation error:', profileError);
-        }
-
-        toast({
-          title: 'Account Created Successfully!',
-          description: 'Welcome to Pak Bazaar Connect. Please complete your profile.',
+      // Try to sign in immediately (auto-confirm trigger may already confirm these emails)
+      if (!authData.session) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: pseudoEmail,
+          password: data.password,
         });
-
-        navigate('/dashboard');
+        if (signInError) {
+          // Not fatal; user might still be confirmed shortly
+          console.warn('Auto sign-in after sign-up failed:', signInError.message);
+        }
       }
+
+      toast({
+        title: 'Account Created Successfully!',
+        description: 'Welcome to Pak Bazaar Connect. Please complete your profile.',
+      });
+
+      navigate('/dashboard');
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({
@@ -204,7 +206,7 @@ const SimpleSignupForm = () => {
                   <FormControl>
                     <Input
                       {...field}
-                      type="text"
+                      type="password"
                       placeholder="Create a password"
                       disabled={isLoading}
                       className="font-poppins"

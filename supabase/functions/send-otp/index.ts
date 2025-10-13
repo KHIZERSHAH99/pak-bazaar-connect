@@ -128,7 +128,7 @@ serve(async (req) => {
         body: JSON.stringify({
           to: whatsappPhone,
           type: 'text',
-          text: message,
+          body: message,
         }),
       });
 

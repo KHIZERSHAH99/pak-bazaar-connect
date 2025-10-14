@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingDown, Package } from 'lucide-react';
+import { TrendingDown, Circle, CircleCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface PricingTier {
@@ -62,15 +62,15 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
   if (!sortedTiers || sortedTiers.length === 0) return null;
 
   return (
-    <Card className={cn("overflow-hidden", className)}>
-      <CardHeader className="pb-3 px-4 py-3">
-        <CardTitle className="flex items-center gap-2 text-base font-semibold">
-          <TrendingDown className="h-4 w-4 text-primary" />
+    <Card className={cn("overflow-hidden border-border/50", className)}>
+      <CardHeader className="pb-2 px-4 py-3 bg-muted/20">
+        <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <TrendingDown className="h-4 w-4" />
           Bulk Pricing Tiers
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="divide-y divide-border">
+        <div className="divide-y divide-border/50">
           {sortedTiers.map((tier) => {
             const isActive = activeTier?.id === tier.id;
             
@@ -78,30 +78,34 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
               <div
                 key={tier.id}
                 className={cn(
-                  "px-4 py-3 flex items-center justify-between",
-                  isActive && "bg-primary/5"
+                  "px-4 py-2.5 flex items-center justify-between hover:bg-muted/30 transition-colors",
+                  isActive && "bg-muted/40"
                 )}
               >
-                <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">
+                <div className="flex items-center gap-2.5">
+                  {isActive ? (
+                    <CircleCheck className="h-4 w-4 text-primary flex-shrink-0" />
+                  ) : (
+                    <Circle className="h-4 w-4 text-muted-foreground/40 flex-shrink-0" />
+                  )}
+                  <span className="text-sm text-foreground">
                     {tier.max_quantity 
                       ? `${tier.min_quantity.toLocaleString()} - ${tier.max_quantity.toLocaleString()}`
                       : `${tier.min_quantity.toLocaleString()}+`
                     } units
                   </span>
                   {isActive && (
-                    <Badge className="text-xs h-5" variant="default">
+                    <Badge className="text-[10px] h-4 px-1.5 bg-green-600 hover:bg-green-600">
                       Current Tier
                     </Badge>
                   )}
                 </div>
                 
                 <div className="text-right">
-                  <div className="text-lg font-bold text-primary">
+                  <div className="text-base font-bold text-primary">
                     PKR {tier.unit_price.toLocaleString()}
                   </div>
-                  <div className="text-xs text-muted-foreground">per unit</div>
+                  <div className="text-[10px] text-muted-foreground">per unit</div>
                 </div>
               </div>
             );
@@ -110,7 +114,7 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
         
         {/* Show total for current quantity */}
         {activeTier && currentQuantity >= (sortedTiers[0]?.min_quantity || 1) && (
-          <div className="px-4 py-3 bg-muted/30 border-t">
+          <div className="px-4 py-2.5 bg-muted/20 border-t border-border/50">
             <div className="flex justify-between items-center text-sm">
               <span className="text-muted-foreground">
                 Total for {currentQuantity.toLocaleString()} units:
@@ -123,12 +127,13 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
         )}
         
         {/* Bulk order message */}
-        <div className="px-4 py-2 bg-muted/50 border-t">
-          <p className="text-xs text-muted-foreground text-center">
-            💡 Order more to unlock better prices! Bulk orders save up to{' '}
+        <div className="px-4 py-2 border-t border-border/50">
+          <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1">
+            <span>💡</span>
+            <span>Order more to unlock better prices! Bulk orders save up to{' '}
             {sortedTiers.length > 1 
               ? Math.round(((sortedTiers[0].unit_price - sortedTiers[sortedTiers.length - 1].unit_price) / sortedTiers[0].unit_price) * 100)
-              : 0}%
+              : 0}%</span>
           </p>
         </div>
       </CardContent>

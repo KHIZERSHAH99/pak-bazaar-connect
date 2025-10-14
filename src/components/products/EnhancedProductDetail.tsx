@@ -63,20 +63,27 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
   };
 
   const handleOrderClick = () => {
-    // Allow guests and sellers to place orders
-    const canOrder = !user || profile?.role === 'seller' || !profile;
-    
-    if (!canOrder) {
+    // Only authenticated sellers can place orders
+    if (!user) {
       toast({
-        title: "Access Required",
-        description: "Please sign in as a seller to place orders",
+        title: "Login Required",
+        description: "Please sign in to place orders",
         variant: "destructive"
       });
       return;
     }
 
-    // Check if trying to order from own shop (only for authenticated users)
-    if (user && product.shops?.owner_id === user.id) {
+    if (profile?.role !== 'seller') {
+      toast({
+        title: "Seller Account Required",
+        description: "Only sellers can place orders. Please switch to seller role.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Check if trying to order from own shop
+    if (product.shops?.owner_id === user.id) {
       toast({
         title: "Cannot Order",
         description: "You cannot order from your own shop",
@@ -242,6 +249,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 tiers={tiers}
                 basePrice={currentUnitPrice || product.price}
                 moq={product.moq}
+                stockQuantity={product.stock_quantity}
                 onQuantityChange={(qty, unitPrice, total) => {
                   setQuantity(qty);
                   // Ensure unit price is never 0

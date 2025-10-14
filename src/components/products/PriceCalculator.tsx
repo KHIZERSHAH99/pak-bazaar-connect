@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calculator, Package, TrendingDown, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 interface PricingTier {
   id: string;
   min_quantity: number;
@@ -16,6 +17,7 @@ interface PriceCalculatorProps {
   tiers: PricingTier[];
   basePrice: number;
   moq?: number;
+  stockQuantity?: number;
   onQuantityChange?: (quantity: number, unitPrice: number, totalPrice: number) => void;
   className?: string;
 }
@@ -23,11 +25,13 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   tiers,
   basePrice,
   moq = 1,
+  stockQuantity,
   onQuantityChange,
   className
 }) => {
   const [quantity, setQuantity] = useState(moq);
   const [showSavings, setShowSavings] = useState(false);
+  const { toast } = useToast();
   const sortedTiers = useMemo(() => {
     // Ensure we have a valid base price (never 0)
     const validBasePrice = basePrice > 0 ? basePrice : 100;
@@ -102,7 +106,30 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   }, [quantity, calculations, onQuantityChange]);
   const handleQuantityChange = (value: string) => {
     const newQuantity = parseInt(value) || 1;
-    setQuantity(Math.max(moq, newQuantity));
+    
+    // Check minimum quantity
+    if (newQuantity < moq) {
+      toast({
+        title: "Below Minimum",
+        description: `Minimum order quantity is ${moq} units`,
+        variant: "destructive"
+      });
+      setQuantity(moq);
+      return;
+    }
+    
+    // Check stock availability
+    if (stockQuantity && newQuantity > stockQuantity) {
+      toast({
+        title: "Exceeds Stock",
+        description: `Only ${stockQuantity} units available in stock`,
+        variant: "destructive"
+      });
+      setQuantity(stockQuantity);
+      return;
+    }
+    
+    setQuantity(newQuantity);
   };
   const quickQuantityButtons = [{
     label: 'MOQ',
@@ -119,7 +146,12 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   }, {
     label: '5000',
     value: 5000
-  }].filter(btn => btn.value >= moq);
+  }].filter(btn => {
+    // Filter by MOQ and stock quantity
+    if (btn.value < moq) return false;
+    if (stockQuantity && btn.value > stockQuantity) return false;
+    return true;
+  });
   return <Card className={cn("overflow-hidden", className)}>
       <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-primary/10">
         <CardTitle className="flex items-center gap-2">
@@ -136,7 +168,15 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
                 Min: {moq} units
               </Badge>}
           </Label>
-          <Input id="quantity" type="number" min={moq} value={quantity} onChange={e => handleQuantityChange(e.target.value)} className="text-lg font-semibold" />
+          <Input 
+            id="quantity" 
+            type="number" 
+            min={moq} 
+            max={stockQuantity}
+            value={quantity} 
+            onChange={e => handleQuantityChange(e.target.value)} 
+            className="text-lg font-semibold" 
+          />
           
           {/* Quick select buttons */}
           <div className="flex flex-wrap gap-2 mt-2">

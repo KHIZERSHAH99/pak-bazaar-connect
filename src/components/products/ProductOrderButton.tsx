@@ -26,13 +26,22 @@ const ProductOrderButton: React.FC<ProductOrderButtonProps> = ({
   const { toast } = useToast();
 
   const totalAmount = (product.price || 0) * quantity;
-  const canOrder = !user || profile?.role === 'seller' || !profile; // Allow guests and sellers
+  const canOrder = user && profile?.role === 'seller'; // Only authenticated sellers can order
 
   const handleOrderClick = () => {
-    if (!canOrder) {
+    if (!user) {
       toast({
-        title: 'Access Required',
-        description: 'Please sign in as a seller to place orders',
+        title: 'Login Required',
+        description: 'Please sign in to place orders',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (profile?.role !== 'seller') {
+      toast({
+        title: 'Seller Account Required',
+        description: 'Only sellers can place orders. Please switch to seller role.',
         variant: 'destructive'
       });
       return;

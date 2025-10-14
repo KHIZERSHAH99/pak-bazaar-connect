@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
-import WholesalerDashboard from '@/components/dashboard/WholesalerDashboard';
+import ShopsManagement from '@/components/dashboard/ShopsManagement';
 import SellerDashboard from '@/components/dashboard/SellerDashboard';
 import PendingDashboard from '@/components/dashboard/PendingDashboard';
 import EnhancedWelcomeOnboarding from '@/components/ui/EnhancedWelcomeOnboarding';
@@ -57,7 +57,15 @@ const FixedDashboard: React.FC = () => {
       case 'admin':
         return <AdminDashboard />;
       case 'wholesaler':
-        return <WholesalerDashboard />;
+        return (
+          <div className="space-y-6 p-6">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground font-poppins">Wholesaler Dashboard</h1>
+              <p className="text-muted-foreground mt-2 font-poppins">Manage your shops and products from the navigation menu</p>
+            </div>
+            <ShopsManagement />
+          </div>
+        );
       case 'seller':
         return <SellerDashboard />;
       default:

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
-import WholesalerDashboard from '@/components/dashboard/WholesalerDashboard';
+import ShopsManagement from '@/components/dashboard/ShopsManagement';
 import { Button } from '@/components/ui/button';
 
 const DashboardWholesalerPreview: React.FC = () => {
@@ -34,7 +34,13 @@ const DashboardWholesalerPreview: React.FC = () => {
           </Button>
         </div>
         
-        <WholesalerDashboard />
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground font-poppins">Wholesaler Dashboard</h2>
+            <p className="text-muted-foreground mt-2 font-poppins">Manage shops and products from the navigation menu</p>
+          </div>
+          <ShopsManagement />
+        </div>
       </div>
     </DashboardLayout>
   );

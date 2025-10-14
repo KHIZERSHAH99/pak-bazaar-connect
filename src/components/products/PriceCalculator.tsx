@@ -3,9 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Calculator, Package, TrendingDown, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calculator, Package, TrendingDown, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 
 interface PricingTier {
@@ -32,7 +31,6 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 }) => {
   const [quantity, setQuantity] = useState(moq);
   const [showSavings, setShowSavings] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   const sortedTiers = useMemo(() => {
     // Ensure we have a valid base price (never 0)
@@ -119,25 +117,14 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   ].filter(btn => btn.value >= moq);
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <Card className={cn("overflow-hidden", className)}>
-        <CollapsibleTrigger className="w-full">
-          <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-primary/10 cursor-pointer hover:from-primary/10 hover:to-primary/15 transition-colors">
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Calculator className="h-5 w-5 text-primary" />
-                Price Calculator
-              </div>
-              {isOpen ? (
-                <ChevronUp className="h-5 w-5 text-primary" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-primary" />
-              )}
-            </CardTitle>
-          </CardHeader>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <CardContent className="space-y-4 pt-4">
+    <Card className={cn("overflow-hidden", className)}>
+      <CardHeader className="pb-4 bg-gradient-to-r from-primary/5 to-primary/10">
+        <CardTitle className="flex items-center gap-2">
+          <Calculator className="h-5 w-5 text-primary" />
+          Price Calculator
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4 pt-4">
         {/* Quantity Input */}
         <div className="space-y-2">
           <Label htmlFor="quantity" className="flex items-center gap-2">
@@ -203,10 +190,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
             </div>
           </div>
         </div>
-          </CardContent>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
+      </CardContent>
+    </Card>
   );
 };
 

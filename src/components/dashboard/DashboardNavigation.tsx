@@ -13,7 +13,9 @@ import {
   Store,
   FileText,
   BarChart3,
-  Truck
+  Truck,
+  CreditCard,
+  Ticket
 } from 'lucide-react';
 
 interface NavItem {
@@ -72,6 +74,16 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
         name: 'Orders', 
         path: '/dashboard/wholesaler-orders', 
         icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
+      },
+      { 
+        name: 'Coupons', 
+        path: '/dashboard/coupons', 
+        icon: <Ticket className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
+      },
+      { 
+        name: 'Payment', 
+        path: '/dashboard/payment', 
+        icon: <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
         name: 'Analytics', 

@@ -4,10 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
-import WholesalerDashboard from '@/components/dashboard/WholesalerDashboard';
 import SellerDashboard from '@/components/dashboard/SellerDashboard';
 import WelcomeOnboarding from '@/components/ui/WelcomeOnboarding';
 import DashboardLayout from '@/components/DashboardLayout';
+import ShopsManagement from '@/components/dashboard/ShopsManagement';
 
 const Dashboard: React.FC = () => {
   const { user, profile, loading } = useAuth();
@@ -88,7 +88,15 @@ const Dashboard: React.FC = () => {
       case 'admin':
         return <AdminDashboard />;
       case 'wholesaler':
-        return <WholesalerDashboard />;
+        return (
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground font-poppins">Wholesaler Dashboard</h1>
+              <p className="text-muted-foreground mt-2 font-poppins">Manage your shops and products from the navigation menu</p>
+            </div>
+            <ShopsManagement />
+          </div>
+        );
       case 'seller':
         return <SellerDashboard />;
       default:

@@ -43,6 +43,8 @@ import DashboardAnalytics from '@/pages/dashboard/DashboardAnalytics';
 import DashboardBrowseShops from '@/pages/dashboard/DashboardBrowseShops';
 import DashboardWholesalerPreview from '@/pages/dashboard/DashboardWholesalerPreview';
 import DashboardSellerPreview from '@/pages/dashboard/DashboardSellerPreview';
+import DashboardPayment from '@/pages/dashboard/DashboardPayment';
+import DashboardCoupons from '@/pages/dashboard/DashboardCoupons';
 
 // Seller pages
 import SellerOrders from '@/pages/seller/SellerOrders';
@@ -110,6 +112,8 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
+        <Route path="/dashboard/payment" element={<ProtectedRoute requiredRole="wholesaler"><DashboardPayment /></ProtectedRoute>} />
+        <Route path="/dashboard/coupons" element={<ProtectedRoute requiredRole="wholesaler"><DashboardCoupons /></ProtectedRoute>} />
         <Route path="/dashboard/browse-shops" element={<ProtectedRoute requiredRole="seller"><DashboardBrowseShops /></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-preview" element={<ProtectedRoute requiredRole="admin"><DashboardWholesalerPreview /></ProtectedRoute>} />
         <Route path="/dashboard/seller-preview" element={<ProtectedRoute requiredRole="admin"><DashboardSellerPreview /></ProtectedRoute>} />

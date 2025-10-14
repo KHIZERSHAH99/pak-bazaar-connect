@@ -67,12 +67,11 @@ const EmailSignupForm = () => {
 
       if (signUpError) throw signUpError;
 
-      toast({
-        title: 'Account Created Successfully!',
-        description: 'Please check your email to verify your account.',
-      });
+      // Store email for confirmation page
+      sessionStorage.setItem('pendingConfirmationEmail', data.email);
 
-      navigate('/login');
+      // Redirect to email confirmation page
+      navigate('/email-confirmation-pending');
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({

@@ -57,6 +57,8 @@ import WholesalerProducts from '@/pages/wholesaler/Products';
 
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import AdminPanel from '@/pages/admin/AdminPanel';
+import PublicBrowseShops from '@/pages/BrowseShops';
+import EmailConfirmationPending from '@/pages/EmailConfirmationPending';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -71,6 +73,10 @@ const AppRoutes: React.FC = () => {
         
         <Route path="/features" element={<Features />} />
         <Route path="/stats" element={<Stats />} />
+        
+        {/* Public shops and confirmation */}
+        <Route path="/shops" element={<PublicBrowseShops />} />
+        <Route path="/email-confirmation-pending" element={<EmailConfirmationPending />} />
         
         {/* Legal pages */}
         <Route path="/contact" element={<Contact />} />

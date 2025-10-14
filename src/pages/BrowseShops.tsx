@@ -1,0 +1,20 @@
+import React from 'react';
+import BrowseShops from '@/components/dashboard/BrowseShops';
+import Layout from '@/components/Layout';
+
+const PublicBrowseShops: React.FC = () => {
+  return (
+    <Layout 
+      title="Browse Wholesalers - Pak Bazaar Connect"
+      description="Discover verified wholesale suppliers across Pakistan"
+    >
+      <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/5 via-background to-primary/10 py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <BrowseShops />
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export default PublicBrowseShops;

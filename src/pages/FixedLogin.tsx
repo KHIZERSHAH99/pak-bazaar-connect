@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import PakistaniLoginForm from '@/components/auth/PakistaniLoginForm';
+import EmailLoginForm from '@/components/auth/EmailLoginForm';
 import Layout from '@/components/Layout';
 
 const FixedLogin: React.FC = () => {
@@ -23,7 +23,7 @@ const FixedLogin: React.FC = () => {
     <Layout title="Login - Pak Bazaar Connect">
       <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
         <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <PakistaniLoginForm />
+          <EmailLoginForm />
         </div>
       </div>
     </Layout>

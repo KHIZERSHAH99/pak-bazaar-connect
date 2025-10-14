@@ -109,7 +109,7 @@ const EmailLoginForm: React.FC = () => {
           .from('profiles')
           .select('email')
           .eq('normalized_phone', normalizedPhone)
-          .single();
+          .maybeSingle();
         
         if (profileError || !profileData) {
           throw new Error('Phone number not found. Please check and try again.');

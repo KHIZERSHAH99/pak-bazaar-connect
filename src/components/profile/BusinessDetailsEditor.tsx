@@ -72,15 +72,15 @@ const BusinessDetailsEditor: React.FC<BusinessDetailsEditorProps> = ({
     });
     setEditing(false);
   };
-  return <Card className="p-6 mx-0 px-[37px] py-[19px] my-0">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold font-poppins mx-px px-0 my-0 py-0">Business Information</h3>
-        {!editing && <Button variant="outline" size="sm" onClick={() => setEditing(true)} className="font-poppins">
+  return <Card className="p-3 sm:p-4 md:p-6">
+      <div className="flex justify-between items-center mb-3 sm:mb-4">
+        <h3 className="text-base sm:text-lg font-semibold font-poppins">Business Information</h3>
+        {!editing && <Button variant="outline" size="sm" onClick={() => setEditing(true)} className="font-poppins text-xs sm:text-sm h-8 sm:h-9">
             Edit
           </Button>}
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <div>
           <Label htmlFor="business_name" className="font-poppins">Business Name</Label>
           <Input id="business_name" value={formData.business_name} onChange={e => handleInputChange('business_name', e.target.value)} disabled={!editing} className="font-poppins" />
@@ -122,29 +122,29 @@ const BusinessDetailsEditor: React.FC<BusinessDetailsEditorProps> = ({
           </Select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <Label htmlFor="ntn_number" className="font-poppins">NTN Number</Label>
-            <Input id="ntn_number" value={formData.ntn_number} onChange={e => handleInputChange('ntn_number', e.target.value)} disabled={!editing} className="font-poppins" />
+            <Label htmlFor="ntn_number" className="font-poppins text-xs sm:text-sm">NTN Number</Label>
+            <Input id="ntn_number" value={formData.ntn_number} onChange={e => handleInputChange('ntn_number', e.target.value)} disabled={!editing} className="font-poppins text-sm h-9 sm:h-10" />
           </div>
           <div>
-            <Label htmlFor="strn_number" className="font-poppins">STRN Number</Label>
-            <Input id="strn_number" value={formData.strn_number} onChange={e => handleInputChange('strn_number', e.target.value)} disabled={!editing} className="font-poppins" />
+            <Label htmlFor="strn_number" className="font-poppins text-xs sm:text-sm">STRN Number</Label>
+            <Input id="strn_number" value={formData.strn_number} onChange={e => handleInputChange('strn_number', e.target.value)} disabled={!editing} className="font-poppins text-sm h-9 sm:h-10" />
           </div>
         </div>
 
-        {editing && <div className="flex gap-2 pt-4">
-            <Button onClick={handleSave} disabled={saving} className="flex-1 font-poppins">
+        {editing && <div className="flex gap-2 pt-3 sm:pt-4">
+            <Button onClick={handleSave} disabled={saving} className="flex-1 font-poppins text-xs sm:text-sm h-9 sm:h-10">
               {saving ? <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                   Saving...
                 </> : <>
-                  <Save className="mr-2 h-4 w-4" />
+                  <Save className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   Save Changes
                 </>}
             </Button>
-            <Button variant="outline" onClick={handleCancel} disabled={saving} className="font-poppins">
-              <X className="mr-2 h-4 w-4" />
+            <Button variant="outline" onClick={handleCancel} disabled={saving} className="font-poppins text-xs sm:text-sm h-9 sm:h-10">
+              <X className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
               Cancel
             </Button>
           </div>}

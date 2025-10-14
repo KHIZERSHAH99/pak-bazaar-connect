@@ -77,22 +77,22 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onProfileUpdate 
   };
 
   return (
-    <Card className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold font-poppins">Personal Information</h3>
+    <Card className="p-3 sm:p-4 md:p-6">
+      <div className="flex justify-between items-center mb-3 sm:mb-4">
+        <h3 className="text-base sm:text-lg font-semibold font-poppins">Personal Information</h3>
         {!editing && (
           <Button
             variant="outline"
             size="sm"
             onClick={() => setEditing(true)}
-            className="font-poppins"
+            className="font-poppins text-xs sm:text-sm h-8 sm:h-9"
           >
             Edit
           </Button>
         )}
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <div>
           <Label htmlFor="email" className="font-poppins">Email</Label>
           <Input
@@ -147,44 +147,44 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onProfileUpdate 
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <Label htmlFor="city" className="font-poppins">City</Label>
+            <Label htmlFor="city" className="font-poppins text-xs sm:text-sm">City</Label>
             <Input
               id="city"
               value={formData.city}
               onChange={(e) => handleInputChange('city', e.target.value)}
               disabled={!editing}
-              className="font-poppins"
+              className="font-poppins text-sm h-9 sm:h-10"
             />
           </div>
           <div>
-            <Label htmlFor="postal_code" className="font-poppins">Postal Code</Label>
+            <Label htmlFor="postal_code" className="font-poppins text-xs sm:text-sm">Postal Code</Label>
             <Input
               id="postal_code"
               value={formData.postal_code}
               onChange={(e) => handleInputChange('postal_code', e.target.value)}
               disabled={!editing}
-              className="font-poppins"
+              className="font-poppins text-sm h-9 sm:h-10"
             />
           </div>
         </div>
 
         {editing && (
-          <div className="flex gap-2 pt-4">
+          <div className="flex gap-2 pt-3 sm:pt-4">
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 font-poppins"
+              className="flex-1 font-poppins text-xs sm:text-sm h-9 sm:h-10"
             >
               {saving ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                   Saving...
                 </>
               ) : (
                 <>
-                  <Save className="mr-2 h-4 w-4" />
+                  <Save className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   Save Changes
                 </>
               )}
@@ -193,9 +193,9 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onProfileUpdate 
               variant="outline"
               onClick={handleCancel}
               disabled={saving}
-              className="font-poppins"
+              className="font-poppins text-xs sm:text-sm h-9 sm:h-10"
             >
-              <X className="mr-2 h-4 w-4" />
+              <X className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
               Cancel
             </Button>
           </div>

@@ -72,63 +72,63 @@ const EnhancedUserProfile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+        <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
           {/* Header Section */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">{t('myProfile')}</h1>
-            <p className="text-gray-600 dark:text-gray-300 font-poppins">
+          <div className="text-center mb-4 sm:mb-6 md:mb-8">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2 font-poppins">{t('myProfile')}</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-poppins">
               {t('manageAccountInfo')}
             </p>
           </div>
 
           {/* Profile Overview Cards - Updated to remove profile image */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="text-center py-8">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="bg-blue-100 dark:bg-blue-800/50 p-3 rounded-full">
-                    <ShoppingBag className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+            <Card className="text-center py-4 sm:py-6 md:py-8">
+              <CardContent className="p-3 sm:p-4 md:p-6">
+                <div className="flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
+                  <div className="bg-blue-100 dark:bg-blue-800/50 p-2 sm:p-2.5 md:p-3 rounded-full">
+                    <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white font-poppins">
                   {loading ? '...' : orderStats.totalOrders}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 font-poppins">{t('totalOrders')}</p>
+                <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 font-poppins">{t('totalOrders')}</p>
               </CardContent>
             </Card>
 
-            <Card className="text-center py-8">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="bg-green-100 dark:bg-green-800/50 p-3 rounded-full">
-                    <Shield className="h-6 w-6 text-green-600 dark:text-green-400" />
+            <Card className="text-center py-4 sm:py-6 md:py-8">
+              <CardContent className="p-3 sm:p-4 md:p-6">
+                <div className="flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
+                  <div className="bg-green-100 dark:bg-green-800/50 p-2 sm:p-2.5 md:p-3 rounded-full">
+                    <Shield className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-600 dark:text-green-400" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white font-poppins">
                   {loading ? '...' : orderStats.completedOrders}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 font-poppins">{t('completed')}</p>
+                <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 font-poppins">{t('completed')}</p>
               </CardContent>
             </Card>
 
-            <Card className="text-center py-8">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="bg-orange-100 dark:bg-orange-800/50 p-3 rounded-full">
-                    <Star className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+            <Card className="text-center py-4 sm:py-6 md:py-8">
+              <CardContent className="p-3 sm:p-4 md:p-6">
+                <div className="flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
+                  <div className="bg-orange-100 dark:bg-orange-800/50 p-2 sm:p-2.5 md:p-3 rounded-full">
+                    <Star className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-orange-600 dark:text-orange-400" />
                   </div>
                 </div>
-                <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="text-lg px-3 py-1 font-poppins capitalize">
+                <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} className="text-sm sm:text-base md:text-lg px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 font-poppins capitalize">
                   {profile.role}
                 </Badge>
-                <p className="text-gray-600 dark:text-gray-300 font-poppins mt-2">{t('accountType')}</p>
+                <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-300 font-poppins mt-1 sm:mt-2">{t('accountType')}</p>
               </CardContent>
             </Card>
           </div>
 
           {/* Main Profile Information */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             {/* Account Information */}
             <div className="space-y-6">
               <AccountInfo email={profile.email} createdAt={profile.created_at} />
@@ -149,38 +149,38 @@ const EnhancedUserProfile: React.FC = () => {
 
           {/* Verification Status */}
           <Card className="overflow-hidden border-none shadow-md">
-            <div className="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 dark:from-indigo-600/30 dark:to-purple-600/30 backdrop-blur-sm p-4 md:p-6 border-b border-indigo-200/50 dark:border-indigo-700/50">
-              <div className="flex items-center gap-3">
-                <div className="bg-indigo-100 dark:bg-indigo-800/50 p-3 rounded-full">
-                  <Shield className="h-5 w-5 text-indigo-700 dark:text-indigo-300" />
+            <div className="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 dark:from-indigo-600/30 dark:to-purple-600/30 backdrop-blur-sm p-3 sm:p-4 md:p-6 border-b border-indigo-200/50 dark:border-indigo-700/50">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="bg-indigo-100 dark:bg-indigo-800/50 p-2 sm:p-2.5 md:p-3 rounded-full">
+                  <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-700 dark:text-indigo-300" />
                 </div>
                 <div>
-                  <h2 className="text-lg md:text-xl font-semibold mb-1 font-poppins text-indigo-800 dark:text-indigo-100">
+                  <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-0.5 sm:mb-1 font-poppins text-indigo-800 dark:text-indigo-100">
                     Verification Status
                   </h2>
-                  <p className="text-indigo-700 dark:text-indigo-200 text-sm font-poppins">
+                  <p className="text-indigo-700 dark:text-indigo-200 text-xs sm:text-sm font-poppins">
                     Your account verification and security status
                   </p>
                 </div>
               </div>
             </div>
             
-            <CardContent className="p-4 md:p-6 bg-background/95 dark:bg-background/95">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg border border-border/50">
-                  <Badge variant={profile.verification_status === 'approved' ? 'default' : 'secondary'} className="font-poppins">
+            <CardContent className="p-3 sm:p-4 md:p-6 bg-background/95 dark:bg-background/95">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg border border-border/50">
+                  <Badge variant={profile.verification_status === 'approved' ? 'default' : 'secondary'} className="font-poppins text-xs sm:text-sm">
                     {profile.verification_status || 'pending'}
                   </Badge>
-                  <span className="font-medium text-foreground font-poppins">
+                  <span className="font-medium text-foreground font-poppins text-xs sm:text-sm">
                     Account Verification
                   </span>
                 </div>
                 
-                <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg border border-border/50">
-                  <Badge variant={profile.is_suspended ? 'destructive' : 'default'} className="font-poppins">
+                <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg border border-border/50">
+                  <Badge variant={profile.is_suspended ? 'destructive' : 'default'} className="font-poppins text-xs sm:text-sm">
                     {profile.is_suspended ? 'Suspended' : 'Active'}
                   </Badge>
-                  <span className="font-medium text-foreground font-poppins">
+                  <span className="font-medium text-foreground font-poppins text-xs sm:text-sm">
                     Account Status
                   </span>
                 </div>

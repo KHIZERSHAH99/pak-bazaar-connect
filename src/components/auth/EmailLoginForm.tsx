@@ -13,7 +13,7 @@ import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  identifier: z.string().min(1, 'Email or phone number is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -28,26 +28,30 @@ const EmailLoginForm: React.FC = () => {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      identifier: '',
       password: '',
     },
   });
 
   const handleResendVerification = async () => {
-    const email = form.getValues('email');
-    if (!email) {
+    const identifier = form.getValues('identifier');
+    
+    // Check if it's an email
+    const isEmail = identifier.includes('@');
+    
+    if (!isEmail) {
       toast({
-        title: "Email required",
-        description: "Please enter your email address first",
+        title: "Email verification only",
+        description: "Phone verification resend is not supported yet",
         variant: "destructive",
       });
       return;
     }
-
+    
     try {
       const { error } = await supabase.auth.resend({
         type: 'signup',
-        email: email,
+        email: identifier,
       });
 
       if (error) throw error;
@@ -70,12 +74,55 @@ const EmailLoginForm: React.FC = () => {
     try {
       setLoading(true);
       setEmailNotConfirmed(false);
-      console.log('Attempting login with:', values.email);
+      
+      const { identifier, password } = values;
+      
+      // Determine if identifier is email or phone
+      const isEmail = identifier.includes('@');
+      
+      console.log('Attempting login with:', identifier, 'Type:', isEmail ? 'email' : 'phone');
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
+      let data, error;
+
+      if (isEmail) {
+        // Login with email
+        const result = await supabase.auth.signInWithPassword({
+          email: identifier,
+          password: password,
+        });
+        data = result.data;
+        error = result.error;
+      } else {
+        // Normalize phone number for login
+        let normalizedPhone = identifier.replace(/\D/g, '');
+        
+        if (normalizedPhone.startsWith('92')) {
+          normalizedPhone = '0' + normalizedPhone.substring(2);
+        } else if (normalizedPhone.startsWith('3')) {
+          normalizedPhone = '0' + normalizedPhone;
+        }
+        
+        console.log('Normalized phone:', normalizedPhone);
+        
+        // Find user by phone number
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('normalized_phone', normalizedPhone)
+          .single();
+        
+        if (profileError || !profileData) {
+          throw new Error('Phone number not found. Please check and try again.');
+        }
+        
+        // Login with the email associated with phone
+        const result = await supabase.auth.signInWithPassword({
+          email: profileData.email,
+          password: password,
+        });
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
         console.error('Login error:', error);
@@ -144,17 +191,16 @@ const EmailLoginForm: React.FC = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="identifier"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <Mail className="h-4 w-4" />
-                      Email Address
+                      Email or Phone Number
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="your.email@example.com"
-                        type="email"
+                        placeholder="email@example.com or 03001234567"
                         {...field}
                         disabled={loading}
                       />

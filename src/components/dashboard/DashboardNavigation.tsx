@@ -56,11 +56,6 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
 
     const wholesalerItems: NavItem[] = [
       { 
-        name: 'My Shops', 
-        path: '/dashboard/shops', 
-        icon: <Store className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
-      },
-      { 
         name: 'Products', 
         path: '/dashboard/products', 
         icon: <Package className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 

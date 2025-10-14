@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -8,56 +7,49 @@ import SellerDashboard from '@/components/dashboard/SellerDashboard';
 import WelcomeOnboarding from '@/components/ui/WelcomeOnboarding';
 import DashboardLayout from '@/components/DashboardLayout';
 import ShopsManagement from '@/components/dashboard/ShopsManagement';
-
 const Dashboard: React.FC = () => {
-  const { user, profile, loading } = useAuth();
+  const {
+    user,
+    profile,
+    loading
+  } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(false);
-
   useEffect(() => {
     // Check if user is new (created in last 24 hours) and hasn't seen onboarding
     if (user && profile && !loading) {
       const userCreated = new Date(user.created_at);
       const now = new Date();
       const hoursSinceCreation = (now.getTime() - userCreated.getTime()) / (1000 * 60 * 60);
-      
       const hasSeenOnboarding = localStorage.getItem(`onboarding_${user.id}`);
-      
       if (hoursSinceCreation < 24 && !hasSeenOnboarding) {
         setShowOnboarding(true);
       }
     }
   }, [user, profile, loading]);
-
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
     if (user) {
       localStorage.setItem(`onboarding_${user.id}`, 'true');
     }
   };
-
   const handleSkipOnboarding = () => {
     setShowOnboarding(false);
     if (user) {
       localStorage.setItem(`onboarding_${user.id}`, 'true');
     }
   };
-
   if (loading) {
-    return (
-      <DashboardLayout>
+    return <DashboardLayout>
         <div className="flex justify-center items-center min-h-96">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin text-pakistani_green-600 mx-auto mb-4" />
             <p className="text-gray-600 font-poppins">Loading your dashboard...</p>
           </div>
         </div>
-      </DashboardLayout>
-    );
+      </DashboardLayout>;
   }
-
   if (!user || !profile) {
-    return (
-      <DashboardLayout>
+    return <DashboardLayout>
         <div className="flex justify-center items-center min-h-96">
           <div className="text-center">
             <h2 className="text-xl font-semibold text-gray-900 mb-2 font-poppins">
@@ -66,66 +58,47 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-600 mb-4 font-poppins">
               Please log in to access your dashboard
             </p>
-            <button
-              onClick={() => window.location.href = '/login'}
-              className="bg-pakistani_green-600 text-white px-4 py-2 rounded-lg hover:bg-pakistani_green-700 font-poppins"
-            >
+            <button onClick={() => window.location.href = '/login'} className="bg-pakistani_green-600 text-white px-4 py-2 rounded-lg hover:bg-pakistani_green-700 font-poppins">
               Go to Login
             </button>
           </div>
         </div>
-      </DashboardLayout>
-    );
+      </DashboardLayout>;
   }
 
   // Redirect all users except admin and existing wholesalers to seller dashboard
   if (profile.role !== 'admin' && profile.role !== 'wholesaler') {
     return <Navigate to="/dashboard/seller-dashboard" replace />;
   }
-
   const renderDashboard = () => {
     switch (profile.role) {
       case 'admin':
         return <AdminDashboard />;
       case 'wholesaler':
-        return (
-          <div className="space-y-6">
+        return <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-bold text-foreground font-poppins">Wholesaler Dashboard</h1>
-              <p className="text-muted-foreground mt-2 font-poppins">Manage your shops and products from the navigation menu</p>
+              <p className="text-muted-foreground mt-2 font-poppins">Manage your shops from the navigation menu</p>
             </div>
             <ShopsManagement />
-          </div>
-        );
+          </div>;
       case 'seller':
         return <SellerDashboard />;
       default:
-        return (
-          <div className="text-center py-12">
+        return <div className="text-center py-12">
             <h2 className="text-xl font-semibold text-gray-900 mb-2 font-poppins">
               Role Not Assigned
             </h2>
             <p className="text-gray-600 font-poppins">
               Please contact support to get your role assigned.
             </p>
-          </div>
-        );
+          </div>;
     }
   };
-
-  return (
-    <DashboardLayout>
+  return <DashboardLayout>
       {renderDashboard()}
       
-      {showOnboarding && (
-        <WelcomeOnboarding
-          userRole={profile.role}
-          onComplete={handleOnboardingComplete}
-          onSkip={handleSkipOnboarding}
-        />
-      )}
-    </DashboardLayout>
-  );
+      {showOnboarding && <WelcomeOnboarding userRole={profile.role} onComplete={handleOnboardingComplete} onSkip={handleSkipOnboarding} />}
+    </DashboardLayout>;
 };
-
 export default Dashboard;

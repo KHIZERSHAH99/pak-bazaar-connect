@@ -176,47 +176,6 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           </div>
         </div>
 
-        {/* Current Pricing */}
-        <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Unit Price:</span>
-            <span className="text-lg font-bold text-primary">
-              PKR {calculations.unitPrice.toLocaleString()}
-            </span>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Quantity:</span>
-            <span className="font-medium">× {quantity.toLocaleString()}</span>
-          </div>
-          
-          <div className="h-px bg-border" />
-          
-          <div className="flex justify-between items-center">
-            <span className="font-medium">Total Amount:</span>
-            <span className="text-xl font-bold text-primary">
-              PKR {calculations.totalPrice.toLocaleString()}
-            </span>
-          </div>
-          
-          {showSavings && (
-            <div className="flex justify-between items-center pt-2 border-t border-border">
-              <span className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
-                <TrendingDown className="h-4 w-4" />
-                You Save:
-              </span>
-              <div className="text-right">
-                <div className="text-green-600 dark:text-green-400 font-bold">
-                  PKR {calculations.savings.toLocaleString()}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  ({calculations.savingsPercent.toFixed(1)}% off)
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Next Tier Suggestion */}
         {calculations.unitsToNextTier && calculations.unitsToNextTier <= 100 && (
           <Alert className="border-primary/20 bg-primary/5">

@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { normalizePakistaniPhone } from '@/lib/auth/phone-utils';
 
 const loginSchema = z.object({
   identifier: z.string().min(1, 'Email or phone number is required'),
@@ -18,6 +19,11 @@ const loginSchema = z.object({
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
+
+type AuthByPhoneResponse = {
+  success: boolean;
+  email?: string;
+};
 
 const EmailLoginForm: React.FC = () => {
   const navigate = useNavigate();
@@ -93,31 +99,22 @@ const EmailLoginForm: React.FC = () => {
         data = result.data;
         error = result.error;
       } else {
-        // Normalize phone number for login
-        let normalizedPhone = identifier.replace(/\D/g, '');
-        
-        if (normalizedPhone.startsWith('92')) {
-          normalizedPhone = '0' + normalizedPhone.substring(2);
-        } else if (normalizedPhone.startsWith('3')) {
-          normalizedPhone = '0' + normalizedPhone;
-        }
-        
+        // Normalize phone number using shared utility
+        const normalizedPhone = normalizePakistaniPhone(identifier);
         console.log('Normalized phone:', normalizedPhone);
         
-        // Find user by phone number
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('normalized_phone', normalizedPhone)
-          .maybeSingle();
+        // Authenticate by phone via secure RPC (bypasses RLS safely)
+        const { data: authDataRaw, error: rpcError } = await supabase.rpc('authenticate_user_by_phone', {
+          user_phone: normalizedPhone,
+        });
+        const authData = authDataRaw as AuthByPhoneResponse;
         
-        if (profileError || !profileData) {
+        if (rpcError || !authData || authData.success !== true || !authData.email) {
           throw new Error('Phone number not found. Please check and try again.');
         }
         
-        // Login with the email associated with phone
         const result = await supabase.auth.signInWithPassword({
-          email: profileData.email,
+          email: authData.email,
           password: password,
         });
         data = result.data;

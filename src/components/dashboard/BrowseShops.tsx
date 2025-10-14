@@ -49,7 +49,7 @@ const BrowseShops: React.FC = () => {
   const filteredShops = shops.filter(shop => shop.name.toLowerCase().includes(searchTerm.toLowerCase()) || shop.address.toLowerCase().includes(searchTerm.toLowerCase()) || shop.contact.toLowerCase().includes(searchTerm.toLowerCase()));
   const handleViewShop = (shopId: string) => {
     console.log('Navigating to shop:', shopId);
-    navigate(`/seller/shop/${shopId}`);
+    navigate(`/shop/${shopId}`);
   };
   const getShopImageSrc = (logo?: string) => {
     if (logo && !logo.includes('placeholder.svg')) {

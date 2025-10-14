@@ -47,7 +47,7 @@ import DashboardSellerPreview from '@/pages/dashboard/DashboardSellerPreview';
 // Seller pages
 import SellerOrders from '@/pages/seller/SellerOrders';
 import BrowseShops from '@/pages/seller/BrowseShops';
-import ShopDetails from '@/pages/seller/ShopDetails';
+import SellerShopDetails from '@/pages/seller/ShopDetails';
 import ShopProducts from '@/pages/seller/ShopProducts';
 
 // Wholesaler pages
@@ -59,6 +59,7 @@ import AdminDashboard from '@/pages/admin/AdminDashboard';
 import AdminPanel from '@/pages/admin/AdminPanel';
 import PublicBrowseShops from '@/pages/BrowseShops';
 import EmailConfirmationPending from '@/pages/EmailConfirmationPending';
+import ShopDetails from '@/pages/ShopDetails';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -76,6 +77,7 @@ const AppRoutes: React.FC = () => {
         
         {/* Public shops and confirmation */}
         <Route path="/shops" element={<PublicBrowseShops />} />
+        <Route path="/shop/:shopId" element={<ShopDetails />} />
         <Route path="/email-confirmation-pending" element={<EmailConfirmationPending />} />
         
         {/* Legal pages */}
@@ -118,7 +120,7 @@ const AppRoutes: React.FC = () => {
         {/* Seller routes */}
         <Route path="/seller/orders" element={<ProtectedRoute requiredRole="seller"><SellerOrders /></ProtectedRoute>} />
         <Route path="/seller/browse-shops" element={<ProtectedRoute requiredRole="seller"><BrowseShops /></ProtectedRoute>} />
-        <Route path="/seller/shop/:shopId" element={<ProtectedRoute requiredRole="seller"><ShopDetails /></ProtectedRoute>} />
+        <Route path="/seller/shop/:shopId" element={<ProtectedRoute requiredRole="seller"><SellerShopDetails /></ProtectedRoute>} />
         <Route path="/seller/shop/:shopId/products" element={<ProtectedRoute requiredRole="seller"><ShopProducts /></ProtectedRoute>} />
 
         {/* Wholesaler routes */}

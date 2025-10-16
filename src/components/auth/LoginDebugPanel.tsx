@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { debugPhoneNumbers } from '@/lib/pakistani-phone-auth';
+// Debug phone numbers function removed with OTP system
 import { useToast } from '@/hooks/use-toast';
 
 interface PhoneRecord {
@@ -21,12 +21,18 @@ const LoginDebugPanel: React.FC = () => {
   const fetchPhoneNumbers = async () => {
     setIsLoading(true);
     try {
-      const phones = await debugPhoneNumbers();
-      setPhoneRecords(phones);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('phone_number, normalized_phone, email, role')
+        .not('phone_number', 'is', null)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setPhoneRecords(data || []);
       
       toast({
         title: 'Debug Data Loaded',
-        description: `Found ${phones.length} phone records`,
+        description: `Found ${data?.length || 0} phone records`,
       });
     } catch (error) {
       console.error('Debug fetch error:', error);

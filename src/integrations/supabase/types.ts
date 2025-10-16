@@ -1205,61 +1205,6 @@ export type Database = {
           },
         ]
       }
-      otp_verifications: {
-        Row: {
-          attempts_count: number | null
-          created_at: string | null
-          expires_at: string
-          id: string
-          is_verified: boolean | null
-          otp_code: string
-          phone_number: string
-          user_id: string | null
-        }
-        Insert: {
-          attempts_count?: number | null
-          created_at?: string | null
-          expires_at: string
-          id?: string
-          is_verified?: boolean | null
-          otp_code: string
-          phone_number: string
-          user_id?: string | null
-        }
-        Update: {
-          attempts_count?: number | null
-          created_at?: string | null
-          expires_at?: string
-          id?: string
-          is_verified?: boolean | null
-          otp_code?: string
-          phone_number?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "otp_verifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "otp_verifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "otp_verifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_wholesaler_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       password_policy_config: {
         Row: {
           check_leaked_passwords: boolean | null
@@ -2608,15 +2553,19 @@ export type Database = {
         Args: { p_email?: string; p_phone?: string }
         Returns: Json
       }
+      cleanup_auth_attempts_aggressive: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_data: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
-      cleanup_expired_otps: {
+      cleanup_old_audit_logs: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
-      cleanup_old_audit_logs: {
+      cleanup_old_audit_logs_aggressive: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2628,7 +2577,7 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
-      cleanup_old_otp_records: {
+      cleanup_old_guest_orders: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2640,7 +2589,19 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_payment_screenshots_aggressive: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_product_views_aggressive: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_sensitive_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_sms_logs_aggressive: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2665,10 +2626,6 @@ export type Database = {
         Returns: undefined
       }
       generate_csrf_token: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_otp: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
@@ -2859,9 +2816,9 @@ export type Database = {
         Args: { phone_input: string }
         Returns: string
       }
-      send_otp_sms: {
-        Args: { p_otp_code: string; p_phone_number: string }
-        Returns: Json
+      run_all_cleanups: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       switch_business_role: {
         Args: { target_role: string }
@@ -2916,10 +2873,6 @@ export type Database = {
       }
       validate_password_strength: {
         Args: { password: string }
-        Returns: Json
-      }
-      verify_otp: {
-        Args: { provided_otp: string; user_phone: string }
         Returns: Json
       }
     }

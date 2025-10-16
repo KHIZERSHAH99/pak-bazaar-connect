@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Phone, Briefcase, Lock, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/pakistani-phone-auth';
+import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/phone-utils';
 
 // Signup form schema with email as primary
 const signupSchema = z.object({

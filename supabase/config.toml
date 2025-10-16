@@ -54,7 +54,7 @@ enabled = true
 # Port to use for the storage URL.
 port = 54327
 # If file uploads require authentication. Set to `false` to enable anonymous uploads.
-file_size_limit = "50MiB"
+file_size_limit = "500KiB"
 
 [auth]
 enabled = true
@@ -99,8 +99,6 @@ verify_jwt = true
 [functions.rate-limit-check]
 verify_jwt = true
 
-[functions.send-otp]
-verify_jwt = false
+[functions.database-cleanup]
+verify_jwt = true
 
-[functions.verify-otp]
-verify_jwt = false

@@ -1,9 +1,9 @@
 
 import React from 'react';
-import EnhancedOrderManagement from '@/components/orders/EnhancedOrderManagement';
+import UnifiedOrderManagement from '@/components/orders/UnifiedOrderManagement';
 
-const OrdersManagement: React.FC = () => {
-  return <EnhancedOrderManagement />;
+const OrdersManagement = () => {
+  return <UnifiedOrderManagement userRole="wholesaler" />;
 };
 
 export default OrdersManagement;

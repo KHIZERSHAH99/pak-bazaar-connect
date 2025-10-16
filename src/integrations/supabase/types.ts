@@ -2025,6 +2025,27 @@ export type Database = {
         }
         Relationships: []
       }
+      security_config: {
+        Row: {
+          config_key: string
+          config_value: Json
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          config_key: string
+          config_value: Json
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          config_key?: string
+          config_value?: Json
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       security_events: {
         Row: {
           created_at: string | null
@@ -2350,6 +2371,30 @@ export type Database = {
           retry_count?: number | null
           sent_at?: string | null
           status?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -2763,6 +2808,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_user_role_secure: {
+        Args: { _user_id?: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       increment_coupon_usage: {
         Args: { coupon_id: string }
         Returns: undefined
@@ -2795,6 +2851,17 @@ export type Database = {
       log_password_security_event: {
         Args: { p_details?: Json; p_event_type: string; p_user_id: string }
         Returns: undefined
+      }
+      log_security_event: {
+        Args: {
+          p_details?: Json
+          p_event_type: string
+          p_ip_address?: unknown
+          p_severity?: string
+          p_user_agent?: string
+          p_user_id?: string
+        }
+        Returns: string
       }
       mask_sensitive_data: {
         Args: { field_type: string; field_value: string }
@@ -2877,6 +2944,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_role: "admin" | "wholesaler" | "seller" | "pending"
       order_status:
         | "pending"
         | "confirmed"
@@ -3015,6 +3083,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "wholesaler", "seller", "pending"],
       order_status: [
         "pending",
         "confirmed",

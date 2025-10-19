@@ -2,41 +2,43 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Store, ShoppingBag, Shield, CheckCircle } from 'lucide-react';
-
-const featuresData = [
-  {
-    icon: <Store className="h-8 w-8" />,
-    title: 'For Wholesalers',
-    description: 'Create shops, list products, and reach retailers across Pakistan',
-    color: 'from-blue-500 to-blue-600',
-    benefits: ['Unlimited product listings', 'Advanced analytics', 'Promotional ads'],
-  },
-  {
-    icon: <ShoppingBag className="h-8 w-8" />,
-    title: 'For Sellers',
-    description: 'Source quality products directly from verified wholesalers',
-    color: 'from-purple-500 to-purple-600',
-    benefits: ['Bulk pricing', 'Quick ordering', 'Inventory management'],
-  },
-  {
-    icon: <Shield className="h-8 w-8" />,
-    title: 'Secure Trading',
-    description: 'End-to-end security with verified businesses and secure payments',
-    color: 'from-green-500 to-green-600',
-    benefits: ['Business verification', 'Secure payments', 'Dispute resolution'],
-  },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const WhyChooseUsSection: React.FC = () => {
+  const { t } = useLanguage();
+  
+  const featuresData = [
+    {
+      icon: <Store className="h-8 w-8" />,
+      titleKey: 'forWholesalers',
+      descriptionKey: 'createShopsListProducts',
+      color: 'from-blue-500 to-blue-600',
+      benefitKeys: ['unlimitedProductListings', 'advancedAnalytics', 'promotionalAds'],
+    },
+    {
+      icon: <ShoppingBag className="h-8 w-8" />,
+      titleKey: 'forSellers',
+      descriptionKey: 'sourceQualityProducts',
+      color: 'from-purple-500 to-purple-600',
+      benefitKeys: ['bulkPricing', 'quickOrdering', 'inventoryManagement'],
+    },
+    {
+      icon: <Shield className="h-8 w-8" />,
+      titleKey: 'secureTrading',
+      descriptionKey: 'endToEndSecurity',
+      color: 'from-green-500 to-green-600',
+      benefitKeys: ['businessVerification', 'securePayments', 'disputeResolution'],
+    },
+  ];
   return (
     <section className="py-12 md:py-20 px-4 md:px-6 bg-background">
       <div className="container mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 md:mb-4 font-poppins">
-            Why Choose Pak Bazaar Connect?
+            {t('whyChooseUs')}
           </h2>
           <p className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto font-poppins px-2">
-            Designed specifically for Pakistani businesses with local payment methods and regional expertise
+            {t('designedForPakistan')}
           </p>
         </div>
         
@@ -47,14 +49,14 @@ const WhyChooseUsSection: React.FC = () => {
                 <div className="text-white">{feature.icon}</div>
               </div>
               
-              <h3 className="text-xl font-bold text-foreground mb-3 font-poppins">{feature.title}</h3>
-              <p className="text-muted-foreground mb-6 font-poppins leading-relaxed">{feature.description}</p>
+              <h3 className="text-xl font-bold text-foreground mb-3 font-poppins">{t(feature.titleKey)}</h3>
+              <p className="text-muted-foreground mb-6 font-poppins leading-relaxed">{t(feature.descriptionKey)}</p>
               
               <ul className="space-y-3">
-                {feature.benefits.map((benefit, idx) => (
+                {feature.benefitKeys.map((benefitKey, idx) => (
                   <li key={idx} className="flex items-center text-sm text-foreground font-poppins">
                     <CheckCircle className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
-                    {benefit}
+                    {t(benefitKey)}
                   </li>
                 ))}
               </ul>

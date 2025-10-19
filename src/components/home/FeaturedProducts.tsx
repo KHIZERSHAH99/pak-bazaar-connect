@@ -9,8 +9,10 @@ import OptimizedImage from '@/components/ui/image-optimizer';
 import LazyLoadWrapper from '@/components/ui/lazy-load-wrapper';
 import { getActiveProducts } from '@/lib/products';
 import { Product } from '@/lib/types';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const FeaturedProducts = () => {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,14 +37,14 @@ const FeaturedProducts = () => {
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 font-poppins">
-            Featured Products
+            {t('featuredProducts')}
           </h2>
           <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6 md:mb-8 font-poppins px-2">
-            Discover top-quality products from verified suppliers across Pakistan
+            {t('discoverTopQuality')}
           </p>
           <Link to="/products">
             <Button variant="outline" className="border-pakistani_green-600 text-pakistani_green-600 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-950 font-poppins">
-              View All Products
+              {t('viewAllProducts')}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
@@ -77,7 +79,7 @@ const FeaturedProducts = () => {
                       containerClassName="h-48"
                     />
                     <Badge className="absolute top-3 left-3 bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
-                      {product.categories?.name || "Featured"}
+                      {product.categories?.name || t('featured')}
                     </Badge>
                     <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110">
                       <Package className="w-4 h-4 text-pakistani_green-600" />
@@ -97,7 +99,7 @@ const FeaturedProducts = () => {
                       </span>
                       {product.sample_price && (
                         <span className="text-sm text-gray-500 font-poppins">
-                          Sample: PKR {product.sample_price}
+                          {t('sample')}: PKR {product.sample_price}
                         </span>
                       )}
                     </div>
@@ -105,12 +107,12 @@ const FeaturedProducts = () => {
                     {/* Supplier Info */}
                     <div className="space-y-2">
                       <p className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">
-                        {product.shops?.name || "Verified Supplier"}
+                        {product.shops?.name || t('verifiedSupplier')}
                       </p>
                       <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                         <MapPin className="w-3 h-3 mr-1" />
                         <span className="font-poppins">
-                          {product.shops?.cities?.name ? `${product.shops.cities.name}, ${product.shops.cities.province}` : "Pakistan"}
+                          {product.shops?.cities?.name ? `${product.shops.cities.name}, ${product.shops.cities.province}` : t('pakistan')}
                         </span>
                       </div>
                     </div>
@@ -123,7 +125,7 @@ const FeaturedProducts = () => {
                           4.8
                         </span>
                         <span className="text-xs text-gray-500 font-poppins">
-                          (Reviews)
+                          ({t('reviews')})
                         </span>
                       </div>
                       <span className="text-xs text-gray-500 dark:text-gray-400 font-poppins">
@@ -133,7 +135,7 @@ const FeaturedProducts = () => {
 
                     {/* Action Button */}
                     <Button className="w-full bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 text-white font-poppins mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 rounded-xl shadow-lg hover:shadow-pakistani_green-600/30">
-                      View Details
+                      {t('viewDetails')}
                       <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </div>
@@ -144,7 +146,7 @@ const FeaturedProducts = () => {
         ) : (
           <div className="text-center py-16">
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground font-poppins">No featured products available</p>
+            <p className="text-muted-foreground font-poppins">{t('noFeaturedProducts')}</p>
           </div>
         )}
 
@@ -152,7 +154,7 @@ const FeaturedProducts = () => {
         <div className="text-center mt-12">
           <Link to="/signup">
             <Button size="lg" className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins shadow-lg">
-              Start Your Business Journey
+              {t('startBusinessJourney')}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </Link>

@@ -57,6 +57,42 @@ const translations = {
     'pending': 'Pending',
     'selectRole': 'Select Your Role',
     
+    // Featured Products
+    'featuredProducts.title': 'Featured Products',
+    'featuredProducts.description': 'Discover top-quality products from verified suppliers across Pakistan',
+    'featuredProducts.viewAll': 'View All Products',
+    'featuredProducts.sample': 'Sample',
+    'featuredProducts.reviews': 'Reviews',
+    'featuredProducts.moq': 'MOQ',
+    'featuredProducts.viewDetails': 'View Details',
+    'featuredProducts.startJourney': 'Start Your Business Journey',
+    'featuredProducts.noProducts': 'No featured products available',
+    
+    // Why Choose Us
+    'whyChoose.title': 'Why Choose Pak Bazaar Connect?',
+    'whyChoose.description': 'Designed specifically for Pakistani businesses with local payment methods and regional expertise',
+    'whyChoose.wholesalers.title': 'For Wholesalers',
+    'whyChoose.wholesalers.description': 'Create shops, list products, and reach retailers across Pakistan',
+    'whyChoose.wholesalers.benefit1': 'Unlimited product listings',
+    'whyChoose.wholesalers.benefit2': 'Advanced analytics',
+    'whyChoose.wholesalers.benefit3': 'Promotional ads',
+    'whyChoose.sellers.title': 'For Sellers',
+    'whyChoose.sellers.description': 'Source quality products directly from verified wholesalers',
+    'whyChoose.sellers.benefit1': 'Bulk pricing',
+    'whyChoose.sellers.benefit2': 'Quick ordering',
+    'whyChoose.sellers.benefit3': 'Inventory management',
+    'whyChoose.secure.title': 'Secure Trading',
+    'whyChoose.secure.description': 'End-to-end security with verified businesses and secure payments',
+    'whyChoose.secure.benefit1': 'Business verification',
+    'whyChoose.secure.benefit2': 'Secure payments',
+    'whyChoose.secure.benefit3': 'Dispute resolution',
+    
+    // Call to Action
+    'cta.title': 'Ready to Transform Your Business?',
+    'cta.description': 'Join Pakistan\'s fastest-growing B2B marketplace. Get started in minutes with our simple registration process.',
+    'cta.createAccount': 'Create Free Account',
+    'cta.exploreMarketplace': 'Explore Marketplace',
+    
     // Dashboard
     'totalOrders': 'Total Orders',
     'pendingOrders': 'Pending Orders',
@@ -359,6 +395,42 @@ const translations = {
     'seller': 'فروخت کنندہ',
     'pending': 'زیر التواء',
     'selectRole': 'اپنا کردار منتخب کریں',
+    
+    // Featured Products
+    'featuredProducts.title': 'نمایاں مصنوعات',
+    'featuredProducts.description': 'پاکستان بھر میں تصدیق شدہ سپلائرز سے اعلیٰ معیار کی مصنوعات دریافت کریں',
+    'featuredProducts.viewAll': 'تمام مصنوعات دیکھیں',
+    'featuredProducts.sample': 'نمونہ',
+    'featuredProducts.reviews': 'جائزے',
+    'featuredProducts.moq': 'کم سے کم مقدار',
+    'featuredProducts.viewDetails': 'تفصیلات دیکھیں',
+    'featuredProducts.startJourney': 'اپنا کاروباری سفر شروع کریں',
+    'featuredProducts.noProducts': 'کوئی نمایاں مصنوعات دستیاب نہیں',
+    
+    // Why Choose Us
+    'whyChoose.title': 'پاک بازار کنیکٹ کیوں منتخب کریں؟',
+    'whyChoose.description': 'خاص طور پر پاکستانی کاروباروں کے لیے مقامی ادائیگی کے طریقوں اور علاقائی مہارت کے ساتھ ڈیزائن کیا گیا',
+    'whyChoose.wholesalers.title': 'تھوک فروشوں کے لیے',
+    'whyChoose.wholesalers.description': 'دکانیں بنائیں، مصنوعات کی فہرست بنائیں، اور پاکستان بھر میں خوردہ فروشوں تک پہنچیں',
+    'whyChoose.wholesalers.benefit1': 'لامحدود مصنوعات کی فہرست',
+    'whyChoose.wholesalers.benefit2': 'جدید تجزیات',
+    'whyChoose.wholesalers.benefit3': 'تشہیری اشتہارات',
+    'whyChoose.sellers.title': 'بیچنے والوں کے لیے',
+    'whyChoose.sellers.description': 'تصدیق شدہ تھوک فروشوں سے براہ راست معیاری مصنوعات حاصل کریں',
+    'whyChoose.sellers.benefit1': 'بلک قیمتیں',
+    'whyChoose.sellers.benefit2': 'تیز آرڈرنگ',
+    'whyChoose.sellers.benefit3': 'انوینٹری کا انتظام',
+    'whyChoose.secure.title': 'محفوظ تجارت',
+    'whyChoose.secure.description': 'تصدیق شدہ کاروباروں اور محفوظ ادائیگیوں کے ساتھ مکمل سیکیورٹی',
+    'whyChoose.secure.benefit1': 'کاروباری تصدیق',
+    'whyChoose.secure.benefit2': 'محفوظ ادائیگیاں',
+    'whyChoose.secure.benefit3': 'تنازعات کا حل',
+    
+    // Call to Action
+    'cta.title': 'اپنے کاروبار کو تبدیل کرنے کے لیے تیار ہیں؟',
+    'cta.description': 'پاکستان کی تیز ترین ترقی کرنے والی B2B مارکیٹ میں شامل ہوں۔ ہمارے سادہ رجسٹریشن عمل کے ساتھ منٹوں میں شروع کریں۔',
+    'cta.createAccount': 'مفت اکاؤنٹ بنائیں',
+    'cta.exploreMarketplace': 'مارکیٹ دریافت کریں',
     
     // Dashboard
     'totalOrders': 'کل آرڈرز',

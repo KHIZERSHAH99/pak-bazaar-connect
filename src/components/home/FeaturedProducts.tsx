@@ -9,10 +9,8 @@ import OptimizedImage from '@/components/ui/image-optimizer';
 import LazyLoadWrapper from '@/components/ui/lazy-load-wrapper';
 import { getActiveProducts } from '@/lib/products';
 import { Product } from '@/lib/types';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 const FeaturedProducts = () => {
-  const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,14 +35,14 @@ const FeaturedProducts = () => {
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 font-poppins">
-            {t('featuredProducts.title')}
+            Featured Products
           </h2>
           <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6 md:mb-8 font-poppins px-2">
-            {t('featuredProducts.description')}
+            Discover top-quality products from verified suppliers across Pakistan
           </p>
           <Link to="/products">
             <Button variant="outline" className="border-pakistani_green-600 text-pakistani_green-600 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-950 font-poppins">
-              {t('featuredProducts.viewAll')}
+              View All Products
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
@@ -99,7 +97,7 @@ const FeaturedProducts = () => {
                       </span>
                       {product.sample_price && (
                         <span className="text-sm text-gray-500 font-poppins">
-                          {t('featuredProducts.sample')}: PKR {product.sample_price}
+                          Sample: PKR {product.sample_price}
                         </span>
                       )}
                     </div>
@@ -125,17 +123,17 @@ const FeaturedProducts = () => {
                           4.8
                         </span>
                         <span className="text-xs text-gray-500 font-poppins">
-                          ({t('featuredProducts.reviews')})
+                          (Reviews)
                         </span>
                       </div>
                       <span className="text-xs text-gray-500 dark:text-gray-400 font-poppins">
-                        {t('featuredProducts.moq')}: {product.moq || 1}
+                        MOQ: {product.moq || 1}
                       </span>
                     </div>
 
                     {/* Action Button */}
                     <Button className="w-full bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 text-white font-poppins mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 rounded-xl shadow-lg hover:shadow-pakistani_green-600/30">
-                      {t('featuredProducts.viewDetails')}
+                      View Details
                       <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </div>
@@ -146,7 +144,7 @@ const FeaturedProducts = () => {
         ) : (
           <div className="text-center py-16">
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground font-poppins">{t('featuredProducts.noProducts')}</p>
+            <p className="text-muted-foreground font-poppins">No featured products available</p>
           </div>
         )}
 
@@ -154,7 +152,7 @@ const FeaturedProducts = () => {
         <div className="text-center mt-12">
           <Link to="/signup">
             <Button size="lg" className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins shadow-lg">
-              {t('featuredProducts.startJourney')}
+              Start Your Business Journey
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </Link>

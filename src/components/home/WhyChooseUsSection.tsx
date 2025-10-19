@@ -2,43 +2,41 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Store, ShoppingBag, Shield, CheckCircle } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+
+const featuresData = [
+  {
+    icon: <Store className="h-8 w-8" />,
+    title: 'For Wholesalers',
+    description: 'Create shops, list products, and reach retailers across Pakistan',
+    color: 'from-blue-500 to-blue-600',
+    benefits: ['Unlimited product listings', 'Advanced analytics', 'Promotional ads'],
+  },
+  {
+    icon: <ShoppingBag className="h-8 w-8" />,
+    title: 'For Sellers',
+    description: 'Source quality products directly from verified wholesalers',
+    color: 'from-purple-500 to-purple-600',
+    benefits: ['Bulk pricing', 'Quick ordering', 'Inventory management'],
+  },
+  {
+    icon: <Shield className="h-8 w-8" />,
+    title: 'Secure Trading',
+    description: 'End-to-end security with verified businesses and secure payments',
+    color: 'from-green-500 to-green-600',
+    benefits: ['Business verification', 'Secure payments', 'Dispute resolution'],
+  },
+];
 
 const WhyChooseUsSection: React.FC = () => {
-  const { t } = useLanguage();
-  
-  const featuresData = [
-    {
-      icon: <Store className="h-8 w-8" />,
-      titleKey: 'whyChoose.wholesalers.title',
-      descriptionKey: 'whyChoose.wholesalers.description',
-      color: 'from-blue-500 to-blue-600',
-      benefitKeys: ['whyChoose.wholesalers.benefit1', 'whyChoose.wholesalers.benefit2', 'whyChoose.wholesalers.benefit3'],
-    },
-    {
-      icon: <ShoppingBag className="h-8 w-8" />,
-      titleKey: 'whyChoose.sellers.title',
-      descriptionKey: 'whyChoose.sellers.description',
-      color: 'from-purple-500 to-purple-600',
-      benefitKeys: ['whyChoose.sellers.benefit1', 'whyChoose.sellers.benefit2', 'whyChoose.sellers.benefit3'],
-    },
-    {
-      icon: <Shield className="h-8 w-8" />,
-      titleKey: 'whyChoose.secure.title',
-      descriptionKey: 'whyChoose.secure.description',
-      color: 'from-green-500 to-green-600',
-      benefitKeys: ['whyChoose.secure.benefit1', 'whyChoose.secure.benefit2', 'whyChoose.secure.benefit3'],
-    },
-  ];
   return (
     <section className="py-12 md:py-20 px-4 md:px-6 bg-background">
       <div className="container mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 md:mb-4 font-poppins">
-            {t('whyChoose.title')}
+            Why Choose Pak Bazaar Connect?
           </h2>
           <p className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto font-poppins px-2">
-            {t('whyChoose.description')}
+            Designed specifically for Pakistani businesses with local payment methods and regional expertise
           </p>
         </div>
         
@@ -49,14 +47,14 @@ const WhyChooseUsSection: React.FC = () => {
                 <div className="text-white">{feature.icon}</div>
               </div>
               
-              <h3 className="text-xl font-bold text-foreground mb-3 font-poppins">{t(feature.titleKey)}</h3>
-              <p className="text-muted-foreground mb-6 font-poppins leading-relaxed">{t(feature.descriptionKey)}</p>
+              <h3 className="text-xl font-bold text-foreground mb-3 font-poppins">{feature.title}</h3>
+              <p className="text-muted-foreground mb-6 font-poppins leading-relaxed">{feature.description}</p>
               
               <ul className="space-y-3">
-                {feature.benefitKeys.map((benefitKey, idx) => (
+                {feature.benefits.map((benefit, idx) => (
                   <li key={idx} className="flex items-center text-sm text-foreground font-poppins">
                     <CheckCircle className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
-                    {t(benefitKey)}
+                    {benefit}
                   </li>
                 ))}
               </ul>

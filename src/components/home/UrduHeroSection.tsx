@@ -30,7 +30,7 @@ const UrduHeroSection = () => {
               : 'Connect wholesalers and retailers, accelerate your business growth'}
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 md:mb-12 px-2 sm:px-0">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8 md:mb-12 px-2 sm:px-0">
             <Link to={user ? "/dashboard" : "/signup"}>
               <Button 
                 size="lg" 

@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PakBazaar Connect - B2B Wholesale Marketplace</title>
     
+    <!-- Critical CSS for instant hero render -->
+    <style>
+      #root{min-height:100vh}
+      .hero-skeleton{display:flex;align-items:center;justify-content:center;min-height:60vh;background:linear-gradient(to bottom,#f0f9f4,#fff);padding:3rem 1rem}
+      .hero-skeleton h1{font-size:clamp(1.5rem,5vw,3.75rem);font-weight:700;color:#1a5a34;text-align:center;line-height:1.2;margin:0 auto;max-width:56rem;animation:fadeIn 0.3s}
+      @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    </style>
+    
     <!-- Preconnect to external domains for faster resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,7 +62,12 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Instant-render hero skeleton for faster LCP -->
+      <div class="hero-skeleton">
+        <h1>Pakistan's Largest<br>B2B E-Commerce Platform</h1>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

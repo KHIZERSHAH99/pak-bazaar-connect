@@ -7,10 +7,14 @@
     
     <!-- Critical CSS for instant hero render -->
     <style>
-      #root{min-height:100vh}
-      .hero-skeleton{display:flex;align-items:center;justify-content:center;min-height:60vh;background:linear-gradient(to bottom,#f0f9f4,#fff);padding:3rem 1rem}
-      .hero-skeleton h1{font-size:clamp(1.5rem,5vw,3.75rem);font-weight:700;color:#1a5a34;text-align:center;line-height:1.2;margin:0 auto;max-width:56rem;animation:fadeIn 0.3s}
-      @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+      *{box-sizing:border-box}
+      body,html{margin:0;padding:0;font-family:'Poppins',sans-serif;-webkit-font-smoothing:antialiased}
+      #root{min-height:100vh;background:#fff}
+      .hero-skeleton{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;background:linear-gradient(to bottom,#f0f9f4,#fff);padding:3rem 1rem;position:relative;overflow:hidden}
+      .hero-skeleton h1{font-size:clamp(1.5rem,5vw,3.75rem);font-weight:700;color:#1a5a34;text-align:center;line-height:1.2;margin:0 auto;max-width:56rem;animation:fadeIn 0.3s;letter-spacing:-0.02em}
+      .hero-skeleton::before{content:'';position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(27,94,32,0.08),transparent);border-radius:50%;top:10%;right:10%;animation:pulse 4s ease-in-out infinite}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      @keyframes pulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:0.5;transform:scale(1.05)}}
     </style>
     
     <!-- Preconnect to external domains for faster resource loading -->

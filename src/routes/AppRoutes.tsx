@@ -1,72 +1,74 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
-// Import all existing pages
+// Eager-load critical pages only
 import Index from '@/pages/Index';
 import FixedLogin from '@/pages/FixedLogin';
 import Signup from '@/pages/Signup';
-import Dashboard from '@/pages/Dashboard';
-import Profile from '@/pages/Profile';
-import Products from '@/pages/Products';
-import ProductDetail from '@/pages/ProductDetail';
 
-import NotFound from '@/pages/NotFound';
-import Stats from '@/pages/Stats';
-
-import Features from '@/pages/Features';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import Contact from '@/pages/Contact';
-import AboutUs from '@/pages/AboutUs';
-import TermsOfService from '@/pages/TermsOfService';
-import RefundPolicy from '@/pages/RefundPolicy';
-import ShippingPolicy from '@/pages/ShippingPolicy';
-import Blog from '@/pages/Blog';
-import BlogPost from '@/pages/BlogPost';
-import Checkout from '@/pages/Checkout';
-import Favorites from '@/pages/Favorites';
-import Messages from '@/pages/Messages';
-import Analytics from '@/pages/Analytics';
+// Lazy-load all other pages
+const Dashboard = React.lazy(() => import('@/pages/Dashboard'));
+const Profile = React.lazy(() => import('@/pages/Profile'));
+const Products = React.lazy(() => import('@/pages/Products'));
+const ProductDetail = React.lazy(() => import('@/pages/ProductDetail'));
+const NotFound = React.lazy(() => import('@/pages/NotFound'));
+const Stats = React.lazy(() => import('@/pages/Stats'));
+const Features = React.lazy(() => import('@/pages/Features'));
+const PrivacyPolicy = React.lazy(() => import('@/pages/PrivacyPolicy'));
+const Contact = React.lazy(() => import('@/pages/Contact'));
+const AboutUs = React.lazy(() => import('@/pages/AboutUs'));
+const TermsOfService = React.lazy(() => import('@/pages/TermsOfService'));
+const RefundPolicy = React.lazy(() => import('@/pages/RefundPolicy'));
+const ShippingPolicy = React.lazy(() => import('@/pages/ShippingPolicy'));
+const Blog = React.lazy(() => import('@/pages/Blog'));
+const BlogPost = React.lazy(() => import('@/pages/BlogPost'));
+const Checkout = React.lazy(() => import('@/pages/Checkout'));
+const Favorites = React.lazy(() => import('@/pages/Favorites'));
+const Messages = React.lazy(() => import('@/pages/Messages'));
+const Analytics = React.lazy(() => import('@/pages/Analytics'));
 
 // Dashboard pages
-import DashboardSellerDashboard from '@/pages/dashboard/DashboardSellerDashboard';
-import DashboardShops from '@/pages/dashboard/DashboardShops';
-import DashboardProducts from '@/pages/dashboard/DashboardProducts';
-import DashboardShipping from '@/pages/dashboard/DashboardShipping';
-import DashboardOrders from '@/pages/dashboard/DashboardOrders';
-import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrders';
-import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
-import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
-import DashboardAnalytics from '@/pages/dashboard/DashboardAnalytics';
-
-import DashboardBrowseShops from '@/pages/dashboard/DashboardBrowseShops';
-import DashboardWholesalerPreview from '@/pages/dashboard/DashboardWholesalerPreview';
-import DashboardSellerPreview from '@/pages/dashboard/DashboardSellerPreview';
-import DashboardPayment from '@/pages/dashboard/DashboardPayment';
-import DashboardCoupons from '@/pages/dashboard/DashboardCoupons';
+const DashboardSellerDashboard = React.lazy(() => import('@/pages/dashboard/DashboardSellerDashboard'));
+const DashboardShops = React.lazy(() => import('@/pages/dashboard/DashboardShops'));
+const DashboardProducts = React.lazy(() => import('@/pages/dashboard/DashboardProducts'));
+const DashboardShipping = React.lazy(() => import('@/pages/dashboard/DashboardShipping'));
+const DashboardOrders = React.lazy(() => import('@/pages/dashboard/DashboardOrders'));
+const DashboardWholesalerOrders = React.lazy(() => import('@/pages/dashboard/DashboardWholesalerOrders'));
+const DashboardSellerOrders = React.lazy(() => import('@/pages/dashboard/DashboardSellerOrders'));
+const DashboardAdmin = React.lazy(() => import('@/pages/dashboard/DashboardAdmin'));
+const DashboardAnalytics = React.lazy(() => import('@/pages/dashboard/DashboardAnalytics'));
+const DashboardBrowseShops = React.lazy(() => import('@/pages/dashboard/DashboardBrowseShops'));
+const DashboardWholesalerPreview = React.lazy(() => import('@/pages/dashboard/DashboardWholesalerPreview'));
+const DashboardSellerPreview = React.lazy(() => import('@/pages/dashboard/DashboardSellerPreview'));
+const DashboardPayment = React.lazy(() => import('@/pages/dashboard/DashboardPayment'));
+const DashboardCoupons = React.lazy(() => import('@/pages/dashboard/DashboardCoupons'));
 
 // Seller pages
-import SellerOrders from '@/pages/seller/SellerOrders';
-import BrowseShops from '@/pages/seller/BrowseShops';
-import SellerShopDetails from '@/pages/seller/ShopDetails';
-import ShopProducts from '@/pages/seller/ShopProducts';
+const SellerOrders = React.lazy(() => import('@/pages/seller/SellerOrders'));
+const BrowseShops = React.lazy(() => import('@/pages/seller/BrowseShops'));
+const SellerShopDetails = React.lazy(() => import('@/pages/seller/ShopDetails'));
+const ShopProducts = React.lazy(() => import('@/pages/seller/ShopProducts'));
 
 // Wholesaler pages
-import WholesalerOrders from '@/pages/wholesaler/WholesalerOrders';
-import Shops from '@/pages/wholesaler/Shops';
-import WholesalerProducts from '@/pages/wholesaler/Products';
+const WholesalerOrders = React.lazy(() => import('@/pages/wholesaler/WholesalerOrders'));
+const Shops = React.lazy(() => import('@/pages/wholesaler/Shops'));
+const WholesalerProducts = React.lazy(() => import('@/pages/wholesaler/Products'));
 
-import AdminDashboard from '@/pages/admin/AdminDashboard';
-import AdminPanel from '@/pages/admin/AdminPanel';
-import PublicBrowseShops from '@/pages/BrowseShops';
-import EmailConfirmationPending from '@/pages/EmailConfirmationPending';
-import ShopDetails from '@/pages/ShopDetails';
+// Admin pages
+const AdminDashboard = React.lazy(() => import('@/pages/admin/AdminDashboard'));
+const AdminPanel = React.lazy(() => import('@/pages/admin/AdminPanel'));
+const PublicBrowseShops = React.lazy(() => import('@/pages/BrowseShops'));
+const EmailConfirmationPending = React.lazy(() => import('@/pages/EmailConfirmationPending'));
+const ShopDetails = React.lazy(() => import('@/pages/ShopDetails'));
 
 const AppRoutes: React.FC = () => {
   return (
     <ErrorBoundary>
-      <Routes>
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><LoadingSpinner /></div>}>
+        <Routes>
         {/* Public routes */}
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<FixedLogin />} />
@@ -138,7 +140,8 @@ const AppRoutes: React.FC = () => {
 
         {/* 404 route */}
         <Route path="*" element={<NotFound />} />
-      </Routes>
+        </Routes>
+      </Suspense>
     </ErrorBoundary>
   );
 };

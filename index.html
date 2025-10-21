@@ -23,16 +23,14 @@
       @keyframes pulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:0.5;transform:scale(1.05)}}
     </style>
     
-    <!-- Optimized font loading with swap display -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap&subset=latin" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap&subset=latin" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap&subset=latin"></noscript>
-    
-    <!-- Preconnect to critical domains for faster resource loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <!-- Preconnect to critical domains FIRST for faster resource loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://sxzxyuxtqqflahzncfre.supabase.co">
-    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    
+    <!-- Single consolidated font request to avoid dependency chains -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"></noscript>
     
     <link rel="icon" href="/pbc-favicon.png" type="image/png">
     <meta name="description" content="Pakistan's leading B2B wholesale marketplace connecting wholesalers and retailers. Find verified suppliers, bulk products, and grow your business." />

@@ -59,16 +59,16 @@ const Footer = () => {
 
             {/* Social Media Buttons */}
             <div className="flex gap-2">
-              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50">
+              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50" aria-label="Visit our Facebook page">
                 <Facebook className="w-4 h-4" />
               </Button>
-              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50">
+              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50" aria-label="Visit our Twitter page">
                 <Twitter className="w-4 h-4" />
               </Button>
-              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50">
+              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50" aria-label="Visit our LinkedIn page">
                 <Linkedin className="w-4 h-4" />
               </Button>
-              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50">
+              <Button variant="outline" size="icon-sm" className="hover:bg-pakistani_green-50" aria-label="Visit our Instagram page">
                 <Instagram className="w-4 h-4" />
               </Button>
             </div>

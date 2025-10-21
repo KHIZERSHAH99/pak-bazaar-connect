@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PakBazaar Connect - B2B Wholesale Marketplace</title>
+    
+    <!-- Preconnect to external domains for faster resource loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://sxzxyuxtqqflahzncfre.supabase.co">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    
     <link rel="icon" href="/pbc-favicon.png" type="image/png">
     <meta name="description" content="Pakistan's leading B2B wholesale marketplace connecting wholesalers and retailers. Find verified suppliers, bulk products, and grow your business." />
     <meta name="author" content="PakBazaar Connect" />
@@ -22,19 +29,21 @@
     <!-- HilltopAds Verification -->
     <meta name="e6be9c12396de1d1c3ad9209c34e6b0eed99a6bd" content="e6be9c12396de1d1c3ad9209c34e6b0eed99a6bd" />
     
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6598242635867029"
+    <!-- Defer non-critical ads for better FCP -->
+    <script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6598242635867029"
          crossorigin="anonymous"></script>
     
-    <!-- Adsteera Global Script -->
-    <script type='text/javascript'>
-      var atOptions = {
-        'key' : '98a934445fa1d2aa5fd6e25b30250461',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-      };
+    <!-- Defer Adsteera Script -->
+    <script type='text/javascript' defer>
+      window.addEventListener('load', function() {
+        var atOptions = {
+          'key' : '98a934445fa1d2aa5fd6e25b30250461',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      });
     </script>
   </head>
   <body>

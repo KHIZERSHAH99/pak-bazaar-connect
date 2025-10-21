@@ -23,10 +23,6 @@
       @keyframes pulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:0.5;transform:scale(1.05)}}
     </style>
     
-    <!-- Load main CSS async to avoid blocking LCP -->
-    <link rel="preload" href="/src/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/src/index.css"></noscript>
-    
     <!-- Preconnect to critical domains FIRST for faster resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

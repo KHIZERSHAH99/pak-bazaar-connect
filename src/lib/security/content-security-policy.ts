@@ -77,7 +77,14 @@ export function applyCSP(): void {
   // Create new CSP meta tag
   const meta = document.createElement('meta');
   meta.httpEquiv = 'Content-Security-Policy';
-  meta.content = generateCSPHeader();
+
+  // Build CSP specifically for <meta> (omit directives that are not allowed like frame-ancestors)
+  const metaDirectives = Object.entries(CSP_DIRECTIVES)
+    .filter(([directive]) => directive !== 'frame-ancestors')
+    .map(([directive, sources]) => (sources.length === 0 ? directive : `${directive} ${sources.join(' ')}`))
+    .join('; ');
+
+  meta.content = metaDirectives;
   
   // Add to document head
   document.head.appendChild(meta);

@@ -1,15 +1,11 @@
-
-/* Font-face imports and definitions for Poppins and Urdu font stacks */
-
-/* Fonts are loaded asynchronously in index.html to avoid render blocking */
-
-/* Fallback font family definitions for Tailwind and base CSS */
+/* Optimized font stack with system fallbacks for instant render */
 body, .font-poppins {
-  font-family: 'Poppins', Arial, 'sans-serif';
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 }
 
+/* Urdu fonts loaded on demand */
 .font-urdu,
 .urdu-layout,
 [lang="ur"] {
-  font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', Arial, 'sans-serif' !important;
+  font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', Arial, sans-serif !important;
 }

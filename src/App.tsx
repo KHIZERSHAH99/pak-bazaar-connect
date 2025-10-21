@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,8 +12,10 @@ import AppErrorBoundary from "@/components/ui/AppErrorBoundary";
 import AuthErrorBoundary from "@/components/auth/AuthErrorBoundary";
 import GlobalErrorBoundary from "@/components/common/GlobalErrorHandler";
 import AppRoutes from "@/routes/AppRoutes";
-import PerformanceMonitor from "@/components/ui/performance-monitor";
 import { applyCSP } from "@/lib/security/content-security-policy";
+
+// Lazy load performance monitor - only needed in development
+const PerformanceMonitor = lazy(() => import("@/components/ui/performance-monitor"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,7 +59,11 @@ const App = () => {
                     <BrowserRouter>
                       <AuthProvider>
                         <AppRoutes />
-                        <PerformanceMonitor />
+                        {import.meta.env.DEV && (
+                          <Suspense fallback={null}>
+                            <PerformanceMonitor />
+                          </Suspense>
+                        )}
                       </AuthProvider>
                     </BrowserRouter>
                   </div>

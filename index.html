@@ -5,14 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PakBazaar Connect - B2B Wholesale Marketplace</title>
     
-    <!-- Critical CSS for instant hero render -->
+    <!-- Expanded critical CSS for instant LCP render -->
     <style>
-      *{box-sizing:border-box}
-      body,html{margin:0;padding:0;font-family:'Poppins',sans-serif;-webkit-font-smoothing:antialiased}
+      *{box-sizing:border-box;margin:0;padding:0}
+      body,html{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
       #root{min-height:100vh;background:#fff}
-      .hero-skeleton{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;background:linear-gradient(to bottom,#f0f9f4,#fff);padding:3rem 1rem;position:relative;overflow:hidden}
-      .hero-skeleton h1{font-size:clamp(1.5rem,5vw,3.75rem);font-weight:700;color:#1a5a34;text-align:center;line-height:1.2;margin:0 auto;max-width:56rem;animation:fadeIn 0.3s;letter-spacing:-0.02em}
-      .hero-skeleton::before{content:'';position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(27,94,32,0.08),transparent);border-radius:50%;top:10%;right:10%;animation:pulse 4s ease-in-out infinite}
+      .hero-skeleton{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;background:linear-gradient(180deg,#f0f9f4 0%,#fff 100%);padding:3rem 1rem;position:relative;overflow:hidden}
+      .hero-skeleton h1{font-size:clamp(1.5rem,5vw,3.75rem);font-weight:700;color:#1a5a34;text-align:center;line-height:1.2;margin:0 auto 1.5rem;max-width:56rem;animation:fadeIn 0.3s ease-out;letter-spacing:-0.02em}
+      .hero-skeleton p{font-size:clamp(1rem,2.5vw,1.25rem);color:#2d5a3d;text-align:center;max-width:42rem;margin:0 auto 2rem;line-height:1.6;animation:fadeIn 0.5s ease-out}
+      .hero-skeleton .cta-buttons{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeIn 0.7s ease-out}
+      .hero-skeleton button,.hero-skeleton a{padding:0.875rem 2rem;font-size:1rem;font-weight:600;border-radius:0.5rem;border:none;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;display:inline-block}
+      .hero-skeleton .btn-primary{background:#1a5a34;color:#fff;box-shadow:0 4px 6px rgba(26,90,52,0.2)}
+      .hero-skeleton .btn-secondary{background:#fff;color:#1a5a34;border:2px solid #1a5a34}
+      .hero-skeleton::before{content:'';position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(27,94,32,0.08),transparent);border-radius:50%;top:10%;right:10%;animation:pulse 4s ease-in-out infinite;z-index:0}
+      .hero-skeleton>*{position:relative;z-index:1}
       @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
       @keyframes pulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:0.5;transform:scale(1.05)}}
     </style>
@@ -65,9 +71,14 @@
   </head>
   <body>
     <div id="root">
-      <!-- Instant-render hero skeleton for faster LCP -->
+      <!-- Instant-render hero skeleton for faster LCP with full content -->
       <div class="hero-skeleton">
         <h1>Pakistan's Largest<br>B2B E-Commerce Platform</h1>
+        <p>Connect with verified wholesalers and grow your business with Pakistan's most trusted B2B marketplace</p>
+        <div class="cta-buttons">
+          <a href="/signup" class="btn-primary">Get Started</a>
+          <a href="/products" class="btn-secondary">Browse Products</a>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>

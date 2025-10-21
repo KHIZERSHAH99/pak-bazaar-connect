@@ -21,6 +21,10 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     sourcemap: true,
+    // Enable module preloading to reduce network chain depth
+    modulePreload: {
+      polyfill: true,
+    },
     rollupOptions: {
       output: {
         manualChunks: {

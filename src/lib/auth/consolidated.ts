@@ -135,14 +135,15 @@ export const registerUser = async (
       throw new Error('Please enter a valid email or phone number');
     }
     
-    // Create account
+    // Create account with email confirmation handling
     const { data, error } = await supabase.auth.signUp({
       email: authEmail,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        // Skip email confirmation for phone-based accounts
+        emailRedirectTo: isPhone ? undefined : `${window.location.origin}/dashboard`,
         data: {
-          email: authEmail, // Include the actual email being used
+          email: authEmail,
           role,
           phone_number: phoneNumber || '',
           normalized_phone: phoneNumber || '',
@@ -153,8 +154,9 @@ export const registerUser = async (
           city: businessData.city || '',
           postal_code: businessData.postalCode || '',
           industry: businessData.industry || '',
-          auth_type: isPhone ? 'phone' : 'email', // Mark the auth type
-          display_identifier: emailOrPhone // Store original input for display
+          auth_type: isPhone ? 'phone' : 'email',
+          display_identifier: emailOrPhone,
+          skip_email_confirm: isPhone // Flag for auto-confirmation
         }
       }
     });

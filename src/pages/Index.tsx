@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, memo } from 'react';
 import Layout from '@/components/Layout';
 import UrduHeroSection from '@/components/home/UrduHeroSection';
 
@@ -8,23 +8,28 @@ const FeaturedProducts = lazy(() => import('@/components/home/FeaturedProducts')
 const WhyChooseUsSection = lazy(() => import('@/components/home/WhyChooseUsSection'));
 const CallToActionSection = lazy(() => import('@/components/home/CallToActionSection'));
 
-const Index: React.FC = () => {
+// Lightweight fallback to prevent layout shift
+const SimpleFallback = memo(() => <div className="h-96" />);
+
+const Index: React.FC = memo(() => {
   return (
     <Layout>
       <div className="min-h-screen">
         <UrduHeroSection />
-        <Suspense fallback={<div className="h-96" />}>
+        <Suspense fallback={<SimpleFallback />}>
           <FeaturedProducts />
         </Suspense>
-        <Suspense fallback={<div className="h-96" />}>
+        <Suspense fallback={<SimpleFallback />}>
           <WhyChooseUsSection />
         </Suspense>
-        <Suspense fallback={<div className="h-64" />}>
+        <Suspense fallback={<SimpleFallback />}>
           <CallToActionSection />
         </Suspense>
       </div>
     </Layout>
   );
-};
+});
+
+Index.displayName = 'Index';
 
 export default Index;

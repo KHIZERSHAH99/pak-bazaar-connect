@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Shield, Users, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 
-const UrduHeroSection = () => {
+const UrduHeroSection = memo(() => {
   const { t, language } = useLanguage();
   const { user } = useAuth();
   return (
@@ -75,6 +75,8 @@ const UrduHeroSection = () => {
       </div>
     </section>
   );
-};
+});
+
+UrduHeroSection.displayName = 'UrduHeroSection';
 
 export default UrduHeroSection;

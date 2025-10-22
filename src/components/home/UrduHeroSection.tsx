@@ -1,11 +1,11 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Shield, Users, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 
-const UrduHeroSection = memo(() => {
+const UrduHeroSection = () => {
   const { t, language } = useLanguage();
   const { user } = useAuth();
   return (
@@ -30,7 +30,7 @@ const UrduHeroSection = memo(() => {
               : 'Connect wholesalers and retailers, accelerate your business growth'}
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8 md:mb-12 px-2 sm:px-0">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 md:mb-12 px-2 sm:px-0">
             <Link to={user ? "/dashboard" : "/signup"}>
               <Button 
                 size="lg" 
@@ -75,8 +75,6 @@ const UrduHeroSection = memo(() => {
       </div>
     </section>
   );
-});
-
-UrduHeroSection.displayName = 'UrduHeroSection';
+};
 
 export default UrduHeroSection;

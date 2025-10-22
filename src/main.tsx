@@ -4,21 +4,12 @@ import { CartProvider } from '@/contexts/CartContext'
 import App from './App.tsx'
 import './index.css'
 import './styles/urdu.css'
+import { applyCSP } from './lib/security/content-security-policy'
 
-// Defer CSP application to not block initial render
-setTimeout(() => {
-  import('./lib/security/content-security-policy').then(({ applyCSP }) => {
-    applyCSP();
-  });
-}, 100);
+// Apply Content Security Policy headers for security
+applyCSP();
 
-const rootElement = document.getElementById("root")!;
-
-// Hydrate instead of render if there's already content (from static HTML)
-const hasChildren = rootElement.hasChildNodes();
-
-const root = createRoot(rootElement);
-root.render(
+createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <CartProvider>
       <App />

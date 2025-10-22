@@ -1,4 +1,5 @@
-import React, { memo } from 'react';
+
+import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import SEOHead from '@/components/ui/seo-head';
@@ -11,21 +12,16 @@ interface LayoutProps {
   keywords?: string;
 }
 
-const Layout: React.FC<LayoutProps> = memo(({ 
+const Layout: React.FC<LayoutProps> = ({ 
   children, 
   title,
   description,
   keywords
 }) => {
-  // Only track analytics in production - deferred to not block render
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      const timer = setTimeout(() => {
-        usePageAnalytics();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, []);
+  // Only track analytics in production or when explicitly needed
+  if (process.env.NODE_ENV === 'development') {
+    usePageAnalytics();
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-200 overflow-x-hidden">
@@ -43,8 +39,6 @@ const Layout: React.FC<LayoutProps> = memo(({
       <Footer />
     </div>
   );
-});
-
-Layout.displayName = 'Layout';
+};
 
 export default Layout;

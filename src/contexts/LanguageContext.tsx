@@ -319,51 +319,7 @@ const translations = {
     'productUpdated': 'Product updated successfully!',
     'failedToCreateProduct': 'Failed to create product',
     'failedToUpdateProduct': 'Failed to update product',
-    'productDeleted': 'Product deleted successfully',
-    
-    // Featured Products
-    'featuredProducts': 'Featured Products',
-    'discoverTopQuality': 'Discover top-quality products from verified suppliers across Pakistan',
-    'viewAllProducts': 'View All Products',
-    'featured': 'Featured',
-    'sample': 'Sample',
-    'reviews': 'Reviews',
-    'verifiedSupplier': 'Verified Supplier',
-    'pakistan': 'Pakistan',
-    'viewDetails': 'View Details',
-    'noFeaturedProducts': 'No featured products available',
-    'startBusinessJourney': 'Start Your Business Journey',
-    
-    // Why Choose Us
-    'whyChooseUs': 'Why Choose Pak Bazaar Connect?',
-    'designedForPakistan': 'Designed specifically for Pakistani businesses with local payment methods and regional expertise',
-    'forWholesalers': 'For Wholesalers',
-    'createShopsListProducts': 'Create shops, list products, and reach retailers across Pakistan',
-    'unlimitedProductListings': 'Unlimited product listings',
-    'advancedAnalytics': 'Advanced analytics',
-    'promotionalAds': 'Promotional ads',
-    'forSellers': 'For Sellers',
-    'sourceQualityProducts': 'Source quality products directly from verified wholesalers',
-    'bulkPricing': 'Bulk pricing',
-    'quickOrdering': 'Quick ordering',
-    'inventoryManagement': 'Inventory management',
-    'secureTrading': 'Secure Trading',
-    'endToEndSecurity': 'End-to-end security with verified businesses and secure payments',
-    'businessVerification': 'Business verification',
-    'securePayments': 'Secure payments',
-    'disputeResolution': 'Dispute resolution',
-    
-    // Call to Action
-    'readyToTransform': 'Ready to Transform Your Business?',
-    'joinFastestGrowing': 'Join Pakistan\'s fastest-growing B2B marketplace. Get started in minutes with our simple registration process.',
-    'createFreeAccount': 'Create Free Account',
-    'exploreMarketplace': 'Explore Marketplace',
-    
-    // Footer
-    'pakBazaarConnect': 'Pak Bazaar Connect',
-    'connectingBusinesses': 'Connecting Pakistani businesses for sustainable growth',
-    'trustedMarketplace': 'Trusted marketplace with secure API infrastructure',
-    'backToTop': 'Back to Top'
+    'productDeleted': 'Product deleted successfully'
   },
   ur: {
     // Navigation
@@ -666,51 +622,7 @@ const translations = {
     'productUpdated': 'مصنوعات کامیابی سے اپ ڈیٹ ہو گئی!',
     'failedToCreateProduct': 'مصنوعات بنانا ناکام',
     'failedToUpdateProduct': 'مصنوعات اپ ڈیٹ ناکام',
-    'productDeleted': 'مصنوعات کامیابی سے حذف ہو گئی',
-    
-    // Featured Products
-    'featuredProducts': 'منتخب مصنوعات',
-    'discoverTopQuality': 'پاکستان بھر میں تصدیق شدہ سپلائرز سے اعلیٰ معیار کی مصنوعات دریافت کریں',
-    'viewAllProducts': 'تمام مصنوعات دیکھیں',
-    'featured': 'منتخب',
-    'sample': 'نمونہ',
-    'reviews': 'جائزے',
-    'verifiedSupplier': 'تصدیق شدہ سپلائر',
-    'pakistan': 'پاکستان',
-    'viewDetails': 'تفصیلات دیکھیں',
-    'noFeaturedProducts': 'کوئی منتخب مصنوعات دستیاب نہیں',
-    'startBusinessJourney': 'اپنا کاروباری سفر شروع کریں',
-    
-    // Why Choose Us
-    'whyChooseUs': 'پاک بازار کنیکٹ کیوں منتخب کریں؟',
-    'designedForPakistan': 'خاص طور پر پاکستانی کاروباروں کے لیے مقامی ادائیگی کے طریقوں اور علاقائی مہارت کے ساتھ ڈیزائن کیا گیا',
-    'forWholesalers': 'ہول سیلرز کے لیے',
-    'createShopsListProducts': 'دکانیں بنائیں، مصنوعات کی فہرست بنائیں، اور پورے پاکستان میں خوردہ فروشوں تک پہنچیں',
-    'unlimitedProductListings': 'لامحدود مصنوعات کی فہرستیں',
-    'advancedAnalytics': 'جدید تجزیات',
-    'promotionalAds': 'تشہیری اشتہارات',
-    'forSellers': 'فروخت کنندگان کے لیے',
-    'sourceQualityProducts': 'تصدیق شدہ ہول سیلرز سے براہ راست معیاری مصنوعات حاصل کریں',
-    'bulkPricing': 'بلک قیمتیں',
-    'quickOrdering': 'تیز آرڈرنگ',
-    'inventoryManagement': 'انوینٹری کا انتظام',
-    'secureTrading': 'محفوظ تجارت',
-    'endToEndSecurity': 'تصدیق شدہ کاروباروں اور محفوظ ادائیگیوں کے ساتھ مکمل سیکیورٹی',
-    'businessVerification': 'کاروباری تصدیق',
-    'securePayments': 'محفوظ ادائیگیاں',
-    'disputeResolution': 'تنازعات کا حل',
-    
-    // Call to Action
-    'readyToTransform': 'اپنے کاروبار کو تبدیل کرنے کے لیے تیار ہیں؟',
-    'joinFastestGrowing': 'پاکستان کی تیزی سے بڑھتی ہوئی B2B مارکیٹ میں شامل ہوں۔ ہمارے آسان رجسٹریشن کے عمل کے ساتھ منٹوں میں شروع کریں۔',
-    'createFreeAccount': 'مفت اکاؤنٹ بنائیں',
-    'exploreMarketplace': 'مارکیٹ دریافت کریں',
-    
-    // Footer
-    'pakBazaarConnect': 'پاک بازار کنیکٹ',
-    'connectingBusinesses': 'پائیدار ترقی کے لیے پاکستانی کاروباروں کو جوڑنا',
-    'trustedMarketplace': 'محفوظ API انفراسٹرکچر کے ساتھ قابل اعتماد مارکیٹ',
-    'backToTop': 'اوپر واپس جائیں'
+    'productDeleted': 'مصنوعات کامیابی سے حذف ہو گئی'
   }
 };
 

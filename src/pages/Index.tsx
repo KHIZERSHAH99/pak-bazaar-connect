@@ -1,35 +1,22 @@
 
-import React, { Suspense, lazy, memo } from 'react';
+import React from 'react';
 import Layout from '@/components/Layout';
 import UrduHeroSection from '@/components/home/UrduHeroSection';
+import FeaturedProducts from '@/components/home/FeaturedProducts';
+import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
+import CallToActionSection from '@/components/home/CallToActionSection';
 
-// Lazy load below-the-fold components for faster FCP
-const FeaturedProducts = lazy(() => import('@/components/home/FeaturedProducts'));
-const WhyChooseUsSection = lazy(() => import('@/components/home/WhyChooseUsSection'));
-const CallToActionSection = lazy(() => import('@/components/home/CallToActionSection'));
-
-// Lightweight fallback to prevent layout shift
-const SimpleFallback = memo(() => <div className="h-96" />);
-
-const Index: React.FC = memo(() => {
+const Index: React.FC = () => {
   return (
     <Layout>
       <div className="min-h-screen">
         <UrduHeroSection />
-        <Suspense fallback={<SimpleFallback />}>
-          <FeaturedProducts />
-        </Suspense>
-        <Suspense fallback={<SimpleFallback />}>
-          <WhyChooseUsSection />
-        </Suspense>
-        <Suspense fallback={<SimpleFallback />}>
-          <CallToActionSection />
-        </Suspense>
+        <FeaturedProducts />
+        <WhyChooseUsSection />
+        <CallToActionSection />
       </div>
     </Layout>
   );
-});
-
-Index.displayName = 'Index';
+};
 
 export default Index;

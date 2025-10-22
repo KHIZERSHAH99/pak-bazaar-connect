@@ -36,6 +36,9 @@
     <!-- Preload critical font file directly for instant FCP -->
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" crossorigin>
     
+    <!-- Preload main module to start fetching earlier -->
+    <link rel="modulepreload" href="/src/main.tsx">
+    
     <!-- Consolidated font loading - ALL fonts in ONE request to eliminate blocking -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"></noscript>

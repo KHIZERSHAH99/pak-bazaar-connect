@@ -48,54 +48,8 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       
       console.log('Attempting login with phone:', normalizedPhone);
       
-      // Try multiple email formats for phone-based accounts
-      const emailFormats = [
-        `phone-${normalizedPhone}@pakbazaarconnect.store`, // New format with prefix
-        `${normalizedPhone}@pakbazaarconnect.store`, // Legacy format
-        `${normalizedPhone}@phone.auth`,
-        `${normalizedPhone}@temp-phone-auth.com`,
-        `${normalizedPhone}@phone-auth.com`,
-        `${normalizedPhone}@phone.auth.local`
-      ];
-      
-      console.log('Checking for phone-based auth with possible emails:', emailFormats);
-      
-      // Use RPC function to find user by phone (avoids RLS issues)
-      const { data: profileData, error: profileError } = await supabase
-        .rpc('get_user_by_phone', { phone_input: normalizedPhone });
-      
-      if (profileError) {
-        console.error('Profile query error:', profileError);
-        throw new Error('Failed to verify phone number');
-      }
-      
-      const profile = profileData?.[0] || null;
-      
-      if (!profile) {
-        console.log('No profile found for phone:', normalizedPhone);
-        // Try with different email formats
-        let authAttemptSuccessful = false;
-        
-        for (const emailFormat of emailFormats) {
-          console.log('Attempting direct auth with email:', emailFormat);
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: emailFormat,
-            password
-          });
-          
-          if (!error && data.user) {
-            console.log('Successfully authenticated with email format:', emailFormat);
-            await authSecurityManager.recordAuthAttempt(emailOrPhone, true);
-            return data;
-          }
-        }
-        
-        // If no format worked, use the primary format for the error
-        authEmail = emailFormats[0];
-      } else {
-        console.log('Profile found:', { email: profile.user_email, role: profile.user_role });
-        authEmail = profile.user_email;
-      }
+      // Use standard email format for phone-based auth
+      authEmail = `phone-${normalizedPhone}@pakbazaarconnect.store`;
     } else if (isEmail) {
       authEmail = normalizedInput.toLowerCase();
     } else {

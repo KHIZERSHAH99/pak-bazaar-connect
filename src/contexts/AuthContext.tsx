@@ -70,9 +70,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // State to trigger profile fetch
   const [profileTrigger, setProfileTrigger] = useState<{ userId: string; email: string; metadata: any } | null>(null);
 
-  // Initialize auth state
+  // Initialize auth state with retry logic
   useEffect(() => {
     let mounted = true;
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    // Exponential backoff retry for session refresh
+    const retryWithBackoff = async (attemptFn: () => Promise<any>, attempt: number = 0): Promise<any> => {
+      try {
+        return await attemptFn();
+      } catch (error: any) {
+        if (attempt < maxRetries && (error.message?.includes('Failed to fetch') || error.message?.includes('network'))) {
+          const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+          console.log(`Retrying session fetch in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return retryWithBackoff(attemptFn, attempt + 1);
+        }
+        throw error;
+      }
+    };
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -101,8 +118,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check for existing session with retry logic
+    retryWithBackoff(async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       if (!mounted) return;
       
       setSession(session);
@@ -110,19 +129,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (session?.user) {
         // Ensure profile sync
-        ensureProfileSync(session.user.id, session.user.email || '', session.user.user_metadata).then(() => {
-          fetchProfile(session.user.id);
-        });
+        await ensureProfileSync(session.user.id, session.user.email || '', session.user.user_metadata);
+        await fetchProfile(session.user.id);
       }
       
       setLoading(false);
+    }).catch(error => {
+      console.error('Failed to initialize auth after retries:', error);
+      if (mounted) {
+        setLoading(false);
+        toast({
+          title: "Connection Issue",
+          description: "Having trouble connecting. Please refresh the page.",
+          variant: "destructive"
+        });
+      }
     });
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [toast]);
 
   // Separate effect for profile fetching (prevents deadlock)
   useEffect(() => {

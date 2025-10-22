@@ -68,14 +68,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // Check role permissions
+  // Check role permissions (admins have access to everything)
   const userRole = profile.role as UserRole;
+  const isAdmin = userRole === 'admin';
   
-  if (requiredRole && userRole !== requiredRole) {
+  if (requiredRole && !isAdmin && userRole !== requiredRole) {
     return <Navigate to="/dashboard" replace />;
   }
   
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
+  if (allowedRoles && !isAdmin && !allowedRoles.includes(userRole)) {
     return <Navigate to="/dashboard" replace />;
   }
 

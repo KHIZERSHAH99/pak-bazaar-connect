@@ -136,12 +136,15 @@ export const registerUser = async (
     }
     
     // Create account with email confirmation handling
+    // Skip email confirmation for phone accounts OR for sellers/retailers
+    const skipEmailConfirm = isPhone || role === 'seller';
+    
     const { data, error } = await supabase.auth.signUp({
       email: authEmail,
       password,
       options: {
-        // Skip email confirmation for phone-based accounts
-        emailRedirectTo: isPhone ? undefined : `${window.location.origin}/dashboard`,
+        // Skip email confirmation for phone-based accounts and sellers
+        emailRedirectTo: skipEmailConfirm ? undefined : `${window.location.origin}/dashboard`,
         data: {
           email: authEmail,
           role,
@@ -156,7 +159,7 @@ export const registerUser = async (
           industry: businessData.industry || '',
           auth_type: isPhone ? 'phone' : 'email',
           display_identifier: emailOrPhone,
-          skip_email_confirm: isPhone // Flag for auto-confirmation
+          skip_email_confirm: skipEmailConfirm // Flag for auto-confirmation
         }
       }
     });

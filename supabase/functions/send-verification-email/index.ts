@@ -11,18 +11,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface AuthHookPayload {
-  user: {
-    id: string;
-    email: string;
-    [key: string]: any;
-  };
-  email_data: {
-    token: string;
-    token_hash: string;
-    redirect_to?: string;
-    email_action_type: string;
-  };
+interface VerificationEmailRequest {
+  email: string;
+  token: string;
+  type: 'signup' | 'email_change';
+  redirect_to?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -33,52 +26,10 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const payload: AuthHookPayload = await req.json();
-    
-    // Validate this is an auth hook payload
-    if (!payload.user || !payload.email_data) {
-      console.error('Invalid payload structure - not an auth hook request');
-      return new Response(
-        JSON.stringify({ 
-          error: 'Invalid request format. This endpoint only accepts Supabase Auth Hook payloads.' 
-        }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-    
-    const email = payload.user.email;
-    const token = payload.email_data.token_hash;
-    const type = payload.email_data.email_action_type;
-    const redirect_to = payload.email_data.redirect_to;
+    const { email, token, type, redirect_to }: VerificationEmailRequest = await req.json();
 
-    console.log('Processing verification email request:', { email, type, user_role: payload.user.raw_user_meta_data?.role });
+    console.log('Processing verification email request:', { email, type });
 
-    // Check if this is a seller (retailer) - they don't need email verification
-    const userRole = payload.user.raw_user_meta_data?.role;
-    if (userRole === 'seller') {
-      console.log('Skipping email verification for seller account:', email);
-      
-      await supabase.auth.admin.updateUserById(payload.user.id, {
-        email_confirmed_at: new Date().toISOString()
-      });
-      console.log('Auto-confirmed seller account:', payload.user.id);
-      
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: 'Seller account auto-confirmed',
-          skipped: true 
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-    
     // Check if this is a phone-based account (dummy email)
     if (email.includes('@pakbazaarconnect.store') || 
         email.includes('@phone.auth') || 

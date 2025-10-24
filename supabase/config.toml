@@ -83,6 +83,9 @@ base_url = "http://127.0.0.1:54321"
 # Configure Edge Functions.
 [edge_functions]
 enabled = true
+
+[functions.resend-webhook]
+verify_jwt = false
 port = 54333
 
 # Configure edge functions

@@ -35,6 +35,20 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const payload: AuthHookPayload = await req.json();
     
+    // Validate this is an auth hook payload
+    if (!payload.user || !payload.email_data) {
+      console.error('Invalid payload structure - not an auth hook request');
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid request format. This endpoint only accepts Supabase Auth Hook payloads.' 
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+    
     const email = payload.user.email;
     const token = payload.email_data.token_hash;
     const type = payload.email_data.email_action_type;

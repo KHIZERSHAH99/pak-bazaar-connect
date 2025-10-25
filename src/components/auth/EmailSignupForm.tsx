@@ -50,7 +50,7 @@ const EmailSignupForm = () => {
     setIsLoading(true);
     try {
       const normalizedPhone = normalizePakistaniPhone(data.phoneNumber);
-      const redirectUrl = `${window.location.origin}/dashboard`;
+      const redirectUrl = `${window.location.origin}/verify-email`;
 
       // Sign up with Supabase
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
@@ -61,6 +61,8 @@ const EmailSignupForm = () => {
           data: {
             role: data.businessType,
             phone: normalizedPhone,
+            business_name: '',
+            contact_name: '',
           },
         },
       });
@@ -69,6 +71,12 @@ const EmailSignupForm = () => {
 
       // Store email for confirmation page
       sessionStorage.setItem('pendingConfirmationEmail', data.email);
+      sessionStorage.setItem('pendingRole', data.businessType);
+
+      toast({
+        title: 'Check Your Email!',
+        description: `We've sent a verification link to ${data.email}`,
+      });
 
       // Redirect to email confirmation page
       navigate('/email-confirmation-pending');

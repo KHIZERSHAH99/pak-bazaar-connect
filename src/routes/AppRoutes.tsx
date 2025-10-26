@@ -62,6 +62,7 @@ import AdminPanel from '@/pages/admin/AdminPanel';
 import PublicBrowseShops from '@/pages/BrowseShops';
 import EmailConfirmationPending from '@/pages/EmailConfirmationPending';
 import VerifyEmail from '@/pages/VerifyEmail';
+import VerifyOTP from '@/pages/VerifyOTP';
 import ShopDetails from '@/pages/ShopDetails';
 
 const AppRoutes: React.FC = () => {
@@ -82,6 +83,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/shops" element={<PublicBrowseShops />} />
         <Route path="/shop/:shopId" element={<ShopDetails />} />
         <Route path="/email-confirmation-pending" element={<EmailConfirmationPending />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         
         {/* Legal pages */}

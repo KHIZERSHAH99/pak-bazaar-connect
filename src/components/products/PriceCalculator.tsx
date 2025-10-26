@@ -7,6 +7,7 @@ import { Calculator, Package, TrendingDown, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { calculateFinalPrice, validateMOQ, validateStock } from '@/lib/products/price-calculator';
 interface PricingTier {
   id: string;
   min_quantity: number;
@@ -33,67 +34,22 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   const [showSavings, setShowSavings] = useState(false);
   const { toast } = useToast();
   const sortedTiers = useMemo(() => {
-    // Ensure we have a valid base price (never 0)
-    const validBasePrice = basePrice > 0 ? basePrice : 100;
-    if (!tiers || tiers.length === 0) {
-      return [{
-        id: '1',
-        min_quantity: 1,
-        max_quantity: 99,
-        unit_price: validBasePrice
-      }, {
-        id: '2',
-        min_quantity: 100,
-        max_quantity: 999,
-        unit_price: validBasePrice * 0.95
-      }, {
-        id: '3',
-        min_quantity: 1000,
-        max_quantity: null,
-        unit_price: validBasePrice * 0.90
-      }];
+    if (!tiers || tiers.length === 0 || basePrice <= 0) {
+      return [];
     }
-
-    // Validate existing tiers to ensure no zero prices
-    return [...tiers].map(tier => ({
-      ...tier,
-      unit_price: tier.unit_price > 0 ? tier.unit_price : validBasePrice
-    })).sort((a, b) => a.min_quantity - b.min_quantity);
+    return [...tiers].sort((a, b) => a.min_quantity - b.min_quantity);
   }, [tiers, basePrice]);
   const calculations = useMemo(() => {
-    // Find the applicable tier based on quantity
-    let currentTier = sortedTiers.find(tier => quantity >= tier.min_quantity && (tier.max_quantity === null || quantity <= tier.max_quantity));
-
-    // If no tier found, use the last tier for quantities beyond max
-    if (!currentTier && sortedTiers.length > 0) {
-      const lastTier = sortedTiers[sortedTiers.length - 1];
-      if (quantity >= lastTier.min_quantity) {
-        currentTier = lastTier;
-      }
-    }
-
-    // Fall back to first tier if still no tier found
-    currentTier = currentTier || sortedTiers[0];
-
-    // Ensure unit price is never 0 - use basePrice as fallback
-    const unitPrice = currentTier.unit_price > 0 ? currentTier.unit_price : basePrice;
-    const totalPrice = quantity * unitPrice;
-
-    // Calculate savings based on the first tier or base price
-    const baseUnitPrice = sortedTiers[0]?.unit_price > 0 ? sortedTiers[0].unit_price : basePrice;
-    const baseTotal = quantity * baseUnitPrice;
-    const savings = baseTotal - totalPrice;
-    const savingsPercent = baseTotal > 0 ? savings / baseTotal * 100 : 0;
-
-    // Find next tier for suggestion
+    const result = calculateFinalPrice(basePrice, quantity, {}, sortedTiers);
     const nextTier = sortedTiers.find(tier => tier.min_quantity > quantity);
     const unitsToNextTier = nextTier ? nextTier.min_quantity - quantity : null;
+    
     return {
-      currentTier,
-      unitPrice,
-      totalPrice,
-      savings,
-      savingsPercent,
+      currentTier: result.appliedTier,
+      unitPrice: result.unitPrice,
+      totalPrice: result.totalPrice,
+      savings: result.savings,
+      savingsPercent: result.savingsPercent,
       nextTier,
       unitsToNextTier
     };
@@ -107,25 +63,27 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   const handleQuantityChange = (value: string) => {
     const newQuantity = parseInt(value) || 1;
     
-    // Check minimum quantity
-    if (newQuantity < moq) {
+    // Validate MOQ
+    const moqValidation = validateMOQ(newQuantity, moq || null);
+    if (!moqValidation.isValid) {
       toast({
         title: "Below Minimum",
-        description: `Minimum order quantity is ${moq} units`,
+        description: moqValidation.message,
         variant: "destructive"
       });
       setQuantity(moq);
       return;
     }
     
-    // Check stock availability
-    if (stockQuantity && newQuantity > stockQuantity) {
+    // Validate stock
+    const stockValidation = validateStock(newQuantity, stockQuantity || null);
+    if (!stockValidation.isValid) {
       toast({
         title: "Exceeds Stock",
-        description: `Only ${stockQuantity} units available in stock`,
+        description: stockValidation.message,
         variant: "destructive"
       });
-      setQuantity(stockQuantity);
+      setQuantity(stockQuantity!);
       return;
     }
     

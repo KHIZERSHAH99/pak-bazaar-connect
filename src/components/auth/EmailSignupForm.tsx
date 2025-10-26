@@ -50,14 +50,36 @@ const EmailSignupForm = () => {
     setIsLoading(true);
     try {
       const normalizedPhone = normalizePakistaniPhone(data.phoneNumber);
-      const redirectUrl = `${window.location.origin}/verify-email`;
+
+      // Check for duplicate email/phone before signup
+      const { data: existingProfiles, error: checkError } = await supabase
+        .from('profiles')
+        .select('id, email, normalized_phone')
+        .or(`email.eq.${data.email},normalized_phone.eq.${normalizedPhone}`);
+
+      if (checkError) {
+        console.error('Error checking duplicates:', checkError);
+      }
+
+      if (existingProfiles && existingProfiles.length > 0) {
+        const duplicate = existingProfiles[0];
+        if (duplicate.email?.toLowerCase() === data.email.toLowerCase()) {
+          throw new Error('An account with this email already exists. Please sign in instead.');
+        }
+        if (duplicate.normalized_phone === normalizedPhone) {
+          throw new Error('An account with this phone number already exists. Please sign in instead.');
+        }
+      }
+
+      // Sellers skip email confirmation, wholesalers need verification
+      const skipEmailConfirmation = data.businessType === 'seller';
 
       // Sign up with Supabase
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
-          emailRedirectTo: redirectUrl,
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             role: data.businessType,
             phone: normalizedPhone,
@@ -69,17 +91,50 @@ const EmailSignupForm = () => {
 
       if (signUpError) throw signUpError;
 
-      // Store email for confirmation page
-      sessionStorage.setItem('pendingConfirmationEmail', data.email);
-      sessionStorage.setItem('pendingRole', data.businessType);
+      if (!authData.user) {
+        throw new Error('Signup failed - no user data returned');
+      }
 
-      toast({
-        title: 'Check Your Email!',
-        description: `We've sent a verification link to ${data.email}`,
-      });
+      // Create/update profile with phone and email
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: authData.user.id,
+          email: data.email,
+          phone_number: normalizedPhone,
+          normalized_phone: normalizedPhone,
+          role: data.businessType,
+          email_verified: skipEmailConfirmation, // Sellers auto-verified
+        });
 
-      // Redirect to email confirmation page
-      navigate('/email-confirmation-pending');
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+      }
+
+      if (skipEmailConfirmation) {
+        // Sellers: redirect to dashboard immediately
+        toast({
+          title: 'Account Created!',
+          description: 'Welcome to Pak Bazaar Connect',
+        });
+        navigate('/dashboard');
+      } else {
+        // Wholesalers: send OTP and redirect to verification
+        const { data: otpData } = await supabase.functions.invoke('send-otp-email', {
+          body: { 
+            userId: authData.user.id, 
+            email: data.email,
+            name: 'User'
+          }
+        });
+
+        toast({
+          title: 'Verification Code Sent!',
+          description: `We've sent a 6-digit code to ${data.email}`,
+        });
+
+        navigate(`/verify-otp?userId=${authData.user.id}&email=${data.email}`);
+      }
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({

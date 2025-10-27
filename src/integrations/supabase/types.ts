@@ -1205,6 +1205,24 @@ export type Database = {
           },
         ]
       }
+      otp_rate_limits: {
+        Row: {
+          last_sent_at: string | null
+          send_count: number | null
+          user_id: string
+        }
+        Insert: {
+          last_sent_at?: string | null
+          send_count?: number | null
+          user_id: string
+        }
+        Update: {
+          last_sent_at?: string | null
+          send_count?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       password_policy_config: {
         Row: {
           check_leaked_passwords: boolean | null
@@ -2572,6 +2590,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_otp_rate_limit: { Args: { p_user_id: string }; Returns: boolean }
       check_phone_exists: { Args: { p_phone: string }; Returns: boolean }
       check_profile_rate_limit: { Args: never; Returns: boolean }
       check_rate_limit: {

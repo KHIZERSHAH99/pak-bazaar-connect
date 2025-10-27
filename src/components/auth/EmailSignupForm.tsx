@@ -51,29 +51,6 @@ const EmailSignupForm = () => {
     try {
       const normalizedPhone = normalizePakistaniPhone(data.phoneNumber);
 
-      // Check for duplicate email/phone before signup
-      const { data: existingProfiles, error: checkError } = await supabase
-        .from('profiles')
-        .select('id, email, normalized_phone')
-        .or(`email.eq.${data.email},normalized_phone.eq.${normalizedPhone}`);
-
-      if (checkError) {
-        console.error('Error checking duplicates:', checkError);
-      }
-
-      if (existingProfiles && existingProfiles.length > 0) {
-        const duplicate = existingProfiles[0];
-        if (duplicate.email?.toLowerCase() === data.email.toLowerCase()) {
-          throw new Error('An account with this email already exists. Please sign in instead.');
-        }
-        if (duplicate.normalized_phone === normalizedPhone) {
-          throw new Error('An account with this phone number already exists. Please sign in instead.');
-        }
-      }
-
-      // Sellers skip email confirmation, wholesalers need verification
-      const skipEmailConfirmation = data.businessType === 'seller';
-
       // Sign up with Supabase
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
@@ -83,54 +60,80 @@ const EmailSignupForm = () => {
           data: {
             role: data.businessType,
             phone: normalizedPhone,
-            business_name: '',
-            contact_name: '',
           },
         },
       });
 
       if (signUpError) throw signUpError;
+      if (!authData.user) throw new Error('Signup failed - no user data returned');
 
-      if (!authData.user) {
-        throw new Error('Signup failed - no user data returned');
-      }
-
-      // Create/update profile with phone and email
+      // Create profile
       const { error: profileError } = await supabase
         .from('profiles')
-        .upsert({
+        .insert({
           id: authData.user.id,
           email: data.email,
           phone_number: normalizedPhone,
           normalized_phone: normalizedPhone,
           role: data.businessType,
-          email_verified: skipEmailConfirmation, // Sellers auto-verified
+          email_verified: data.businessType === 'seller',
+          email_verified_at: data.businessType === 'seller' ? new Date().toISOString() : null,
         });
 
       if (profileError) {
-        console.error('Profile creation error:', profileError);
+        // Check for duplicate constraint violation
+        if (profileError.message?.includes('duplicate') || 
+            profileError.message?.includes('already exists') ||
+            profileError.code === '23505') {
+          toast({
+            variant: 'destructive',
+            title: 'Account Exists',
+            description: 'An account with this email or phone number already exists. Please login instead.',
+          });
+          return;
+        }
+        throw profileError;
       }
 
-      if (skipEmailConfirmation) {
-        // Sellers: redirect to dashboard immediately
+      // Handle based on business type
+      if (data.businessType === 'seller') {
+        // Confirm seller email in auth system
+        const { error: confirmError } = await supabase.functions.invoke('confirm-seller-email', {
+          body: { userId: authData.user.id }
+        });
+
+        if (confirmError) {
+          console.error('Failed to confirm seller email:', confirmError);
+        }
+
         toast({
           title: 'Account Created!',
-          description: 'Welcome to Pak Bazaar Connect',
+          description: 'Welcome to Pak Bazaar Connect. Redirecting...',
         });
-        navigate('/dashboard');
+        
+        setTimeout(() => navigate('/dashboard'), 1000);
       } else {
-        // Wholesalers: send OTP and redirect to verification
-        const { data: otpData } = await supabase.functions.invoke('send-otp-email', {
+        // For wholesalers, send OTP
+        const { error: otpError } = await supabase.functions.invoke('send-otp-email', {
           body: { 
             userId: authData.user.id, 
             email: data.email,
-            name: 'User'
+            name: data.businessType 
           }
         });
 
+        if (otpError) {
+          console.error('Failed to send OTP:', otpError);
+          toast({
+            variant: 'destructive',
+            title: 'Warning',
+            description: 'Account created but verification email failed. Please contact support.',
+          });
+        }
+
         toast({
           title: 'Verification Code Sent!',
-          description: `We've sent a 6-digit code to ${data.email}`,
+          description: `Please check ${data.email} for your verification code`,
         });
 
         navigate(`/verify-otp?userId=${authData.user.id}&email=${data.email}`);

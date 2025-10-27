@@ -24,34 +24,39 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
     const isEmail = emailOrPhone.includes('@');
     const isPhone = /^[\d\s\+\-\(\)]+$/.test(emailOrPhone.trim());
     
-    let normalizedInput = emailOrPhone.trim();
     let authEmail = '';
     
     if (isPhone) {
       // Validate phone format first
-      const phoneError = validatePakistaniPhone(normalizedInput);
+      const phoneError = validatePakistaniPhone(emailOrPhone);
       if (phoneError) {
         throw new Error(phoneError.message);
       }
       
-      // Normalize Pakistani phone number
-      const cleanPhone = normalizedInput.replace(/[^0-9]/g, '');
-      let normalizedPhone = cleanPhone;
-      
-      if (cleanPhone.startsWith('923') && cleanPhone.length === 12) {
-        normalizedPhone = '0' + cleanPhone.substring(2);
-      } else if (cleanPhone.startsWith('3') && cleanPhone.length === 10) {
-        normalizedPhone = '0' + cleanPhone;
-      } else if (!cleanPhone.startsWith('0') && cleanPhone.length === 10) {
-        normalizedPhone = '0' + cleanPhone;
+      // Normalize Pakistani phone number to 03XXXXXXXXX
+      let normalizedPhone = emailOrPhone.replace(/[^0-9]/g, '');
+      if (normalizedPhone.startsWith('92')) {
+        normalizedPhone = '0' + normalizedPhone.slice(2);
+      } else if (!normalizedPhone.startsWith('0')) {
+        normalizedPhone = '0' + normalizedPhone;
       }
       
-      console.log('Attempting login with phone:', normalizedPhone);
+      console.log('Looking up phone:', normalizedPhone);
       
-      // Use standard email format for phone-based auth
-      authEmail = `phone-${normalizedPhone}@pakbazaarconnect.store`;
+      // Look up user by normalized phone
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('normalized_phone', normalizedPhone)
+        .single();
+
+      if (profileError || !profile) {
+        throw new Error('No account found with this phone number');
+      }
+
+      authEmail = profile.email;
     } else if (isEmail) {
-      authEmail = normalizedInput.toLowerCase();
+      authEmail = emailOrPhone.toLowerCase().trim();
     } else {
       throw new Error('Please enter a valid email or phone number');
     }
@@ -62,7 +67,7 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       password
     });
     
-      if (error) {
+    if (error) {
       console.error('Authentication error:', error);
       const parsedError = parseAuthError(error);
       throw new Error(parsedError.message);

@@ -38,16 +38,13 @@ interface EnhancedProductDetailProps {
 const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, onBack }) => {
   const [quantity, setQuantity] = useState(product.moq || 1);
   const [showOrderForm, setShowOrderForm] = useState(false);
-  const [currentUnitPrice, setCurrentUnitPrice] = useState(product.price);
-  const [totalAmount, setTotalAmount] = useState(product.price * (product.moq || 1));
+  const [currentUnitPrice, setCurrentUnitPrice] = useState(product.price > 0 ? product.price : 100);
+  const [totalAmount, setTotalAmount] = useState((product.price > 0 ? product.price : 100) * (product.moq || 1));
   const [selectedVariations, setSelectedVariations] = useState<any>({});
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { tiers, loading: tiersLoading, calculatePrice } = usePricingTiers(product.id);
-
-  // Check if product has valid price
-  const hasValidPrice = product.price > 0;
 
   const handleQuantityChange = (value: string) => {
     const newQuantity = parseInt(value) || 1;
@@ -222,18 +219,17 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
               </div>
 
             {/* Product Variations */}
-            {hasValidPrice && (
-              <EnhancedVariationPicker
-                productId={product.id}
-                basePrice={product.price}
-                onVariationChange={(variations, totalPrice) => {
-                  setSelectedVariations(variations);
-                  const validPrice = totalPrice > 0 ? totalPrice : product.price;
-                  setCurrentUnitPrice(validPrice);
-                  setTotalAmount(validPrice * quantity);
-                }}
-              />
-            )}
+            <EnhancedVariationPicker
+              productId={product.id}
+              basePrice={product.price}
+              onVariationChange={(variations, totalPrice) => {
+                setSelectedVariations(variations);
+                // Ensure price is never 0
+                const validPrice = totalPrice > 0 ? totalPrice : (product.price > 0 ? product.price : 100);
+                setCurrentUnitPrice(validPrice);
+                setTotalAmount(validPrice * quantity);
+              }}
+            />
 
             {/* Tiered Pricing Display */}
             {!tiersLoading && (
@@ -249,62 +245,40 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
 
             {/* Price Calculator and Order Section */}
             <div className="space-y-4">
-              {hasValidPrice ? (
-                <PriceCalculator
-                  tiers={tiers}
-                  basePrice={currentUnitPrice}
-                  moq={product.moq}
-                  stockQuantity={product.stock_quantity}
-                  onQuantityChange={(qty, unitPrice, total) => {
-                    setQuantity(qty);
+              <PriceCalculator
+                tiers={tiers}
+                basePrice={currentUnitPrice || product.price}
+                moq={product.moq}
+                stockQuantity={product.stock_quantity}
+                onQuantityChange={(qty, unitPrice, total) => {
+                  setQuantity(qty);
+                  // Ensure unit price is never 0
+                  const safeUnitPrice = unitPrice > 0 ? unitPrice : (product.price > 0 ? product.price : 100);
+                  const finalUnitPrice = safeUnitPrice > 0 ? safeUnitPrice : 100;
+                  
+                  // Only update unit price if no variations are selected
+                  if (!selectedVariations || Object.keys(selectedVariations).length === 0) {
+                    setCurrentUnitPrice(finalUnitPrice);
+                  }
+                  
+                  // Calculate total with the current unit price (which may include variation adjustments)
+                  const actualUnitPrice = (selectedVariations && Object.keys(selectedVariations).length > 0) 
+                    ? currentUnitPrice 
+                    : finalUnitPrice;
                     
-                    // Only update unit price if no variations are selected
-                    if (!selectedVariations || Object.keys(selectedVariations).length === 0) {
-                      setCurrentUnitPrice(unitPrice);
-                    }
-                    
-                    // Calculate total with the current unit price (which may include variation adjustments)
-                    const actualUnitPrice = (selectedVariations && Object.keys(selectedVariations).length > 0) 
-                      ? currentUnitPrice 
-                      : unitPrice;
-                      
-                    setTotalAmount(actualUnitPrice * qty);
-                  }}
-                />
-              ) : (
-                <Card className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
-                  <p className="text-sm text-yellow-800 dark:text-yellow-200 font-medium">
-                    <AlertCircle className="h-4 w-4 inline mr-2" />
-                    Price available on request. Contact the seller for pricing details.
-                  </p>
-                </Card>
-              )}
+                  setTotalAmount(actualUnitPrice * qty);
+                }}
+              />
 
               <div className="space-y-3">
-                {hasValidPrice ? (
-                  <Button 
-                    onClick={handleOrderClick}
-                    className="w-full"
-                    size="lg"
-                  >
-                    <ShoppingCart className="h-5 w-5 mr-2" />
-                    Place Order - PKR {totalAmount.toLocaleString()}
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={() => {
-                      if (product.shops?.owner_id) {
-                        navigate(`/messages?sellerId=${product.shops.owner_id}`);
-                      }
-                    }}
-                    className="w-full"
-                    size="lg"
-                    variant="outline"
-                  >
-                    <MessageSquare className="h-5 w-5 mr-2" />
-                    Contact Seller for Price
-                  </Button>
-                )}
+                <Button 
+                  onClick={handleOrderClick}
+                  className="w-full"
+                  size="lg"
+                >
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Place Order - PKR {totalAmount.toLocaleString()}
+                </Button>
 
                 {/* Add Message Button for retailers to contact wholesalers */}
                 {product.shops?.owner_id && user && profile?.role === 'seller' && product.shops.owner_id !== user.id && (

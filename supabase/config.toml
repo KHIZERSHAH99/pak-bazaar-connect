@@ -68,10 +68,8 @@ major_version = 2
 enable_signup = true
 # Allow users to sign up using a different email than the email that was used for the initial invitation.
 restrict_signup_email = false
-# Require email confirmation before users can log in
-enable_confirmations = true
-# Confirmation URL template (optional)
-# template_url = "{{ .SiteURL }}/auth/confirm?token={{ .Token }}&type=signup"
+# Allow inviting users who have not yet signed up.
+enable_confirmations = false
 
 # Automated testing configuration. Supabase uses these values to configure the
 # test runner for various client libraries.
@@ -103,7 +101,4 @@ verify_jwt = true
 
 [functions.database-cleanup]
 verify_jwt = true
-
-[functions.send-verification-email]
-verify_jwt = false
 

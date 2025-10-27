@@ -50,13 +50,14 @@ const EmailSignupForm = () => {
     setIsLoading(true);
     try {
       const normalizedPhone = normalizePakistaniPhone(data.phoneNumber);
+      const redirectUrl = `${window.location.origin}/dashboard`;
 
       // Sign up with Supabase
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: redirectUrl,
           data: {
             role: data.businessType,
             phone: normalizedPhone,
@@ -65,79 +66,12 @@ const EmailSignupForm = () => {
       });
 
       if (signUpError) throw signUpError;
-      if (!authData.user) throw new Error('Signup failed - no user data returned');
 
-      // Create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: authData.user.id,
-          email: data.email,
-          phone_number: normalizedPhone,
-          normalized_phone: normalizedPhone,
-          role: data.businessType,
-          email_verified: data.businessType === 'seller',
-          email_verified_at: data.businessType === 'seller' ? new Date().toISOString() : null,
-        });
+      // Store email for confirmation page
+      sessionStorage.setItem('pendingConfirmationEmail', data.email);
 
-      if (profileError) {
-        // Check for duplicate constraint violation
-        if (profileError.message?.includes('duplicate') || 
-            profileError.message?.includes('already exists') ||
-            profileError.code === '23505') {
-          toast({
-            variant: 'destructive',
-            title: 'Account Exists',
-            description: 'An account with this email or phone number already exists. Please login instead.',
-          });
-          return;
-        }
-        throw profileError;
-      }
-
-      // Handle based on business type
-      if (data.businessType === 'seller') {
-        // Confirm seller email in auth system
-        const { error: confirmError } = await supabase.functions.invoke('confirm-seller-email', {
-          body: { userId: authData.user.id }
-        });
-
-        if (confirmError) {
-          console.error('Failed to confirm seller email:', confirmError);
-        }
-
-        toast({
-          title: 'Account Created!',
-          description: 'Welcome to Pak Bazaar Connect. Redirecting...',
-        });
-        
-        setTimeout(() => navigate('/dashboard'), 1000);
-      } else {
-        // For wholesalers, send OTP
-        const { error: otpError } = await supabase.functions.invoke('send-otp-email', {
-          body: { 
-            userId: authData.user.id, 
-            email: data.email,
-            name: data.businessType 
-          }
-        });
-
-        if (otpError) {
-          console.error('Failed to send OTP:', otpError);
-          toast({
-            variant: 'destructive',
-            title: 'Warning',
-            description: 'Account created but verification email failed. Please contact support.',
-          });
-        }
-
-        toast({
-          title: 'Verification Code Sent!',
-          description: `Please check ${data.email} for your verification code`,
-        });
-
-        navigate(`/verify-otp?userId=${authData.user.id}&email=${data.email}`);
-      }
+      // Redirect to email confirmation page
+      navigate('/email-confirmation-pending');
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({

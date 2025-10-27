@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +13,7 @@ import AuthErrorBoundary from "@/components/auth/AuthErrorBoundary";
 import GlobalErrorBoundary from "@/components/common/GlobalErrorHandler";
 import AppRoutes from "@/routes/AppRoutes";
 import PerformanceMonitor from "@/components/ui/performance-monitor";
+import { applyCSP } from "@/lib/security/content-security-policy";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +32,11 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  useEffect(() => {
+    // Apply Content Security Policy
+    applyCSP();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider 

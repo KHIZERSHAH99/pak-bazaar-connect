@@ -77,74 +77,64 @@ const EmailLoginForm: React.FC = () => {
   };
 
   const onSubmit = async (values: LoginFormValues) => {
-    setLoading(true);
-    setEmailNotConfirmed(false);
-
     try {
-      const identifier = values.identifier.trim();
+      setLoading(true);
+      setEmailNotConfirmed(false);
       
-      // Check if it's a phone number or email
-      const isPhone = /^(\+92|92|0)?3\d{9}$/.test(identifier.replace(/\D/g, ''));
+      const { identifier, password } = values;
       
-      if (isPhone) {
-        // Normalize phone to 03XXXXXXXXX format
-        let normalizedPhone = identifier.replace(/\D/g, '');
-        if (normalizedPhone.startsWith('92')) {
-          normalizedPhone = '0' + normalizedPhone.slice(2);
-        } else if (!normalizedPhone.startsWith('0')) {
-          normalizedPhone = '0' + normalizedPhone;
-        }
+      // Determine if identifier is email or phone
+      const isEmail = identifier.includes('@');
+      
+      console.log('Attempting login with:', identifier, 'Type:', isEmail ? 'email' : 'phone');
 
-        // Look up user by normalized phone
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('normalized_phone', normalizedPhone)
-          .single();
+      let data, error;
 
-        if (profileError || !profile) {
-          throw new Error('No account found with this phone number');
-        }
-
-        // Sign in with the email we found
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: profile.email,
-          password: values.password,
-        });
-
-        if (signInError) {
-          if (signInError.message.includes('Email not confirmed')) {
-            setEmailNotConfirmed(true);
-            toast({
-              title: "Email not verified",
-              description: "Please verify your email before logging in.",
-              variant: "destructive",
-            });
-            return;
-          }
-          throw signInError;
-        }
-      } else {
-        // Handle email login
-        const { error } = await supabase.auth.signInWithPassword({
+      if (isEmail) {
+        // Login with email
+        const result = await supabase.auth.signInWithPassword({
           email: identifier,
-          password: values.password,
+          password: password,
         });
-
-        if (error) {
-          if (error.message.includes('Email not confirmed')) {
-            setEmailNotConfirmed(true);
-            toast({
-              title: "Email not verified",
-              description: "Please verify your email before logging in.",
-              variant: "destructive",
-            });
-            return;
-          }
-          throw error;
+        data = result.data;
+        error = result.error;
+      } else {
+        // Normalize phone number using shared utility
+        const normalizedPhone = normalizePakistaniPhone(identifier);
+        console.log('Normalized phone:', normalizedPhone);
+        
+        // Authenticate by phone via secure RPC (bypasses RLS safely)
+        const { data: authDataRaw, error: rpcError } = await supabase.rpc('authenticate_user_by_phone', {
+          user_phone: normalizedPhone,
+        });
+        const authData = authDataRaw as AuthByPhoneResponse;
+        
+        if (rpcError || !authData || authData.success !== true || !authData.email) {
+          throw new Error('Phone number not found. Please check and try again.');
         }
+        
+        const result = await supabase.auth.signInWithPassword({
+          email: authData.email,
+          password: password,
+        });
+        data = result.data;
+        error = result.error;
       }
 
+      if (error) {
+        console.error('Login error:', error);
+        
+        // Check if it's an email not confirmed error
+        if (error.message.toLowerCase().includes('email not confirmed')) {
+          setEmailNotConfirmed(true);
+          return;
+        }
+        
+        throw error;
+      }
+
+      console.log('Login successful:', data);
+      
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in",
@@ -152,10 +142,10 @@ const EmailLoginForm: React.FC = () => {
 
       navigate('/dashboard');
     } catch (error: any) {
-      console.error('Login error:', error);
+      console.error('Login failed:', error);
       toast({
         title: "Login failed",
-        description: error.message || "Invalid email/phone or password",
+        description: error.message || "Invalid email or password",
         variant: "destructive",
       });
     } finally {

@@ -24,39 +24,80 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
     const isEmail = emailOrPhone.includes('@');
     const isPhone = /^[\d\s\+\-\(\)]+$/.test(emailOrPhone.trim());
     
+    let normalizedInput = emailOrPhone.trim();
     let authEmail = '';
     
     if (isPhone) {
       // Validate phone format first
-      const phoneError = validatePakistaniPhone(emailOrPhone);
+      const phoneError = validatePakistaniPhone(normalizedInput);
       if (phoneError) {
         throw new Error(phoneError.message);
       }
       
-      // Normalize Pakistani phone number to 03XXXXXXXXX
-      let normalizedPhone = emailOrPhone.replace(/[^0-9]/g, '');
-      if (normalizedPhone.startsWith('92')) {
-        normalizedPhone = '0' + normalizedPhone.slice(2);
-      } else if (!normalizedPhone.startsWith('0')) {
-        normalizedPhone = '0' + normalizedPhone;
+      // Normalize Pakistani phone number
+      const cleanPhone = normalizedInput.replace(/[^0-9]/g, '');
+      let normalizedPhone = cleanPhone;
+      
+      if (cleanPhone.startsWith('923') && cleanPhone.length === 12) {
+        normalizedPhone = '0' + cleanPhone.substring(2);
+      } else if (cleanPhone.startsWith('3') && cleanPhone.length === 10) {
+        normalizedPhone = '0' + cleanPhone;
+      } else if (!cleanPhone.startsWith('0') && cleanPhone.length === 10) {
+        normalizedPhone = '0' + cleanPhone;
       }
       
-      console.log('Looking up phone:', normalizedPhone);
+      console.log('Attempting login with phone:', normalizedPhone);
       
-      // Look up user by normalized phone
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('normalized_phone', normalizedPhone)
-        .single();
-
-      if (profileError || !profile) {
-        throw new Error('No account found with this phone number');
+      // Try multiple email formats for phone-based accounts
+      const emailFormats = [
+        `phone-${normalizedPhone}@pakbazaarconnect.store`, // New format with prefix
+        `${normalizedPhone}@pakbazaarconnect.store`, // Legacy format
+        `${normalizedPhone}@phone.auth`,
+        `${normalizedPhone}@temp-phone-auth.com`,
+        `${normalizedPhone}@phone-auth.com`,
+        `${normalizedPhone}@phone.auth.local`
+      ];
+      
+      console.log('Checking for phone-based auth with possible emails:', emailFormats);
+      
+      // Use RPC function to find user by phone (avoids RLS issues)
+      const { data: profileData, error: profileError } = await supabase
+        .rpc('get_user_by_phone', { phone_input: normalizedPhone });
+      
+      if (profileError) {
+        console.error('Profile query error:', profileError);
+        throw new Error('Failed to verify phone number');
       }
-
-      authEmail = profile.email;
+      
+      const profile = profileData?.[0] || null;
+      
+      if (!profile) {
+        console.log('No profile found for phone:', normalizedPhone);
+        // Try with different email formats
+        let authAttemptSuccessful = false;
+        
+        for (const emailFormat of emailFormats) {
+          console.log('Attempting direct auth with email:', emailFormat);
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: emailFormat,
+            password
+          });
+          
+          if (!error && data.user) {
+            console.log('Successfully authenticated with email format:', emailFormat);
+            await authSecurityManager.recordAuthAttempt(emailOrPhone, true);
+            return data;
+          }
+        }
+        
+        // If no format worked, use the primary format for the error
+        authEmail = emailFormats[0];
+      } else {
+        console.log('Profile found:', { email: profile.user_email, role: profile.user_role });
+        authEmail = profile.user_email;
+      }
     } else if (isEmail) {
-      authEmail = emailOrPhone.toLowerCase().trim();
+      authEmail = normalizedInput.toLowerCase();
     } else {
       throw new Error('Please enter a valid email or phone number');
     }
@@ -67,7 +108,7 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
       password
     });
     
-    if (error) {
+      if (error) {
       console.error('Authentication error:', error);
       const parsedError = parseAuthError(error);
       throw new Error(parsedError.message);
@@ -140,18 +181,14 @@ export const registerUser = async (
       throw new Error('Please enter a valid email or phone number');
     }
     
-    // Create account with email confirmation handling
-    // Skip email confirmation for phone accounts OR for sellers/retailers
-    const skipEmailConfirm = isPhone || role === 'seller';
-    
+    // Create account
     const { data, error } = await supabase.auth.signUp({
       email: authEmail,
       password,
       options: {
-        // Skip email confirmation for phone-based accounts and sellers
-        emailRedirectTo: skipEmailConfirm ? undefined : `${window.location.origin}/dashboard`,
+        emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
-          email: authEmail,
+          email: authEmail, // Include the actual email being used
           role,
           phone_number: phoneNumber || '',
           normalized_phone: phoneNumber || '',
@@ -162,9 +199,8 @@ export const registerUser = async (
           city: businessData.city || '',
           postal_code: businessData.postalCode || '',
           industry: businessData.industry || '',
-          auth_type: isPhone ? 'phone' : 'email',
-          display_identifier: emailOrPhone,
-          skip_email_confirm: skipEmailConfirm // Flag for auto-confirmation
+          auth_type: isPhone ? 'phone' : 'email', // Mark the auth type
+          display_identifier: emailOrPhone // Store original input for display
         }
       }
     });

@@ -252,21 +252,15 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
                 stockQuantity={product.stock_quantity}
                 onQuantityChange={(qty, unitPrice, total) => {
                   setQuantity(qty);
-                  // Ensure unit price is never 0
-                  const safeUnitPrice = unitPrice > 0 ? unitPrice : (product.price > 0 ? product.price : 100);
-                  const finalUnitPrice = safeUnitPrice > 0 ? safeUnitPrice : 100;
                   
                   // Only update unit price if no variations are selected
                   if (!selectedVariations || Object.keys(selectedVariations).length === 0) {
-                    setCurrentUnitPrice(finalUnitPrice);
+                    setCurrentUnitPrice(unitPrice);
+                    setTotalAmount(total);
+                  } else {
+                    // With variations, use current unit price with new quantity
+                    setTotalAmount(currentUnitPrice * qty);
                   }
-                  
-                  // Calculate total with the current unit price (which may include variation adjustments)
-                  const actualUnitPrice = (selectedVariations && Object.keys(selectedVariations).length > 0) 
-                    ? currentUnitPrice 
-                    : finalUnitPrice;
-                    
-                  setTotalAmount(actualUnitPrice * qty);
                 }}
               />
 

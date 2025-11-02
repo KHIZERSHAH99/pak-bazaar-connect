@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/phone-input';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Save, X } from 'lucide-react';
+import { uploadVerificationDocumentsEnhanced } from '@/lib/verification-enhanced';
+import { Loader2, Save, X, Upload, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 interface ProfileEditorProps {
   profile: any;
@@ -17,6 +19,9 @@ interface ProfileEditorProps {
 const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onProfileUpdate }) => {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploadingDocs, setUploadingDocs] = useState(false);
+  const [cnicFile, setCnicFile] = useState<File | null>(null);
+  const [selfieFile, setSelfieFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     contact_name: profile.contact_name || '',
     phone_number: profile.phone_number || '',
@@ -73,7 +78,96 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onProfileUpdate 
       city: profile.city || '',
       postal_code: profile.postal_code || ''
     });
+    setCnicFile(null);
+    setSelfieFile(null);
     setEditing(false);
+  };
+
+  const handleFileChange = (type: 'cnic' | 'selfie', file: File | null) => {
+    if (!file) return;
+
+    // Validate file size (5MB limit)
+    if (file.size > 5242880) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 5MB",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select a JPEG, PNG, or WebP image",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (type === 'cnic') {
+      setCnicFile(file);
+    } else {
+      setSelfieFile(file);
+    }
+  };
+
+  const handleUploadDocuments = async () => {
+    if (!cnicFile || !selfieFile) {
+      toast({
+        title: "Missing files",
+        description: "Please select both CNIC and selfie images",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setUploadingDocs(true);
+    try {
+      await uploadVerificationDocumentsEnhanced(cnicFile, selfieFile);
+      
+      toast({
+        title: "Documents uploaded",
+        description: "Your verification documents have been submitted for review"
+      });
+
+      setCnicFile(null);
+      setSelfieFile(null);
+      onProfileUpdate();
+    } catch (error: any) {
+      console.error('Document upload error:', error);
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload documents. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setUploadingDocs(false);
+    }
+  };
+
+  const getVerificationBadge = () => {
+    const status = profile.verification_status;
+    
+    if (!status || status === 'unverified') {
+      return <Badge variant="secondary" className="font-poppins"><Clock className="w-3 h-3 mr-1" />Not Verified</Badge>;
+    }
+    
+    if (status === 'pending') {
+      return <Badge variant="outline" className="font-poppins"><Clock className="w-3 h-3 mr-1" />Pending Review</Badge>;
+    }
+    
+    if (status === 'approved') {
+      return <Badge variant="default" className="font-poppins bg-green-600"><CheckCircle className="w-3 h-3 mr-1" />Verified</Badge>;
+    }
+    
+    if (status === 'rejected') {
+      return <Badge variant="destructive" className="font-poppins"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
+    }
+    
+    return null;
   };
 
   return (
@@ -168,6 +262,99 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onProfileUpdate 
               className="font-poppins text-sm h-9 sm:h-10"
             />
           </div>
+        </div>
+
+        {/* Verification Documents Section */}
+        <div className="pt-4 border-t">
+          <div className="flex items-center justify-between mb-3">
+            <Label className="font-poppins text-base">Identity Verification</Label>
+            {getVerificationBadge()}
+          </div>
+
+          {profile.verification_status === 'approved' ? (
+            <p className="text-sm text-muted-foreground font-poppins">
+              Your identity has been verified ✓
+            </p>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground font-poppins mb-4">
+                {profile.verification_status === 'pending' 
+                  ? 'Your documents are under review'
+                  : 'Upload your CNIC and selfie to verify your identity'}
+              </p>
+
+              {profile.verification_status !== 'pending' && (
+                <div className="space-y-3">
+                  <div>
+                    <Label htmlFor="cnic" className="font-poppins text-xs sm:text-sm">
+                      CNIC Picture (Front or Back)
+                    </Label>
+                    <Input
+                      id="cnic"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(e) => handleFileChange('cnic', e.target.files?.[0] || null)}
+                      className="font-poppins text-sm h-9 sm:h-10"
+                    />
+                    {cnicFile && (
+                      <p className="text-xs text-muted-foreground mt-1 font-poppins">
+                        Selected: {cnicFile.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="selfie" className="font-poppins text-xs sm:text-sm">
+                      Selfie Picture
+                    </Label>
+                    <Input
+                      id="selfie"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(e) => handleFileChange('selfie', e.target.files?.[0] || null)}
+                      className="font-poppins text-sm h-9 sm:h-10"
+                    />
+                    {selfieFile && (
+                      <p className="text-xs text-muted-foreground mt-1 font-poppins">
+                        Selected: {selfieFile.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <Button
+                    onClick={handleUploadDocuments}
+                    disabled={!cnicFile || !selfieFile || uploadingDocs}
+                    className="w-full font-poppins text-xs sm:text-sm h-9 sm:h-10"
+                    variant="outline"
+                  >
+                    {uploadingDocs ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Submit for Verification
+                      </>
+                    )}
+                  </Button>
+
+                  <p className="text-xs text-muted-foreground font-poppins">
+                    Maximum file size: 5MB. Accepted formats: JPEG, PNG, WebP
+                  </p>
+                </div>
+              )}
+
+              {profile.verification_status === 'rejected' && profile.verification_notes && (
+                <div className="mt-3 p-3 bg-destructive/10 rounded-md">
+                  <p className="text-sm font-poppins text-destructive">
+                    <strong>Rejection Reason:</strong> {profile.verification_notes}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         {editing && (

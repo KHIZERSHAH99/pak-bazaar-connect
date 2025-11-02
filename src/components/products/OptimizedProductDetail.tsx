@@ -159,12 +159,20 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
   const handleQuantityChange = (value: string) => {
     const newQuantity = parseInt(value) || 1;
     const minQuantity = product.moq || 1;
+    const maxQuantity = product.stock_quantity;
     
     if (newQuantity < minQuantity) {
       setQuantity(minQuantity);
       toast({
         title: "Minimum Order Quantity",
         description: `The minimum order quantity is ${minQuantity} units`,
+      });
+    } else if (maxQuantity && newQuantity > maxQuantity) {
+      setQuantity(maxQuantity);
+      toast({
+        title: "Stock Limit Exceeded",
+        description: `Only ${maxQuantity} units available in stock`,
+        variant: "destructive"
       });
     } else {
       setQuantity(newQuantity);
@@ -257,11 +265,14 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
             <Suspense fallback={<Skeleton className="h-64 w-full" />}>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="quantity">Quantity (Min: {product.moq || 1})</Label>
+                  <Label htmlFor="quantity">
+                    Quantity (Min: {product.moq || 1}{product.stock_quantity ? `, Max: ${product.stock_quantity}` : ''})
+                  </Label>
                   <Input
                     id="quantity"
                     type="number"
                     min={product.moq || 1}
+                    max={product.stock_quantity || undefined}
                     value={quantity}
                     onChange={(e) => handleQuantityChange(e.target.value)}
                   />

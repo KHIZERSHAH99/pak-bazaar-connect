@@ -297,19 +297,6 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="font-poppins">{t('createOrder')} - {resolvedShopName}</CardTitle>
-        <div className="space-y-1">
-          <p className="text-base text-muted-foreground">
-            {t('productTotal')}: PKR {totalAmount.toLocaleString()}
-          </p>
-          {shippingInfo && (
-            <p className="text-base text-muted-foreground">
-              {t('shipping')}: PKR {shippingInfo.cost.toLocaleString()} ({shippingInfo.message})
-            </p>
-          )}
-          <p className="text-xl font-bold text-primary">
-            {t('grandTotal')}: PKR {(totalAmount + (shippingInfo?.cost || 0)).toLocaleString()}
-          </p>
-        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -362,26 +349,41 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             />
           </div>
 
-          {/* Shipping Options */}
-          {shippingInfo && (
-            <div className="space-y-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 className="font-semibold font-poppins flex items-center gap-2">
-                <Truck className="h-4 w-4" />
-                {t('shippingDetails')}
-              </h3>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{t('shippingCost')}:</span>
-                  <span className="font-semibold">PKR {shippingInfo.cost.toLocaleString()}</span>
+          {/* Order Summary */}
+          <div className="space-y-3 p-4 bg-accent/50 border border-border rounded-lg">
+            <h3 className="font-semibold font-poppins text-lg">{t('orderSummary')}</h3>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">{t('productTotal')}:</span>
+                <span className="font-semibold">PKR {totalAmount.toLocaleString()}</span>
+              </div>
+              
+              {shippingInfo && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground flex items-center gap-1">
+                      <Truck className="h-3 w-3" />
+                      {t('shippingCost')}:
+                    </span>
+                    <span className="font-semibold">PKR {shippingInfo.cost.toLocaleString()}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Delivery in {shippingInfo.delivery_days} days • {shippingInfo.message}
+                  </p>
+                </>
+              )}
+              
+              <div className="border-t pt-2 mt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-bold">{t('totalAmount')}:</span>
+                  <span className="text-xl font-bold text-primary">
+                    PKR {(totalAmount + (shippingInfo?.cost || 0)).toLocaleString()}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{t('estimatedDelivery')}:</span>
-                  <span className="font-semibold">{shippingInfo.delivery_days} {t('days')}</span>
-                </div>
-                <p className="text-xs text-blue-700">{shippingInfo.message}</p>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Payment Method Selection */}
           <div className="space-y-4">

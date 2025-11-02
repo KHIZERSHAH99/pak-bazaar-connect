@@ -86,20 +86,7 @@ const BusinessDetailsEditor: React.FC<BusinessDetailsEditorProps> = ({
           <Input id="business_name" value={formData.business_name} onChange={e => handleInputChange('business_name', e.target.value)} disabled={!editing} className="font-poppins" />
         </div>
 
-        <div>
-          <Label htmlFor="business_type" className="font-poppins">Business Type</Label>
-          <Select value={formData.business_type} onValueChange={value => handleInputChange('business_type', value)} disabled={!editing}>
-            <SelectTrigger className="font-poppins">
-              <SelectValue placeholder="Select business type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="wholesaler">Wholesaler</SelectItem>
-              <SelectItem value="manufacturer">Manufacturer</SelectItem>
-              <SelectItem value="distributor">Distributor</SelectItem>
-              <SelectItem value="retailer">Retailer</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        
 
         <div>
           <Label htmlFor="industry" className="font-poppins">Industry</Label>

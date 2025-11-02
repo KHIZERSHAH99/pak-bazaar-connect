@@ -152,10 +152,9 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
   // Single pricing calculation hook
   const { tiers, loading: tiersLoading, calculatePrice } = usePricingTiers(product.id);
   
-  // Calculate current pricing
-  const priceResult = calculatePrice(quantity);
-  const unitPrice = typeof priceResult === 'number' ? priceResult / quantity : product.price;
-  const totalPrice = typeof priceResult === 'number' ? priceResult : product.price * quantity;
+  // Calculate current pricing - calculatePrice returns the unit price for the given quantity
+  const unitPrice = calculatePrice(quantity, product.price);
+  const totalPrice = unitPrice * quantity;
 
   const handleQuantityChange = (value: string) => {
     const newQuantity = parseInt(value) || 1;

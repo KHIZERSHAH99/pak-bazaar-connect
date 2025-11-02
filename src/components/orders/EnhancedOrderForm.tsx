@@ -134,10 +134,10 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
         toast({
           title: "File too large",
-          description: "Payment screenshot must be less than 2MB",
+          description: "Payment screenshot must be less than 5MB",
           variant: "destructive"
         });
         return;
@@ -463,7 +463,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
                   <span className="text-primary hover:text-primary/80">
                     {t('clickToUpload')}
                   </span>
-                  <p className="text-sm text-muted-foreground mt-1">{t('maxFileSize').replace('{size}', '2MB')}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{t('maxFileSize').replace('{size}', '5MB')}</p>
                 </Label>
                 <Input 
                   id="screenshot" 

@@ -382,5 +382,62 @@ export const getProductById = async (productId: string): Promise<Product | null>
   }
 };
 
+// Get related products by category or same shop
+export const getRelatedProducts = async (
+  productId: string,
+  categoryId?: string,
+  shopId?: string,
+  limit: number = 6
+): Promise<Product[]> => {
+  try {
+    let query = supabase
+      .from('products')
+      .select('*')
+      .eq('is_active', true)
+      .eq('verification_status', 'approved')
+      .neq('id', productId)
+      .limit(limit);
+
+    // Prioritize same category, fallback to same shop
+    if (categoryId) {
+      query = query.eq('category_id', categoryId);
+    } else if (shopId) {
+      query = query.eq('shop_id', shopId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching related products:', error);
+      return [];
+    }
+
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // Get shops and categories
+    const shopIds = [...new Set(data.map(p => p.shop_id))];
+    const categoryIds = [...new Set(data.map(p => p.category_id).filter(Boolean))];
+
+    const [shopsData, categoriesData] = await Promise.all([
+      supabase.from('shops').select('*').in('id', shopIds),
+      categoryIds.length > 0 ? supabase.from('categories').select('*').in('id', categoryIds) : { data: [] }
+    ]);
+
+    const shops = shopsData.data || [];
+    const categories = categoriesData.data || [];
+
+    return data.map(product => ({
+      ...product,
+      shops: shops.find(s => s.id === product.shop_id) || null,
+      categories: categories.find(c => c.id === product.category_id) || null
+    })) as Product[];
+  } catch (error) {
+    console.error('Error in getRelatedProducts:', error);
+    return [];
+  }
+};
+
 // Export uploadImage from storage
 export { uploadImage };

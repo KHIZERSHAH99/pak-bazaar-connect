@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Package } from 'lucide-react';
+import { Package, Home, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Helmet } from 'react-helmet-async';
 import Layout from '@/components/Layout';
 import { getProductById } from '@/lib/products';
 import { Product } from '@/lib/types';
@@ -87,8 +88,111 @@ const ProductDetail: React.FC = () => {
     );
   }
 
+  // SEO Meta Tags
+  const pageTitle = `${product.name} - ${product.shops?.name || 'Shop'} | Pak Bazaar Connect`;
+  const pageDescription = product.description 
+    ? product.description.substring(0, 160) 
+    : `Buy ${product.name} from ${product.shops?.name || 'verified wholesaler'}. Starting at Rs. ${product.price.toLocaleString()}. MOQ: ${product.moq || 1} units.`;
+  const productUrl = `https://pakbazaarconnect.com/product/${product.id}`;
+  const productImageUrl = product.product_images?.[0]?.image_url || product.image || '';
+
   return (
     <Layout>
+      <Helmet>
+        {/* Basic Meta Tags */}
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={productUrl} />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:image" content={productImageUrl} />
+        <meta property="og:url" content={productUrl} />
+        <meta property="og:type" content="product" />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <meta name="twitter:image" content={productImageUrl} />
+        
+        {/* Product Schema JSON-LD */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.name,
+            "image": productImageUrl,
+            "description": product.description || pageDescription,
+            "brand": {
+              "@type": "Brand",
+              "name": product.brand || product.shops?.name || "Unknown"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": productUrl,
+              "priceCurrency": "PKR",
+              "price": product.price,
+              "availability": product.stock_quantity && product.stock_quantity > 0 
+                ? "https://schema.org/InStock" 
+                : "https://schema.org/OutOfStock",
+              "seller": {
+                "@type": "Organization",
+                "name": product.shops?.name || "Pak Bazaar Connect"
+              }
+            },
+            ...(product.avg_rating && product.total_reviews ? {
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": product.avg_rating,
+                "reviewCount": product.total_reviews
+              }
+            } : {})
+          })}
+        </script>
+      </Helmet>
+      
+      {/* Breadcrumb Navigation */}
+      <div className="bg-muted/50 border-b">
+        <div className="container mx-auto px-4 py-3">
+          <nav className="flex items-center gap-2 text-sm overflow-x-auto">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/')}
+              className="h-auto p-1 hover:bg-transparent"
+            >
+              <Home className="h-4 w-4" />
+            </Button>
+            <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/products')}
+              className="h-auto p-1 hover:underline whitespace-nowrap"
+            >
+              Products
+            </Button>
+            {product.categories && (
+              <>
+                <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => navigate(`/products?category=${product.category_id}`)}
+                  className="h-auto p-1 hover:underline whitespace-nowrap"
+                >
+                  {product.categories.name}
+                </Button>
+              </>
+            )}
+            <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-muted-foreground truncate">{product.name}</span>
+          </nav>
+        </div>
+      </div>
+      
       <OptimizedProductDetail product={product} onBack={handleBackToProducts} />
     </Layout>
   );

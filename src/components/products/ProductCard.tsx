@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Star, MapPin, Package, Heart, ShoppingCart, Eye, Verified } from 'lucide-react';
 import { Product } from '@/lib/types';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
   product: Product;
@@ -18,30 +20,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
   showAddToCart = true, 
   showFavorite = true 
 }) => {
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Import useCart hook dynamically to avoid dependency issues
-    import('@/contexts/CartContext').then(({ useCart }) => {
-      try {
-        const { addToCart } = useCart();
-        addToCart(product);
-        
-        // Show success notification
-        import('@/hooks/use-toast').then(({ useToast }) => {
-          const { toast } = useToast();
-          toast({
-            title: "Added to Cart",
-            description: `${product.name} has been added to your cart.`,
-          });
-        });
-      } catch (error) {
-        console.log('Cart not available, using fallback');
-      }
-    }).catch(() => {
-      console.log('Added to cart:', product.name);
-    });
+    try {
+      addToCart(product);
+      toast({
+        title: "Added to Cart",
+        description: `${product.name} has been added to your cart.`,
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add product to cart",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {

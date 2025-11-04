@@ -7,6 +7,7 @@ import Layout from '@/components/Layout';
 import { getProductById } from '@/lib/products';
 import { Product } from '@/lib/types';
 import OptimizedProductDetail from '@/components/products/OptimizedProductDetail';
+import ProductsErrorBoundary from '@/components/ui/ProductsErrorBoundary';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -193,7 +194,9 @@ const ProductDetail: React.FC = () => {
         </div>
       </div>
       
-      <OptimizedProductDetail product={product} onBack={handleBackToProducts} />
+      <ProductsErrorBoundary>
+        <OptimizedProductDetail product={product} onBack={handleBackToProducts} />
+      </ProductsErrorBoundary>
     </Layout>
   );
 };

@@ -73,13 +73,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Initialize auth state
   useEffect(() => {
     let mounted = true;
+    let refreshTimer: NodeJS.Timeout | null = null;
+
+    // Auto-refresh session before expiry
+    const setupSessionRefresh = (session: Session) => {
+      if (refreshTimer) clearTimeout(refreshTimer);
+      
+      const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+      const now = Date.now();
+      const timeUntilExpiry = expiresAt - now;
+      
+      // Refresh 5 minutes before expiry
+      const refreshTime = Math.max(0, timeUntilExpiry - 5 * 60 * 1000);
+      
+      if (refreshTime > 0) {
+        refreshTimer = setTimeout(async () => {
+          try {
+            const { data, error } = await supabase.auth.refreshSession();
+            if (error) {
+              console.error('Session refresh failed:', error);
+              // Force re-login if refresh fails
+              await supabase.auth.signOut();
+            } else if (data.session) {
+              setupSessionRefresh(data.session);
+            }
+          } catch (err) {
+            console.error('Session refresh error:', err);
+          }
+        }, refreshTime);
+      }
+    };
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         if (!mounted) return;
 
         console.log('Auth state changed:', event, session?.user?.id);
+        
+        // Handle JWT expired
+        if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+          if (session) {
+            setupSessionRefresh(session);
+          }
+        }
         
         setSession(session);
         setUser(session?.user ?? null);
@@ -91,8 +128,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             email: session.user.email || '',
             metadata: session.user.user_metadata
           });
-        } else {
+        } else if (event === 'SIGNED_OUT') {
           setProfile(null);
+          if (refreshTimer) clearTimeout(refreshTimer);
         }
         
         if (mounted) {
@@ -109,6 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       
       if (session?.user) {
+        setupSessionRefresh(session);
         // Ensure profile sync
         ensureProfileSync(session.user.id, session.user.email || '', session.user.user_metadata).then(() => {
           fetchProfile(session.user.id);
@@ -120,6 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => {
       mounted = false;
+      if (refreshTimer) clearTimeout(refreshTimer);
       subscription.unsubscribe();
     };
   }, []);

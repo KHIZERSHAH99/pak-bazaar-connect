@@ -268,6 +268,20 @@ const ProductInfo = memo(({ product }: { product: Product }) => {
 ProductInfo.displayName = 'ProductInfo';
 
 const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product, onBack }) => {
+  // Defensive null check
+  if (!product || !product.id) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <Package className="h-24 w-24 text-muted-foreground mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Product Not Found</h2>
+          <p className="text-muted-foreground mb-4">The product data is invalid or missing.</p>
+          <Button onClick={onBack}>Back to Products</Button>
+        </div>
+      </div>
+    );
+  }
+
   const [quantity, setQuantity] = useState(product.moq || 1);
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [selectedVariations, setSelectedVariations] = useState<any>({});

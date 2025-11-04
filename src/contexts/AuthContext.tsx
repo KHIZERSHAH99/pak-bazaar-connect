@@ -56,13 +56,65 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Fetch user profile
-  const fetchProfile = async (userId: string) => {
+  // Fetch user profile with JWT expiry handling
+  const fetchProfile = async (userId: string, retryCount = 0) => {
     try {
+      // Check if session is expired before fetching
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        console.log('No active session');
+        setProfile(null);
+        return;
+      }
+      
+      // Check if JWT is expired
+      const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+      const now = Date.now();
+      
+      if (expiresAt < now) {
+        console.log('JWT expired, refreshing session...');
+        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+        
+        if (refreshError || !refreshData.session) {
+          console.error('Session refresh failed:', refreshError);
+          toast({
+            title: "Session Expired",
+            description: "Please sign in again",
+            variant: "destructive"
+          });
+          await supabase.auth.signOut();
+          setProfile(null);
+          return;
+        }
+        
+        console.log('Session refreshed successfully');
+      }
+      
       const profileData = await getUserProfile();
       setProfile(profileData as Profile);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching profile:', error);
+      
+      // Handle JWT expired error
+      if (error?.code === 'PGRST301' && retryCount === 0) {
+        console.log('JWT expired error detected, attempting refresh...');
+        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+        
+        if (!refreshError && refreshData.session) {
+          // Retry fetching profile after refresh
+          return fetchProfile(userId, retryCount + 1);
+        } else {
+          console.error('Failed to refresh session:', refreshError);
+          toast({
+            title: "Session Expired",
+            description: "Please sign in again",
+            variant: "destructive"
+          });
+          await supabase.auth.signOut();
+        }
+      }
+      
       setProfile(null);
     }
   };

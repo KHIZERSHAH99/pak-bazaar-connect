@@ -6,6 +6,26 @@ export const ensureProfileSync = async (userId: string, email: string, metadata?
   try {
     console.log('🔄 Ensuring profile sync for user:', userId);
     
+    // Check if session is valid before making requests
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      console.log('No active session for profile sync');
+      return false;
+    }
+    
+    // Check if JWT is expired
+    const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+    const now = Date.now();
+    
+    if (expiresAt < now) {
+      console.log('JWT expired in profile sync, refreshing...');
+      const { error: refreshError } = await supabase.auth.refreshSession();
+      if (refreshError) {
+        console.error('Failed to refresh session:', refreshError);
+        return false;
+      }
+    }
+    
     // Check if profile exists
     const { data: existingProfile, error: fetchError } = await supabase
       .from('profiles')
@@ -15,7 +35,34 @@ export const ensureProfileSync = async (userId: string, email: string, metadata?
     
     if (fetchError && fetchError.code !== 'PGRST116') {
       console.error('Error fetching profile:', fetchError);
-      return false;
+      // If JWT expired, try one more time after refresh
+      if (fetchError.code === 'PGRST301') {
+        console.log('JWT expired error, attempting refresh...');
+        const { error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError) {
+          console.error('Session refresh failed:', refreshError);
+          return false;
+        }
+        // Retry the query
+        const { data: retryProfile, error: retryError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle();
+        
+        if (retryError) {
+          console.error('Retry failed:', retryError);
+          return false;
+        }
+        
+        if (!retryProfile) {
+          // Profile doesn't exist, will be created below
+        } else {
+          return true;
+        }
+      } else {
+        return false;
+      }
     }
     
     // If profile doesn't exist, create it

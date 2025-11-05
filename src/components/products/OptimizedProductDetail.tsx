@@ -29,6 +29,7 @@ import FavoriteButton from '@/components/favorites/FavoriteButton';
 import { useNavigate } from 'react-router-dom';
 import { usePricingTiers } from '@/hooks/usePricingTiers';
 import MessageButton from '@/components/messaging/MessageButton';
+import InquiryButton from '@/components/inquiry/InquiryButton';
 import ProductImageGallery from './ProductImageGallery';
 import ProductReviews from './ProductReviews';
 import RelatedProducts from './RelatedProducts';
@@ -442,10 +443,10 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
             </div>
 
             {/* Action Buttons - Mobile optimized */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col gap-3">
               <Button 
                 onClick={handleOrderClick}
-                className="flex-1 h-12 md:h-10"
+                className="w-full h-12 md:h-10"
                 size="lg"
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
@@ -453,10 +454,16 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
               </Button>
               
               {product.shops?.owner_id && user && (
-                <MessageButton 
-                  sellerId={product.shops.owner_id}
-                  sellerName={product.shops.name}
-                />
+                <div className="grid grid-cols-2 gap-3">
+                  <MessageButton 
+                    sellerId={product.shops.owner_id}
+                    sellerName={product.shops.name}
+                  />
+                  <InquiryButton 
+                    sellerId={product.shops.owner_id}
+                    productId={product.id}
+                  />
+                </div>
               )}
             </div>
 

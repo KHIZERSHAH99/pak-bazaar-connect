@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { MessageCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MessageCircle, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
@@ -25,7 +26,26 @@ const InquiryButton: React.FC<InquiryButtonProps> = ({ sellerId, productId, clas
     quantityNeeded: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sellerPhone, setSellerPhone] = useState<string>('');
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchSellerPhone = async () => {
+      const { data } = await supabase
+        .from('company_profiles')
+        .select('phone, whatsapp')
+        .eq('user_id', sellerId)
+        .single();
+      
+      if (data?.whatsapp || data?.phone) {
+        setSellerPhone(data.whatsapp || data.phone);
+      }
+    };
+    
+    if (open) {
+      fetchSellerPhone();
+    }
+  }, [open, sellerId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +113,27 @@ const InquiryButton: React.FC<InquiryButtonProps> = ({ sellerId, productId, clas
     }
   };
 
+  const handleWhatsAppInquiry = () => {
+    if (!sellerPhone) {
+      toast({
+        title: "Error",
+        description: "Seller phone number not available",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const cleanPhone = sellerPhone.replace(/[^\d]/g, '');
+    const whatsappPhone = cleanPhone.startsWith('92') ? cleanPhone : `92${cleanPhone.replace(/^0/, '')}`;
+    
+    const message = productId 
+      ? `Hi, I'm interested in your product. I'd like to discuss bulk pricing and custom requirements.`
+      : `Hi, I'm interested in your products. I'd like to discuss bulk pricing and custom requirements.`;
+    
+    const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -103,9 +144,17 @@ const InquiryButton: React.FC<InquiryButtonProps> = ({ sellerId, productId, clas
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-poppins">Send Inquiry</DialogTitle>
+          <DialogTitle className="font-poppins">Contact Seller</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        
+        <Tabs defaultValue="form" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="form">Inquiry Form</TabsTrigger>
+            <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="form" className="mt-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="buyerName">Full Name *</Label>
@@ -183,7 +232,36 @@ const InquiryButton: React.FC<InquiryButtonProps> = ({ sellerId, productId, clas
               {isSubmitting ? 'Sending...' : 'Send Inquiry'}
             </Button>
           </div>
-        </form>
+            </form>
+          </TabsContent>
+          
+          <TabsContent value="whatsapp" className="mt-4 space-y-4">
+            <div className="text-center space-y-4 py-6">
+              <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <Send className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-2">Chat on WhatsApp</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Send a direct message to the seller on WhatsApp for instant communication
+                </p>
+              </div>
+              <Button
+                onClick={handleWhatsAppInquiry}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                disabled={!sellerPhone}
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Open WhatsApp Chat
+              </Button>
+              {!sellerPhone && (
+                <p className="text-xs text-muted-foreground">
+                  Seller contact not available
+                </p>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

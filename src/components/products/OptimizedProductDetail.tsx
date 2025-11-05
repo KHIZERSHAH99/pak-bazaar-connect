@@ -30,6 +30,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePricingTiers } from '@/hooks/usePricingTiers';
 import MessageButton from '@/components/messaging/MessageButton';
 import InquiryButton from '@/components/inquiry/InquiryButton';
+import { ShareButtons } from './ShareButtons';
 import ProductImageGallery from './ProductImageGallery';
 import ProductReviews from './ProductReviews';
 import RelatedProducts from './RelatedProducts';
@@ -52,7 +53,14 @@ const ProductHeader = memo(({ product, onBack }: { product: Product; onBack: () 
       <ArrowLeft className="h-4 w-4" />
       Back to Products
     </Button>
-    <FavoriteButton productId={product.id} />
+    <div className="flex items-center gap-2">
+      <ShareButtons 
+        productName={product.name}
+        productUrl={window.location.href}
+        productImage={product.product_images?.[0]?.image_url || product.image}
+      />
+      <FavoriteButton productId={product.id} />
+    </div>
   </div>
 ));
 

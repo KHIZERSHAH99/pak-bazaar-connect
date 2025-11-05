@@ -94,10 +94,7 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
         
         {/* Bulk order message */}
         <div className="px-4 py-2 bg-muted/50 border-t">
-          <p className="text-xs text-muted-foreground text-center">
-          {' '}
-            {sortedTiers.length > 1 ? Math.round((sortedTiers[0].unit_price - sortedTiers[sortedTiers.length - 1].unit_price) / sortedTiers[0].unit_price * 100) : 0}%
-          </p>
+          
         </div>
       </CardContent>
     </Card>;

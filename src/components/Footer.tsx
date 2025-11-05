@@ -1,19 +1,21 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowUp, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-
 const Footer = () => {
-  const { t, language } = useLanguage();
+  const {
+    t,
+    language
+  } = useLanguage();
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
-
-  return (
-    <footer className="bg-card border-t border-border mt-16">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  return <footer className="bg-card border-t border-border mt-16">
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-green-200">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-4">
@@ -33,19 +35,13 @@ const Footer = () => {
             <div className="space-y-3 mb-6">
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-pakistani_green-600" />
-                <a 
-                  href="mailto:info@pakbazaarconnect.store" 
-                  className="text-sm text-muted-foreground hover:text-pakistani_green-600 transition-colors font-poppins"
-                >
+                <a href="mailto:info@pakbazaarconnect.store" className="text-sm text-muted-foreground hover:text-pakistani_green-600 transition-colors font-poppins">
                   info@pakbazaarconnect.store
                 </a>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-pakistani_green-600" />
-                <a 
-                  href="tel:+923149388513" 
-                  className="text-sm text-muted-foreground hover:text-pakistani_green-600 transition-colors font-poppins"
-                >
+                <a href="tel:+923149388513" className="text-sm text-muted-foreground hover:text-pakistani_green-600 transition-colors font-poppins">
                   +92 3149388513
                 </a>
               </div>
@@ -168,19 +164,12 @@ const Footer = () => {
           </p>
           
           {/* Back to Top Button */}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={scrollToTop}
-            className="flex items-center gap-2 hover:bg-pakistani_green-50"
-          >
+          <Button variant="outline" size="sm" onClick={scrollToTop} className="flex items-center gap-2 hover:bg-pakistani_green-50">
             <ArrowUp className="w-4 h-4" />
             Back to Top
           </Button>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;

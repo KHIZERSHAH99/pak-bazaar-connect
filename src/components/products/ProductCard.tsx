@@ -20,15 +20,25 @@ const ProductCard: React.FC<ProductCardProps> = ({
   showAddToCart = true, 
   showFavorite = true 
 }) => {
-  const { addToCart } = useCart();
+  const cartContext = useCart();
   const { toast } = useToast();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
+    if (!cartContext || !cartContext.addToCart) {
+      console.error('Cart context not available');
+      toast({
+        title: "Error",
+        description: "Shopping cart is not available",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
-      addToCart(product);
+      cartContext.addToCart(product);
       toast({
         title: "Added to Cart",
         description: `${product.name} has been added to your cart.`,

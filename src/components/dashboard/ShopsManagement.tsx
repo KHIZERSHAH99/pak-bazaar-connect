@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Store, Plus, Edit, MapPin, Phone, Package } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Store, Plus, Edit, MapPin, Phone, Package, AlertCircle, ArrowDown } from 'lucide-react';
 import { Shop } from '@/lib/types';
 import { getShopsByOwner } from '@/lib/shops';
 import { useToast } from '@/hooks/use-toast';
@@ -19,6 +20,7 @@ const ShopsManagement: React.FC = () => {
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
+  const paymentSetupRef = useRef<HTMLDivElement>(null);
   const {
     data: shops = [],
     isLoading,
@@ -47,12 +49,45 @@ const ShopsManagement: React.FC = () => {
     setSelectedShop(shop);
     setIsEditDialogOpen(true);
   };
+
+  const scrollToPaymentSetup = () => {
+    paymentSetupRef.current?.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'start' 
+    });
+  };
+
+  const hasPaymentMethods = paymentMethods && (
+    (paymentMethods.bank_name && paymentMethods.account_number) ||
+    paymentMethods.jazzcash_number ||
+    paymentMethods.easypaisa_number
+  );
   if (isLoading) {
     return <div className="space-y-4">
         {[...Array(2)].map((_, i) => <div key={i} className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>)}
       </div>;
   }
   return <div className="space-y-3 sm:space-y-4 py-2 sm:py-4">
+      {/* Payment Methods Reminder Banner */}
+      {shops.length > 0 && !hasPaymentMethods && (
+        <Alert className="border-orange-200 bg-orange-50">
+          <AlertCircle className="h-4 w-4 text-orange-600" />
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span className="text-sm text-orange-800 font-poppins">
+              <strong>Action Required:</strong> Set up your payment methods to start receiving orders from sellers.
+            </span>
+            <Button
+              size="sm"
+              onClick={scrollToPaymentSetup}
+              className="bg-orange-600 hover:bg-orange-700 font-poppins whitespace-nowrap"
+            >
+              <ArrowDown className="h-3 w-3 mr-1" />
+              Setup Now
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="flex justify-between items-center">
         <h1 className="text-xl sm:text-2xl font-bold font-poppins text-gray-900">{t('myShops')}</h1>
         <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
@@ -153,7 +188,7 @@ const ShopsManagement: React.FC = () => {
 
       {/* Payment Methods Section */}
       {shops.length > 0 && (
-        <div className="mt-8">
+        <div ref={paymentSetupRef} className="mt-8 scroll-mt-4">
           <PaymentMethodsSetup />
         </div>
       )}

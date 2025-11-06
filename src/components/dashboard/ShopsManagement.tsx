@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CreateShopDialog from '@/components/shops/CreateShopDialog';
 import EditShopDialog from '@/components/shops/EditShopDialog';
+import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
 import { useQuery } from '@tanstack/react-query';
 const ShopsManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -106,6 +107,13 @@ const ShopsManagement: React.FC = () => {
               </CardContent>
             </Card>)}
         </div>}
+
+      {/* Payment Methods Section */}
+      {shops.length > 0 && (
+        <div className="mt-8">
+          <PaymentMethodsSetup />
+        </div>
+      )}
 
       <CreateShopDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)} onShopCreated={handleShopCreated} />
 

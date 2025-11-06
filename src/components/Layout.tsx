@@ -27,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({
         {children}
       </main>
       
-      <Footer className="bg-pakistani_green-900" />
+      <Footer />
     </div>;
 };
 export default Layout;

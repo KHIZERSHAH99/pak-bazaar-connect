@@ -11,6 +11,8 @@ import CreateShopDialog from '@/components/shops/CreateShopDialog';
 import EditShopDialog from '@/components/shops/EditShopDialog';
 import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
 import { useQuery } from '@tanstack/react-query';
+import { getMyPaymentMethods } from '@/lib/payment-methods';
+import { PaymentMethodInfo } from '@/types/enhanced-payment';
 const ShopsManagement: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -24,6 +26,11 @@ const ShopsManagement: React.FC = () => {
   } = useQuery<Shop[]>({
     queryKey: ['user-shops'],
     queryFn: getShopsByOwner
+  });
+
+  const { data: paymentMethods } = useQuery<PaymentMethodInfo | null>({
+    queryKey: ['my-payment-methods'],
+    queryFn: getMyPaymentMethods
   });
   const handleShopCreated = () => {
     refetch();
@@ -103,6 +110,42 @@ const ShopsManagement: React.FC = () => {
                   {shop.is_verified && <Badge className="bg-green-100 text-green-800 font-poppins text-xs px-2 py-0.5">
                       {t('verified')}
                     </Badge>}
+                </div>
+
+                {/* Payment Methods Summary */}
+                <div className="pt-3 mt-3 border-t border-gray-200">
+                  <p className="text-xs font-medium text-gray-600 mb-2 font-poppins">Payment Methods:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {paymentMethods?.bank_name && paymentMethods?.account_number ? (
+                      <Badge variant="success" size="sm" className="font-poppins">
+                        Bank
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" size="sm" className="font-poppins text-gray-400">
+                        Bank
+                      </Badge>
+                    )}
+                    
+                    {paymentMethods?.jazzcash_number ? (
+                      <Badge variant="success" size="sm" className="font-poppins">
+                        JazzCash
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" size="sm" className="font-poppins text-gray-400">
+                        JazzCash
+                      </Badge>
+                    )}
+                    
+                    {paymentMethods?.easypaisa_number ? (
+                      <Badge variant="success" size="sm" className="font-poppins">
+                        EasyPaisa
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" size="sm" className="font-poppins text-gray-400">
+                        EasyPaisa
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>)}

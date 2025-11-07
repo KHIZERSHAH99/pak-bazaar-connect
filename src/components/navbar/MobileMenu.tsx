@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { User, ShoppingBag, Users, Zap, Home, Settings, Sun, Moon, Heart, MessageSquare, BarChart, LogOut } from 'lucide-react';
+import { User, ShoppingBag, Users, Zap, Home, Settings, Sun, Moon, Heart, MessageSquare, BarChart, LogOut, HelpCircle } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 interface MobileMenuProps {
@@ -12,6 +12,7 @@ interface MobileMenuProps {
   user: any;
   profile: any;
   onLogout: () => void;
+  onShowTutorial?: () => void;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ 
@@ -19,7 +20,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onClose, 
   user, 
   profile, 
-  onLogout 
+  onLogout,
+  onShowTutorial 
 }) => {
   const { theme, setTheme } = useTheme();
 
@@ -156,6 +158,18 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
             {/* Controls Section */}
             <div className="space-y-1 border-t border-border pt-2">
+              {/* Tutorial Button - Only for wholesalers and sellers */}
+              {onShowTutorial && (profile?.role === 'wholesaler' || profile?.role === 'seller') && (
+                <Button
+                  onClick={onShowTutorial}
+                  variant="ghost"
+                  className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins"
+                >
+                  <HelpCircle className="w-4 h-4 mr-2" />
+                  Tutorial
+                </Button>
+              )}
+
               {/* Theme Toggle */}
               <Button
                 onClick={handleThemeToggle}

@@ -5,10 +5,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Flag, Menu, X, ShoppingBag, Users, Zap, Package, BookOpen } from 'lucide-react';
+import { Flag, Menu, X, ShoppingBag, Users, Zap, Package, BookOpen, HelpCircle } from 'lucide-react';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';
+import EnhancedWelcomeOnboarding from '@/components/ui/EnhancedWelcomeOnboarding';
 const Navbar = () => {
   const {
     user,
@@ -20,6 +21,7 @@ const Navbar = () => {
     toast
   } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const handleLogout = async () => {
     try {
       await signOut();
@@ -92,6 +94,19 @@ const Navbar = () => {
                 </Link>
               </div>
 
+              {/* Help/Tour Button - Only for wholesalers and sellers */}
+              {user && (profile?.role === 'wholesaler' || profile?.role === 'seller') && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowTutorial(true)}
+                  className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                >
+                  <HelpCircle className="w-4 h-4 mr-2" />
+                  Tutorial
+                </Button>
+              )}
+
               {/* Language Toggle */}
               <LanguageToggle />
 
@@ -120,8 +135,27 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-        <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} user={user} profile={profile} onLogout={handleLogout} />
+        <MobileMenu 
+          isOpen={isMobileMenuOpen} 
+          onClose={() => setIsMobileMenuOpen(false)} 
+          user={user} 
+          profile={profile} 
+          onLogout={handleLogout}
+          onShowTutorial={() => {
+            setShowTutorial(true);
+            setIsMobileMenuOpen(false);
+          }}
+        />
       </header>
+
+      {/* Tutorial Modal */}
+      {showTutorial && profile?.role && (profile.role === 'wholesaler' || profile.role === 'seller') && (
+        <EnhancedWelcomeOnboarding
+          userRole={profile.role}
+          onComplete={() => setShowTutorial(false)}
+          onSkip={() => setShowTutorial(false)}
+        />
+      )}
     </>;
 };
 export default Navbar;

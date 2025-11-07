@@ -57,10 +57,12 @@ const ShopsManagement: React.FC = () => {
     });
   };
 
-  const hasPaymentMethods = paymentMethods && (
-    (paymentMethods.bank_name && paymentMethods.account_number) ||
-    paymentMethods.jazzcash_number ||
-    paymentMethods.easypaisa_number
+  const hasPaymentMethods = Boolean(
+    paymentMethods && (
+      (paymentMethods.bank_name?.trim() && paymentMethods.account_number?.trim()) ||
+      paymentMethods.jazzcash_number?.trim() ||
+      paymentMethods.easypaisa_number?.trim()
+    )
   );
   if (isLoading) {
     return <div className="space-y-4">

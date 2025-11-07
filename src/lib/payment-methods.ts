@@ -14,12 +14,13 @@ export const upsertPaymentMethods = async (paymentData: {
   const user = await getCurrentUser();
   if (!user) throw new Error('User not authenticated');
 
-  // Check if payment methods already exist
-  const { data: existing, error: fetchError } = await supabase
+  // Get all active payment methods to find if one exists
+  const { data: existingMethods, error: fetchError } = await supabase
     .from('payment_methods')
     .select('*')
     .eq('wholesaler_id', user.id)
-    .single();
+    .eq('is_active', true)
+    .order('created_at', { ascending: false });
 
   if (fetchError && fetchError.code !== 'PGRST116') {
     console.error('Error fetching existing payment methods:', fetchError);
@@ -32,6 +33,11 @@ export const upsertPaymentMethods = async (paymentData: {
     is_active: true,
     updated_at: new Date().toISOString()
   };
+
+  // Find the most recent method with actual data, or just the most recent one
+  const existing = existingMethods && existingMethods.length > 0 
+    ? existingMethods.find(m => m.bank_name || m.jazzcash_number || m.easypaisa_number) || existingMethods[0]
+    : null;
 
   if (existing) {
     // Update existing
@@ -155,12 +161,18 @@ export const getMyPaymentMethods = async (): Promise<PaymentMethodInfo | null> =
     .select('*')
     .eq('wholesaler_id', user.id)
     .eq('is_active', true)
-    .maybeSingle();
+    .order('updated_at', { ascending: false });
 
   if (error && error.code !== 'PGRST116') {
     console.error('Error fetching my payment methods:', error);
     return null;
   }
 
-  return data || null;
+  // Return the most recently updated method with data, or the most recent one
+  if (data && data.length > 0) {
+    const methodWithData = data.find(m => m.bank_name || m.jazzcash_number || m.easypaisa_number);
+    return methodWithData || data[0];
+  }
+
+  return null;
 };

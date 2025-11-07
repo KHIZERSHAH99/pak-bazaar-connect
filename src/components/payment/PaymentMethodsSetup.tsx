@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Building, Smartphone, Plus, Edit, Check } from 'lucide-react';
-import { getWholesalerPaymentMethods, createPaymentMethod } from '@/lib/payment-helpers';
+import { upsertPaymentMethods, getMyPaymentMethods } from '@/lib/payment-methods';
 import { PaymentMethodInfo } from '@/types/enhanced-payment';
 import { useAuth } from '@/contexts/AuthContext';
 
 const PaymentMethodsSetup: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodInfo[]>([]);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodInfo | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,11 +33,10 @@ const PaymentMethodsSetup: React.FC = () => {
     if (!user) return;
     
     try {
-      const methods = await getWholesalerPaymentMethods(user.id);
-      setPaymentMethods(methods);
+      const method = await getMyPaymentMethods();
+      setPaymentMethod(method);
       
-      if (methods.length > 0) {
-        const method = methods[0];
+      if (method) {
         setFormData({
           bank_name: method.bank_name || '',
           account_number: method.account_number || '',
@@ -57,11 +56,7 @@ const PaymentMethodsSetup: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await createPaymentMethod({
-        wholesaler_id: user.id,
-        ...formData,
-        is_active: true
-      });
+      await upsertPaymentMethods(formData);
 
       toast({
         title: "Payment Methods Updated",
@@ -70,7 +65,7 @@ const PaymentMethodsSetup: React.FC = () => {
       });
 
       setIsEditing(false);
-      fetchPaymentMethods();
+      await fetchPaymentMethods();
     } catch (error: any) {
       toast({
         title: "Failed to Update Payment Methods",
@@ -82,7 +77,7 @@ const PaymentMethodsSetup: React.FC = () => {
     }
   };
 
-  const hasPaymentMethods = paymentMethods.length > 0;
+  const hasPaymentMethods = Boolean(paymentMethod);
 
   return (
     <Card>

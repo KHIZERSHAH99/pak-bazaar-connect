@@ -43,9 +43,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
     category_id: '',
     
     // Product Details
-    brand: '',
-    model_number: '',
-    origin_country: '',
     package_weight: '',
     package_dimensions: '',
     stock_quantity: '',
@@ -177,9 +174,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
         is_active: formData.is_active,
         verification_status: 'pending' as const,
         category_id: formData.category_id || null,
-        brand: formData.brand || null,
-        model_number: formData.model_number || null,
-        origin_country: formData.origin_country || null,
         package_weight: formData.package_weight ? parseFloat(formData.package_weight) : null,
         package_dimensions: formData.package_dimensions || null,
         stock_quantity: formData.stock_quantity ? parseInt(formData.stock_quantity) : null,
@@ -224,9 +218,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
       shop_id: shops.length === 1 ? shops[0].id : '',
       is_active: true,
       category_id: '',
-      brand: '',
-      model_number: '',
-      origin_country: '',
       package_weight: '',
       package_dimensions: '',
       stock_quantity: '',
@@ -391,56 +382,18 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
             </TabsContent>
             
             <TabsContent value="details" className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="brand">Brand</Label>
-                  <Input
-                    id="brand"
-                    name="brand"
-                    value={formData.brand}
-                    onChange={handleInputChange}
-                    placeholder="Enter brand name"
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="model_number">Model Number</Label>
-                  <Input
-                    id="model_number"
-                    name="model_number"
-                    value={formData.model_number}
-                    onChange={handleInputChange}
-                    placeholder="Enter model number"
-                    disabled={isSubmitting}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="origin_country">Origin Country</Label>
-                  <Input
-                    id="origin_country"
-                    name="origin_country"
-                    value={formData.origin_country}
-                    onChange={handleInputChange}
-                    placeholder="e.g., Pakistan"
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="stock_quantity">Stock Quantity</Label>
-                  <Input
-                    id="stock_quantity"
-                    name="stock_quantity"
-                    type="number"
-                    min="0"
-                    value={formData.stock_quantity}
-                    onChange={handleInputChange}
-                    placeholder="e.g., 100"
-                    disabled={isSubmitting}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="stock_quantity">Stock Quantity</Label>
+                <Input
+                  id="stock_quantity"
+                  name="stock_quantity"
+                  type="number"
+                  min="0"
+                  value={formData.stock_quantity}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 100"
+                  disabled={isSubmitting}
+                />
               </div>
 
               <div>

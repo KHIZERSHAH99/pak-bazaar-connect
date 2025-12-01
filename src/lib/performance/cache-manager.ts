@@ -136,5 +136,11 @@ export class CacheManager {
 
 export const cacheManager = CacheManager.getInstance();
 
-// Auto-cleanup every 10 minutes
-setInterval(() => cacheManager.cleanup(), 10 * 60 * 1000);
+// Register cache cleanup with the centralized cleanup manager
+// This is initialized in main.tsx to prevent memory leaks from multiple intervals
+export function registerCacheCleanup(): void {
+  // Import dynamically to avoid circular dependencies
+  import('./cleanup-manager').then(({ cleanupManager }) => {
+    cleanupManager.registerTask('cache-cleanup', () => cacheManager.cleanup());
+  });
+}

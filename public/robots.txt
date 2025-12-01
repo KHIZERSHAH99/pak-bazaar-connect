@@ -1,8 +1,13 @@
+# Pak Bazaar Connect - Pakistan B2B Wholesale Marketplace
+# Optimized for Pakistani search engines and Google
+
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 2
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +15,19 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# Allow all other bots
 User-agent: *
 Allow: /
+Crawl-delay: 3
+
+# Disallow private/admin areas
+Disallow: /dashboard/admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
+
+# Sitemap location
+Sitemap: https://pakbazaarconnect.lovable.app/sitemap.xml
+
+# Host specification
+Host: https://pakbazaarconnect.lovable.app

@@ -10,6 +10,9 @@ export interface QueryConfig {
   offset?: number;
 }
 
+// Maximum cache entries to prevent memory bloat
+const MAX_CACHE_SIZE = 100;
+
 export class QueryOptimizer {
   private static instance: QueryOptimizer;
   private queryCache = new Map<string, { data: any; timestamp: number; ttl: number }>();
@@ -77,6 +80,11 @@ export class QueryOptimizer {
 
       if (error) throw error;
 
+      // Enforce cache size limit before adding
+      if (this.queryCache.size >= MAX_CACHE_SIZE) {
+        this.evictOldestEntries(10); // Remove 10 oldest entries
+      }
+
       // Cache successful results
       this.queryCache.set(cacheKey, {
         data,
@@ -104,6 +112,16 @@ export class QueryOptimizer {
       current.count++;
       current.avgTime = (current.avgTime * (current.count - 1) + executionTime) / current.count;
       this.queryStats.set(cacheKey, current);
+    }
+  }
+
+  // Evict oldest entries to prevent memory bloat
+  private evictOldestEntries(count: number): void {
+    const entries = Array.from(this.queryCache.entries())
+      .sort((a, b) => a[1].timestamp - b[1].timestamp);
+    
+    for (let i = 0; i < Math.min(count, entries.length); i++) {
+      this.queryCache.delete(entries[i][0]);
     }
   }
 
@@ -149,19 +167,20 @@ export class QueryOptimizer {
   // Cache management
   clearCache(): void {
     this.queryCache.clear();
+    this.queryStats.clear();
   }
 
-  getCacheStats(): { size: number; hitRate: number } {
+  getCacheStats(): { size: number; hitRate: number; maxSize: number } {
     let hits = 0;
     let total = 0;
     
     for (const stats of this.queryStats.values()) {
       total += stats.count;
-      // This is a simplified calculation
     }
 
     return {
       size: this.queryCache.size,
+      maxSize: MAX_CACHE_SIZE,
       hitRate: total > 0 ? hits / total : 0
     };
   }
@@ -169,15 +188,26 @@ export class QueryOptimizer {
   // Clean up expired cache entries
   cleanup(): void {
     const now = Date.now();
+    let cleanedCount = 0;
+    
     for (const [key, cached] of this.queryCache.entries()) {
       if (now - cached.timestamp > cached.ttl) {
         this.queryCache.delete(key);
+        cleanedCount++;
       }
+    }
+    
+    if (cleanedCount > 0) {
+      console.log(`[QueryOptimizer] Cleaned ${cleanedCount} expired cache entries`);
     }
   }
 }
 
 export const queryOptimizer = QueryOptimizer.getInstance();
 
-// Auto-cleanup every 5 minutes
-setInterval(() => queryOptimizer.cleanup(), 5 * 60 * 1000);
+// Register cleanup with centralized manager
+export function registerQueryOptimizerCleanup(): void {
+  import('./cleanup-manager').then(({ cleanupManager }) => {
+    cleanupManager.registerTask('query-optimizer-cleanup', () => queryOptimizer.cleanup());
+  });
+}

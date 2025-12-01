@@ -1,140 +1,155 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import LazyLoadFallback from '@/components/ui/LazyLoadFallback';
 
-// Import all existing pages
+// Critical pages - load immediately
 import Index from '@/pages/Index';
-import FixedLogin from '@/pages/FixedLogin';
-import Signup from '@/pages/Signup';
-import Dashboard from '@/pages/Dashboard';
-import Profile from '@/pages/Profile';
-import Products from '@/pages/Products';
-import ProductDetail from '@/pages/ProductDetail';
-
 import NotFound from '@/pages/NotFound';
-import Stats from '@/pages/Stats';
 
-import Features from '@/pages/Features';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import Contact from '@/pages/Contact';
-import AboutUs from '@/pages/AboutUs';
-import TermsOfService from '@/pages/TermsOfService';
-import RefundPolicy from '@/pages/RefundPolicy';
-import ShippingPolicy from '@/pages/ShippingPolicy';
-import Blog from '@/pages/Blog';
-import BlogPost from '@/pages/BlogPost';
-import Checkout from '@/pages/Checkout';
-import Favorites from '@/pages/Favorites';
-import Messages from '@/pages/Messages';
-import Analytics from '@/pages/Analytics';
+// Lazy load all other pages for better initial load performance
+const FixedLogin = lazy(() => import('@/pages/FixedLogin'));
+const Signup = lazy(() => import('@/pages/Signup'));
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Profile = lazy(() => import('@/pages/Profile'));
+const Products = lazy(() => import('@/pages/Products'));
+const ProductDetail = lazy(() => import('@/pages/ProductDetail'));
+const Stats = lazy(() => import('@/pages/Stats'));
+const Features = lazy(() => import('@/pages/Features'));
+const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
+const Contact = lazy(() => import('@/pages/Contact'));
+const AboutUs = lazy(() => import('@/pages/AboutUs'));
+const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
+const RefundPolicy = lazy(() => import('@/pages/RefundPolicy'));
+const ShippingPolicy = lazy(() => import('@/pages/ShippingPolicy'));
+const Blog = lazy(() => import('@/pages/Blog'));
+const BlogPost = lazy(() => import('@/pages/BlogPost'));
+const Checkout = lazy(() => import('@/pages/Checkout'));
+const Favorites = lazy(() => import('@/pages/Favorites'));
+const Messages = lazy(() => import('@/pages/Messages'));
+const Analytics = lazy(() => import('@/pages/Analytics'));
 
-// Dashboard pages
-import DashboardSellerDashboard from '@/pages/dashboard/DashboardSellerDashboard';
-import DashboardShops from '@/pages/dashboard/DashboardShops';
-import DashboardProducts from '@/pages/dashboard/DashboardProducts';
-import DashboardShipping from '@/pages/dashboard/DashboardShipping';
-import DashboardOrders from '@/pages/dashboard/DashboardOrders';
-import DashboardWholesalerOrders from '@/pages/dashboard/DashboardWholesalerOrders';
-import DashboardSellerOrders from '@/pages/dashboard/DashboardSellerOrders';
-import DashboardAdmin from '@/pages/dashboard/DashboardAdmin';
-import DashboardAnalytics from '@/pages/dashboard/DashboardAnalytics';
+// Dashboard pages - lazy load
+const DashboardSellerDashboard = lazy(() => import('@/pages/dashboard/DashboardSellerDashboard'));
+const DashboardShops = lazy(() => import('@/pages/dashboard/DashboardShops'));
+const DashboardProducts = lazy(() => import('@/pages/dashboard/DashboardProducts'));
+const DashboardShipping = lazy(() => import('@/pages/dashboard/DashboardShipping'));
+const DashboardOrders = lazy(() => import('@/pages/dashboard/DashboardOrders'));
+const DashboardWholesalerOrders = lazy(() => import('@/pages/dashboard/DashboardWholesalerOrders'));
+const DashboardSellerOrders = lazy(() => import('@/pages/dashboard/DashboardSellerOrders'));
+const DashboardAdmin = lazy(() => import('@/pages/dashboard/DashboardAdmin'));
+const DashboardAnalytics = lazy(() => import('@/pages/dashboard/DashboardAnalytics'));
+const DashboardBrowseShops = lazy(() => import('@/pages/dashboard/DashboardBrowseShops'));
+const DashboardWholesalerPreview = lazy(() => import('@/pages/dashboard/DashboardWholesalerPreview'));
+const DashboardSellerPreview = lazy(() => import('@/pages/dashboard/DashboardSellerPreview'));
+const DashboardPayment = lazy(() => import('@/pages/dashboard/DashboardPayment'));
+const DashboardCoupons = lazy(() => import('@/pages/dashboard/DashboardCoupons'));
 
-import DashboardBrowseShops from '@/pages/dashboard/DashboardBrowseShops';
-import DashboardWholesalerPreview from '@/pages/dashboard/DashboardWholesalerPreview';
-import DashboardSellerPreview from '@/pages/dashboard/DashboardSellerPreview';
-import DashboardPayment from '@/pages/dashboard/DashboardPayment';
-import DashboardCoupons from '@/pages/dashboard/DashboardCoupons';
+// Seller pages - lazy load
+const SellerOrders = lazy(() => import('@/pages/seller/SellerOrders'));
+const BrowseShops = lazy(() => import('@/pages/seller/BrowseShops'));
+const SellerShopDetails = lazy(() => import('@/pages/seller/ShopDetails'));
+const ShopProducts = lazy(() => import('@/pages/seller/ShopProducts'));
 
-// Seller pages
-import SellerOrders from '@/pages/seller/SellerOrders';
-import BrowseShops from '@/pages/seller/BrowseShops';
-import SellerShopDetails from '@/pages/seller/ShopDetails';
-import ShopProducts from '@/pages/seller/ShopProducts';
+// Wholesaler pages - lazy load
+const WholesalerOrders = lazy(() => import('@/pages/wholesaler/WholesalerOrders'));
+const Shops = lazy(() => import('@/pages/wholesaler/Shops'));
+const WholesalerProducts = lazy(() => import('@/pages/wholesaler/Products'));
 
-// Wholesaler pages
-import WholesalerOrders from '@/pages/wholesaler/WholesalerOrders';
-import Shops from '@/pages/wholesaler/Shops';
-import WholesalerProducts from '@/pages/wholesaler/Products';
+// Admin pages - lazy load
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
+const AdminPanel = lazy(() => import('@/pages/admin/AdminPanel'));
 
-import AdminDashboard from '@/pages/admin/AdminDashboard';
-import AdminPanel from '@/pages/admin/AdminPanel';
-import PublicBrowseShops from '@/pages/BrowseShops';
-import EmailConfirmationPending from '@/pages/EmailConfirmationPending';
-import ShopDetails from '@/pages/ShopDetails';
+// Public pages - lazy load
+const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));
+const EmailConfirmationPending = lazy(() => import('@/pages/EmailConfirmationPending'));
+const ShopDetails = lazy(() => import('@/pages/ShopDetails'));
+
+// Wrapper component for lazy loaded routes
+const LazyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Suspense fallback={<LazyLoadFallback />}>
+    {children}
+  </Suspense>
+);
 
 const AppRoutes: React.FC = () => {
   return (
     <ErrorBoundary>
       <Routes>
-        {/* Public routes */}
+        {/* Public routes - Index loads immediately */}
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={<FixedLogin />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
         
-        <Route path="/features" element={<Features />} />
-        <Route path="/stats" element={<Stats />} />
+        {/* Auth routes */}
+        <Route path="/login" element={<LazyRoute><FixedLogin /></LazyRoute>} />
+        <Route path="/signup" element={<LazyRoute><Signup /></LazyRoute>} />
+        
+        {/* Product routes */}
+        <Route path="/products" element={<LazyRoute><Products /></LazyRoute>} />
+        <Route path="/product/:id" element={<LazyRoute><ProductDetail /></LazyRoute>} />
+        
+        {/* Info pages */}
+        <Route path="/features" element={<LazyRoute><Features /></LazyRoute>} />
+        <Route path="/stats" element={<LazyRoute><Stats /></LazyRoute>} />
         
         {/* Public shops and confirmation */}
-        <Route path="/shops" element={<PublicBrowseShops />} />
-        <Route path="/shop/:shopId" element={<ShopDetails />} />
-        <Route path="/email-confirmation-pending" element={<EmailConfirmationPending />} />
+        <Route path="/shops" element={<LazyRoute><PublicBrowseShops /></LazyRoute>} />
+        <Route path="/shop/:shopId" element={<LazyRoute><ShopDetails /></LazyRoute>} />
+        <Route path="/email-confirmation-pending" element={<LazyRoute><EmailConfirmationPending /></LazyRoute>} />
         
         {/* Legal pages */}
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:id" element={<BlogPost />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-of-service" element={<TermsOfService />} />
-        <Route path="/refund-policy" element={<RefundPolicy />} />
-        <Route path="/shipping-policy" element={<ShippingPolicy />} />
+        <Route path="/contact" element={<LazyRoute><Contact /></LazyRoute>} />
+        <Route path="/about" element={<LazyRoute><AboutUs /></LazyRoute>} />
+        <Route path="/blog" element={<LazyRoute><Blog /></LazyRoute>} />
+        <Route path="/blog/:id" element={<LazyRoute><BlogPost /></LazyRoute>} />
+        <Route path="/privacy-policy" element={<LazyRoute><PrivacyPolicy /></LazyRoute>} />
+        <Route path="/terms-of-service" element={<LazyRoute><TermsOfService /></LazyRoute>} />
+        <Route path="/refund-policy" element={<LazyRoute><RefundPolicy /></LazyRoute>} />
+        <Route path="/shipping-policy" element={<LazyRoute><ShippingPolicy /></LazyRoute>} />
         
         {/* Additional routes */}
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/favorites" element={<LazyRoute><Favorites /></LazyRoute>} />
+        <Route path="/messages" element={<LazyRoute><Messages /></LazyRoute>} />
+        <Route path="/checkout" element={<LazyRoute><Checkout /></LazyRoute>} />
+        <Route path="/analytics" element={<LazyRoute><Analytics /></LazyRoute>} />
 
         {/* Protected routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><LazyRoute><Dashboard /></LazyRoute></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><LazyRoute><Profile /></LazyRoute></ProtectedRoute>} />
 
         {/* Dashboard routes */}
-        <Route path="/dashboard/seller-dashboard" element={<ProtectedRoute><DashboardSellerDashboard /></ProtectedRoute>} />
-        <Route path="/dashboard/shops" element={<ProtectedRoute requiredRole="wholesaler"><DashboardShops /></ProtectedRoute>} />
-        <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="wholesaler"><DashboardProducts /></ProtectedRoute>} />
-        <Route path="/dashboard/shipping" element={<ProtectedRoute requiredRole="wholesaler"><DashboardShipping /></ProtectedRoute>} />
-        <Route path="/dashboard/orders" element={<ProtectedRoute><DashboardOrders /></ProtectedRoute>} />
-        <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><DashboardSellerOrders /></ProtectedRoute>} />
-        <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><DashboardWholesalerOrders /></ProtectedRoute>} />
-        <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><DashboardAdmin /></ProtectedRoute>} />
-        <Route path="/dashboard/analytics" element={<ProtectedRoute><DashboardAnalytics /></ProtectedRoute>} />
-        <Route path="/dashboard/payment" element={<ProtectedRoute requiredRole="wholesaler"><DashboardPayment /></ProtectedRoute>} />
-        <Route path="/dashboard/coupons" element={<ProtectedRoute requiredRole="wholesaler"><DashboardCoupons /></ProtectedRoute>} />
-        <Route path="/dashboard/browse-shops" element={<ProtectedRoute requiredRole="seller"><DashboardBrowseShops /></ProtectedRoute>} />
-        <Route path="/dashboard/wholesaler-preview" element={<ProtectedRoute requiredRole="admin"><DashboardWholesalerPreview /></ProtectedRoute>} />
-        <Route path="/dashboard/seller-preview" element={<ProtectedRoute requiredRole="admin"><DashboardSellerPreview /></ProtectedRoute>} />
+        <Route path="/dashboard/seller-dashboard" element={<ProtectedRoute><LazyRoute><DashboardSellerDashboard /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/shops" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardShops /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/products" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardProducts /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/shipping" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardShipping /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/orders" element={<ProtectedRoute><LazyRoute><DashboardOrders /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><LazyRoute><DashboardSellerOrders /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardWholesalerOrders /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdmin /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/analytics" element={<ProtectedRoute><LazyRoute><DashboardAnalytics /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/payment" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardPayment /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/coupons" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardCoupons /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/browse-shops" element={<ProtectedRoute requiredRole="seller"><LazyRoute><DashboardBrowseShops /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/wholesaler-preview" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardWholesalerPreview /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/seller-preview" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardSellerPreview /></LazyRoute></ProtectedRoute>} />
         
         {/* Redirect old chat route to dashboard */}
         <Route path="/dashboard/chat" element={<Navigate to="/dashboard" replace />} />
 
         {/* Seller routes */}
-        <Route path="/seller/orders" element={<ProtectedRoute requiredRole="seller"><SellerOrders /></ProtectedRoute>} />
-        <Route path="/seller/browse-shops" element={<ProtectedRoute requiredRole="seller"><BrowseShops /></ProtectedRoute>} />
-        <Route path="/seller/shop/:shopId" element={<ProtectedRoute requiredRole="seller"><SellerShopDetails /></ProtectedRoute>} />
-        <Route path="/seller/shop/:shopId/products" element={<ProtectedRoute requiredRole="seller"><ShopProducts /></ProtectedRoute>} />
+        <Route path="/seller/orders" element={<ProtectedRoute requiredRole="seller"><LazyRoute><SellerOrders /></LazyRoute></ProtectedRoute>} />
+        <Route path="/seller/browse-shops" element={<ProtectedRoute requiredRole="seller"><LazyRoute><BrowseShops /></LazyRoute></ProtectedRoute>} />
+        <Route path="/seller/shop/:shopId" element={<ProtectedRoute requiredRole="seller"><LazyRoute><SellerShopDetails /></LazyRoute></ProtectedRoute>} />
+        <Route path="/seller/shop/:shopId/products" element={<ProtectedRoute requiredRole="seller"><LazyRoute><ShopProducts /></LazyRoute></ProtectedRoute>} />
 
         {/* Wholesaler routes */}
-        <Route path="/wholesaler/orders" element={<ProtectedRoute requiredRole="wholesaler"><WholesalerOrders /></ProtectedRoute>} />
-        <Route path="/wholesaler/shops" element={<ProtectedRoute requiredRole="wholesaler"><Shops /></ProtectedRoute>} />
-        <Route path="/wholesaler/products" element={<ProtectedRoute requiredRole="wholesaler"><WholesalerProducts /></ProtectedRoute>} />
-        
+        <Route path="/wholesaler/orders" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><WholesalerOrders /></LazyRoute></ProtectedRoute>} />
+        <Route path="/wholesaler/shops" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><Shops /></LazyRoute></ProtectedRoute>} />
+        <Route path="/wholesaler/products" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><WholesalerProducts /></LazyRoute></ProtectedRoute>} />
 
-        <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/panel" element={<ProtectedRoute requiredRole="admin"><AdminPanel /></ProtectedRoute>} />
+        {/* Admin routes */}
+        <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><LazyRoute><AdminDashboard /></LazyRoute></ProtectedRoute>} />
+        <Route path="/admin/panel" element={<ProtectedRoute requiredRole="admin"><LazyRoute><AdminPanel /></LazyRoute></ProtectedRoute>} />
 
         {/* 404 route */}
         <Route path="*" element={<NotFound />} />

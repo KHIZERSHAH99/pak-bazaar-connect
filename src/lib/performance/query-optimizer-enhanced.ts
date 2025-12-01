@@ -9,6 +9,9 @@ export interface QueryOptimizationConfig {
   enableIndexHints?: boolean;
 }
 
+// Maximum cache entries to prevent memory bloat
+const MAX_CACHE_SIZE = 50;
+
 class QueryOptimizerEnhanced {
   private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
   private defaultConfig: QueryOptimizationConfig = {
@@ -25,6 +28,16 @@ class QueryOptimizerEnhanced {
 
   private isValidCache(item: { timestamp: number; ttl: number }): boolean {
     return Date.now() - item.timestamp < item.ttl;
+  }
+
+  // Evict oldest entries to prevent memory bloat
+  private evictOldestEntries(count: number): void {
+    const entries = Array.from(this.cache.entries())
+      .sort((a, b) => a[1].timestamp - b[1].timestamp);
+    
+    for (let i = 0; i < Math.min(count, entries.length); i++) {
+      this.cache.delete(entries[i][0]);
+    }
   }
 
   async optimizedQuery(
@@ -44,7 +57,6 @@ class QueryOptimizerEnhanced {
     if (config.enableCaching) {
       const cached = this.cache.get(cacheKey);
       if (cached && this.isValidCache(cached)) {
-        console.log(`Cache hit for ${tableName}`);
         return cached.data;
       }
     }
@@ -82,6 +94,11 @@ class QueryOptimizerEnhanced {
       
       if (error) throw error;
 
+      // Enforce cache size limit before adding
+      if (this.cache.size >= MAX_CACHE_SIZE) {
+        this.evictOldestEntries(5);
+      }
+
       // Cache the result
       if (config.enableCaching) {
         this.cache.set(cacheKey, {
@@ -89,7 +106,6 @@ class QueryOptimizerEnhanced {
           timestamp: Date.now(),
           ttl: config.cacheTimeout!
         });
-        console.log(`Cached result for ${tableName}`);
       }
 
       return data || [];
@@ -172,10 +188,22 @@ class QueryOptimizerEnhanced {
         key.includes(pattern)
       );
       keysToDelete.forEach(key => this.cache.delete(key));
-      console.log(`Cleared ${keysToDelete.length} cache entries matching "${pattern}"`);
     } else {
       this.cache.clear();
-      console.log('Cleared all cache');
+    }
+  }
+
+  // Cleanup expired entries
+  cleanup(): void {
+    let cleanedCount = 0;
+    for (const [key, item] of this.cache.entries()) {
+      if (!this.isValidCache(item)) {
+        this.cache.delete(key);
+        cleanedCount++;
+      }
+    }
+    if (cleanedCount > 0) {
+      console.log(`[QueryOptimizerEnhanced] Cleaned ${cleanedCount} expired entries`);
     }
   }
 
@@ -187,9 +215,17 @@ class QueryOptimizerEnhanced {
     return {
       totalEntries: this.cache.size,
       validEntries,
+      maxSize: MAX_CACHE_SIZE,
       hitRate: validEntries / this.cache.size || 0
     };
   }
 }
 
 export const queryOptimizer = new QueryOptimizerEnhanced();
+
+// Register cleanup with centralized manager
+export function registerEnhancedQueryCleanup(): void {
+  import('./cleanup-manager').then(({ cleanupManager }) => {
+    cleanupManager.registerTask('enhanced-query-cleanup', () => queryOptimizer.cleanup());
+  });
+}

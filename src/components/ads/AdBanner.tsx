@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 
 type AdSize = '300x250' | '728x90' | '160x600' | '160x300' | '468x60' | '320x50' | 'native';
 
@@ -7,7 +7,7 @@ interface AdBannerProps {
   className?: string;
 }
 
-const AD_CONFIG: Record<AdSize, { key: string; width: number; height: number; src: string }> = {
+const AD_CONFIG: Record<AdSize, { key: string; width: number; height: number; src: string; isNative?: boolean }> = {
   '300x250': {
     key: '6e906f54278379013dea325356cedfea',
     width: 300,
@@ -47,62 +47,71 @@ const AD_CONFIG: Record<AdSize, { key: string; width: number; height: number; sr
   'native': {
     key: 'e38f7b8d13d3c6ad12cd625c9c483842',
     width: 0,
-    height: 0,
-    src: '//pl27701721.effectivegatecpm.com/e38f7b8d13d3c6ad12cd625c9c483842/invoke.js'
+    height: 100,
+    src: '//pl27701721.effectivegatecpm.com/e38f7b8d13d3c6ad12cd625c9c483842/invoke.js',
+    isNative: true
   }
 };
 
-const AdBanner: React.FC<AdBannerProps> = ({ size, className = '' }) => {
+const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const loadedRef = useRef(false);
+  const adId = useRef(`ad-${size}-${Math.random().toString(36).substr(2, 9)}`);
 
   useEffect(() => {
-    if (loadedRef.current || !containerRef.current) return;
-    
     const config = AD_CONFIG[size];
-    if (!config) return;
+    if (!config || !containerRef.current) return;
 
-    loadedRef.current = true;
+    const container = containerRef.current;
+    
+    // Clear any existing content
+    container.innerHTML = '';
 
-    if (size === 'native') {
-      // Native ad
+    if (config.isNative) {
+      // Native ad handling
+      const nativeContainer = document.createElement('div');
+      nativeContainer.id = `container-${config.key}`;
+      container.appendChild(nativeContainer);
+
       const script = document.createElement('script');
       script.async = true;
       script.setAttribute('data-cfasync', 'false');
       script.src = config.src;
-      
-      const container = document.createElement('div');
-      container.id = `container-${config.key}`;
-      
-      containerRef.current.appendChild(container);
-      containerRef.current.appendChild(script);
+      container.appendChild(script);
     } else {
-      // Banner ad - set atOptions on window first
-      const optionsScript = document.createElement('script');
-      optionsScript.type = 'text/javascript';
-      optionsScript.textContent = `
-        window.atOptions = {
-          'key': '${config.key}',
-          'format': 'iframe',
-          'height': ${config.height},
-          'width': ${config.width},
-          'params': {}
-        };
-      `;
+      // Banner ad - use iframe approach for better isolation
+      // First set atOptions globally with unique identifier
+      const uniqueId = adId.current;
       
-      const invokeScript = document.createElement('script');
-      invokeScript.type = 'text/javascript';
-      invokeScript.src = config.src;
-      
-      containerRef.current.appendChild(optionsScript);
-      containerRef.current.appendChild(invokeScript);
+      // Create a wrapper for the ad
+      const adWrapper = document.createElement('div');
+      adWrapper.id = uniqueId;
+      adWrapper.style.width = `${config.width}px`;
+      adWrapper.style.height = `${config.height}px`;
+      adWrapper.style.margin = '0 auto';
+      container.appendChild(adWrapper);
+
+      // Set global atOptions before loading the script
+      (window as any).atOptions = {
+        'key': config.key,
+        'format': 'iframe',
+        'height': config.height,
+        'width': config.width,
+        'params': {}
+      };
+
+      // Load the ad script
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = config.src;
+      script.async = true;
+      container.appendChild(script);
     }
 
     return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+      // Cleanup on unmount
+      if (container) {
+        container.innerHTML = '';
       }
-      loadedRef.current = false;
     };
   }, [size]);
 
@@ -111,7 +120,7 @@ const AdBanner: React.FC<AdBannerProps> = ({ size, className = '' }) => {
   return (
     <div 
       ref={containerRef}
-      className={`ad-container flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden ${className}`}
+      className={`ad-container flex items-center justify-center overflow-hidden ${className}`}
       style={{ 
         minWidth: config?.width || 'auto',
         minHeight: config?.height || 100,
@@ -120,6 +129,8 @@ const AdBanner: React.FC<AdBannerProps> = ({ size, className = '' }) => {
       aria-label="Advertisement"
     />
   );
-};
+});
+
+AdBanner.displayName = 'AdBanner';
 
 export default AdBanner;

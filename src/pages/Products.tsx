@@ -9,6 +9,7 @@ import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
+import InContentAd from '@/components/ads/InContentAd';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -168,10 +169,14 @@ const Products: React.FC = () => {
     <Layout 
       title="Products - Pak Bazaar Connect"
       description="Browse quality products from verified wholesalers across Pakistan"
+      showSidebarAds={true}
     >
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 xl:max-w-5xl">
         <ProductsHeader />
+        
+        {/* Top ad for products page */}
+        <InContentAd variant="horizontal" />
         
         <ProductsFilters
           categories={categories}
@@ -189,6 +194,9 @@ const Products: React.FC = () => {
         />
         
         <ProductsGrid products={products} loading={loading} />
+        
+        {/* Bottom ad */}
+        <InContentAd variant="square" />
 
         {/* Back to Top Button - Fixed Position */}
         <div className="fixed bottom-6 right-6 z-50">

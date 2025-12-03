@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo, useState } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 
 type AdSize = '300x250' | '728x90' | '160x600' | '160x300' | '468x60' | '320x50' | 'native';
 
@@ -55,28 +55,21 @@ const AD_CONFIG: Record<AdSize, { key: string; width: number; height: number; sr
 
 const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const adId = useRef(`ad-${size}-${Math.random().toString(36).substr(2, 9)}`);
-  const [adLoaded, setAdLoaded] = useState(false);
-  const [showFallback, setShowFallback] = useState(false);
+  const hasInitialized = useRef(false);
+  const uniqueId = useRef(`ad-${size}-${Math.random().toString(36).substr(2, 9)}`);
 
   useEffect(() => {
     const config = AD_CONFIG[size];
-    if (!config || !containerRef.current) return;
-
+    if (!config || !containerRef.current || hasInitialized.current) return;
+    
+    hasInitialized.current = true;
     const container = containerRef.current;
     
     // Clear any existing content
     container.innerHTML = '';
 
-    // Set a timeout to show fallback if ad doesn't load
-    const fallbackTimer = setTimeout(() => {
-      if (!adLoaded) {
-        setShowFallback(true);
-      }
-    }, 5000); // 5 seconds timeout
-
     if (config.isNative) {
-      // Native ad handling
+      // Native ad: create container div then load script
       const nativeContainer = document.createElement('div');
       nativeContainer.id = `container-${config.key}`;
       container.appendChild(nativeContainer);
@@ -85,95 +78,56 @@ const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
       script.async = true;
       script.setAttribute('data-cfasync', 'false');
       script.src = config.src;
-      script.onload = () => {
-        setAdLoaded(true);
-        setShowFallback(false);
-      };
-      script.onerror = () => {
-        setShowFallback(true);
-      };
       container.appendChild(script);
     } else {
-      // Banner ad - use iframe approach for better isolation
-      const uniqueId = adId.current;
+      // Banner ad: inject atOptions as inline script FIRST, then invoke.js
+      // This is the exact pattern Adsteera requires
       
-      // Create a wrapper for the ad
-      const adWrapper = document.createElement('div');
-      adWrapper.id = uniqueId;
-      adWrapper.style.width = `${config.width}px`;
-      adWrapper.style.height = `${config.height}px`;
-      adWrapper.style.margin = '0 auto';
-      container.appendChild(adWrapper);
+      // Step 1: Create inline script with atOptions
+      const optionsScript = document.createElement('script');
+      optionsScript.type = 'text/javascript';
+      optionsScript.textContent = `
+        atOptions = {
+          'key' : '${config.key}',
+          'format' : 'iframe',
+          'height' : ${config.height},
+          'width' : ${config.width},
+          'params' : {}
+        };
+      `;
+      container.appendChild(optionsScript);
 
-      // Set global atOptions before loading the script
-      (window as any).atOptions = {
-        'key': config.key,
-        'format': 'iframe',
-        'height': config.height,
-        'width': config.width,
-        'params': {}
-      };
-
-      // Load the ad script
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = config.src;
-      script.async = true;
-      script.onload = () => {
-        setAdLoaded(true);
-        setShowFallback(false);
-      };
-      script.onerror = () => {
-        setShowFallback(true);
-      };
-      container.appendChild(script);
+      // Step 2: Create and append the invoke script
+      const invokeScript = document.createElement('script');
+      invokeScript.type = 'text/javascript';
+      invokeScript.src = config.src;
+      invokeScript.async = false; // Important: must execute in order
+      container.appendChild(invokeScript);
     }
 
     return () => {
-      clearTimeout(fallbackTimer);
       // Cleanup on unmount
       if (container) {
         container.innerHTML = '';
       }
+      hasInitialized.current = false;
     };
-  }, [size, adLoaded]);
+  }, [size]);
 
   const config = AD_CONFIG[size];
   
-  // Fallback placeholder component
-  const FallbackPlaceholder = () => (
-    <div 
-      className="flex items-center justify-center bg-gradient-to-br from-muted/50 to-muted rounded-lg border border-border/50"
-      style={{ 
-        width: config?.width || '100%',
-        height: config?.height || 100,
-        maxWidth: '100%'
-      }}
-    >
-      <div className="text-center p-4">
-        <p className="text-xs text-muted-foreground">Advertisement</p>
-        <p className="text-[10px] text-muted-foreground/70 mt-1">
-          Ad content loading...
-        </p>
-      </div>
-    </div>
-  );
-  
   return (
     <div className={`ad-container flex items-center justify-center overflow-hidden ${className}`}>
-      {showFallback && !adLoaded ? (
-        <FallbackPlaceholder />
-      ) : (
-        <div 
-          ref={containerRef}
-          style={{ 
-            minWidth: config?.width || 'auto',
-            minHeight: config?.height || 100,
-            maxWidth: '100%'
-          }}
-          aria-label="Advertisement"
-        />
-      )}
+      <div 
+        ref={containerRef}
+        id={uniqueId.current}
+        style={{ 
+          minWidth: config?.isNative ? 'auto' : config?.width,
+          minHeight: config?.height || 100,
+          maxWidth: '100%'
+        }}
+        aria-label="Advertisement"
+      />
     </div>
   );
 });

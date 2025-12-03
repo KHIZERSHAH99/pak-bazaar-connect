@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo } from 'react';
+import React, { useEffect, useRef, memo, useState } from 'react';
 
 type AdSize = '300x250' | '728x90' | '160x600' | '160x300' | '468x60' | '320x50' | 'native';
 
@@ -56,6 +56,8 @@ const AD_CONFIG: Record<AdSize, { key: string; width: number; height: number; sr
 const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const adId = useRef(`ad-${size}-${Math.random().toString(36).substr(2, 9)}`);
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {
     const config = AD_CONFIG[size];
@@ -65,6 +67,13 @@ const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
     
     // Clear any existing content
     container.innerHTML = '';
+
+    // Set a timeout to show fallback if ad doesn't load
+    const fallbackTimer = setTimeout(() => {
+      if (!adLoaded) {
+        setShowFallback(true);
+      }
+    }, 5000); // 5 seconds timeout
 
     if (config.isNative) {
       // Native ad handling
@@ -76,10 +85,16 @@ const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
       script.async = true;
       script.setAttribute('data-cfasync', 'false');
       script.src = config.src;
+      script.onload = () => {
+        setAdLoaded(true);
+        setShowFallback(false);
+      };
+      script.onerror = () => {
+        setShowFallback(true);
+      };
       container.appendChild(script);
     } else {
       // Banner ad - use iframe approach for better isolation
-      // First set atOptions globally with unique identifier
       const uniqueId = adId.current;
       
       // Create a wrapper for the ad
@@ -104,30 +119,62 @@ const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
       script.type = 'text/javascript';
       script.src = config.src;
       script.async = true;
+      script.onload = () => {
+        setAdLoaded(true);
+        setShowFallback(false);
+      };
+      script.onerror = () => {
+        setShowFallback(true);
+      };
       container.appendChild(script);
     }
 
     return () => {
+      clearTimeout(fallbackTimer);
       // Cleanup on unmount
       if (container) {
         container.innerHTML = '';
       }
     };
-  }, [size]);
+  }, [size, adLoaded]);
 
   const config = AD_CONFIG[size];
   
-  return (
+  // Fallback placeholder component
+  const FallbackPlaceholder = () => (
     <div 
-      ref={containerRef}
-      className={`ad-container flex items-center justify-center overflow-hidden ${className}`}
+      className="flex items-center justify-center bg-gradient-to-br from-muted/50 to-muted rounded-lg border border-border/50"
       style={{ 
-        minWidth: config?.width || 'auto',
-        minHeight: config?.height || 100,
+        width: config?.width || '100%',
+        height: config?.height || 100,
         maxWidth: '100%'
       }}
-      aria-label="Advertisement"
-    />
+    >
+      <div className="text-center p-4">
+        <p className="text-xs text-muted-foreground">Advertisement</p>
+        <p className="text-[10px] text-muted-foreground/70 mt-1">
+          Ad content loading...
+        </p>
+      </div>
+    </div>
+  );
+  
+  return (
+    <div className={`ad-container flex items-center justify-center overflow-hidden ${className}`}>
+      {showFallback && !adLoaded ? (
+        <FallbackPlaceholder />
+      ) : (
+        <div 
+          ref={containerRef}
+          style={{ 
+            minWidth: config?.width || 'auto',
+            minHeight: config?.height || 100,
+            maxWidth: '100%'
+          }}
+          aria-label="Advertisement"
+        />
+      )}
+    </div>
   );
 });
 

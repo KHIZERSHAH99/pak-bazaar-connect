@@ -55,48 +55,25 @@ const AD_CONFIG: Record<AdSize, { key: string; width: number; height: number; sr
 
 const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const uniqueId = useRef(`ad-${size}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-  const [hasContent, setHasContent] = useState(false);
+  const adId = useRef(`ad-${size}-${Math.random().toString(36).substr(2, 9)}`);
+  const [adLoaded, setAdLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
-  const loadedRef = useRef(false);
 
   useEffect(() => {
     const config = AD_CONFIG[size];
-    if (!config || !containerRef.current || loadedRef.current) return;
+    if (!config || !containerRef.current) return;
 
-    loadedRef.current = true;
     const container = containerRef.current;
     
     // Clear any existing content
     container.innerHTML = '';
 
-    // Check for ad content periodically
-    const checkForContent = () => {
-      if (container && container.children.length > 0) {
-        const hasIframe = container.querySelector('iframe');
-        const hasAd = container.querySelector('ins, .adsbygoogle, [id*="aswift"]');
-        if (hasIframe || hasAd || container.innerHTML.length > 100) {
-          setHasContent(true);
-          setShowFallback(false);
-          return true;
-        }
-      }
-      return false;
-    };
-
     // Set a timeout to show fallback if ad doesn't load
     const fallbackTimer = setTimeout(() => {
-      if (!checkForContent()) {
+      if (!adLoaded) {
         setShowFallback(true);
       }
-    }, 8000); // 8 seconds timeout
-
-    // Check periodically for ad content
-    const contentChecker = setInterval(() => {
-      if (checkForContent()) {
-        clearInterval(contentChecker);
-      }
-    }, 1000);
+    }, 5000); // 5 seconds timeout
 
     if (config.isNative) {
       // Native ad handling
@@ -108,50 +85,65 @@ const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
       script.async = true;
       script.setAttribute('data-cfasync', 'false');
       script.src = config.src;
+      script.onload = () => {
+        setAdLoaded(true);
+        setShowFallback(false);
+      };
+      script.onerror = () => {
+        setShowFallback(true);
+      };
       container.appendChild(script);
     } else {
-      // Banner ad - create isolated container with inline script
+      // Banner ad - use iframe approach for better isolation
+      const uniqueId = adId.current;
+      
+      // Create a wrapper for the ad
       const adWrapper = document.createElement('div');
-      adWrapper.id = uniqueId.current;
+      adWrapper.id = uniqueId;
       adWrapper.style.width = `${config.width}px`;
       adWrapper.style.height = `${config.height}px`;
       adWrapper.style.margin = '0 auto';
       container.appendChild(adWrapper);
 
-      // Create inline script that sets atOptions immediately before invoke
-      const inlineScript = document.createElement('script');
-      inlineScript.type = 'text/javascript';
-      inlineScript.textContent = `
-        atOptions = {
-          'key': '${config.key}',
-          'format': 'iframe',
-          'height': ${config.height},
-          'width': ${config.width},
-          'params': {}
-        };
-      `;
-      container.appendChild(inlineScript);
+      // Set global atOptions before loading the script
+      (window as any).atOptions = {
+        'key': config.key,
+        'format': 'iframe',
+        'height': config.height,
+        'width': config.width,
+        'params': {}
+      };
 
-      // Load the invoke script immediately after setting atOptions
-      const invokeScript = document.createElement('script');
-      invokeScript.type = 'text/javascript';
-      invokeScript.src = config.src;
-      invokeScript.async = false; // Important: load synchronously after atOptions
-      container.appendChild(invokeScript);
+      // Load the ad script
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = config.src;
+      script.async = true;
+      script.onload = () => {
+        setAdLoaded(true);
+        setShowFallback(false);
+      };
+      script.onerror = () => {
+        setShowFallback(true);
+      };
+      container.appendChild(script);
     }
 
     return () => {
       clearTimeout(fallbackTimer);
-      clearInterval(contentChecker);
+      // Cleanup on unmount
+      if (container) {
+        container.innerHTML = '';
+      }
     };
-  }, [size]);
+  }, [size, adLoaded]);
 
   const config = AD_CONFIG[size];
   
   // Fallback placeholder component
   const FallbackPlaceholder = () => (
     <div 
-      className="flex items-center justify-center bg-gradient-to-br from-muted/30 to-muted/50 rounded-lg border border-border/30"
+      className="flex items-center justify-center bg-gradient-to-br from-muted/50 to-muted rounded-lg border border-border/50"
       style={{ 
         width: config?.width || '100%',
         height: config?.height || 100,
@@ -159,24 +151,29 @@ const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
       }}
     >
       <div className="text-center p-4">
-        <p className="text-xs text-muted-foreground/60">Sponsored</p>
+        <p className="text-xs text-muted-foreground">Advertisement</p>
+        <p className="text-[10px] text-muted-foreground/70 mt-1">
+          Ad content loading...
+        </p>
       </div>
     </div>
   );
   
   return (
     <div className={`ad-container flex items-center justify-center overflow-hidden ${className}`}>
-      <div 
-        ref={containerRef}
-        style={{ 
-          minWidth: config?.width || 'auto',
-          minHeight: config?.height || 100,
-          maxWidth: '100%',
-          display: showFallback && !hasContent ? 'none' : 'block'
-        }}
-        aria-label="Advertisement"
-      />
-      {showFallback && !hasContent && <FallbackPlaceholder />}
+      {showFallback && !adLoaded ? (
+        <FallbackPlaceholder />
+      ) : (
+        <div 
+          ref={containerRef}
+          style={{ 
+            minWidth: config?.width || 'auto',
+            minHeight: config?.height || 100,
+            maxWidth: '100%'
+          }}
+          aria-label="Advertisement"
+        />
+      )}
     </div>
   );
 });

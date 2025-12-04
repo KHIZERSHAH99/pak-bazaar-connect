@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, memo } from 'react';
+import postscribe from 'postscribe';
 
 type AdSize = '300x250' | '728x90' | '160x600' | '160x300' | '468x60' | '320x50' | 'native';
 
@@ -68,41 +69,39 @@ const AdBanner: React.FC<AdBannerProps> = memo(({ size, className = '' }) => {
     // Clear any existing content
     container.innerHTML = '';
 
-    if (config.isNative) {
-      // Native ad: create container div then load script
-      const nativeContainer = document.createElement('div');
-      nativeContainer.id = `container-${config.key}`;
-      container.appendChild(nativeContainer);
-
-      const script = document.createElement('script');
-      script.async = true;
-      script.setAttribute('data-cfasync', 'false');
-      script.src = config.src;
-      container.appendChild(script);
-    } else {
-      // Banner ad: inject atOptions as inline script FIRST, then invoke.js
-      // This is the exact pattern Adsteera requires
-      
-      // Step 1: Create inline script with atOptions
-      const optionsScript = document.createElement('script');
-      optionsScript.type = 'text/javascript';
-      optionsScript.textContent = `
-        atOptions = {
-          'key' : '${config.key}',
-          'format' : 'iframe',
-          'height' : ${config.height},
-          'width' : ${config.width},
-          'params' : {}
-        };
-      `;
-      container.appendChild(optionsScript);
-
-      // Step 2: Create and append the invoke script
-      const invokeScript = document.createElement('script');
-      invokeScript.type = 'text/javascript';
-      invokeScript.src = config.src;
-      invokeScript.async = false; // Important: must execute in order
-      container.appendChild(invokeScript);
+    try {
+      if (config.isNative) {
+        // Native ad: create container div then load script using postscribe
+        const scriptContent = `
+          <div id="container-${config.key}"></div>
+          <script async="async" data-cfasync="false" src="${config.src}"></script>
+        `;
+        
+        postscribe(container, scriptContent, {
+          error: (err) => console.warn('Native ad load error:', err)
+        });
+      } else {
+        // Banner ad: inject atOptions THEN invoke.js using postscribe
+        // This safely handles the document.write() calls from Adsteera
+        const scriptContent = `
+          <script type="text/javascript">
+            atOptions = {
+              'key' : '${config.key}',
+              'format' : 'iframe',
+              'height' : ${config.height},
+              'width' : ${config.width},
+              'params' : {}
+            };
+          </script>
+          <script type="text/javascript" src="${config.src}"></script>
+        `;
+        
+        postscribe(container, scriptContent, {
+          error: (err) => console.warn('Banner ad load error:', err)
+        });
+      }
+    } catch (error) {
+      console.warn('Ad initialization error:', error);
     }
 
     return () => {

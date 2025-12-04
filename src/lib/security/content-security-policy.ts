@@ -5,13 +5,27 @@
 
 export const CSP_DIRECTIVES = {
   'default-src': ["'self'"],
-  'frame-src': ["'self'"],
+  'frame-src': [
+    "'self'",
+    "https://*.highperformanceformat.com",
+    "https://*.effectivegatecpm.com",
+    "https://highperformanceformat.com",
+    "https://effectivegatecpm.com",
+    "http://*.highperformanceformat.com",
+    "http://*.effectivegatecpm.com"
+  ],
   'script-src': [
     "'self'",
     "'unsafe-inline'", // Required for React in development
     "'unsafe-eval'", // Required for development tools
     "https://sxzxyuxtqqflahzncfre.supabase.co",
-    "https://*.supabase.co"
+    "https://*.supabase.co",
+    "https://*.highperformanceformat.com",
+    "https://*.effectivegatecpm.com",
+    "https://highperformanceformat.com",
+    "https://effectivegatecpm.com",
+    "http://*.highperformanceformat.com",
+    "http://*.effectivegatecpm.com"
   ],
   'style-src': [
     "'self'",
@@ -23,7 +37,11 @@ export const CSP_DIRECTIVES = {
     "data:",
     "blob:",
     "https://sxzxyuxtqqflahzncfre.supabase.co",
-    "https://*.supabase.co"
+    "https://*.supabase.co",
+    "https://*.highperformanceformat.com",
+    "https://*.effectivegatecpm.com",
+    "https://*",
+    "http://*"
   ],
   'font-src': [
     "'self'",
@@ -34,7 +52,10 @@ export const CSP_DIRECTIVES = {
     "https://sxzxyuxtqqflahzncfre.supabase.co",
     "https://*.supabase.co",
     "wss://sxzxyuxtqqflahzncfre.supabase.co",
-    "wss://*.supabase.co"
+    "wss://*.supabase.co",
+    "https://*.highperformanceformat.com",
+    "https://*.effectivegatecpm.com",
+    "https://*"
   ],
   'media-src': [
     "'self'",

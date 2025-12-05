@@ -1176,6 +1176,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fk_orders_shop_id"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_delivery_confirmed_by_fkey"
             columns: ["delivery_confirmed_by"]
             isOneToOne: false
@@ -1201,6 +1208,13 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1815,6 +1829,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fk_products_shop_id"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "products_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
@@ -1826,6 +1847,13 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops_public"
             referencedColumns: ["id"]
           },
         ]
@@ -2226,6 +2254,13 @@ export type Database = {
             referencedRelation: "shops"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "shipping_configs_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       shipping_details: {
@@ -2541,6 +2576,30 @@ export type Database = {
         }
         Relationships: []
       }
+      shops_public: {
+        Row: {
+          city_id: string | null
+          created_at: string | null
+          id: string | null
+          logo: string | null
+          name: string | null
+        }
+        Insert: {
+          city_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          logo?: string | null
+          name?: string | null
+        }
+        Update: {
+          city_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          logo?: string | null
+          name?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_order_tracking: {
@@ -2706,6 +2765,16 @@ export type Database = {
       }
       get_profile_summary: { Args: { profile_id: string }; Returns: Json }
       get_public_profile_info: { Args: { profile_id: string }; Returns: Json }
+      get_public_shop_info: {
+        Args: { p_shop_id: string }
+        Returns: {
+          city_id: string
+          created_at: string
+          id: string
+          logo: string
+          name: string
+        }[]
+      }
       get_safe_profile_data: { Args: { user_id: string }; Returns: Json }
       get_safe_profile_summary: { Args: { profile_id: string }; Returns: Json }
       get_secure_payment_methods: {

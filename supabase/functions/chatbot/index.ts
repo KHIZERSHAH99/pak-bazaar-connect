@@ -4,7 +4,7 @@ import { OpenAI } from "https://esm.sh/openai@4.12.4";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-user-id',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 Deno.serve(async (req) => {
@@ -16,6 +16,35 @@ Deno.serve(async (req) => {
     console.log("Chatbot function called");
     const { message } = await req.json();
     console.log("Received message:", message);
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Supabase credentials missing");
+      throw new Error('Supabase configuration is incomplete');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Extract and verify user from JWT token (secure method)
+    let userId: string | null = null;
+    const authHeader = req.headers.get('Authorization');
+    
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      
+      if (authError) {
+        console.log("Auth error (user may be anonymous):", authError.message);
+      } else if (user) {
+        userId = user.id;
+        console.log("Authenticated user:", userId);
+      }
+    } else {
+      console.log("No auth header provided, proceeding as anonymous");
+    }
 
     // Initialize OpenAI
     const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
@@ -62,34 +91,25 @@ Deno.serve(async (req) => {
     const reply = completion.choices[0].message.content;
     console.log("Generated response successfully:", reply?.substring(0, 50) + "...");
 
-    // Store the chat in the database
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-    
-    if (!supabaseUrl || !supabaseServiceKey) {
-      console.error("Supabase credentials missing");
-      throw new Error('Supabase configuration is incomplete');
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    const userId = req.headers.get('x-user-id');
-    console.log(`Saving chat for user: ${userId || 'anonymous'}`);
-    
-    try {
-      const { data, error } = await supabase.from('chat_history').insert({
-        user_id: userId || null,
-        message,
-        reply,
-      }).select();
-      
-      if (error) {
-        console.error('Error saving chat:', error);
-      } else {
-        console.log('Chat saved successfully:', data[0].id);
+    // Store the chat in the database (only for authenticated users)
+    if (userId) {
+      try {
+        const { data, error } = await supabase.from('chat_history').insert({
+          user_id: userId,
+          message,
+          reply,
+        }).select();
+        
+        if (error) {
+          console.error('Error saving chat:', error);
+        } else {
+          console.log('Chat saved successfully:', data[0].id);
+        }
+      } catch (dbError) {
+        console.error('Database error:', dbError);
       }
-    } catch (dbError) {
-      console.error('Database error:', dbError);
+    } else {
+      console.log('Skipping chat history save for anonymous user');
     }
 
     return new Response(

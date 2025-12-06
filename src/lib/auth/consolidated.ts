@@ -9,8 +9,17 @@ import {
   parseAuthError 
 } from './auth-errors';
 
-// Consolidated authentication with security
+// Legacy authentication without captcha (for backwards compatibility)
 export const authenticateUser = async (emailOrPhone: string, password: string) => {
+  return authenticateUserWithCaptcha(emailOrPhone, password);
+};
+
+// Consolidated authentication with security and hCaptcha support
+export const authenticateUserWithCaptcha = async (
+  emailOrPhone: string, 
+  password: string, 
+  captchaToken?: string
+) => {
   try {
     console.log('🔐 Starting consolidated authentication');
     
@@ -78,10 +87,17 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
         
         for (const emailFormat of emailFormats) {
           console.log('Attempting direct auth with email:', emailFormat);
-          const { data, error } = await supabase.auth.signInWithPassword({
+          const signInOptions: any = {
             email: emailFormat,
             password
-          });
+          };
+          
+          // Add captcha token if provided
+          if (captchaToken) {
+            signInOptions.options = { captchaToken };
+          }
+          
+          const { data, error } = await supabase.auth.signInWithPassword(signInOptions);
           
           if (!error && data.user) {
             console.log('Successfully authenticated with email format:', emailFormat);
@@ -103,12 +119,19 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
     }
     
     // Authenticate with Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const signInOptions: any = {
       email: authEmail,
       password
-    });
+    };
     
-      if (error) {
+    // Add captcha token if provided
+    if (captchaToken) {
+      signInOptions.options = { captchaToken };
+    }
+    
+    const { data, error } = await supabase.auth.signInWithPassword(signInOptions);
+    
+    if (error) {
       console.error('Authentication error:', error);
       const parsedError = parseAuthError(error);
       throw new Error(parsedError.message);
@@ -129,7 +152,8 @@ export const registerUser = async (
   emailOrPhone: string,
   password: string,
   role: UserRole,
-  businessData: Record<string, any>
+  businessData: Record<string, any>,
+  captchaToken?: string
 ) => {
   try {
     console.log('🔐 Starting consolidated registration');
@@ -181,28 +205,35 @@ export const registerUser = async (
       throw new Error('Please enter a valid email or phone number');
     }
     
-    // Create account
+    // Create account with captcha token
+    const signUpOptions: any = {
+      emailRedirectTo: `${window.location.origin}/dashboard`,
+      data: {
+        email: authEmail,
+        role,
+        phone_number: phoneNumber || '',
+        normalized_phone: phoneNumber || '',
+        contact_name: businessData.contactName || 'User',
+        business_name: businessData.businessName || 'Business',
+        business_type: businessData.businessType || 'Retailer',
+        address: businessData.address || '',
+        city: businessData.city || '',
+        postal_code: businessData.postalCode || '',
+        industry: businessData.industry || '',
+        auth_type: isPhone ? 'phone' : 'email',
+        display_identifier: emailOrPhone
+      }
+    };
+    
+    // Add captcha token if provided
+    if (captchaToken) {
+      signUpOptions.captchaToken = captchaToken;
+    }
+    
     const { data, error } = await supabase.auth.signUp({
       email: authEmail,
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: {
-          email: authEmail, // Include the actual email being used
-          role,
-          phone_number: phoneNumber || '',
-          normalized_phone: phoneNumber || '',
-          contact_name: businessData.contactName || 'User',
-          business_name: businessData.businessName || 'Business',
-          business_type: businessData.businessType || 'Retailer',
-          address: businessData.address || '',
-          city: businessData.city || '',
-          postal_code: businessData.postalCode || '',
-          industry: businessData.industry || '',
-          auth_type: isPhone ? 'phone' : 'email', // Mark the auth type
-          display_identifier: emailOrPhone // Store original input for display
-        }
-      }
+      options: signUpOptions
     });
     
     if (error) {

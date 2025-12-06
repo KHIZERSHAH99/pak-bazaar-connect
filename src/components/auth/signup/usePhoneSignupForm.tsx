@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, RefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -8,14 +8,16 @@ import { formSchema, FormValues } from './signupSchema';
 import { UserRole } from '@/lib/types';
 import { signUp } from '@/lib/auth';
 import { validatePakistaniPhone } from '@/lib/auth/phone-utils';
+import { HCaptchaRef } from '../HCaptcha';
 
-export const usePhoneSignupForm = () => {
+export const usePhoneSignupForm = (captchaRef?: RefObject<HCaptchaRef>) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<UserRole>('wholesaler');
   const [isPhoneBlocked, setIsPhoneBlocked] = useState(false);
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -145,6 +147,10 @@ export const usePhoneSignupForm = () => {
       description: 'Your phone number has been successfully verified.',
     });
   };
+
+  const handleCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
   
   const onSubmit = async (values: FormValues) => {
     console.log('Form submission started for role:', selectedRole);
@@ -211,7 +217,18 @@ export const usePhoneSignupForm = () => {
         postal_code: values.postalCode || ''
       };
       
-      await signUp(values.phoneNumber, values.password, selectedRole, businessData);
+      // Get captcha token if available
+      let token = captchaToken;
+      if (!token && captchaRef?.current) {
+        try {
+          token = await captchaRef.current.execute();
+        } catch (captchaError) {
+          console.error('Captcha error:', captchaError);
+          throw new Error('Please complete the security verification');
+        }
+      }
+
+      await signUp(values.phoneNumber, values.password, selectedRole, businessData, token || undefined);
       
       toast({
         title: 'Account Created Successfully!',
@@ -237,6 +254,10 @@ export const usePhoneSignupForm = () => {
       if (error.message) {
         errorMsg = error.message;
       }
+      
+      // Reset captcha on error
+      captchaRef?.current?.reset();
+      setCaptchaToken(null);
       
       setErrorMessage(errorMsg);
       
@@ -270,6 +291,7 @@ export const usePhoneSignupForm = () => {
     handleRoleSelect,
     handlePhoneBlocked,
     handlePhoneVerified,
+    handleCaptchaVerify,
     onSubmit
   };
 };

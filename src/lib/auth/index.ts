@@ -57,12 +57,13 @@ export const signIn = async (phoneOrEmail: string, password: string) => {
   }
 };
 
-// Enhanced sign-up with unified phone/email support
+// Enhanced sign-up with unified phone/email support and captcha
 export const signUp = async (
   emailOrPhone: string, 
   password: string, 
   role: UserRole = 'seller',
-  businessData?: Record<string, any>
+  businessData?: Record<string, any>,
+  captchaToken?: string
 ) => {
   try {
     console.log('🔐 Starting sign up process');
@@ -83,9 +84,9 @@ export const signUp = async (
     const defaultRole = 'seller';
     
     if (isPhoneNumber) {
-      return await signUpWithPhone(cleanInput, password, defaultRole, businessData || {});
+      return await signUpWithPhone(cleanInput, password, defaultRole, businessData || {}, captchaToken);
     } else {
-      return await signUpWithEmail(cleanInput.toLowerCase(), password, defaultRole, businessData || {});
+      return await signUpWithEmail(cleanInput.toLowerCase(), password, defaultRole, businessData || {}, captchaToken);
     }
   } catch (error) {
     console.error('Sign up error:', error);
@@ -207,12 +208,13 @@ const signInWithEmail = async (email: string, password: string) => {
   return data;
 };
 
-// Phone-based signup
+// Phone-based signup with captcha support
 const signUpWithPhone = async (
   phoneNumber: string, 
   password: string, 
   role: UserRole,
-  businessData: Record<string, any>
+  businessData: Record<string, any>,
+  captchaToken?: string
 ) => {
   const normalizedPhone = normalizePakistaniPhone(phoneNumber);
   
@@ -234,25 +236,32 @@ const signUpWithPhone = async (
   // Create unique email for Supabase auth
   const uniqueEmail = `${normalizedPhone}@pakbazaarconnect.store`;
 
+  const signUpOptions: any = {
+    emailRedirectTo: `${window.location.origin}/dashboard`,
+    data: {
+      role,
+      phone_number: normalizedPhone,
+      normalized_phone: normalizedPhone,
+      contact_name: businessData.contactName || 'User',
+      business_name: businessData.businessName || 'Business',
+      business_type: businessData.businessType || 'Retailer',
+      address: businessData.address || '',
+      city: businessData.city || '',
+      postal_code: businessData.postalCode || '',
+      industry: businessData.industry || ''
+    }
+  };
+
+  // Add captcha token if provided
+  if (captchaToken) {
+    signUpOptions.captchaToken = captchaToken;
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email: uniqueEmail,
     password,
-    phone: normalizedPhone, // Add phone to auth.users
-    options: {
-      emailRedirectTo: `${window.location.origin}/dashboard`,
-      data: {
-        role,
-        phone_number: normalizedPhone,
-        normalized_phone: normalizedPhone,
-        contact_name: businessData.contactName || 'User',
-        business_name: businessData.businessName || 'Business',
-        business_type: businessData.businessType || 'Retailer',
-        address: businessData.address || '',
-        city: businessData.city || '',
-        postal_code: businessData.postalCode || '',
-        industry: businessData.industry || ''
-      }
-    }
+    phone: normalizedPhone,
+    options: signUpOptions
   });
 
   if (error) {
@@ -291,23 +300,31 @@ const signUpWithPhone = async (
   return data;
 };
 
-// Email-based signup
+// Email-based signup with captcha support
 const signUpWithEmail = async (
   email: string, 
   password: string, 
   role: UserRole,
-  businessData: Record<string, any>
+  businessData: Record<string, any>,
+  captchaToken?: string
 ) => {
+  const signUpOptions: any = {
+    emailRedirectTo: `${window.location.origin}/dashboard`,
+    data: {
+      role,
+      ...businessData
+    }
+  };
+
+  // Add captcha token if provided
+  if (captchaToken) {
+    signUpOptions.captchaToken = captchaToken;
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      emailRedirectTo: `${window.location.origin}/dashboard`,
-      data: {
-        role,
-        ...businessData
-      }
-    }
+    options: signUpOptions
   });
 
   if (error) {

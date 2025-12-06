@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -9,8 +9,11 @@ import PhoneAccountInfoStep from './signup/PhoneAccountInfoStep';
 import BusinessInfoStep from './signup/BusinessInfoStep';
 import SellerInfoStep from './SellerInfoStep';
 import FinalStep from './signup/FinalStep';
+import { HCaptchaRef } from './HCaptcha';
 
 const SignupForm: React.FC = () => {
+  const captchaRef = useRef<HCaptchaRef>(null);
+  
   const {
     form,
     isLoading,
@@ -24,7 +27,8 @@ const SignupForm: React.FC = () => {
     prevStep,
     handleRoleSelect,
     handlePhoneBlocked,
-  } = usePhoneSignupForm();
+    handleCaptchaVerify,
+  } = usePhoneSignupForm(captchaRef);
 
   const renderStep = () => {
     switch (currentStep) {
@@ -43,6 +47,8 @@ const SignupForm: React.FC = () => {
             isLoading={isLoading}
             selectedRole={selectedRole}
             onPhoneBlocked={handlePhoneBlocked}
+            onCaptchaVerify={handleCaptchaVerify}
+            captchaRef={captchaRef}
           />
         );
       case 3:

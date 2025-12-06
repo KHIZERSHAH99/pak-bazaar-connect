@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,19 +9,24 @@ import { FormValues } from './signupSchema';
 import { UserRole } from '@/lib/types';
 import { supabase } from '@/integrations/supabase/client';
 import { validatePakistaniPhone } from '@/lib/auth/phone-utils';
+import HCaptchaWidget, { HCaptchaRef } from '../HCaptcha';
 
 interface PhoneAccountInfoStepProps {
   form: UseFormReturn<FormValues>;
   isLoading: boolean;
   selectedRole: UserRole;
   onPhoneBlocked: (blocked: boolean) => void;
+  onCaptchaVerify?: (token: string) => void;
+  captchaRef?: React.RefObject<HCaptchaRef>;
 }
 
 const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
   form,
   isLoading,
   selectedRole,
-  onPhoneBlocked
+  onPhoneBlocked,
+  onCaptchaVerify,
+  captchaRef
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -271,6 +276,13 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
           <li>• You can change your password anytime from your profile</li>
         </ul>
       </div>
+
+      {/* hCaptcha Widget */}
+      <HCaptchaWidget
+        ref={captchaRef}
+        onVerify={onCaptchaVerify}
+        className="flex flex-col items-center pt-4"
+      />
     </div>
   );
 };

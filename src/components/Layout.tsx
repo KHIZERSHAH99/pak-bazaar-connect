@@ -33,7 +33,7 @@ const Layout: React.FC<LayoutProps> = ({
         {children}
       </main>
       
-      <Footer className="border-[#ef1515] text-[#00ff55] bg-green-200" />
+      <Footer />
     </div>;
 };
 export default Layout;

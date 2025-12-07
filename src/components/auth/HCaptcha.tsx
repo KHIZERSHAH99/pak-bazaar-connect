@@ -2,8 +2,8 @@ import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { Shield } from 'lucide-react';
 
-// hCaptcha site key from Supabase configuration
-const HCAPTCHA_SITE_KEY = '10000000-ffff-ffff-ffff-000000000001';
+// hCaptcha production site key
+const HCAPTCHA_SITE_KEY = '178057a4-3bfe-4e46-a26e-5f7871da6c70';
 
 export interface HCaptchaRef {
   execute: () => Promise<string>;

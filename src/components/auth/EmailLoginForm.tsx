@@ -81,22 +81,21 @@ const EmailLoginForm: React.FC = () => {
   };
 
   const onSubmit = async (values: LoginFormValues) => {
+    // Require captcha to be completed before submission
+    if (!captchaToken) {
+      toast({
+        title: "Security verification required",
+        description: "Please complete the captcha verification first",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
       setLoading(true);
       setEmailNotConfirmed(false);
       
       const { identifier, password } = values;
-      
-      // Execute hCaptcha and get token
-      let token = captchaToken;
-      if (!token && captchaRef.current) {
-        try {
-          token = await captchaRef.current.execute();
-        } catch (captchaError) {
-          console.error('Captcha error:', captchaError);
-          throw new Error('Please complete the security verification');
-        }
-      }
       
       // Determine if identifier is email or phone
       const isEmail = identifier.includes('@');
@@ -111,7 +110,7 @@ const EmailLoginForm: React.FC = () => {
           email: identifier,
           password: password,
           options: {
-            captchaToken: token || undefined,
+            captchaToken: captchaToken,
           },
         });
         data = result.data;
@@ -135,7 +134,7 @@ const EmailLoginForm: React.FC = () => {
           email: authData.email,
           password: password,
           options: {
-            captchaToken: token || undefined,
+            captchaToken: captchaToken,
           },
         });
         data = result.data;

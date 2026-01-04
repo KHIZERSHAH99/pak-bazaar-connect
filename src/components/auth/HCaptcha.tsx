@@ -59,21 +59,23 @@ const HCaptchaWidget = forwardRef<HCaptchaRef, HCaptchaWidgetProps>(
 
     return (
       <div className={className}>
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-3">
           <Shield className="h-4 w-4 text-primary" />
           <span className="text-sm text-muted-foreground font-poppins">
-            Security verification
+            Complete security verification
           </span>
         </div>
-        <HCaptcha
-          ref={captchaRef}
-          sitekey={HCAPTCHA_SITE_KEY}
-          onVerify={handleVerify}
-          onError={handleError}
-          onExpire={handleExpire}
-          size="normal"
-          theme="light"
-        />
+        <div className="flex justify-center">
+          <HCaptcha
+            ref={captchaRef}
+            sitekey={HCAPTCHA_SITE_KEY}
+            onVerify={handleVerify}
+            onError={handleError}
+            onExpire={handleExpire}
+            size="normal"
+            theme="light"
+          />
+        </div>
       </div>
     );
   }

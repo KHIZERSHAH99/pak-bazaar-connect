@@ -2616,11 +2616,11 @@ export type Database = {
         Returns: Json
       }
       authenticate_user_by_phone:
-        | { Args: { user_phone: string }; Returns: Json }
         | {
             Args: { p_password: string; p_phone_number: string }
             Returns: Json
           }
+        | { Args: { user_phone: string }; Returns: Json }
       calculate_shipping_cost: {
         Args: {
           p_buyer_city?: string

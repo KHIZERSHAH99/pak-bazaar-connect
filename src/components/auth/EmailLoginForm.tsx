@@ -81,8 +81,8 @@ const EmailLoginForm: React.FC = () => {
   };
 
   const onSubmit = async (values: LoginFormValues) => {
-    // Require captcha to be completed before submission
-    if (!captchaToken) {
+    // Require captcha to be completed before submission (token can be empty string for fallback)
+    if (captchaToken === null) {
       toast({
         title: "Security verification required",
         description: "Please complete the captcha verification first",
@@ -103,15 +103,16 @@ const EmailLoginForm: React.FC = () => {
       console.log('Attempting login with:', identifier, 'Type:', isEmail ? 'email' : 'phone');
 
       let data, error;
+      
+      // Only include captchaToken if it's a real token (not empty fallback)
+      const authOptions = captchaToken ? { captchaToken } : undefined;
 
       if (isEmail) {
-        // Login with email - include captcha token
+        // Login with email
         const result = await supabase.auth.signInWithPassword({
           email: identifier,
           password: password,
-          options: {
-            captchaToken: captchaToken,
-          },
+          options: authOptions,
         });
         data = result.data;
         error = result.error;
@@ -133,9 +134,7 @@ const EmailLoginForm: React.FC = () => {
         const result = await supabase.auth.signInWithPassword({
           email: authData.email,
           password: password,
-          options: {
-            captchaToken: captchaToken,
-          },
+          options: authOptions,
         });
         data = result.data;
         error = result.error;

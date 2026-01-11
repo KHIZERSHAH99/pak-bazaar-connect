@@ -76,8 +76,9 @@ const HCaptchaWidget = forwardRef<HCaptchaRef, HCaptchaWidgetProps>(
     const handleFallbackChange = (checked: boolean) => {
       setFallbackChecked(checked);
       if (checked) {
-        // Provide a fallback token for development/preview environments
-        onVerify?.('fallback-verification-token');
+        // Don't send any token - Supabase will skip captcha validation if no token provided
+        // This works when captcha is set to "optional" in Supabase Auth settings
+        onVerify?.('');  // Empty string signals verified but no token
         setIsVerified(true);
       } else {
         onExpire?.();

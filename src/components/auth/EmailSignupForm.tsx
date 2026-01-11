@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,14 +8,21 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Phone, Briefcase, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Phone, Briefcase, Lock, Mail, Eye, EyeOff, User, Building2, CheckCircle2, XCircle, Loader2, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/phone-utils';
+import HCaptchaWidget, { HCaptchaRef } from './HCaptcha';
 
-// Signup form schema with email as primary
+// Enhanced signup form schema with business info
 const signupSchema = z.object({
   businessType: z.enum(['wholesaler', 'seller']),
+  contactName: z.string()
+    .min(2, "Contact name must be at least 2 characters")
+    .max(100, "Contact name must be less than 100 characters"),
+  businessName: z.string()
+    .min(2, "Business name must be at least 2 characters")
+    .max(200, "Business name must be less than 200 characters"),
   email: z.string().email('Please enter a valid email address'),
   phoneNumber: z.string()
     .min(1, "Phone number is required")
@@ -36,32 +43,107 @@ const EmailSignupForm = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptchaRef>(null);
+  
+  // Phone validation state
+  const [phoneCheckStatus, setPhoneCheckStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: { 
       businessType: 'seller',
+      contactName: '',
+      businessName: '',
       email: '',
       phoneNumber: '',
       password: ''
     }
   });
 
+  // Watch phone number for real-time validation
+  const phoneNumber = form.watch('phoneNumber');
+  
+  useEffect(() => {
+    const checkPhone = async () => {
+      if (!phoneNumber || !validatePakistaniPhone(phoneNumber)) {
+        setPhoneCheckStatus('idle');
+        return;
+      }
+      
+      setPhoneCheckStatus('checking');
+      
+      try {
+        const normalizedPhone = normalizePakistaniPhone(phoneNumber);
+        
+        // Check if phone exists using RPC function
+        const { data: phoneData, error } = await supabase.rpc('check_phone_exists', {
+          p_phone: normalizedPhone
+        });
+        
+        if (error) {
+          console.error('Phone check error:', error);
+          setPhoneCheckStatus('idle');
+          return;
+        }
+        
+        setPhoneCheckStatus(phoneData ? 'taken' : 'available');
+      } catch (err) {
+        console.error('Phone validation error:', err);
+        setPhoneCheckStatus('idle');
+      }
+    };
+    
+    const timer = setTimeout(checkPhone, 500);
+    return () => clearTimeout(timer);
+  }, [phoneNumber]);
+
+  const handleCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
+
+  const handleCaptchaExpire = () => {
+    setCaptchaToken(null);
+  };
+
   const handleSubmit = async (data: SignupFormValues) => {
+    // Require captcha completion
+    if (!captchaToken) {
+      toast({
+        variant: 'destructive',
+        title: 'Security Verification Required',
+        description: 'Please complete the captcha verification first.',
+      });
+      return;
+    }
+    
+    // Check if phone is already taken
+    if (phoneCheckStatus === 'taken') {
+      toast({
+        variant: 'destructive',
+        title: 'Phone Already Registered',
+        description: 'This phone number is already registered. Please login instead.',
+      });
+      return;
+    }
+    
     setIsLoading(true);
     try {
       const normalizedPhone = normalizePakistaniPhone(data.phoneNumber);
       const redirectUrl = `${window.location.origin}/dashboard`;
 
-      // Sign up with Supabase
+      // Sign up with Supabase including captcha token
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
           emailRedirectTo: redirectUrl,
+          captchaToken: captchaToken,
           data: {
             role: data.businessType,
             phone: normalizedPhone,
+            contact_name: data.contactName,
+            business_name: data.businessName,
           },
         },
       });
@@ -71,10 +153,20 @@ const EmailSignupForm = () => {
       // Store email for confirmation page
       sessionStorage.setItem('pendingConfirmationEmail', data.email);
 
+      toast({
+        title: 'Account Created!',
+        description: 'Please check your email to confirm your account.',
+      });
+
       // Redirect to email confirmation page
       navigate('/email-confirmation-pending');
     } catch (error: any) {
       console.error('Signup error:', error);
+      
+      // Reset captcha on error
+      captchaRef.current?.reset();
+      setCaptchaToken(null);
+      
       toast({
         variant: 'destructive',
         title: 'Signup Failed',
@@ -86,6 +178,20 @@ const EmailSignupForm = () => {
   };
 
   const selectedBusinessType = form.watch('businessType');
+  const password = form.watch('password');
+  
+  // Calculate password strength
+  const getPasswordStrength = (pwd: string) => {
+    let strength = 0;
+    if (pwd.length >= 8) strength++;
+    if (/[A-Z]/.test(pwd)) strength++;
+    if (/[a-z]/.test(pwd)) strength++;
+    if (/[0-9]/.test(pwd)) strength++;
+    if (/[^A-Za-z0-9]/.test(pwd)) strength++;
+    return strength;
+  };
+  
+  const passwordStrength = getPasswordStrength(password || '');
 
   return (
     <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-card">
@@ -152,6 +258,54 @@ const EmailSignupForm = () => {
               )}
             />
 
+            {/* Contact Name Field */}
+            <FormField
+              control={form.control}
+              name="contactName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Contact Name *
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Your full name"
+                      disabled={isLoading}
+                      className="font-poppins"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Business Name Field */}
+            <FormField
+              control={form.control}
+              name="businessName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <Building2 className="w-4 h-4" />
+                    Business Name *
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Your business or shop name"
+                      disabled={isLoading}
+                      className="font-poppins"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Email Field */}
             <FormField
               control={form.control}
@@ -187,14 +341,35 @@ const EmailSignupForm = () => {
                     Pakistani Mobile Number *
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      type="tel"
-                      placeholder="03XX-XXXXXXX"
-                      disabled={isLoading}
-                      className="font-poppins"
-                    />
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        type="tel"
+                        placeholder="03XX-XXXXXXX"
+                        disabled={isLoading}
+                        className="font-poppins pr-10"
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        {phoneCheckStatus === 'checking' && (
+                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        )}
+                        {phoneCheckStatus === 'available' && (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        )}
+                        {phoneCheckStatus === 'taken' && (
+                          <XCircle className="h-4 w-4 text-destructive" />
+                        )}
+                      </div>
+                    </div>
                   </FormControl>
+                  {phoneCheckStatus === 'taken' && (
+                    <p className="text-sm text-destructive">
+                      This phone number is already registered. <Link to="/login" className="underline">Login instead?</Link>
+                    </p>
+                  )}
+                  {phoneCheckStatus === 'available' && (
+                    <p className="text-sm text-green-600">Phone number is available!</p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -215,7 +390,7 @@ const EmailSignupForm = () => {
                       <Input
                         {...field}
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Create a password"
+                        placeholder="Create a strong password"
                         disabled={isLoading}
                         className="font-poppins pr-10"
                       />
@@ -229,17 +404,63 @@ const EmailSignupForm = () => {
                       </button>
                     </div>
                   </FormControl>
+                  {/* Password strength indicator */}
+                  {password && (
+                    <div className="space-y-1">
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((level) => (
+                          <div
+                            key={level}
+                            className={`h-1 flex-1 rounded-full transition-colors ${
+                              passwordStrength >= level
+                                ? passwordStrength <= 2
+                                  ? 'bg-destructive'
+                                  : passwordStrength <= 3
+                                  ? 'bg-yellow-500'
+                                  : 'bg-green-500'
+                                : 'bg-muted'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {passwordStrength <= 2 ? 'Weak password' : passwordStrength <= 3 ? 'Medium strength' : 'Strong password'}
+                      </p>
+                    </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
 
+            {/* hCaptcha Widget */}
+            <div className="py-2">
+              <HCaptchaWidget
+                ref={captchaRef}
+                onVerify={handleCaptchaVerify}
+                onExpire={handleCaptchaExpire}
+              />
+              {captchaToken && (
+                <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Security verification complete</span>
+                </div>
+              )}
+            </div>
+
             <Button 
               type="submit" 
               className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white py-6 font-semibold"
-              disabled={isLoading}
+              disabled={isLoading || !captchaToken || phoneCheckStatus === 'taken'}
             >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating Account...
+                </>
+              ) : (
+                'Create Account'
+              )}
             </Button>
           </form>
         </Form>
@@ -247,9 +468,9 @@ const EmailSignupForm = () => {
         {/* Security Notice */}
         <div className="mt-4 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
           <div className="flex items-start gap-2">
-            <Lock className="w-4 h-4 text-pakistani_green-600 mt-0.5 flex-shrink-0" />
+            <Shield className="w-4 h-4 text-pakistani_green-600 mt-0.5 flex-shrink-0" />
             <p className="text-xs text-muted-foreground">
-              <strong>Secure Registration:</strong> Pakistani phone-only authentication with end-to-end encryption
+              <strong>Secure Registration:</strong> Your data is protected with industry-standard encryption and verified with hCaptcha.
             </p>
           </div>
         </div>

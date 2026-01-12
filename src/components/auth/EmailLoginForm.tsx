@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +12,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { normalizePakistaniPhone } from '@/lib/auth/phone-utils';
-import HCaptchaWidget, { HCaptchaRef } from './HCaptcha';
 
 const loginSchema = z.object({
   identifier: z.string().min(1, 'Email or phone number is required'),
@@ -32,8 +31,6 @@ const EmailLoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [emailNotConfirmed, setEmailNotConfirmed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const captchaRef = useRef<HCaptchaRef>(null);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -81,18 +78,6 @@ const EmailLoginForm: React.FC = () => {
   };
 
   const onSubmit = async (values: LoginFormValues) => {
-    // Check if captcha is completed (including preview mode bypass)
-    const isPreviewBypass = captchaToken === 'PREVIEW_MODE_BYPASS' || captchaToken === 'FALLBACK_VERIFIED';
-    
-    if (!captchaToken) {
-      toast({
-        title: "Security verification required",
-        description: "Please complete the captcha verification first",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     try {
       setLoading(true);
       setEmailNotConfirmed(false);
@@ -105,16 +90,12 @@ const EmailLoginForm: React.FC = () => {
       console.log('Attempting login with:', identifier, 'Type:', isEmail ? 'email' : 'phone');
 
       let data, error;
-      
-      // Only include captchaToken if it's a real hCaptcha token (not preview/fallback bypass)
-      const authOptions = isPreviewBypass ? undefined : { captchaToken };
 
       if (isEmail) {
-        // Login with email
+        // Login with email - no captcha needed since it's disabled in Supabase
         const result = await supabase.auth.signInWithPassword({
           email: identifier,
           password: password,
-          options: authOptions,
         });
         data = result.data;
         error = result.error;
@@ -136,7 +117,6 @@ const EmailLoginForm: React.FC = () => {
         const result = await supabase.auth.signInWithPassword({
           email: authData.email,
           password: password,
-          options: authOptions,
         });
         data = result.data;
         error = result.error;
@@ -144,10 +124,6 @@ const EmailLoginForm: React.FC = () => {
 
       if (error) {
         console.error('Login error:', error);
-        
-        // Reset captcha on error
-        captchaRef.current?.reset();
-        setCaptchaToken(null);
         
         // Check if it's an email not confirmed error
         if (error.message.toLowerCase().includes('email not confirmed')) {
@@ -169,10 +145,6 @@ const EmailLoginForm: React.FC = () => {
     } catch (error: any) {
       console.error('Login failed:', error);
       
-      // Reset captcha on error
-      captchaRef.current?.reset();
-      setCaptchaToken(null);
-      
       toast({
         title: "Login failed",
         description: error.message || "Invalid email or password",
@@ -181,14 +153,6 @@ const EmailLoginForm: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCaptchaVerify = (token: string) => {
-    setCaptchaToken(token);
-  };
-
-  const handleCaptchaExpire = () => {
-    setCaptchaToken(null);
   };
 
   return (
@@ -276,14 +240,6 @@ const EmailLoginForm: React.FC = () => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
-
-              {/* hCaptcha Widget */}
-              <HCaptchaWidget
-                ref={captchaRef}
-                onVerify={handleCaptchaVerify}
-                onExpire={handleCaptchaExpire}
-                className="flex flex-col items-center my-4"
               />
 
               <Button

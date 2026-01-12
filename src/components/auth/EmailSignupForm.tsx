@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,11 +8,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Phone, Briefcase, Lock, Mail, Eye, EyeOff, User, Building2, CheckCircle2, XCircle, Loader2, Shield } from 'lucide-react';
+import { Phone, Briefcase, Lock, Mail, Eye, EyeOff, User, Building2, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/phone-utils';
-import HCaptchaWidget, { HCaptchaRef } from './HCaptcha';
 
 // Enhanced signup form schema with business info
 const signupSchema = z.object({
@@ -43,8 +42,6 @@ const EmailSignupForm = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const captchaRef = useRef<HCaptchaRef>(null);
   
   // Phone validation state
   const [phoneCheckStatus, setPhoneCheckStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
@@ -98,27 +95,7 @@ const EmailSignupForm = () => {
     return () => clearTimeout(timer);
   }, [phoneNumber]);
 
-  const handleCaptchaVerify = (token: string) => {
-    setCaptchaToken(token);
-  };
-
-  const handleCaptchaExpire = () => {
-    setCaptchaToken(null);
-  };
-
   const handleSubmit = async (formData: SignupFormValues) => {
-    // Check if captcha is completed (including preview mode bypass)
-    const isPreviewBypass = captchaToken === 'PREVIEW_MODE_BYPASS' || captchaToken === 'FALLBACK_VERIFIED';
-    
-    if (!captchaToken) {
-      toast({
-        variant: 'destructive',
-        title: 'Security Verification Required',
-        description: 'Please complete the captcha verification first.',
-      });
-      return;
-    }
-    
     // Check if phone is already taken
     if (phoneCheckStatus === 'taken') {
       toast({
@@ -134,27 +111,19 @@ const EmailSignupForm = () => {
       const normalizedPhone = normalizePakistaniPhone(formData.phoneNumber);
       const redirectUrl = `${window.location.origin}/dashboard`;
 
-      // Only include captchaToken if it's a real hCaptcha token (not preview/fallback bypass)
-      const signupOptions: any = {
-        emailRedirectTo: redirectUrl,
-        data: {
-          role: formData.businessType,
-          phone: normalizedPhone,
-          contact_name: formData.contactName,
-          business_name: formData.businessName,
-        },
-      };
-      
-      // Add captcha token only if not in preview/bypass mode
-      if (!isPreviewBypass) {
-        signupOptions.captchaToken = captchaToken;
-      }
-
-      // Sign up with Supabase
+      // Sign up with Supabase (no captcha since it's disabled in Supabase dashboard)
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: signupOptions,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            role: formData.businessType,
+            phone: normalizedPhone,
+            contact_name: formData.contactName,
+            business_name: formData.businessName,
+          },
+        },
       });
 
       if (signUpError) throw signUpError;
@@ -171,10 +140,6 @@ const EmailSignupForm = () => {
       navigate('/email-confirmation-pending');
     } catch (error: any) {
       console.error('Signup error:', error);
-      
-      // Reset captcha on error
-      captchaRef.current?.reset();
-      setCaptchaToken(null);
       
       toast({
         variant: 'destructive',
@@ -442,25 +407,10 @@ const EmailSignupForm = () => {
               )}
             />
 
-            {/* hCaptcha Widget */}
-            <div className="py-2">
-              <HCaptchaWidget
-                ref={captchaRef}
-                onVerify={handleCaptchaVerify}
-                onExpire={handleCaptchaExpire}
-              />
-              {captchaToken && (
-                <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span>Security verification complete</span>
-                </div>
-              )}
-            </div>
-
             <Button 
               type="submit" 
               className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white py-6 font-semibold"
-              disabled={isLoading || !captchaToken || phoneCheckStatus === 'taken'}
+              disabled={isLoading || phoneCheckStatus === 'taken'}
             >
               {isLoading ? (
                 <>
@@ -477,9 +427,9 @@ const EmailSignupForm = () => {
         {/* Security Notice */}
         <div className="mt-4 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
           <div className="flex items-start gap-2">
-            <Shield className="w-4 h-4 text-pakistani_green-600 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-pakistani_green-600 mt-0.5 flex-shrink-0" />
             <p className="text-xs text-muted-foreground">
-              <strong>Secure Registration:</strong> Your data is protected with industry-standard encryption and verified with hCaptcha.
+              <strong>Secure Registration:</strong> Your data is protected with industry-standard encryption.
             </p>
           </div>
         </div>

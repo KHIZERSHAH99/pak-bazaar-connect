@@ -81,8 +81,10 @@ const EmailLoginForm: React.FC = () => {
   };
 
   const onSubmit = async (values: LoginFormValues) => {
-    // Require captcha to be completed before submission (token can be empty string for fallback)
-    if (captchaToken === null) {
+    // Check if captcha is completed (including preview mode bypass)
+    const isPreviewBypass = captchaToken === 'PREVIEW_MODE_BYPASS' || captchaToken === 'FALLBACK_VERIFIED';
+    
+    if (!captchaToken) {
       toast({
         title: "Security verification required",
         description: "Please complete the captcha verification first",
@@ -104,8 +106,8 @@ const EmailLoginForm: React.FC = () => {
 
       let data, error;
       
-      // Only include captchaToken if it's a real token (not empty fallback)
-      const authOptions = captchaToken ? { captchaToken } : undefined;
+      // Only include captchaToken if it's a real hCaptcha token (not preview/fallback bypass)
+      const authOptions = isPreviewBypass ? undefined : { captchaToken };
 
       if (isEmail) {
         // Login with email

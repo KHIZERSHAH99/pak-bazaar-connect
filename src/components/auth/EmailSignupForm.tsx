@@ -106,8 +106,10 @@ const EmailSignupForm = () => {
     setCaptchaToken(null);
   };
 
-  const handleSubmit = async (data: SignupFormValues) => {
-    // Require captcha completion
+  const handleSubmit = async (formData: SignupFormValues) => {
+    // Check if captcha is completed (including preview mode bypass)
+    const isPreviewBypass = captchaToken === 'PREVIEW_MODE_BYPASS' || captchaToken === 'FALLBACK_VERIFIED';
+    
     if (!captchaToken) {
       toast({
         variant: 'destructive',
@@ -129,29 +131,36 @@ const EmailSignupForm = () => {
     
     setIsLoading(true);
     try {
-      const normalizedPhone = normalizePakistaniPhone(data.phoneNumber);
+      const normalizedPhone = normalizePakistaniPhone(formData.phoneNumber);
       const redirectUrl = `${window.location.origin}/dashboard`;
 
-      // Sign up with Supabase including captcha token
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          captchaToken: captchaToken,
-          data: {
-            role: data.businessType,
-            phone: normalizedPhone,
-            contact_name: data.contactName,
-            business_name: data.businessName,
-          },
+      // Only include captchaToken if it's a real hCaptcha token (not preview/fallback bypass)
+      const signupOptions: any = {
+        emailRedirectTo: redirectUrl,
+        data: {
+          role: formData.businessType,
+          phone: normalizedPhone,
+          contact_name: formData.contactName,
+          business_name: formData.businessName,
         },
+      };
+      
+      // Add captcha token only if not in preview/bypass mode
+      if (!isPreviewBypass) {
+        signupOptions.captchaToken = captchaToken;
+      }
+
+      // Sign up with Supabase
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: signupOptions,
       });
 
       if (signUpError) throw signUpError;
 
       // Store email for confirmation page
-      sessionStorage.setItem('pendingConfirmationEmail', data.email);
+      sessionStorage.setItem('pendingConfirmationEmail', formData.email);
 
       toast({
         title: 'Account Created!',

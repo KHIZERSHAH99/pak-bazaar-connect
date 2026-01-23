@@ -3,36 +3,21 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowUp, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import AdBanner from '@/components/ads/AdBanner';
+
 const Footer = () => {
-  const {
-    t,
-    language
-  } = useLanguage();
+  const { t, language } = useLanguage();
+  
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
   };
-  return <footer className="bg-card border-t border-border mt-16">
-      {/* Footer Ad - Good visibility */}
-      <div className="bg-muted/50 py-4">
-        <div className="max-w-7xl mx-auto px-4 flex justify-center">
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground mb-2">Advertisement</p>
-            <div className="hidden md:block">
-              <AdBanner size="468x60" />
-            </div>
-            <div className="block md:hidden">
-              <AdBanner size="320x50" />
-            </div>
-          </div>
-        </div>
-      </div>
-      
+
+  return (
+    <footer className="bg-card border-t border-border mt-16">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 bg-inherit">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 bg-green-200">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2 bg-transparent">
             <div className="flex items-center mb-4">
               <div className="bg-pakistani_green-600 rounded-xl p-2 shadow-md">
@@ -186,6 +171,8 @@ const Footer = () => {
           </Button>
         </div>
       </div>
-    </footer>;
+    </footer>
+  );
 };
+
 export default Footer;

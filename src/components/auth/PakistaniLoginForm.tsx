@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PhoneInput } from '@/components/ui/phone-input';
-import { Phone, Lock, Eye, EyeOff, Loader2, Shield } from 'lucide-react';
+import { Phone, Eye, EyeOff, Loader2, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authenticateUserWithCaptcha } from '@/lib/auth/consolidated';
 import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/auth/phone-utils';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
-import { showAuthError, parseAuthError, validatePasswordStrength } from '@/lib/auth/auth-errors';
-import HCaptchaWidget, { HCaptchaRef } from './HCaptcha';
+import { showAuthError } from '@/lib/auth/auth-errors';
 
 const PakistaniLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -20,9 +19,7 @@ const PakistaniLoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [accountLocked, setAccountLocked] = useState(false);
   const [lockoutMessage, setLockoutMessage] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   
-  const captchaRef = useRef<HCaptchaRef>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -60,20 +57,10 @@ const PakistaniLoginForm: React.FC = () => {
         throw new Error(lockoutMessage || 'Account is temporarily locked');
       }
 
-      // Execute hCaptcha and get token
-      let token = captchaToken;
-      if (!token && captchaRef.current) {
-        try {
-          token = await captchaRef.current.execute();
-        } catch (captchaError) {
-          console.error('Captcha error:', captchaError);
-          throw new Error('Please complete the security verification');
-        }
-      }
-
-      console.log('🔐 Attempting consolidated authentication:', cleanPhone);
+      console.log('🔐 Attempting authentication:', cleanPhone);
       
-      const result = await authenticateUserWithCaptcha(cleanPhone, password, token || undefined);
+      // Call authentication without captcha token (hCaptcha disabled in Supabase)
+      const result = await authenticateUserWithCaptcha(cleanPhone, password);
       
       if (result.user) {
         toast({
@@ -87,10 +74,6 @@ const PakistaniLoginForm: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      
-      // Reset captcha on error
-      captchaRef.current?.reset();
-      setCaptchaToken(null);
       
       // Use the new error handling system
       showAuthError(error, 'login');
@@ -117,14 +100,6 @@ const PakistaniLoginForm: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleCaptchaVerify = (token: string) => {
-    setCaptchaToken(token);
-  };
-
-  const handleCaptchaExpire = () => {
-    setCaptchaToken(null);
   };
 
   return (
@@ -196,14 +171,6 @@ const PakistaniLoginForm: React.FC = () => {
               Forgot Password?
             </Link>
           </div>
-
-          {/* hCaptcha Widget */}
-          <HCaptchaWidget
-            ref={captchaRef}
-            onVerify={handleCaptchaVerify}
-            onExpire={handleCaptchaExpire}
-            className="flex flex-col items-center"
-          />
 
           <Button
             type="submit"

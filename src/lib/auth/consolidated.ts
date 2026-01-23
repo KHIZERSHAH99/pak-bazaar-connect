@@ -14,11 +14,11 @@ export const authenticateUser = async (emailOrPhone: string, password: string) =
   return authenticateUserWithCaptcha(emailOrPhone, password);
 };
 
-// Consolidated authentication with security and hCaptcha support
+// Consolidated authentication with security (hCaptcha disabled in Supabase)
 export const authenticateUserWithCaptcha = async (
   emailOrPhone: string, 
   password: string, 
-  captchaToken?: string
+  _captchaToken?: string // Kept for backwards compatibility but not used
 ) => {
   try {
     console.log('🔐 Starting consolidated authentication');
@@ -87,17 +87,11 @@ export const authenticateUserWithCaptcha = async (
         
         for (const emailFormat of emailFormats) {
           console.log('Attempting direct auth with email:', emailFormat);
-          const signInOptions: any = {
+          
+          const { data, error } = await supabase.auth.signInWithPassword({
             email: emailFormat,
             password
-          };
-          
-          // Add captcha token if provided
-          if (captchaToken) {
-            signInOptions.options = { captchaToken };
-          }
-          
-          const { data, error } = await supabase.auth.signInWithPassword(signInOptions);
+          });
           
           if (!error && data.user) {
             console.log('Successfully authenticated with email format:', emailFormat);
@@ -118,18 +112,11 @@ export const authenticateUserWithCaptcha = async (
       throw new Error('Please enter a valid email or phone number');
     }
     
-    // Authenticate with Supabase
-    const signInOptions: any = {
+    // Authenticate with Supabase (no captcha - disabled in Supabase settings)
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: authEmail,
       password
-    };
-    
-    // Add captcha token if provided
-    if (captchaToken) {
-      signInOptions.options = { captchaToken };
-    }
-    
-    const { data, error } = await supabase.auth.signInWithPassword(signInOptions);
+    });
     
     if (error) {
       console.error('Authentication error:', error);
@@ -153,7 +140,7 @@ export const registerUser = async (
   password: string,
   role: UserRole,
   businessData: Record<string, any>,
-  captchaToken?: string
+  _captchaToken?: string // Kept for backwards compatibility but not used
 ) => {
   try {
     console.log('🔐 Starting consolidated registration');
@@ -205,8 +192,8 @@ export const registerUser = async (
       throw new Error('Please enter a valid email or phone number');
     }
     
-    // Create account with captcha token
-    const signUpOptions: any = {
+    // Create account (no captcha - disabled in Supabase settings)
+    const signUpOptions = {
       emailRedirectTo: `${window.location.origin}/dashboard`,
       data: {
         email: authEmail,
@@ -224,11 +211,6 @@ export const registerUser = async (
         display_identifier: emailOrPhone
       }
     };
-    
-    // Add captcha token if provided
-    if (captchaToken) {
-      signUpOptions.captchaToken = captchaToken;
-    }
     
     const { data, error } = await supabase.auth.signUp({
       email: authEmail,

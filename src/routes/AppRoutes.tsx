@@ -9,7 +9,7 @@ import Index from '@/pages/Index';
 import NotFound from '@/pages/NotFound';
 
 // Lazy load all other pages for better initial load performance
-const FixedLogin = lazy(() => import('@/pages/FixedLogin'));
+const Login = lazy(() => import('@/pages/Login'));
 const Signup = lazy(() => import('@/pages/Signup'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Profile = lazy(() => import('@/pages/Profile'));
@@ -81,7 +81,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/" element={<Index />} />
         
         {/* Auth routes */}
-        <Route path="/login" element={<LazyRoute><FixedLogin /></LazyRoute>} />
+        <Route path="/login" element={<LazyRoute><Login /></LazyRoute>} />
         <Route path="/signup" element={<LazyRoute><Signup /></LazyRoute>} />
         
         {/* Product routes */}

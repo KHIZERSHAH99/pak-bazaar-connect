@@ -43,7 +43,8 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     name: '',
     phone: '',
     address: '',
-    city: ''
+    city: '',
+    order_notes: ''
   });
   const [shippingInfo, setShippingInfo] = useState<ShippingCalculation | null>(null);
   const [isExpress, setIsExpress] = useState(false);
@@ -172,7 +173,8 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
       const order = await createOrderWithPayment(resolvedShopId, finalAmount, selectedMethod, screenshot, {
         buyer_name: buyerInfo.name,
         buyer_phone: buyerInfo.phone,
-        buyer_address: `${buyerInfo.address}, ${buyerInfo.city}`
+        buyer_address: `${buyerInfo.address}, ${buyerInfo.city}`,
+        order_notes: buyerInfo.order_notes || undefined
       });
       if (!order) {
         throw new Error('Failed to create order');
@@ -285,6 +287,20 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             ...buyerInfo,
             address: value
           })} type="textarea" placeholder={t('enterStreetAddress')} required validation="description" maxLength={500} />
+            
+            {/* Order Notes */}
+            <div className="mt-4">
+              <SecureOrderFormInput 
+                id="orderNotes" 
+                label="Order Notes / Special Instructions (Optional)" 
+                value={buyerInfo.order_notes} 
+                onChange={value => setBuyerInfo({...buyerInfo, order_notes: value})} 
+                type="textarea" 
+                placeholder="Any special requirements or delivery instructions..." 
+                validation="description" 
+                maxLength={500} 
+              />
+            </div>
           </div>
 
           {/* Order Summary */}

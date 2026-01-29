@@ -1,13 +1,16 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Package, CheckCircle, XCircle, Clock, TrendingUp } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Package, CheckCircle, XCircle, Clock, TrendingUp, RotateCcw, FileText, Download } from 'lucide-react';
 import { getUnifiedOrders, optimisticUpdateOrderStatus } from '@/lib/orders/unified-queries';
+import { reusePreviousOrder } from '@/lib/orders/core';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 interface UnifiedOrderManagementProps {
   userRole: 'seller' | 'wholesaler';
@@ -16,20 +19,27 @@ interface UnifiedOrderManagementProps {
 // Memoized Order Card Component
 const OrderCard = memo(({ 
   order, 
-  onStatusUpdate 
+  onStatusUpdate,
+  onReorder,
+  userRole
 }: { 
   order: any; 
   onStatusUpdate: (orderId: string, status: string) => void;
+  onReorder: (orderId: string) => void;
+  userRole: 'seller' | 'wholesaler';
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending': return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300';
+      case 'confirmed': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+      case 'completed': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300';
+      case 'delivered': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300';
+      case 'rejected': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
+
+  const showReorderButton = userRole === 'seller' && ['completed', 'delivered'].includes(order.status);
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -61,7 +71,16 @@ const OrderCard = memo(({
             <span className="capitalize">{order.payment_method?.replace('_', ' ')}</span>
           </div>
           
-          {order.status === 'pending' && (
+          {/* Order Notes if present */}
+          {order.order_notes && (
+            <div className="pt-2 border-t">
+              <p className="text-xs text-muted-foreground">Notes:</p>
+              <p className="text-sm">{order.order_notes}</p>
+            </div>
+          )}
+          
+          {/* Wholesaler actions */}
+          {order.status === 'pending' && userRole === 'wholesaler' && (
             <div className="flex gap-2 pt-2">
               <Button 
                 size="sm" 
@@ -79,6 +98,21 @@ const OrderCard = memo(({
               >
                 <XCircle className="h-4 w-4 mr-1" />
                 Reject
+              </Button>
+            </div>
+          )}
+
+          {/* Seller reorder button */}
+          {showReorderButton && (
+            <div className="pt-2 border-t mt-2">
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => onReorder(order.id)}
+                className="w-full"
+              >
+                <RotateCcw className="h-4 w-4 mr-1" />
+                Reorder
               </Button>
             </div>
           )}
@@ -154,6 +188,7 @@ OrderStats.displayName = 'OrderStats';
 const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRole }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Single query for orders and stats with 30-second stale time
   const { data, isLoading } = useQuery({
@@ -212,6 +247,26 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
     updateStatusMutation.mutate({ orderId, status });
   };
 
+  const handleReorder = async (orderId: string) => {
+    try {
+      const orderData = await reusePreviousOrder(orderId);
+      // Navigate to shop with order data pre-filled
+      toast({
+        title: 'Order Data Loaded',
+        description: 'Redirecting to create new order with same details...',
+      });
+      // Store reorder data in sessionStorage for the order form to pick up
+      sessionStorage.setItem('reorder_data', JSON.stringify(orderData));
+      navigate(`/shop/${orderData.shop_id}`);
+    } catch (error: any) {
+      toast({
+        title: 'Reorder Failed',
+        description: error.message || 'Could not load previous order details',
+        variant: 'destructive'
+      });
+    }
+  };
+
   // Memoize filtered orders
   const filteredOrders = useMemo(() => {
     return data?.orders || [];
@@ -252,6 +307,8 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
               key={order.id} 
               order={order} 
               onStatusUpdate={handleStatusUpdate}
+              onReorder={handleReorder}
+              userRole={userRole}
             />
           ))
         )}

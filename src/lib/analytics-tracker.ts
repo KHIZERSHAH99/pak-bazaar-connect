@@ -34,18 +34,32 @@ class AnalyticsTracker {
 
   async track(event: AnalyticsEvent): Promise<void> {
     try {
+      // Security: Omit IP address (handled server-side) and anonymize user agent
+      const anonymizedUserAgent = this.anonymizeUserAgent(event.user_agent || navigator.userAgent);
+      
       await supabase.from('analytics_events').insert({
         user_id: this.userId,
         event_type: event.event_type,
         event_data: event.event_data || {},
-        page_url: event.page_url || window.location.href,
-        referrer: event.referrer || document.referrer,
-        user_agent: event.user_agent || navigator.userAgent,
+        page_url: event.page_url || window.location.pathname, // Only path, not full URL with query params
+        referrer: event.referrer ? new URL(event.referrer).hostname : null, // Only referrer hostname
+        user_agent: anonymizedUserAgent,
         session_id: this.sessionId
+        // Note: IP address is intentionally omitted client-side for privacy
       });
     } catch (error) {
       console.error('Analytics tracking error:', error);
     }
+  }
+
+  // Anonymize user agent to reduce fingerprinting
+  private anonymizeUserAgent(userAgent: string): string {
+    // Extract only browser family and OS, not specific version details
+    const browserMatch = userAgent.match(/(Chrome|Firefox|Safari|Edge|Opera)/i);
+    const osMatch = userAgent.match(/(Windows|Mac|Linux|Android|iOS)/i);
+    const browser = browserMatch ? browserMatch[1] : 'Unknown';
+    const os = osMatch ? osMatch[1] : 'Unknown';
+    return `${browser}/${os}`;
   }
 
   // Track page views

@@ -169,7 +169,8 @@ const signInWithPhone = async (phoneNumber: string, password: string) => {
     throw new Error(authResult.error || 'No account found with this phone number');
   }
 
-  console.log('✅ Found user, attempting password authentication with email:', authResult.email);
+  // Security: Do not log email addresses (PII) - use only for auth
+  console.log('✅ Found user, attempting password authentication');
 
   // Sign in with the found email
   const { data, error } = await supabase.auth.signInWithPassword({

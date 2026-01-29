@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { GUEST_USER_UUID } from '@/lib/constants';
+import { sanitizeUserInput } from '@/lib/security/content-sanitizer';
 
 export interface EnhancedOrderData {
   shopId: string;
@@ -20,6 +21,19 @@ export interface EnhancedOrderData {
   paymentScreenshot?: File;
   isGuestOrder?: boolean;
 }
+
+// Sanitize order input fields to prevent XSS
+const sanitizeOrderData = (orderData: EnhancedOrderData) => ({
+  buyerName: orderData.buyerName ? sanitizeUserInput(orderData.buyerName, 100) : undefined,
+  buyerPhone: orderData.buyerPhone ? sanitizeUserInput(orderData.buyerPhone, 20) : undefined,
+  buyerAddress: orderData.buyerAddress ? sanitizeUserInput(orderData.buyerAddress, 500) : undefined,
+  buyerStreetAddress: orderData.buyerStreetAddress ? sanitizeUserInput(orderData.buyerStreetAddress, 300) : undefined,
+  buyerArea: orderData.buyerArea ? sanitizeUserInput(orderData.buyerArea, 100) : undefined,
+  buyerCity: orderData.buyerCity ? sanitizeUserInput(orderData.buyerCity, 100) : undefined,
+  buyerProvince: orderData.buyerProvince ? sanitizeUserInput(orderData.buyerProvince, 50) : 'Punjab',
+  buyerPostalCode: orderData.buyerPostalCode ? sanitizeUserInput(orderData.buyerPostalCode, 10) : undefined,
+  deliveryInstructions: orderData.deliveryInstructions ? sanitizeUserInput(orderData.deliveryInstructions, 500) : undefined,
+});
 
 export const createOrderWithPaymentEnhanced = async (orderData: EnhancedOrderData): Promise<string | null> => {
   try {
@@ -74,7 +88,10 @@ export const createOrderWithPaymentEnhanced = async (orderData: EnhancedOrderDat
       screenshotUrl = filePath;
     }
     
-    // Create the order with enhanced address fields
+    // Sanitize all user-provided text fields to prevent XSS
+    const sanitized = sanitizeOrderData(orderData);
+    
+    // Create the order with sanitized address fields
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert([{
@@ -83,15 +100,15 @@ export const createOrderWithPaymentEnhanced = async (orderData: EnhancedOrderDat
         total_amount: orderData.totalAmount,
         payment_method: orderData.paymentMethod || 'bank_transfer',
         payment_screenshot: screenshotUrl,
-        buyer_name: orderData.buyerName,
-        buyer_phone: orderData.buyerPhone,
-        buyer_address: orderData.buyerAddress,
-        buyer_street_address: orderData.buyerStreetAddress,
-        buyer_area: orderData.buyerArea,
-        buyer_city: orderData.buyerCity,
-        buyer_province: orderData.buyerProvince || 'Punjab',
-        buyer_postal_code: orderData.buyerPostalCode,
-        delivery_instructions: orderData.deliveryInstructions,
+        buyer_name: sanitized.buyerName,
+        buyer_phone: sanitized.buyerPhone,
+        buyer_address: sanitized.buyerAddress,
+        buyer_street_address: sanitized.buyerStreetAddress,
+        buyer_area: sanitized.buyerArea,
+        buyer_city: sanitized.buyerCity,
+        buyer_province: sanitized.buyerProvince,
+        buyer_postal_code: sanitized.buyerPostalCode,
+        delivery_instructions: sanitized.deliveryInstructions,
         shipping_method: orderData.shippingMethod || 'standard',
         shipping_cost: orderData.shippingCost || 0,
         is_guest_order: !user,

@@ -2,6 +2,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser } from '@/lib/auth';
 import { uploadImage } from '@/lib/storage';
 import { Product } from '@/lib/types';
+import { validateAndSanitizeInput } from '@/lib/security/simple-validation';
+import { sanitizeUserInput } from '@/lib/security/content-sanitizer';
 
 export const createProduct = async (productData: {
   shop_id: string;
@@ -35,6 +37,16 @@ export const createProduct = async (productData: {
       throw new Error('Minimum order quantity must be at least 1');
     }
 
+    // XSS sanitization for user-provided content
+    const nameValidation = await validateAndSanitizeInput(productData.name, 'business', 100);
+    if (!nameValidation.isValid && nameValidation.securityThreats.length > 0) {
+      throw new Error('Invalid product name: contains prohibited content');
+    }
+    
+    const sanitizedDescription = productData.description 
+      ? sanitizeUserInput(productData.description, 2000)
+      : null;
+
     // Verify user owns the shop
     const { data: shop, error: shopError } = await supabase
       .from('shops')
@@ -53,7 +65,12 @@ export const createProduct = async (productData: {
     const { data, error } = await supabase
       .from('products')
       .insert({
-        ...productData,
+        shop_id: productData.shop_id,
+        name: nameValidation.sanitizedValue,
+        description: sanitizedDescription,
+        price: productData.price,
+        image: productData.image,
+        category_id: productData.category_id,
         is_active: true,
         verification_status: 'approved',
         moq: productData.moq || 1
@@ -212,9 +229,24 @@ export const updateProduct = async (
       throw new Error('You can only update your own products');
     }
 
+    // Sanitize any user-provided content in updates
+    const sanitizedUpdates = { ...updates };
+    
+    if (updates.name) {
+      const nameValidation = await validateAndSanitizeInput(updates.name, 'business', 100);
+      if (nameValidation.securityThreats.length > 0) {
+        throw new Error('Invalid product name: contains prohibited content');
+      }
+      sanitizedUpdates.name = nameValidation.sanitizedValue;
+    }
+    
+    if (updates.description) {
+      sanitizedUpdates.description = sanitizeUserInput(updates.description, 2000);
+    }
+
     const { data, error } = await supabase
       .from('products')
-      .update(updates)
+      .update(sanitizedUpdates)
       .eq('id', productId)
       .select()
       .single();

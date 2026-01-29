@@ -530,6 +530,7 @@ export const createOrderWithPayment = async (
     buyer_name: string;
     buyer_phone: string;
     buyer_address: string;
+    order_notes?: string;
   }
 ): Promise<Order | null> => {
   try {
@@ -564,7 +565,8 @@ export const createOrderWithPayment = async (
       is_guest_order: isGuestOrder,
       buyer_name: buyerInfo?.buyer_name || 'Unknown',
       buyer_phone: buyerInfo?.buyer_phone || '',
-      buyer_address: buyerInfo?.buyer_address || ''
+      buyer_address: buyerInfo?.buyer_address || '',
+      order_notes: buyerInfo?.order_notes || null
     };
 
     const order = await createOrderWithValidation(orderData);

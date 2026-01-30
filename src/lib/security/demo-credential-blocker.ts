@@ -1,28 +1,21 @@
 import { supabase } from '@/integrations/supabase/client';
 
-// Demo credentials that should be blocked in production
-// These are stored as environment variables in production
-const getDemoCredentials = () => {
-  // In production, these should come from environment variables
-  // to avoid hardcoding sensitive information
-  const envDemoEmails = process.env.BLOCKED_EMAILS?.split(',') || [];
-  const envDemoPhones = process.env.BLOCKED_PHONES?.split(',') || [];
-  
-  // Fallback to minimal set for development only
-  if (window.location.hostname === 'localhost') {
-    return {
-      emails: ['test@example.com', 'demo@example.com'],
-      phones: ['03000000000'],
-      passwords: ['password', '123456']
-    };
-  }
-  
-  // In production, use environment-based configuration
-  return {
-    emails: envDemoEmails.length > 0 ? envDemoEmails : [],
-    phones: envDemoPhones.length > 0 ? envDemoPhones : [],
-    passwords: [] // Never store weak passwords, check dynamically
-  };
+// Pattern-based detection for demo/test credentials
+// No hardcoded credentials - uses pattern matching instead
+const DEMO_IDENTIFIER_PATTERNS = [
+  /^test/i,
+  /^demo/i,
+  /^admin@test/i,
+  /^user\d*@/i,
+  /@test\.com$/i,
+  /@example\.com$/i,
+  /^0300{6,}/  // Repeated zeros pattern in phone
+];
+
+const isDevelopmentEnvironment = (): boolean => {
+  return window.location.hostname === 'localhost' || 
+         window.location.hostname.includes('127.0.0.1') ||
+         window.location.hostname.includes('preview');
 };
 
 // Common weak password patterns to check
@@ -51,41 +44,42 @@ export const checkDemoCredentialSecurity = (
 ): SecurityCheckResult => {
   const suggestions: string[] = [];
   
-  // Check if we're in development mode
-  const isDevelopment = window.location.hostname === 'localhost' || 
-                       window.location.hostname.includes('preview');
-  
-  // In development, allow demo credentials
-  if (isDevelopment) {
+  // In development, allow any credentials
+  if (isDevelopmentEnvironment()) {
     return { isBlocked: false };
   }
 
-  const demoCredentials = getDemoCredentials();
-
-  // Block demo emails in production
-  if (email && demoCredentials.emails.includes(email.toLowerCase())) {
-    return {
-      isBlocked: true,
-      reason: 'Demo credentials are not allowed in production',
-      suggestions: [
-        'Use your real email address',
-        'Create a proper business account',
-        'Contact support if you need assistance'
-      ]
-    };
+  // Block demo/test email patterns in production
+  if (email) {
+    const isTestEmail = DEMO_IDENTIFIER_PATTERNS.some(p => p.test(email));
+    if (isTestEmail) {
+      return {
+        isBlocked: true,
+        reason: 'Test/demo email patterns are not allowed in production',
+        suggestions: [
+          'Use your real email address',
+          'Create a proper business account',
+          'Contact support if you need assistance'
+        ]
+      };
+    }
   }
 
-  // Block demo phone numbers in production
-  if (phone && demoCredentials.phones.includes(phone.replace(/[\s-+()]/g, ''))) {
-    return {
-      isBlocked: true,
-      reason: 'Demo phone numbers are not allowed in production',
-      suggestions: [
-        'Use your real phone number',
-        'Ensure you can receive SMS verification',
-        'Use a Pakistani mobile number format'
-      ]
-    };
+  // Block demo phone number patterns in production
+  if (phone) {
+    const cleanPhone = phone.replace(/[\s\-+()]/g, '');
+    const isTestPhone = DEMO_IDENTIFIER_PATTERNS.some(p => p.test(cleanPhone));
+    if (isTestPhone) {
+      return {
+        isBlocked: true,
+        reason: 'Test/demo phone number patterns are not allowed in production',
+        suggestions: [
+          'Use your real phone number',
+          'Ensure you can receive SMS verification',
+          'Use a Pakistani mobile number format'
+        ]
+      };
+    }
   }
 
   // Block weak/demo passwords in production
@@ -132,18 +126,22 @@ export const logCredentialSecurityEvent = async (
   }
 ) => {
   try {
-    await supabase.rpc('log_audit_event', {
-      p_user_id: null, // No user ID for blocked attempts
-      p_event_type: event,
-      p_new_values: JSON.stringify({
-        ...details,
-        timestamp: new Date().toISOString(),
-        ip_address: 'client-side', // We can't get real IP on client side
-        user_agent: navigator.userAgent
-      })
-    });
+    // Use direct insert instead of RPC to avoid dependency on non-existent function
+    await supabase
+      .from('audit_logs')
+      .insert({
+        user_id: null, // No user ID for blocked attempts
+        event_type: event,
+        new_values: {
+          ...details,
+          timestamp: new Date().toISOString(),
+          ip_address: 'client-side', // We can't get real IP on client side
+          user_agent: navigator.userAgent
+        },
+        table_name: 'authentication'
+      });
   } catch (error) {
-    console.error('Failed to log credential security event:', error);
+    console.warn('Failed to log credential security event:', error);
   }
 };
 

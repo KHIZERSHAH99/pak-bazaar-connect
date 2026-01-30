@@ -280,27 +280,41 @@ class AuthSecurityManager {
     }
   }
 
-  // Check for demo credentials in production
+  // Check for demo/weak credentials in production using pattern detection
+  // No hardcoded credentials - uses pattern-based detection instead
   isDemoCredentials(identifier: string, password: string): boolean {
-    const demoCredentials = [
-      { phone: '03001234567', pass: 'demo123' },
-      { phone: '03004567890', pass: 'demo123' },
-      { email: 'admin@test.com', pass: 'admin123' },
-      { email: 'wholesaler1@test.com', pass: 'wholesale123' },
-      { email: 'seller1@test.com', pass: 'seller123' }
-    ];
-
-    const isDev = process.env.NODE_ENV === 'development' || 
-                  window.location.hostname === 'localhost';
+    const isDev = import.meta.env.DEV || 
+                  window.location.hostname === 'localhost' ||
+                  window.location.hostname.includes('preview');
     
-    if (!isDev) {
-      // Block demo credentials in production
-      return demoCredentials.some(cred => 
-        (cred.phone === identifier || cred.email === identifier) && cred.pass === password
-      );
+    if (isDev) {
+      return false; // Allow in development/preview
     }
 
-    return false;
+    // Pattern-based detection for demo/test credentials (no hardcoded values)
+    const identifierPatterns = [
+      /^test/i,
+      /^demo/i,
+      /^admin@test/i,
+      /^user\d*@/i,
+      /@test\.com$/i,
+      /@example\.com$/i,
+      /^0300{6,}/  // Repeated zeros pattern
+    ];
+
+    const weakPasswordPatterns = [
+      /^demo\d*$/i,
+      /^test\d*$/i,
+      /^admin\d*$/i,
+      /^password\d*$/i,
+      /^123456/,
+      /^qwerty/i
+    ];
+
+    const isTestIdentifier = identifierPatterns.some(p => p.test(identifier));
+    const isWeakPassword = weakPasswordPatterns.some(p => p.test(password));
+
+    return isTestIdentifier && isWeakPassword;
   }
 
   async enforceSecureLogin(identifier: string, password: string): Promise<{

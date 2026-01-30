@@ -37,15 +37,16 @@ class AnalyticsTracker {
       // Security: Omit IP address (handled server-side) and anonymize user agent
       const anonymizedUserAgent = this.anonymizeUserAgent(event.user_agent || navigator.userAgent);
       
-      await supabase.from('analytics_events').insert({
-        user_id: this.userId,
-        event_type: event.event_type,
-        event_data: event.event_data || {},
-        page_url: event.page_url || window.location.pathname, // Only path, not full URL with query params
-        referrer: event.referrer ? new URL(event.referrer).hostname : null, // Only referrer hostname
-        user_agent: anonymizedUserAgent,
-        session_id: this.sessionId
-        // Note: IP address is intentionally omitted client-side for privacy
+      // Use secure SECURITY DEFINER function to insert analytics events
+      // This bypasses RLS safely while preventing direct table manipulation
+      await supabase.rpc('secure_insert_analytics_event', {
+        p_event_type: event.event_type,
+        p_user_id: this.userId,
+        p_session_id: this.sessionId,
+        p_page_url: event.page_url || window.location.pathname,
+        p_referrer: event.referrer ? new URL(event.referrer).hostname : null,
+        p_user_agent: anonymizedUserAgent,
+        p_event_data: event.event_data || {}
       });
     } catch (error) {
       console.error('Analytics tracking error:', error);

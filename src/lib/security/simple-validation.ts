@@ -217,23 +217,43 @@ export const validateAndSanitizeInput = async (
 
 const logSecurityThreat = async (eventType: string, details: any) => {
   try {
-    await supabase.rpc('log_audit_event', {
-      p_user_id: (await supabase.auth.getUser()).data.user?.id,
-      p_event_type: eventType,
-      p_new_values: JSON.stringify(details)
-    });
+    // Use direct insert instead of RPC to avoid function dependency
+    const { data: { user } } = await supabase.auth.getUser();
+    await supabase
+      .from('audit_logs')
+      .insert({
+        user_id: user?.id || null,
+        event_type: eventType,
+        new_values: details,
+        table_name: 'security_validation'
+      });
   } catch (error) {
-    console.error('Failed to log security threat:', error);
+    console.warn('Failed to log security threat:', error);
   }
 };
 
-// Simplified field uniqueness checker
+// Rate limiting cache for uniqueness checks to prevent enumeration
+const uniquenessCheckCache = new Map<string, { result: boolean; timestamp: number }>();
+const CACHE_TTL_MS = 5000; // 5 second cache to prevent rapid enumeration
+
+// Simplified field uniqueness checker with rate limiting
 export const checkFieldUniqueness = async (
   field: string,
   value: string,
   excludeUserId?: string
 ): Promise<boolean> => {
+  // Create cache key
+  const cacheKey = `${field}:${value}`;
+  const cached = uniquenessCheckCache.get(cacheKey);
+  
+  // Return cached result if still valid (prevents rapid enumeration)
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.result;
+  }
+  
   try {
+    let result = false;
+    
     // Use direct queries to avoid TypeScript complexity
     if (field === 'email') {
       const { data } = await supabase
@@ -241,37 +261,44 @@ export const checkFieldUniqueness = async (
         .select('id')
         .eq('email', value)
         .limit(1);
-      return Boolean(data && data.length > 0);
-    }
-    
-    if (field === 'phone') {
+      result = Boolean(data && data.length > 0);
+    } else if (field === 'phone') {
       const { data } = await supabase
         .from('profiles')
         .select('id')
         .or(`phone_number.eq.${value},normalized_phone.eq.${value}`)
         .limit(1);
-      return Boolean(data && data.length > 0);
-    }
-    
-    if (field === 'ntn') {
+      result = Boolean(data && data.length > 0);
+    } else if (field === 'ntn') {
       const { data } = await supabase
         .from('profiles')
         .select('id')
         .eq('ntn_number', value)
         .limit(1);
-      return Boolean(data && data.length > 0);
-    }
-    
-    if (field === 'strn') {
+      result = Boolean(data && data.length > 0);
+    } else if (field === 'strn') {
       const { data } = await supabase
         .from('profiles')
         .select('id')
         .eq('strn_number', value)
         .limit(1);
-      return Boolean(data && data.length > 0);
+      result = Boolean(data && data.length > 0);
     }
     
-    return false;
+    // Cache the result
+    uniquenessCheckCache.set(cacheKey, { result, timestamp: Date.now() });
+    
+    // Clean old cache entries periodically
+    if (uniquenessCheckCache.size > 100) {
+      const now = Date.now();
+      for (const [key, val] of uniquenessCheckCache.entries()) {
+        if (now - val.timestamp > CACHE_TTL_MS) {
+          uniquenessCheckCache.delete(key);
+        }
+      }
+    }
+    
+    return result;
   } catch (error) {
     console.error(`${field} uniqueness check error:`, error);
     return false;

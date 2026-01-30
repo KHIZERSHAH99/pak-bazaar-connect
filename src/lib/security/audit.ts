@@ -5,15 +5,22 @@ export const logSecurityEvent = async (event: string, details: any = {}) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
-    // Enhanced event data - for now we'll log to console since audit_logs table needs to be added to types
-    const eventData = {
-      user_id: user?.id || null,
-      event_type: event,
-      timestamp: new Date().toISOString(),
-      user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
-      ip_address: null, // Will be populated by edge function if needed
-      details: details
-    };
+    // Use secure SECURITY DEFINER function to insert audit logs
+    // This bypasses RLS safely while preventing direct table manipulation
+    const { error } = await supabase.rpc('secure_insert_audit_log', {
+      p_user_id: user?.id || null,
+      p_event_type: event,
+      p_table_name: details.table_name || null,
+      p_record_id: details.record_id || null,
+      p_old_values: details.old_values || null,
+      p_new_values: details,
+      p_user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null
+    });
+
+    if (error) {
+      // Fallback to console logging if secure function fails
+      console.warn('Audit log insert failed, falling back to console:', error);
+    }
 
     // Always log to console for immediate visibility
     console.log(`🔒 Security Event: ${event}`, {
@@ -25,7 +32,12 @@ export const logSecurityEvent = async (event: string, details: any = {}) => {
     // Store in localStorage as backup (for development/debugging)
     if (typeof window !== 'undefined') {
       const securityLogs = JSON.parse(localStorage.getItem('security_logs') || '[]');
-      securityLogs.push(eventData);
+      securityLogs.push({
+        user_id: user?.id || null,
+        event_type: event,
+        timestamp: new Date().toISOString(),
+        details
+      });
       // Keep only last 100 entries
       if (securityLogs.length > 100) {
         securityLogs.splice(0, securityLogs.length - 100);

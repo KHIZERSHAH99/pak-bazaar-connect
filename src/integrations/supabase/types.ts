@@ -2874,6 +2874,50 @@ export type Database = {
         Returns: string
       }
       run_all_cleanups: { Args: never; Returns: undefined }
+      secure_insert_ad_click: {
+        Args: {
+          p_ad_id: string
+          p_placement?: string
+          p_session_id?: string
+          p_user_id?: string
+        }
+        Returns: string
+      }
+      secure_insert_ad_impression: {
+        Args: {
+          p_ad_id: string
+          p_placement?: string
+          p_session_id?: string
+          p_size?: string
+          p_source?: string
+          p_user_id?: string
+        }
+        Returns: string
+      }
+      secure_insert_analytics_event: {
+        Args: {
+          p_event_data?: Json
+          p_event_type: string
+          p_page_url?: string
+          p_referrer?: string
+          p_session_id?: string
+          p_user_agent?: string
+          p_user_id?: string
+        }
+        Returns: string
+      }
+      secure_insert_audit_log: {
+        Args: {
+          p_event_type: string
+          p_new_values?: Json
+          p_old_values?: Json
+          p_record_id?: string
+          p_table_name?: string
+          p_user_agent?: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       switch_business_role: { Args: { target_role: string }; Returns: Json }
       sync_auth_profiles: { Args: never; Returns: undefined }
       track_product_view: {

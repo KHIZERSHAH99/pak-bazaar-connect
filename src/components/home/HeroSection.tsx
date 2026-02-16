@@ -39,7 +39,7 @@ const HeroSection: React.FC = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 font-poppins" onClick={() => navigate(user ? '/dashboard' : '/signup')}>
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 font-poppins min-h-[48px]" onClick={() => navigate(user ? '/dashboard' : '/signup')}>
                 {user ? 'Dashboard' : 'Signup'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>

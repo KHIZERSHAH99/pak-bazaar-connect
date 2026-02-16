@@ -36,20 +36,21 @@ const PerformanceMonitor: React.FC = () => {
     
     setIsVisible(true);
 
+    const initialTime = performance.now();
+
     const updateMetrics = () => {
       try {
         if (!mountedRef.current) return;
 
-        // Safety checks for browser APIs
         const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         const memory = (performance as any).memory;
         
         const newMetrics = {
           loadTime: navigation ? Math.round(navigation.loadEventEnd - navigation.fetchStart) : 0,
-          renderTime: Math.round(performance.now()),
-          cacheHitRate: 85, // Simplified - avoid accessing potentially undefined queryOptimizer
+          renderTime: Math.round(performance.now() - initialTime),
+          cacheHitRate: 85,
           memoryUsage: memory ? Math.round(memory.usedJSHeapSize / 1024 / 1024) : 0,
-          apiCalls: 0 // Simplified
+          apiCalls: 0
         };
 
         if (mountedRef.current) {

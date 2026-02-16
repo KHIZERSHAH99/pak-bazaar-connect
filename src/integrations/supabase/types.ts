@@ -2874,6 +2874,15 @@ export type Database = {
         Returns: string
       }
       run_all_cleanups: { Args: never; Returns: undefined }
+      secure_check_rate_limit: {
+        Args: {
+          p_action: string
+          p_identifier: string
+          p_max_requests?: number
+          p_window_minutes?: number
+        }
+        Returns: boolean
+      }
       secure_insert_ad_click: {
         Args: {
           p_ad_id: string
@@ -2917,6 +2926,23 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      secure_insert_notification: {
+        Args: {
+          p_message: string
+          p_title: string
+          p_type: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      secure_track_product_view: {
+        Args: {
+          p_product_id: string
+          p_session_id?: string
+          p_user_id?: string
+        }
+        Returns: undefined
       }
       switch_business_role: { Args: { target_role: string }; Returns: Json }
       sync_auth_profiles: { Args: never; Returns: undefined }

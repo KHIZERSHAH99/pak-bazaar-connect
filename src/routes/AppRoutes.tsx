@@ -45,6 +45,9 @@ const DashboardWholesalerPreview = lazy(() => import('@/pages/dashboard/Dashboar
 const DashboardSellerPreview = lazy(() => import('@/pages/dashboard/DashboardSellerPreview'));
 const DashboardPayment = lazy(() => import('@/pages/dashboard/DashboardPayment'));
 const DashboardCoupons = lazy(() => import('@/pages/dashboard/DashboardCoupons'));
+const DashboardTutorials = lazy(() => import('@/pages/dashboard/DashboardTutorials'));
+const DashboardTutorialDetail = lazy(() => import('@/pages/dashboard/DashboardTutorialDetail'));
+const DashboardTutorialManager = lazy(() => import('@/pages/dashboard/DashboardTutorialManager'));
 
 // Seller pages - lazy load
 const SellerOrders = lazy(() => import('@/pages/seller/SellerOrders'));
@@ -132,7 +135,10 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/browse-shops" element={<ProtectedRoute requiredRole="seller"><LazyRoute><DashboardBrowseShops /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-preview" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardWholesalerPreview /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/seller-preview" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardSellerPreview /></LazyRoute></ProtectedRoute>} />
-        
+        <Route path="/dashboard/tutorials" element={<ProtectedRoute><LazyRoute><DashboardTutorials /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/tutorials/:id" element={<ProtectedRoute><LazyRoute><DashboardTutorialDetail /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/tutorial-manager" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardTutorialManager /></LazyRoute></ProtectedRoute>} />
+
         {/* Redirect old chat route to dashboard */}
         <Route path="/dashboard/chat" element={<Navigate to="/dashboard" replace />} />
 

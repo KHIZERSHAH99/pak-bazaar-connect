@@ -2436,6 +2436,83 @@ export type Database = {
         }
         Relationships: []
       }
+      tutorial_views: {
+        Row: {
+          id: string
+          tutorial_id: string
+          user_id: string
+          watched_at: string
+        }
+        Insert: {
+          id?: string
+          tutorial_id: string
+          user_id: string
+          watched_at?: string
+        }
+        Update: {
+          id?: string
+          tutorial_id?: string
+          user_id?: string
+          watched_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutorial_views_tutorial_id_fkey"
+            columns: ["tutorial_id"]
+            isOneToOne: false
+            referencedRelation: "tutorials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutorials: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          is_featured: boolean
+          is_important: boolean
+          target_page: string | null
+          target_role: string
+          thumbnail_url: string | null
+          title: string
+          youtube_url: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_featured?: boolean
+          is_important?: boolean
+          target_page?: string | null
+          target_role?: string
+          thumbnail_url?: string | null
+          title: string
+          youtube_url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_featured?: boolean
+          is_important?: boolean
+          target_page?: string | null
+          target_role?: string
+          thumbnail_url?: string | null
+          title?: string
+          youtube_url?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null

@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, ShoppingBag, FileText, TrendingUp, AlertTriangle, CheckCircle, Shield, Activity } from 'lucide-react';
+import { Users, ShoppingBag, FileText, TrendingUp, AlertTriangle, CheckCircle, Shield, Activity, Video } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SecurityMonitor } from '@/components/security/SecurityMonitor';
@@ -143,6 +143,12 @@ export const EnhancedAdminDashboard: React.FC = () => {
               <Button className="w-full justify-start" variant="outline">
                 <Shield className="h-4 w-4 mr-2" />
                 Full Admin Panel
+              </Button>
+            </Link>
+            <Link to="/dashboard/tutorial-manager">
+              <Button className="w-full justify-start" variant="outline">
+                <Video className="h-4 w-4 mr-2" />
+                Tutorial Manager
               </Button>
             </Link>
             <Button 

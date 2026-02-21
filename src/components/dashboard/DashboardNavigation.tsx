@@ -15,7 +15,9 @@ import {
   BarChart3,
   Truck,
   CreditCard,
-  Ticket
+  Ticket,
+  BookOpen,
+  Video
 } from 'lucide-react';
 
 interface NavItem {
@@ -45,6 +47,11 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
         icon: <Home className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
       { 
+        name: 'Tutorials', 
+        path: '/dashboard/tutorials', 
+        icon: <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
+      },
+      { 
         name: 'Profile', 
         path: '/profile', 
         icon: <Settings className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
@@ -52,6 +59,11 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
     ];
 
     const adminItems: NavItem[] = [
+      { 
+        name: 'Tutorial Manager', 
+        path: '/dashboard/tutorial-manager', 
+        icon: <Video className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
+      },
     ];
 
     const wholesalerItems: NavItem[] = [

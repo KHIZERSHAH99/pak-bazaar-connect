@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import DashboardSidebar from './dashboard/DashboardSidebar';
 import SEOHead from '@/components/ui/seo-head';
+import ContextualTutorialButton from '@/components/tutorials/ContextualTutorialButton';
 import PerformanceMonitor from '@/components/ui/performance-monitor';
 import { usePageAnalytics } from '@/hooks/usePageAnalytics';
 import { Button } from '@/components/ui/button';
@@ -63,6 +64,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </main>
       </div>
       <Footer />
+      <ContextualTutorialButton />
       <PerformanceMonitor />
     </div>;
 };

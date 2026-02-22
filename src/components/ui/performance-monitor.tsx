@@ -24,25 +24,30 @@ const PerformanceMonitor: React.FC = () => {
   });
 
   const isAdmin = profile?.role === 'admin';
-  const mountTimeRef = React.useRef(performance.now());
+  const renderTimeRef = React.useRef<number | null>(null);
+
+  // Capture render time exactly once after first paint
+  useEffect(() => {
+    if (renderTimeRef.current === null) {
+      requestAnimationFrame(() => {
+        renderTimeRef.current = Math.round(performance.now());
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (!isAdmin) return;
 
-    // Capture render time once after mount
-    const renderTime = Math.round(performance.now() - mountTimeRef.current);
-
     const updateMetrics = () => {
       const cacheStats = queryOptimizer.getCacheStats();
       
-      // Use First Contentful Paint for real user-perceived load time
       const paintEntries = performance.getEntriesByType('paint');
       const fcp = paintEntries.find(e => e.name === 'first-contentful-paint');
       const loadTime = fcp ? Math.round(fcp.startTime) : 0;
       
       setMetrics({
         loadTime,
-        renderTime,
+        renderTime: renderTimeRef.current ?? 0,
         cacheHitRate: Math.round(cacheStats.hitRate * 100),
         memoryUsage: (performance as any).memory ? 
           Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024) : 0,
@@ -50,9 +55,8 @@ const PerformanceMonitor: React.FC = () => {
       });
     };
 
-    // Delay initial update to ensure FCP is available
-    const initialTimeout = setTimeout(updateMetrics, 500);
-    const interval = setInterval(updateMetrics, 10000);
+    const initialTimeout = setTimeout(updateMetrics, 1000);
+    const interval = setInterval(updateMetrics, 30000);
 
     return () => {
       clearTimeout(initialTimeout);

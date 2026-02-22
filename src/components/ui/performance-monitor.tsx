@@ -34,10 +34,14 @@ const PerformanceMonitor: React.FC = () => {
 
     const updateMetrics = () => {
       const cacheStats = queryOptimizer.getCacheStats();
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      
+      // Use First Contentful Paint for real user-perceived load time
+      const paintEntries = performance.getEntriesByType('paint');
+      const fcp = paintEntries.find(e => e.name === 'first-contentful-paint');
+      const loadTime = fcp ? Math.round(fcp.startTime) : 0;
       
       setMetrics({
-        loadTime: navigation ? Math.round(navigation.loadEventEnd - navigation.fetchStart) : 0,
+        loadTime,
         renderTime,
         cacheHitRate: Math.round(cacheStats.hitRate * 100),
         memoryUsage: (performance as any).memory ? 
@@ -46,10 +50,14 @@ const PerformanceMonitor: React.FC = () => {
       });
     };
 
-    updateMetrics();
+    // Delay initial update to ensure FCP is available
+    const initialTimeout = setTimeout(updateMetrics, 500);
     const interval = setInterval(updateMetrics, 10000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
   }, [isAdmin]);
 
   if (!isAdmin) return null;
@@ -72,7 +80,7 @@ const PerformanceMonitor: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-2 text-xs">
         <div className="flex justify-between items-center">
-          <span>Page Load:</span>
+          <span>FCP:</span>
           <Badge variant={getPerformanceStatus(metrics.loadTime, [2000, 4000])}>
             {metrics.loadTime}ms
           </Badge>

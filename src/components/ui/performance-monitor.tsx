@@ -22,15 +22,15 @@ const PerformanceMonitor: React.FC = () => {
     memoryUsage: 0,
     apiCalls: 0
   });
-  
-  const [isVisible, setIsVisible] = useState(false);
+
+  const isAdmin = profile?.role === 'admin';
+  const mountTimeRef = React.useRef(performance.now());
 
   useEffect(() => {
-    // Only show for admin users
-    const isAdmin = profile?.role === 'admin';
-    setIsVisible(isAdmin);
+    if (!isAdmin) return;
 
-    if (!isVisible) return;
+    // Capture render time once after mount
+    const renderTime = Math.round(performance.now() - mountTimeRef.current);
 
     const updateMetrics = () => {
       const cacheStats = queryOptimizer.getCacheStats();
@@ -38,7 +38,7 @@ const PerformanceMonitor: React.FC = () => {
       
       setMetrics({
         loadTime: navigation ? Math.round(navigation.loadEventEnd - navigation.fetchStart) : 0,
-        renderTime: Math.round(performance.now()),
+        renderTime,
         cacheHitRate: Math.round(cacheStats.hitRate * 100),
         memoryUsage: (performance as any).memory ? 
           Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024) : 0,
@@ -47,12 +47,12 @@ const PerformanceMonitor: React.FC = () => {
     };
 
     updateMetrics();
-    const interval = setInterval(updateMetrics, 5000);
+    const interval = setInterval(updateMetrics, 10000);
 
     return () => clearInterval(interval);
-  }, [isVisible, profile]);
+  }, [isAdmin]);
 
-  if (!isVisible) return null;
+  if (!isAdmin) return null;
 
   const getPerformanceStatus = (value: number, thresholds: [number, number]) => {
     if (value <= thresholds[0]) return 'success';

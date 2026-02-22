@@ -35,7 +35,7 @@ const ContextualTutorialButton: React.FC = () => {
         onClick={handleOpen}
         variant="outline"
         size="sm"
-        className="fixed bottom-6 right-6 z-40 shadow-lg font-poppins gap-2 bg-background"
+        className="fixed bottom-20 right-6 z-40 shadow-lg font-poppins gap-2 bg-background"
       >
         <Video className="h-4 w-4" /> Watch Tutorial
       </Button>

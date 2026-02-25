@@ -14,6 +14,8 @@ const MAX_CACHE_SIZE = 50;
 
 class QueryOptimizerEnhanced {
   private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private hits = 0;
+  private misses = 0;
   private defaultConfig: QueryOptimizationConfig = {
     enableCaching: true,
     cacheTimeout: 5 * 60 * 1000, // 5 minutes
@@ -57,8 +59,10 @@ class QueryOptimizerEnhanced {
     if (config.enableCaching) {
       const cached = this.cache.get(cacheKey);
       if (cached && this.isValidCache(cached)) {
+        this.hits++;
         return cached.data;
       }
+      this.misses++;
     }
 
     try {
@@ -202,21 +206,21 @@ class QueryOptimizerEnhanced {
         cleanedCount++;
       }
     }
-    if (cleanedCount > 0) {
+    if (import.meta.env.DEV && cleanedCount > 0) {
       console.log(`[QueryOptimizerEnhanced] Cleaned ${cleanedCount} expired entries`);
     }
   }
 
   getCacheStats() {
-    const validEntries = Array.from(this.cache.values()).filter(item => 
-      this.isValidCache(item)
-    ).length;
+    const total = this.hits + this.misses;
     
     return {
       totalEntries: this.cache.size,
-      validEntries,
+      validEntries: Array.from(this.cache.values()).filter(item => this.isValidCache(item)).length,
       maxSize: MAX_CACHE_SIZE,
-      hitRate: validEntries / this.cache.size || 0
+      hitRate: total > 0 ? this.hits / total : 0,
+      hits: this.hits,
+      misses: this.misses
     };
   }
 }

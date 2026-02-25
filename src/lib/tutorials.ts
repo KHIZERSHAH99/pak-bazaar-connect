@@ -58,26 +58,54 @@ export const getYouTubeThumbnail = (url: string): string | null => {
   return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
 };
 
-// Fetch tutorials for users (filtered by role)
-export const fetchTutorials = async (userRole?: string) => {
+// Sort options for tutorials
+export type TutorialSortOption = 'featured' | 'newest' | 'popular';
+
+// Fetch tutorials for users (filtered by role, with sort)
+export const fetchTutorials = async (userRole?: string, sort: TutorialSortOption = 'featured') => {
   let query = supabase
     .from('tutorials')
     .select('*')
-    .eq('is_active', true)
-    .order('is_featured', { ascending: false })
-    .order('is_important', { ascending: false })
-    .order('created_at', { ascending: false });
+    .eq('is_active', true);
+
+  if (sort === 'featured') {
+    query = query
+      .order('is_featured', { ascending: false })
+      .order('is_important', { ascending: false })
+      .order('created_at', { ascending: false });
+  } else if (sort === 'newest') {
+    query = query.order('created_at', { ascending: false });
+  } else {
+    // 'popular' - will sort client-side after getting view counts
+    query = query.order('created_at', { ascending: false });
+  }
 
   const { data, error } = await query;
   if (error) throw error;
 
-  // Filter by role client-side (since target_role can be 'all' or specific)
+  let results = data || [];
   if (userRole) {
-    return (data || []).filter(
+    results = results.filter(
       (t: any) => t.target_role === 'all' || t.target_role === userRole
     );
   }
-  return data || [];
+  return results;
+};
+
+// Fetch view counts for tutorials (admin)
+export const fetchTutorialViewCounts = async (): Promise<Record<string, number>> => {
+  const { data, error } = await supabase
+    .from('tutorial_views')
+    .select('tutorial_id');
+  if (error) {
+    if (import.meta.env.DEV) console.error('Error fetching view counts:', error);
+    return {};
+  }
+  const counts: Record<string, number> = {};
+  (data || []).forEach((v: any) => {
+    counts[v.tutorial_id] = (counts[v.tutorial_id] || 0) + 1;
+  });
+  return counts;
 };
 
 // Fetch all tutorials for admin

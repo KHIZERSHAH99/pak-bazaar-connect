@@ -314,49 +314,27 @@ export const deleteProduct = async (productId: string): Promise<void> => {
 
 export const getActiveProducts = async (limit: number = 20): Promise<Product[]> => {
   try {
-    // Use the new RPC function to avoid RLS issues
     const { data, error } = await supabase
-      .rpc('get_active_products_list');
+      .from('products')
+      .select(`
+        id, name, description, price, image, shop_id, is_active, category_id,
+        moq, verification_status, sample_available, sample_price, created_at,
+        shops!products_shop_id_fkey (id, name, logo),
+        categories!products_category_id_fkey (id, name, description)
+      `)
+      .eq('is_active', true)
+      .eq('verification_status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(limit);
 
     if (error) {
-      console.error('Error fetching active products:', error);
+      if (import.meta.env.DEV) console.error('Error fetching active products:', error);
       throw error;
     }
 
-    if (!data || data.length === 0) {
-      return [];
-    }
-
-    // Get categories separately
-    const categoriesData = await supabase.from('categories').select('*');
-    const categories = categoriesData.data || [];
-
-    // Map the RPC data to the Product type
-    const products = data.map(product => ({
-      id: product.id,
-      name: product.name,
-      description: product.description || '',
-      price: product.price,
-      image: product.image,
-      shop_id: product.shop_id,
-      is_active: product.is_active,
-      category_id: product.category_id,
-      moq: product.moq || 1,
-      verification_status: product.verification_status || 'approved',
-      sample_available: product.sample_available || false,
-      sample_price: product.sample_price || null,
-      created_at: product.created_at,
-      shops: product.shop_name ? {
-        id: product.shop_id,
-        name: product.shop_name,
-        logo: product.shop_logo
-      } : null,
-      categories: categories.find(cat => cat.id === product.category_id) || null
-    }));
-
-    return products as Product[];
+    return (data || []) as unknown as Product[];
   } catch (error) {
-    console.error('Error in getActiveProducts:', error);
+    if (import.meta.env.DEV) console.error('Error in getActiveProducts:', error);
     return [];
   }
 };

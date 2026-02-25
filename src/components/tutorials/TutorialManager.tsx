@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Plus, Search, Edit2, Trash2, Play, Star, AlertCircle, Filter } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Play, Star, AlertCircle, Filter, Eye, ExternalLink } from 'lucide-react';
 import {
   fetchAllTutorials,
   createTutorial,
@@ -20,10 +20,26 @@ import {
   uploadTutorialThumbnail,
   isValidYouTubeUrl,
   getYouTubeThumbnail,
+  extractYouTubeId,
+  fetchTutorialViewCounts,
   TUTORIAL_CATEGORIES,
   TUTORIAL_TARGET_ROLES,
   type Tutorial,
 } from '@/lib/tutorials';
+
+const TARGET_PAGES = [
+  { value: '', label: 'None (Global)' },
+  { value: '/dashboard/shops', label: 'Shops' },
+  { value: '/dashboard/products', label: 'Products' },
+  { value: '/dashboard/orders', label: 'Orders' },
+  { value: '/dashboard/seller-orders', label: 'Seller Orders' },
+  { value: '/dashboard/wholesaler-orders', label: 'Wholesaler Orders' },
+  { value: '/dashboard/payment', label: 'Payment' },
+  { value: '/dashboard/shipping', label: 'Shipping' },
+  { value: '/dashboard/analytics', label: 'Analytics' },
+  { value: '/dashboard/coupons', label: 'Coupons' },
+  { value: '/dashboard/browse-shops', label: 'Browse Shops' },
+];
 
 const TutorialManager: React.FC = () => {
   const { user } = useAuth();
@@ -38,6 +54,11 @@ const TutorialManager: React.FC = () => {
   const { data: tutorials = [], isLoading } = useQuery({
     queryKey: ['admin-tutorials'],
     queryFn: fetchAllTutorials,
+  });
+
+  const { data: viewCounts = {} } = useQuery({
+    queryKey: ['tutorial-view-counts'],
+    queryFn: fetchTutorialViewCounts,
   });
 
   const createMutation = useMutation({
@@ -178,6 +199,9 @@ const TutorialManager: React.FC = () => {
                         <Badge variant="secondary" className="text-[10px]">{tutorial.target_role}</Badge>
                         {tutorial.is_featured && <Badge className="text-[10px] bg-amber-500"><Star className="h-2.5 w-2.5 mr-0.5" />Featured</Badge>}
                         {!tutorial.is_active && <Badge variant="destructive" className="text-[10px]">Inactive</Badge>}
+                        <Badge variant="outline" className="text-[10px] gap-0.5">
+                          <Eye className="h-2.5 w-2.5" /> {viewCounts[tutorial.id] || 0}
+                        </Badge>
                       </div>
                     </div>
                     <div className="flex gap-1 flex-shrink-0">
@@ -231,7 +255,9 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
   const [isActive, setIsActive] = useState(tutorial?.is_active ?? true);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const urlValid = youtubeUrl ? isValidYouTubeUrl(youtubeUrl) : true;
+  const videoId = youtubeUrl ? extractYouTubeId(youtubeUrl) : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -281,6 +307,36 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
             <AlertCircle className="h-3 w-3" /> Invalid YouTube URL
           </p>
         )}
+        {/* YouTube Preview */}
+        {videoId && urlValid && (
+          <div className="mt-2 space-y-2">
+            <img
+              src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+              alt="Video thumbnail"
+              className="w-full max-w-[240px] rounded border"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="font-poppins text-xs"
+              onClick={() => setShowPreview(!showPreview)}
+            >
+              <ExternalLink className="h-3 w-3 mr-1" /> {showPreview ? 'Hide Preview' : 'Preview Video'}
+            </Button>
+            {showPreview && (
+              <div className="aspect-video w-full max-w-[320px] rounded overflow-hidden">
+                <iframe
+                  src={`https://www.youtube.com/embed/${videoId}`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+                  allowFullScreen
+                  title="Video preview"
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <div>
         <Label className="font-poppins">Thumbnail (optional, uses YouTube thumbnail if empty)</Label>
@@ -307,8 +363,13 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
         </div>
       </div>
       <div>
-        <Label className="font-poppins">Target Page (optional, e.g. /dashboard/products)</Label>
-        <Input value={targetPage} onChange={(e) => setTargetPage(e.target.value)} placeholder="/dashboard/products" className="font-poppins" />
+        <Label className="font-poppins">Target Page</Label>
+        <Select value={targetPage} onValueChange={setTargetPage}>
+          <SelectTrigger className="font-poppins"><SelectValue placeholder="Select target page" /></SelectTrigger>
+          <SelectContent>
+            {TARGET_PAGES.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
       <div className="flex flex-wrap gap-6">
         <div className="flex items-center gap-2">

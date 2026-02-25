@@ -5,20 +5,24 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Play, Star, BookOpen } from 'lucide-react';
+import { Search, Play, Star, BookOpen, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { fetchTutorials, getYouTubeThumbnail, TUTORIAL_CATEGORIES, type Tutorial } from '@/lib/tutorials';
+import { fetchTutorials, getYouTubeThumbnail, TUTORIAL_CATEGORIES, type Tutorial, type TutorialSortOption } from '@/lib/tutorials';
 import { useNavigate } from 'react-router-dom';
+
+const PAGE_SIZE = 9;
 
 const TutorialGrid: React.FC = () => {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [sortBy, setSortBy] = useState<TutorialSortOption>('featured');
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const { data: tutorials = [], isLoading } = useQuery({
-    queryKey: ['tutorials', profile?.role],
-    queryFn: () => fetchTutorials(profile?.role || undefined),
+    queryKey: ['tutorials', profile?.role, sortBy],
+    queryFn: () => fetchTutorials(profile?.role || undefined, sortBy),
   });
 
   const filtered = tutorials.filter((t: any) => {
@@ -28,8 +32,11 @@ const TutorialGrid: React.FC = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const featured = filtered.filter((t: any) => t.is_featured);
-  const regular = filtered.filter((t: any) => !t.is_featured);
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  const featured = sortBy === 'featured' ? visible.filter((t: any) => t.is_featured) : [];
+  const regular = sortBy === 'featured' ? visible.filter((t: any) => !t.is_featured) : visible;
 
   return (
     <div className="space-y-6">
@@ -42,13 +49,13 @@ const TutorialGrid: React.FC = () => {
         </p>
       </div>
 
-      {/* Search and filter */}
+      {/* Search, filter and sort */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search tutorials..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 font-poppins" />
+          <Input placeholder="Search tutorials..." value={search} onChange={(e) => { setSearch(e.target.value); setVisibleCount(PAGE_SIZE); }} className="pl-9 font-poppins" />
         </div>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+        <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); setVisibleCount(PAGE_SIZE); }}>
           <SelectTrigger className="w-full sm:w-44 font-poppins">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
@@ -57,6 +64,15 @@ const TutorialGrid: React.FC = () => {
             {TUTORIAL_CATEGORIES.map((c) => (
               <SelectItem key={c} value={c}>{c}</SelectItem>
             ))}
+          </SelectContent>
+        </Select>
+        <Select value={sortBy} onValueChange={(v) => { setSortBy(v as TutorialSortOption); setVisibleCount(PAGE_SIZE); }}>
+          <SelectTrigger className="w-full sm:w-40 font-poppins">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="featured">Featured First</SelectItem>
+            <SelectItem value="newest">Newest</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -97,6 +113,19 @@ const TutorialGrid: React.FC = () => {
               <TutorialCard key={t.id} tutorial={t} onClick={() => navigate(`/dashboard/tutorials/${t.id}`)} />
             ))}
           </div>
+
+          {/* Load More */}
+          {hasMore && (
+            <div className="flex justify-center pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                className="font-poppins"
+              >
+                <ChevronDown className="h-4 w-4 mr-2" /> Load More ({filtered.length - visibleCount} remaining)
+              </Button>
+            </div>
+          )}
         </>
       )}
     </div>

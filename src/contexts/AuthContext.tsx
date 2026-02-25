@@ -55,29 +55,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const profileFetchedRef = React.useRef(false);
 
   // Fetch user profile with JWT expiry handling
   const fetchProfile = async (userId: string, retryCount = 0) => {
     try {
-      // Check if session is expired before fetching
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        console.log('No active session');
         setProfile(null);
         return;
       }
       
-      // Check if JWT is expired
       const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
-      const now = Date.now();
       
-      if (expiresAt < now) {
-        console.log('JWT expired, refreshing session...');
+      if (expiresAt < Date.now()) {
         const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
         
         if (refreshError || !refreshData.session) {
-          console.error('Session refresh failed:', refreshError);
           toast({
             title: "Session Expired",
             description: "Please sign in again",
@@ -87,25 +82,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProfile(null);
           return;
         }
-        
-        console.log('Session refreshed successfully');
       }
       
       const profileData = await getUserProfile();
       setProfile(profileData as Profile);
+      profileFetchedRef.current = true;
     } catch (error: any) {
-      console.error('Error fetching profile:', error);
+      if (import.meta.env.DEV) console.error('Error fetching profile:', error);
       
-      // Handle JWT expired error
       if (error?.code === 'PGRST301' && retryCount === 0) {
-        console.log('JWT expired error detected, attempting refresh...');
         const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
         
         if (!refreshError && refreshData.session) {
-          // Retry fetching profile after refresh
           return fetchProfile(userId, retryCount + 1);
         } else {
-          console.error('Failed to refresh session:', refreshError);
           toast({
             title: "Session Expired",
             description: "Please sign in again",
@@ -119,23 +109,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // State to trigger profile fetch
-  const [profileTrigger, setProfileTrigger] = useState<{ userId: string; email: string; metadata: any } | null>(null);
-
   // Initialize auth state
   useEffect(() => {
     let mounted = true;
     let refreshTimer: NodeJS.Timeout | null = null;
 
-    // Auto-refresh session before expiry
-    const setupSessionRefresh = (session: Session) => {
+    const setupSessionRefresh = (sess: Session) => {
       if (refreshTimer) clearTimeout(refreshTimer);
       
-      const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
-      const now = Date.now();
-      const timeUntilExpiry = expiresAt - now;
-      
-      // Refresh 5 minutes before expiry
+      const expiresAt = sess.expires_at ? sess.expires_at * 1000 : 0;
+      const timeUntilExpiry = expiresAt - Date.now();
       const refreshTime = Math.max(0, timeUntilExpiry - 5 * 60 * 1000);
       
       if (refreshTime > 0) {
@@ -143,67 +126,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           try {
             const { data, error } = await supabase.auth.refreshSession();
             if (error) {
-              console.error('Session refresh failed:', error);
-              // Force re-login if refresh fails
+              if (import.meta.env.DEV) console.error('Session refresh failed:', error);
               await supabase.auth.signOut();
             } else if (data.session) {
               setupSessionRefresh(data.session);
             }
           } catch (err) {
-            console.error('Session refresh error:', err);
+            if (import.meta.env.DEV) console.error('Session refresh error:', err);
           }
         }, refreshTime);
       }
     };
 
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event, sess) => {
         if (!mounted) return;
-
-        console.log('Auth state changed:', event, session?.user?.id);
         
-        // Handle JWT expired
         if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
-          if (session) {
-            setupSessionRefresh(session);
-          }
+          if (sess) setupSessionRefresh(sess);
         }
         
-        setSession(session);
-        setUser(session?.user ?? null);
+        setSession(sess);
+        setUser(sess?.user ?? null);
         
-        if (session?.user && event === 'SIGNED_IN') {
-          // Trigger profile fetch via state update (avoids deadlock)
-          setProfileTrigger({
-            userId: session.user.id,
-            email: session.user.email || '',
-            metadata: session.user.user_metadata
+        if (sess?.user && event === 'SIGNED_IN' && !profileFetchedRef.current) {
+          // Only fetch profile on first SIGNED_IN, not on token refreshes
+          ensureProfileSync(sess.user.id, sess.user.email || '', sess.user.user_metadata).then(() => {
+            fetchProfile(sess.user.id);
           });
         } else if (event === 'SIGNED_OUT') {
           setProfile(null);
+          profileFetchedRef.current = false;
           if (refreshTimer) clearTimeout(refreshTimer);
         }
         
-        if (mounted) {
-          setLoading(false);
-        }
+        if (mounted) setLoading(false);
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session: sess } }) => {
       if (!mounted) return;
       
-      setSession(session);
-      setUser(session?.user ?? null);
+      setSession(sess);
+      setUser(sess?.user ?? null);
       
-      if (session?.user) {
-        setupSessionRefresh(session);
-        // Ensure profile sync
-        ensureProfileSync(session.user.id, session.user.email || '', session.user.user_metadata).then(() => {
-          fetchProfile(session.user.id);
-        });
+      if (sess?.user) {
+        setupSessionRefresh(sess);
+        if (!profileFetchedRef.current) {
+          ensureProfileSync(sess.user.id, sess.user.email || '', sess.user.user_metadata).then(() => {
+            fetchProfile(sess.user.id);
+          });
+        }
       }
       
       setLoading(false);
@@ -215,17 +189,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       subscription.unsubscribe();
     };
   }, []);
-
-  // Separate effect for profile fetching (prevents deadlock)
-  useEffect(() => {
-    if (profileTrigger) {
-      const syncAndFetch = async () => {
-        await ensureProfileSync(profileTrigger.userId, profileTrigger.email, profileTrigger.metadata);
-        await fetchProfile(profileTrigger.userId);
-      };
-      syncAndFetch();
-    }
-  }, [profileTrigger]);
 
   // Auth methods
   const handleSignIn = async (phoneOrEmail: string, password: string): Promise<{ error?: string }> => {

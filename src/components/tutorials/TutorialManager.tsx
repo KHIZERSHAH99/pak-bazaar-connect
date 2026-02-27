@@ -11,16 +11,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Plus, Search, Edit2, Trash2, Play, Star, AlertCircle, Filter, Eye, ExternalLink } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Play, Star, AlertCircle, Filter, Eye } from 'lucide-react';
 import {
   fetchAllTutorials,
   createTutorial,
   updateTutorial,
   deleteTutorial,
   uploadTutorialThumbnail,
-  isValidYouTubeUrl,
+  isValidVideoUrl,
   getYouTubeThumbnail,
-  extractYouTubeId,
+  isDirectVideoFile,
+  toEmbeddableVideoUrl,
   fetchTutorialViewCounts,
   TUTORIAL_CATEGORIES,
   TUTORIAL_TARGET_ROLES,
@@ -246,7 +247,7 @@ interface TutorialFormProps {
 const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit, isLoading }) => {
   const [title, setTitle] = useState(tutorial?.title || '');
   const [description, setDescription] = useState(tutorial?.description || '');
-  const [youtubeUrl, setYoutubeUrl] = useState(tutorial?.youtube_url || '');
+  const [videoUrl, setVideoUrl] = useState(tutorial?.youtube_url || '');
   const [category, setCategory] = useState(tutorial?.category || 'General');
   const [targetRole, setTargetRole] = useState(tutorial?.target_role || 'all');
   const [targetPage, setTargetPage] = useState(tutorial?.target_page || 'none');
@@ -256,12 +257,13 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const urlValid = youtubeUrl ? isValidYouTubeUrl(youtubeUrl) : true;
-  const videoId = youtubeUrl ? extractYouTubeId(youtubeUrl) : null;
+  const urlValid = videoUrl ? isValidVideoUrl(videoUrl) : true;
+  const previewUrl = videoUrl ? toEmbeddableVideoUrl(videoUrl) : null;
+  const directVideo = videoUrl ? isDirectVideoFile(videoUrl) : false;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !youtubeUrl.trim() || !isValidYouTubeUrl(youtubeUrl)) return;
+    if (!title.trim() || !videoUrl.trim() || !isValidVideoUrl(videoUrl)) return;
 
     let thumbnailUrl = tutorial?.thumbnail_url || null;
     if (thumbnailFile) {
@@ -277,7 +279,7 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
     onSubmit({
       title: title.trim(),
       description: description.trim() || null,
-      youtube_url: youtubeUrl.trim(),
+      youtube_url: videoUrl.trim(),
       thumbnail_url: thumbnailUrl,
       category,
       target_role: targetRole,
@@ -300,21 +302,15 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
         <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Brief description of this tutorial" className="font-poppins" rows={3} />
       </div>
       <div>
-        <Label className="font-poppins">YouTube URL *</Label>
-        <Input value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." className="font-poppins" required />
-        {youtubeUrl && !urlValid && (
+        <Label className="font-poppins">Video URL *</Label>
+        <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://..." className="font-poppins" required />
+        {videoUrl && !urlValid && (
           <p className="text-destructive text-xs mt-1 flex items-center gap-1 font-poppins">
-            <AlertCircle className="h-3 w-3" /> Invalid YouTube URL
+            <AlertCircle className="h-3 w-3" /> Invalid video URL
           </p>
         )}
-        {/* YouTube Preview */}
-        {videoId && urlValid && (
+        {previewUrl && urlValid && (
           <div className="mt-2 space-y-2">
-            <img
-              src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
-              alt="Video thumbnail"
-              className="w-full max-w-[240px] rounded border"
-            />
             <Button
               type="button"
               variant="outline"
@@ -322,23 +318,28 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
               className="font-poppins text-xs"
               onClick={() => setShowPreview(!showPreview)}
             >
-              <ExternalLink className="h-3 w-3 mr-1" /> {showPreview ? 'Hide Preview' : 'Preview Video'}
+              <Play className="h-3 w-3 mr-1" /> {showPreview ? 'Hide Preview' : 'Preview Video'}
             </Button>
             {showPreview && (
-              <a
-                href={`https://www.youtube.com/watch?v=${videoId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-primary underline font-poppins"
-              >
-                <Play className="h-3 w-3" /> Watch on YouTube
-              </a>
+              <div className="aspect-video rounded border overflow-hidden bg-black">
+                {directVideo ? (
+                  <video src={previewUrl} controls className="w-full h-full" preload="metadata" />
+                ) : (
+                  <iframe
+                    src={previewUrl}
+                    title="Video preview"
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                    allowFullScreen
+                  />
+                )}
+              </div>
             )}
           </div>
         )}
       </div>
       <div>
-        <Label className="font-poppins">Thumbnail (optional, uses YouTube thumbnail if empty)</Label>
+        <Label className="font-poppins">Thumbnail (optional, auto-detected for YouTube if empty)</Label>
         <Input type="file" accept="image/*" onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)} className="font-poppins" />
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -384,7 +385,7 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
           <Label className="font-poppins text-sm">Active</Label>
         </div>
       </div>
-      <Button type="submit" className="w-full font-poppins" disabled={isLoading || uploading || !title || !youtubeUrl || !urlValid}>
+      <Button type="submit" className="w-full font-poppins" disabled={isLoading || uploading || !title || !videoUrl || !urlValid}>
         {isLoading || uploading ? 'Saving...' : tutorial ? 'Update Tutorial' : 'Create Tutorial'}
       </Button>
     </form>

@@ -7,12 +7,8 @@ export const CSP_DIRECTIVES = {
   'default-src': ["'self'"],
   'frame-src': [
     "'self'",
-    "https://*.highperformanceformat.com",
-    "https://*.effectivegatecpm.com",
-    "https://highperformanceformat.com",
-    "https://effectivegatecpm.com",
-    "http://*.highperformanceformat.com",
-    "http://*.effectivegatecpm.com"
+    "https:",
+    "http:"
   ],
   'script-src': [
     "'self'",
@@ -59,7 +55,10 @@ export const CSP_DIRECTIVES = {
   ],
   'media-src': [
     "'self'",
-    "https://sxzxyuxtqqflahzncfre.supabase.co"
+    "blob:",
+    "data:",
+    "https:",
+    "http:"
   ],
   'object-src': ["'none'"],
   'base-uri': ["'self'"],

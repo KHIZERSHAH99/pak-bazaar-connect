@@ -37,19 +37,64 @@ export const TUTORIAL_TARGET_ROLES = [
 // Extract YouTube video ID from various URL formats
 export const extractYouTubeId = (url: string): string | null => {
   const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/|youtube-nocookie\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
     /^([a-zA-Z0-9_-]{11})$/,
   ];
+
   for (const pattern of patterns) {
     const match = url.match(pattern);
     if (match) return match[1];
   }
+
   return null;
 };
 
-// Validate YouTube URL
-export const isValidYouTubeUrl = (url: string): boolean => {
-  return extractYouTubeId(url) !== null;
+// Validate generic video URL (http/https)
+export const isValidVideoUrl = (url: string): boolean => {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+  } catch {
+    return false;
+  }
+};
+
+// Backward-compatible alias
+export const isValidYouTubeUrl = (url: string): boolean => isValidVideoUrl(url);
+
+// Direct playable video file
+export const isDirectVideoFile = (url: string): boolean => {
+  try {
+    const pathname = new URL(url).pathname.toLowerCase();
+    return /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/.test(pathname);
+  } catch {
+    return false;
+  }
+};
+
+// Convert a supported video URL to an embeddable inline URL
+export const toEmbeddableVideoUrl = (url: string): string | null => {
+  if (!isValidVideoUrl(url)) return null;
+
+  if (isDirectVideoFile(url)) return url;
+
+  const youtubeId = extractYouTubeId(url);
+  if (youtubeId) return `https://www.youtube.com/embed/${youtubeId}?rel=0`;
+
+  const vimeoMatch = url.match(/(?:vimeo\.com\/(?:video\/)?)(\d+)/i);
+  if (vimeoMatch?.[1]) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+
+  const dailymotionMatch = url.match(/(?:dailymotion\.com\/video\/|dai\.ly\/)([a-zA-Z0-9]+)/i);
+  if (dailymotionMatch?.[1]) return `https://www.dailymotion.com/embed/video/${dailymotionMatch[1]}`;
+
+  const loomMatch = url.match(/loom\.com\/share\/([a-zA-Z0-9]+)/i);
+  if (loomMatch?.[1]) return `https://www.loom.com/embed/${loomMatch[1]}`;
+
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
+  if (driveMatch?.[1]) return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+
+  // Fallback: try to embed as-is (works for many providers)
+  return url;
 };
 
 // Get YouTube thumbnail from video ID

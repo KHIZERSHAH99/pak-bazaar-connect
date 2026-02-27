@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Video } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { fetchPageTutorials, extractYouTubeId, markTutorialViewed } from '@/lib/tutorials';
+import { fetchPageTutorials, isDirectVideoFile, markTutorialViewed, toEmbeddableVideoUrl } from '@/lib/tutorials';
 
 const ContextualTutorialButton: React.FC = () => {
   const { user, profile } = useAuth();
@@ -22,7 +22,8 @@ const ContextualTutorialButton: React.FC = () => {
   if (tutorials.length === 0) return null;
 
   const current = tutorials[selectedIdx] as any;
-  const videoId = current ? extractYouTubeId(current.youtube_url) : null;
+  const embedUrl = current ? toEmbeddableVideoUrl(current.youtube_url) : null;
+  const isDirectFile = current ? isDirectVideoFile(current.youtube_url) : false;
 
   const handleOpen = () => {
     setOpen(true);
@@ -45,15 +46,19 @@ const ContextualTutorialButton: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="font-poppins">{current?.title}</DialogTitle>
           </DialogHeader>
-          {videoId && (
+          {embedUrl && (
             <div className="aspect-video rounded-lg overflow-hidden bg-black">
-              <iframe
-                src={`https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1`}
-                title={current?.title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              {isDirectFile ? (
+                <video src={embedUrl} controls autoPlay className="w-full h-full" preload="metadata" />
+              ) : (
+                <iframe
+                  src={embedUrl}
+                  title={current?.title}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                  allowFullScreen
+                />
+              )}
             </div>
           )}
           {current?.description && (

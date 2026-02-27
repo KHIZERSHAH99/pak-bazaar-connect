@@ -28,7 +28,7 @@ import {
 } from '@/lib/tutorials';
 
 const TARGET_PAGES = [
-  { value: '', label: 'None (Global)' },
+  { value: 'none', label: 'None (Global)' },
   { value: '/dashboard/shops', label: 'Shops' },
   { value: '/dashboard/products', label: 'Products' },
   { value: '/dashboard/orders', label: 'Orders' },
@@ -249,7 +249,7 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
   const [youtubeUrl, setYoutubeUrl] = useState(tutorial?.youtube_url || '');
   const [category, setCategory] = useState(tutorial?.category || 'General');
   const [targetRole, setTargetRole] = useState(tutorial?.target_role || 'all');
-  const [targetPage, setTargetPage] = useState(tutorial?.target_page || '');
+  const [targetPage, setTargetPage] = useState(tutorial?.target_page || 'none');
   const [isFeatured, setIsFeatured] = useState(tutorial?.is_featured || false);
   const [isImportant, setIsImportant] = useState(tutorial?.is_important || false);
   const [isActive, setIsActive] = useState(tutorial?.is_active ?? true);
@@ -281,7 +281,7 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
       thumbnail_url: thumbnailUrl,
       category,
       target_role: targetRole,
-      target_page: targetPage.trim() || null,
+      target_page: targetPage === 'none' ? null : targetPage.trim() || null,
       is_featured: isFeatured,
       is_important: isImportant,
       is_active: isActive,
@@ -325,15 +325,14 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
               <ExternalLink className="h-3 w-3 mr-1" /> {showPreview ? 'Hide Preview' : 'Preview Video'}
             </Button>
             {showPreview && (
-              <div className="aspect-video w-full max-w-[320px] rounded overflow-hidden">
-                <iframe
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
-                  allowFullScreen
-                  title="Video preview"
-                />
-              </div>
+              <a
+                href={`https://www.youtube.com/watch?v=${videoId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs text-primary underline font-poppins"
+              >
+                <Play className="h-3 w-3" /> Watch on YouTube
+              </a>
             )}
           </div>
         )}

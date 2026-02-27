@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Star } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { markTutorialViewed, fetchTutorials, getYouTubeThumbnail, isDirectVideoFile, toEmbeddableVideoUrl } from '@/lib/tutorials';
+import { markTutorialViewed, extractYouTubeId, fetchTutorials, getYouTubeThumbnail } from '@/lib/tutorials';
 
 const TutorialDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,8 +55,7 @@ const TutorialDetail: React.FC = () => {
     );
   }
 
-  const embedUrl = toEmbeddableVideoUrl(tutorial.youtube_url);
-  const isDirectFile = isDirectVideoFile(tutorial.youtube_url);
+  const videoId = extractYouTubeId(tutorial.youtube_url);
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -66,18 +65,14 @@ const TutorialDetail: React.FC = () => {
 
       {/* Video Player */}
       <div className="aspect-video rounded-lg overflow-hidden bg-black">
-        {embedUrl ? (
-          isDirectFile ? (
-            <video src={embedUrl} controls className="w-full h-full" preload="metadata" />
-          ) : (
-            <iframe
-              src={embedUrl}
-              title={tutorial.title}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-              allowFullScreen
-            />
-          )
+        {videoId ? (
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+            title={tutorial.title}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
         ) : (
           <div className="flex items-center justify-center h-full text-destructive-foreground">Invalid video URL</div>
         )}

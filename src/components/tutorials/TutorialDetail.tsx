@@ -63,36 +63,20 @@ const TutorialDetail: React.FC = () => {
         <ArrowLeft className="h-4 w-4 mr-2" /> Back to Tutorials
       </Button>
 
-      {/* Video Player - opens on YouTube since iframe is blocked in preview */}
-      <a
-        href={`https://www.youtube.com/watch?v=${videoId}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block aspect-video rounded-lg overflow-hidden bg-muted relative group cursor-pointer"
-      >
+      {/* Video Player */}
+      <div className="aspect-video rounded-lg overflow-hidden bg-black">
         {videoId ? (
-          <>
-            <img
-              src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-              alt={tutorial.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-              }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
-              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-            </div>
-            <span className="absolute bottom-3 left-3 text-white text-xs bg-black/60 px-2 py-1 rounded font-poppins">
-              Watch on YouTube ↗
-            </span>
-          </>
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+            title={tutorial.title}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
         ) : (
           <div className="flex items-center justify-center h-full text-destructive-foreground">Invalid video URL</div>
         )}
-      </a>
+      </div>
 
       {/* Title and info */}
       <div>

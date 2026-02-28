@@ -78,4 +78,3 @@ No code changes needed — this is your full recording guide with the intro vide
 - Mark Video #1 as **Featured** so it always shows first
 
 **Recording order:** Phase 1 first (every user needs these), then Phase 2 (wholesalers are your supply side), then Phase 3 and 4.
-

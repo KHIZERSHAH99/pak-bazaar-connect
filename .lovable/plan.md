@@ -1,91 +1,81 @@
 
 
-# Tutorial System and Performance Improvements Plan
+## Complete Tutorial Video Production Plan
 
-## Problem Summary
-
-Based on the code audit and network logs, there are several issues:
-
-1. **Auth polling every ~20-27 seconds** causes duplicate profile fetches (visible in network logs - same profile endpoint called repeatedly)
-2. **404 error on `get_active_products_list`** RPC that doesn't exist
-3. **Tutorial system missing features** like pagination, view counts, and drag-to-reorder
-4. **Performance monitor cache hit rate always 0%** because the custom `queryOptimizer` cache is never used by actual page components
-5. **Console.log pollution** in production code
+No code changes needed — this is your full recording guide with the intro video added as #1.
 
 ---
 
-## Part 1: Fix Auth Polling (Biggest Performance Win)
+### Phase 1: Getting Started (Record These First)
 
-The `AuthContext.tsx` has a `SIGNED_IN` event that fires on every token refresh cycle (~20-27s based on logs), triggering `ensureProfileSync` + `fetchProfile` each time. This causes 2 extra API calls per cycle.
+| # | Video Title | Target Role | Category | Target Page | Duration |
+|---|-------------|-------------|----------|-------------|----------|
+| 1 | **What is Pak Bazaar Connect? (Platform Overview)** | All | Getting Started | none | 2-3 min |
+| 2 | How to Sign Up on PBC | All | Getting Started | none | 2-3 min |
+| 3 | How to Log In & Navigate Your Dashboard | All | Getting Started | /dashboard | 2-3 min |
+| 4 | How to Edit Your Profile | All | Account | /profile | 2 min |
+| 5 | How to Use the Chatbot for Help | All | General | none | 1-2 min |
 
-**Fix**: Only sync profile on initial `SIGNED_IN` (not on `TOKEN_REFRESHED`), and cache the profile so it doesn't re-fetch if already loaded.
-
-**Changes in `src/contexts/AuthContext.tsx`**:
-- Add a `profileFetchedRef` to track if profile was already loaded this session
-- In `onAuthStateChange`, only trigger profile fetch on first `SIGNED_IN`, skip if profile already exists
-- Remove duplicate `ensureProfileSync` call in `getSession().then()` when `profileTrigger` effect already handles it
-- Remove excessive `console.log` statements
-
----
-
-## Part 2: Tutorial System Improvements
-
-### 2a. Add Tutorial View Count Display (Admin)
-- Query `tutorial_views` table to get view counts per tutorial
-- Display view count badge on each tutorial card in TutorialManager
-
-### 2b. Add Pagination to Tutorial Grid
-- Currently loads all tutorials at once
-- Add simple "Load More" pagination (10 tutorials per page) using Supabase `.range()`
-
-### 2c. Improve Tutorial Form UX
-- Add YouTube video preview thumbnail when URL is pasted (already partially done, but show inline preview)
-- Add a "Preview" button that opens the YouTube video in a small preview before saving
-- Add target page dropdown with common page paths instead of free text input
-
-### 2d. Add "Sort by" Option to User Tutorial Grid
-- Options: Newest, Most Popular (by views), Featured First (current default)
+**Video #1 Script Outline — "What is Pak Bazaar Connect?"**
+1. Hook (10s) — "Looking for a better way to buy and sell wholesale in Pakistan?"
+2. What PBC is (30s) — B2B marketplace connecting wholesalers and sellers
+3. Who it's for (30s) — Wholesalers who want to sell, Sellers/retailers who want to buy
+4. Key features tour (60s) — Quick visual: shops, products, orders, messaging, analytics
+5. How to get started (20s) — "Sign up free, choose your role, start trading"
+6. CTA (10s) — "Create your account now at pbc.lovable.app"
 
 ---
 
-## Part 3: Performance Monitor Accuracy
+### Phase 2: Wholesaler Tutorials (Supply Side)
 
-### 3a. Fix Cache Hit Rate
-The `getCacheStats().hitRate` calculation is wrong -- it divides valid entries by total entries, which doesn't measure actual cache hits vs misses.
-
-**Fix in `src/lib/performance/query-optimizer-enhanced.ts`**:
-- Add `hits` and `misses` counters to the class
-- Increment `hits` when cache is used, `misses` when a fresh query is made
-- Calculate `hitRate` as `hits / (hits + misses)`
-
-### 3b. Remove Console Logs in Production
-- Remove or guard `console.log` statements in AuthContext, query-optimizer, and performance-monitor behind `import.meta.env.DEV`
-
----
-
-## Part 4: Fix 404 RPC Error
-
-The network logs show a 404 for `get_active_products_list` RPC. This function doesn't exist in the database.
-
-**Fix**: Find and update the component calling this RPC to use a direct table query instead.
+| # | Video Title | Target Role | Category | Target Page |
+|---|-------------|-------------|----------|-------------|
+| 6 | How to Create Your First Shop | Wholesaler | Shops | /dashboard/shops |
+| 7 | How to Add & Manage Products | Wholesaler | Products | /dashboard/products |
+| 8 | How to Set Product Pricing & Variations | Wholesaler | Products | /dashboard/products |
+| 9 | How to Manage Incoming Orders | Wholesaler | Orders | /dashboard/wholesaler-orders |
+| 10 | How to Set Up Payment Methods | Wholesaler | Payments | /dashboard/payment |
+| 11 | How to Configure Shipping | Wholesaler | Shipping | /dashboard/shipping |
+| 12 | How to Create & Manage Coupons | Wholesaler | Orders | /dashboard/coupons |
+| 13 | How to Read Your Analytics | Wholesaler | General | /dashboard/analytics |
 
 ---
 
-## Technical Details
+### Phase 3: Seller (Buyer) Tutorials
 
-### Files to Modify:
-1. `src/contexts/AuthContext.tsx` - Fix auth polling, remove duplicate fetches
-2. `src/lib/performance/query-optimizer-enhanced.ts` - Fix cache hit rate calculation
-3. `src/components/tutorials/TutorialGrid.tsx` - Add pagination and sort options
-4. `src/components/tutorials/TutorialManager.tsx` - Add view count display
-5. `src/lib/tutorials.ts` - Add paginated fetch function, view count query
-6. `src/components/ui/performance-monitor.tsx` - Minor cleanup
+| # | Video Title | Target Role | Category | Target Page |
+|---|-------------|-------------|----------|-------------|
+| 14 | How to Browse & Find Shops | Seller | Shops | /dashboard/browse-shops |
+| 15 | How to Place an Order | Seller | Orders | /dashboard/seller-orders |
+| 16 | How to Track Your Orders | Seller | Orders | /dashboard/seller-orders |
+| 17 | How to Message a Wholesaler | Seller | General | none |
 
-### Files to Search (for RPC fix):
-- Find which component calls `get_active_products_list` and fix it
+---
 
-### Estimated Impact:
-- Auth polling fix: Eliminates ~6 unnecessary API calls per minute
-- Tutorial pagination: Reduces data load for users with many tutorials
-- Cache hit rate fix: Gives admin accurate performance metrics
+### Phase 4: Admin Tutorials (Internal Use)
+
+| # | Video Title | Target Role | Category | Target Page |
+|---|-------------|-------------|----------|-------------|
+| 18 | Admin: How to Manage Role Requests | Admin | Account | /dashboard/admin |
+| 19 | Admin: How to Add & Manage Tutorials | Admin | General | /dashboard/tutorial-manager |
+
+---
+
+### Recording Tips
+
+**Structure each video:**
+1. Intro (10s) — "In this video you'll learn how to..."
+2. Show the page — Navigate to the relevant page
+3. Step-by-step walkthrough — Do the action live on screen
+4. Recap (10s) — "Now you know how to..."
+
+**Practical advice:**
+- Keep videos under 3-4 minutes
+- Screen record with OBS Studio (free)
+- Record at 1080p minimum
+- Upload to YouTube as Unlisted for privacy
+- Use the **Target Page** field in Tutorial Manager so videos appear contextually on the right page
+- Mark Video #1 as **Featured** so it always shows first
+
+**Recording order:** Phase 1 first (every user needs these), then Phase 2 (wholesalers are your supply side), then Phase 3 and 4.
 

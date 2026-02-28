@@ -92,8 +92,24 @@ Deno.serve(async (req) => {
           );
         }
       }
-    } else {
-      console.log("No auth header provided, proceeding as anonymous");
+  } else {
+      console.log("No auth header provided, applying anonymous rate limit");
+      
+      // IP-based rate limiting for anonymous users (stricter: 5 requests/hour)
+      const clientIp = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+      const { data: anonAllowed } = await supabase.rpc('secure_check_rate_limit', {
+        p_identifier: `anon_ip_${clientIp}`,
+        p_action: 'chatbot_anon',
+        p_max_requests: 5,
+        p_window_minutes: 60
+      });
+
+      if (anonAllowed === false) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Please sign in for higher limits.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // Initialize OpenAI

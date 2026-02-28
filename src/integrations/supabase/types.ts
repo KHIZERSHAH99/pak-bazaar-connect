@@ -3021,6 +3021,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      send_otp_sms: {
+        Args: { p_otp_code: string; p_phone_number: string }
+        Returns: Json
+      }
       switch_business_role: { Args: { target_role: string }; Returns: Json }
       sync_auth_profiles: { Args: never; Returns: undefined }
       track_product_view: {

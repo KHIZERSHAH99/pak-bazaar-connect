@@ -6,13 +6,14 @@
     <title>Pak Bazaar Connect - Pakistan ka Sabse Bara B2B Wholesale Marketplace</title>
     <link rel="icon" href="/pbc-favicon.png" type="image/png">
     
-    <!-- Preconnect to Google Fonts for faster loading -->
+    <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://sxzxyuxtqqflahzncfre.supabase.co">
     
-    <!-- Non-render-blocking font loading -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap"></noscript>
+    <!-- Non-render-blocking font loading with display=swap -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap"></noscript>
     
     <!-- Pakistan-focused SEO Meta Tags -->
     <meta name="description" content="Pakistan ka sabse bara B2B wholesale marketplace. Karachi, Lahore, Islamabad mein wholesalers aur retailers ko connect karein. Thok mein khareedein, munafa kamaein! 🇵🇰" />
@@ -57,23 +58,30 @@
     <!-- HilltopAds Verification -->
     <meta name="e6be9c12396de1d1c3ad9209c34e6b0eed99a6bd" content="e6be9c12396de1d1c3ad9209c34e6b0eed99a6bd" />
     
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6598242635867029"
-         crossorigin="anonymous"></script>
-    
-    <!-- Adsteera Global Script -->
-    <script type='text/javascript'>
-      var atOptions = {
-        'key' : '98a934445fa1d2aa5fd6e25b30250461',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-      };
-    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Defer ad scripts until after page is interactive -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          // Google AdSense - loaded after page render
+          var adsScript = document.createElement('script');
+          adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6598242635867029';
+          adsScript.async = true;
+          adsScript.crossOrigin = 'anonymous';
+          document.head.appendChild(adsScript);
+          // Adsteera config
+          window.atOptions = {
+            'key': '98a934445fa1d2aa5fd6e25b30250461',
+            'format': 'iframe',
+            'height': 250,
+            'width': 300,
+            'params': {}
+          };
+        }, 3000);
+      });
+    </script>
   </body>
 </html>

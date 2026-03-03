@@ -16,16 +16,6 @@ export const CSP_DIRECTIVES = {
     "'unsafe-eval'",
     "https://sxzxyuxtqqflahzncfre.supabase.co",
     "https://*.supabase.co",
-    "https://*.googlesyndication.com",
-    "https://*.google.com",
-    "https://*.adtrafficquality.google",
-    "https://*.googleadservices.com",
-    "https://*.highperformanceformat.com",
-    "https://*.effectivegatecpm.com",
-    "https://highperformanceformat.com",
-    "https://effectivegatecpm.com",
-    "http://*.highperformanceformat.com",
-    "http://*.effectivegatecpm.com"
   ],
   'style-src': [
     "'self'",
@@ -38,10 +28,7 @@ export const CSP_DIRECTIVES = {
     "blob:",
     "https://sxzxyuxtqqflahzncfre.supabase.co",
     "https://*.supabase.co",
-    "https://*.highperformanceformat.com",
-    "https://*.effectivegatecpm.com",
-    "https://*",
-    "http://*"
+    "https://*"
   ],
   'font-src': [
     "'self'",
@@ -53,11 +40,6 @@ export const CSP_DIRECTIVES = {
     "https://*.supabase.co",
     "wss://sxzxyuxtqqflahzncfre.supabase.co",
     "wss://*.supabase.co",
-    "https://*.googlesyndication.com",
-    "https://*.google.com",
-    "https://*.adtrafficquality.google",
-    "https://*.highperformanceformat.com",
-    "https://*.effectivegatecpm.com",
     "https://*"
   ],
   'media-src': [

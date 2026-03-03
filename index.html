@@ -11,8 +11,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://sxzxyuxtqqflahzncfre.supabase.co" crossorigin>
     
-    <!-- DNS prefetch for ad networks (non-critical) -->
-    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
     
     <!-- Non-render-blocking font loading with display=swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -38,8 +36,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="theme-color" content="#1B5E20" />
     
-    <!-- AdSense -->
-    <meta name="google-adsense-account" content="ca-pub-6598242635867029">
 
     <!-- Open Graph (Pakistan-focused) -->
     <meta property="og:title" content="Pak Bazaar Connect - Pakistan B2B Wholesale Marketplace" />
@@ -58,8 +54,6 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://pakbazaarconnect.lovable.app/" />
     
-    <!-- HilltopAds Verification -->
-    <meta name="e6be9c12396de1d1c3ad9209c34e6b0eed99a6bd" content="e6be9c12396de1d1c3ad9209c34e6b0eed99a6bd" />
     
     <!-- Inline critical CSS for faster FCP -->
     <style>
@@ -74,27 +68,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Defer ad scripts until browser is idle -->
-    <script>
-      function loadAds() {
-        var adsScript = document.createElement('script');
-        adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6598242635867029';
-        adsScript.async = true;
-        adsScript.crossOrigin = 'anonymous';
-        document.head.appendChild(adsScript);
-        window.atOptions = {
-          'key': '98a934445fa1d2aa5fd6e25b30250461',
-          'format': 'iframe',
-          'height': 250,
-          'width': 300,
-          'params': {}
-        };
-      }
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(function() { setTimeout(loadAds, 5000); });
-      } else {
-        window.addEventListener('load', function() { setTimeout(loadAds, 8000); });
-      }
-    </script>
   </body>
 </html>

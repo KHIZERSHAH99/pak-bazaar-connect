@@ -23,25 +23,33 @@ export default defineConfig(({ mode }) => ({
     // Optimize chunk splitting for better caching
     rollupOptions: {
       output: {
+        // Use content hashes for long-term caching
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
         manualChunks: {
           // Core vendor libraries
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           // Supabase client
           'vendor-supabase': ['@supabase/supabase-js'],
-          // UI framework components
-          'vendor-radix': [
+          // UI framework - split into smaller chunks
+          'vendor-radix-core': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-popover',
+          ],
+          'vendor-radix-extra': [
             '@radix-ui/react-select',
             '@radix-ui/react-tabs',
             '@radix-ui/react-toast',
             '@radix-ui/react-tooltip',
-            '@radix-ui/react-popover',
           ],
           // Form and validation
           'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
           // Data fetching
           'vendor-query': ['@tanstack/react-query'],
+          // Charts (heavy, rarely needed on first load)
+          'vendor-charts': ['recharts'],
         },
       },
     },
@@ -49,6 +57,8 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
     // Use esbuild for minification (built-in, no extra dependency)
     minify: mode === 'production' ? 'esbuild' : false,
+    // Enable CSS code splitting
+    cssCodeSplit: true,
   },
   // Optimize dependencies
   optimizeDeps: {

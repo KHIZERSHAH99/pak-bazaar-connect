@@ -33,17 +33,13 @@ export default defineConfig(({ mode }) => ({
           // Supabase client
           'vendor-supabase': ['@supabase/supabase-js'],
           // UI framework - split into smaller chunks
-          'vendor-radix-core': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-popover',
-          ],
-          'vendor-radix-extra': [
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-toast',
-            '@radix-ui/react-tooltip',
-          ],
+          'vendor-radix-dialog': ['@radix-ui/react-dialog'],
+          'vendor-radix-dropdown': ['@radix-ui/react-dropdown-menu'],
+          'vendor-radix-popover': ['@radix-ui/react-popover'],
+          'vendor-radix-select': ['@radix-ui/react-select'],
+          'vendor-radix-tabs': ['@radix-ui/react-tabs'],
+          'vendor-radix-toast': ['@radix-ui/react-toast'],
+          'vendor-radix-tooltip': ['@radix-ui/react-tooltip'],
           // Form and validation
           'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
           // Data fetching

@@ -9,7 +9,10 @@
     <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://sxzxyuxtqqflahzncfre.supabase.co">
+    <link rel="preconnect" href="https://sxzxyuxtqqflahzncfre.supabase.co" crossorigin>
+    
+    <!-- DNS prefetch for ad networks (non-critical) -->
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
     
     <!-- Non-render-blocking font loading with display=swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -58,30 +61,40 @@
     <!-- HilltopAds Verification -->
     <meta name="e6be9c12396de1d1c3ad9209c34e6b0eed99a6bd" content="e6be9c12396de1d1c3ad9209c34e6b0eed99a6bd" />
     
+    <!-- Inline critical CSS for faster FCP -->
+    <style>
+      body{margin:0;font-family:'Poppins',sans-serif;background:#fff;color:#0a0f1e}
+      #root{min-height:100vh}
+      .min-h-screen{min-height:100vh}
+      .bg-background{background:hsl(0 0% 100%)}
+      .text-foreground{color:hsl(222.2 84% 4.9%)}
+      .font-poppins{font-family:'Poppins',sans-serif}
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Defer ad scripts until after page is interactive -->
+    <!-- Defer ad scripts until browser is idle -->
     <script>
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          // Google AdSense - loaded after page render
-          var adsScript = document.createElement('script');
-          adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6598242635867029';
-          adsScript.async = true;
-          adsScript.crossOrigin = 'anonymous';
-          document.head.appendChild(adsScript);
-          // Adsteera config
-          window.atOptions = {
-            'key': '98a934445fa1d2aa5fd6e25b30250461',
-            'format': 'iframe',
-            'height': 250,
-            'width': 300,
-            'params': {}
-          };
-        }, 3000);
-      });
+      function loadAds() {
+        var adsScript = document.createElement('script');
+        adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6598242635867029';
+        adsScript.async = true;
+        adsScript.crossOrigin = 'anonymous';
+        document.head.appendChild(adsScript);
+        window.atOptions = {
+          'key': '98a934445fa1d2aa5fd6e25b30250461',
+          'format': 'iframe',
+          'height': 250,
+          'width': 300,
+          'params': {}
+        };
+      }
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function() { setTimeout(loadAds, 5000); });
+      } else {
+        window.addEventListener('load', function() { setTimeout(loadAds, 8000); });
+      }
     </script>
   </body>
 </html>

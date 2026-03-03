@@ -12,10 +12,14 @@ export const CSP_DIRECTIVES = {
   ],
   'script-src': [
     "'self'",
-    "'unsafe-inline'", // Required for React in development
-    "'unsafe-eval'", // Required for development tools
+    "'unsafe-inline'",
+    "'unsafe-eval'",
     "https://sxzxyuxtqqflahzncfre.supabase.co",
     "https://*.supabase.co",
+    "https://*.googlesyndication.com",
+    "https://*.google.com",
+    "https://*.adtrafficquality.google",
+    "https://*.googleadservices.com",
     "https://*.highperformanceformat.com",
     "https://*.effectivegatecpm.com",
     "https://highperformanceformat.com",
@@ -49,6 +53,9 @@ export const CSP_DIRECTIVES = {
     "https://*.supabase.co",
     "wss://sxzxyuxtqqflahzncfre.supabase.co",
     "wss://*.supabase.co",
+    "https://*.googlesyndication.com",
+    "https://*.google.com",
+    "https://*.adtrafficquality.google",
     "https://*.highperformanceformat.com",
     "https://*.effectivegatecpm.com",
     "https://*"
@@ -63,7 +70,6 @@ export const CSP_DIRECTIVES = {
   'object-src': ["'none'"],
   'base-uri': ["'self'"],
   'form-action': ["'self'"],
-  'frame-ancestors': ["'none'"],
   'upgrade-insecure-requests': []
 };
 

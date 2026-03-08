@@ -4,40 +4,34 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import DashboardSidebar from './dashboard/DashboardSidebar';
 import SEOHead from '@/components/ui/seo-head';
-import ContextualTutorialButton from '@/components/tutorials/ContextualTutorialButton';
-import PerformanceMonitor from '@/components/ui/performance-monitor';
-import { usePageAnalytics } from '@/hooks/usePageAnalytics';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
 }
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   title = 'Dashboard - Pak Bazaar Connect',
   description = 'Manage your business operations on Pakistan\'s leading B2B marketplace platform.'
 }) => {
-  const {
-    loading
-  } = useAuth();
+  const { loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // Conditionally use analytics to prevent duplicate tracking
-  if (process.env.NODE_ENV === 'development') {
-    usePageAnalytics();
-  }
+
   if (loading) {
     return <LoadingScreen />;
   }
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-  return <div className="min-h-screen flex flex-col bg-background">
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
       <SEOHead title={title} description={description} />
       <Navbar />
       <div className="flex flex-grow relative">
-        {/* Mobile sidebar toggle button - moved to top for better accessibility */}
         <div className="md:hidden fixed top-[4.5rem] left-4 z-30">
           <Button 
             className="rounded-lg w-10 h-10 flex items-center justify-center bg-card border border-border shadow-lg hover:bg-accent transition-all duration-200 hover:scale-105" 
@@ -52,8 +46,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         <DashboardSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-        {/* Improved overlay */}
-        {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-10 md:hidden backdrop-blur-sm transition-opacity duration-300" onClick={() => setSidebarOpen(false)} aria-hidden="true" />}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-10 md:hidden backdrop-blur-sm transition-opacity duration-300" 
+            onClick={() => setSidebarOpen(false)} 
+            aria-hidden="true" 
+          />
+        )}
 
         <main className="flex-grow p-2 sm:p-3 md:p-6 overflow-auto bg-background">
           <div className="container mx-auto max-w-7xl md:pl-0">
@@ -64,8 +63,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </main>
       </div>
       <Footer />
-      <ContextualTutorialButton />
-      <PerformanceMonitor />
-    </div>;
+    </div>
+  );
 };
+
 export default DashboardLayout;

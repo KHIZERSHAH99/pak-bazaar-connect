@@ -112,7 +112,7 @@ export const confirmOrderEnhanced = async (orderId: string, notes?: string) => {
     .eq('id', orderId)
     .select(`
       *,
-      shops!shop_id(owner_id, name)
+      shops!fk_orders_shop_id(owner_id, name)
     `);
 
   if (error) {

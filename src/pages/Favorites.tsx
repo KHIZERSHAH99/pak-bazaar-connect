@@ -108,9 +108,13 @@ const Favorites: React.FC = () => {
                 <CardContent>
                   <div className="text-center py-8">
                     <Store className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground font-poppins">
+                    <p className="text-muted-foreground font-poppins mb-4">
                       No favorite shops yet
                     </p>
+                    <Button variant="outline" onClick={handleBrowseShops} className="font-poppins">
+                      <Store className="w-4 h-4 mr-2" />
+                      Browse Shops
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

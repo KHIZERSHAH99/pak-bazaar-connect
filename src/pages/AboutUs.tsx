@@ -120,28 +120,28 @@ const AboutUs: React.FC = () => {
                   <Shield className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2 font-poppins">Trust</h3>
-                <p className="text-sm text-gray-600 font-poppins">Building lasting relationships through transparency and reliability</p>
+                <p className="text-sm text-muted-foreground font-poppins">Building lasting relationships through transparency and reliability</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2 font-poppins">Collaboration</h3>
-                <p className="text-sm text-gray-600 font-poppins">Fostering partnerships that benefit all stakeholders</p>
+                <p className="text-sm text-muted-foreground font-poppins">Fostering partnerships that benefit all stakeholders</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Target className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2 font-poppins">Excellence</h3>
-                <p className="text-sm text-gray-600 font-poppins">Continuously improving to deliver exceptional value</p>
+                <p className="text-sm text-muted-foreground font-poppins">Continuously improving to deliver exceptional value</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Award className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2 font-poppins">Innovation</h3>
-                <p className="text-sm text-gray-600 font-poppins">Leveraging technology to solve real business challenges</p>
+                <p className="text-sm text-muted-foreground font-poppins">Leveraging technology to solve real business challenges</p>
               </div>
             </div>
           </div>

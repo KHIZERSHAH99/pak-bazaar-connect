@@ -127,7 +127,7 @@ const Navbar = () => {
             {/* Mobile Menu Button and Language Toggle */}
             <div className="md:hidden flex items-center gap-2">
               <LanguageToggle />
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
                 {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>

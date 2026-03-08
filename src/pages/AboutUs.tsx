@@ -3,8 +3,8 @@ import Layout from '@/components/Layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, Award, Shield } from 'lucide-react';
 const AboutUs: React.FC = () => {
-  return <Layout>
-      <div className="min-h-screen bg-gray-50">
+  return <Layout title="About Us - Pak Bazaar Connect" description="Learn about Pak Bazaar Connect — Pakistan's modern B2B marketplace connecting wholesalers and retailers for seamless trade.">
+      <div className="min-h-screen bg-background">
         <div className="max-w-6xl mx-auto px-4 py-12">
           {/* Hero Section */}
           <div className="text-center mb-16">

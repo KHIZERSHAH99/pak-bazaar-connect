@@ -146,7 +146,7 @@ const ShopDetails: React.FC = () => {
 
             <Card className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800 font-poppins flex items-center">
+                <h3 className="text-lg font-semibold text-foreground font-poppins flex items-center">
                   <Package className="h-5 w-5 mr-2" />
                   Products ({products?.length || 0})
                 </h3>

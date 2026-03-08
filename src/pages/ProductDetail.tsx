@@ -17,10 +17,7 @@ const ProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('ProductDetail - Product ID from params:', id);
-    
     if (!id) {
-      console.log('No product ID provided');
       setLoading(false);
       return;
     }

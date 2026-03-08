@@ -162,7 +162,7 @@ export class SecurityManager {
         case 'order':
           const { data: order } = await supabase
             .from('orders')
-            .select('buyer_id, shops!shop_id(owner_id)')
+            .select('buyer_id, shops!fk_orders_shop_id(owner_id)')
             .eq('id', resourceId)
             .single();
           return order?.buyer_id === targetUserId || order?.shops?.owner_id === targetUserId;

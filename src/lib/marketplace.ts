@@ -149,7 +149,7 @@ export const getProductById = async (id: string): Promise<Product | null> => {
     .select(`
       *,
       categories (id, name),
-      shops!shop_id (
+      shops!fk_products_shop_id (
         id,
         name, 
         contact, 

@@ -88,7 +88,7 @@ const RealTimeOrderTracking: React.FC<RealTimeOrderTrackingProps> = ({ orderId }
           status,
           created_at,
           buyer_name,
-          shops!shop_id(name)
+          shops!fk_orders_shop_id(name)
         `)
         .eq('id', orderId)
         .single();

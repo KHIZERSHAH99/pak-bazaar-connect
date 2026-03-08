@@ -49,7 +49,7 @@ const FavoritesDisplay: React.FC = () => {
             price,
             image,
             shop_id,
-            shops!shop_id(name)
+            shops!fk_products_shop_id(name)
           `)
           .in('id', productIds)
           .eq('is_active', true);

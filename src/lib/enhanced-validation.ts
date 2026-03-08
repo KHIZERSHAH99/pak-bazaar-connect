@@ -221,7 +221,7 @@ export const checkUserPermissions = async (userId: string, action: string, resou
           .from('orders')
           .select(`
             shop_id,
-            shops!shop_id(owner_id)
+            shops!fk_orders_shop_id(owner_id)
           `)
           .eq('id', resourceId)
           .single();

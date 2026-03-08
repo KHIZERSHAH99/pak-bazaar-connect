@@ -176,7 +176,7 @@ export const getOrderWithSecurity = async (orderId: string) => {
     .from('orders')
     .select(`
       *,
-      shops!shop_id(name, contact, address, owner_id),
+      shops!fk_orders_shop_id(name, contact, address, owner_id),
       profiles!orders_buyer_id_fkey(email, business_name)
     `)
     .eq('id', orderId)

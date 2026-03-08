@@ -106,7 +106,7 @@ const ShopDetails: React.FC = () => {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Shops
             </Button>
-            <h1 className="text-2xl font-bold text-gray-800 font-poppins">{shop.name}</h1>
+            <h1 className="text-2xl font-bold text-foreground font-poppins">{shop.name}</h1>
           </div>
           <Badge variant="success" className="font-poppins">
             Active Shop

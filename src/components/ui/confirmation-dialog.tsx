@@ -43,7 +43,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       case 'warning':
         return <AlertTriangle className="h-5 w-5 text-yellow-600" />;
       default:
-        return <Info className="h-5 w-5 text-pakistani_green-600" />;
+        return <Info className="h-5 w-5 text-primary" />;
     }
   };
 

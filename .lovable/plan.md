@@ -1,80 +1,69 @@
 
 
-## Complete Tutorial Video Production Plan
+# Combined Improvement Plan: Security Fixes + Order Management + Performance
 
-No code changes needed — this is your full recording guide with the intro video added as #1.
+## Part 1: Security Fixes (Critical — Do First)
 
----
+### 1A. CRITICAL: Prevent role self-escalation on profiles table
+**Problem**: Any user can `UPDATE profiles SET role = 'admin' WHERE id = auth.uid()` because the "Users can update own profile" policy has no column restriction.
+**Fix**: Add a BEFORE UPDATE trigger that prevents non-admin users from changing their own `role` column.
 
-### Phase 1: Getting Started (Record These First)
+### 1B. CRITICAL: Restrict payment_methods visibility
+**Problem**: Policy "Authenticated users can view active payment methods" exposes bank accounts, JazzCash/Easypaisa numbers to ALL logged-in users.
+**Fix**: Replace with a scoped policy — only buyers who have an order with that wholesaler can see their payment methods (via orders → shops join).
 
-| # | Video Title | Target Role | Category | Target Page | Duration |
-|---|-------------|-------------|----------|-------------|----------|
-| 1 | **What is Pak Bazaar Connect? (Platform Overview)** | All | Getting Started | none | 2-3 min |
-| 2 | How to Sign Up on PBC | All | Getting Started | none | 2-3 min |
-| 3 | How to Log In & Navigate Your Dashboard | All | Getting Started | /dashboard | 2-3 min |
-| 4 | How to Edit Your Profile | All | Account | /profile | 2 min |
-| 5 | How to Use the Chatbot for Help | All | General | none | 1-2 min |
+### 1C. WARN: Remove public read on tutorial_views
+**Problem**: Anonymous users can enumerate user_id + watched_at data.
+**Fix**: Drop the overly broad "Users can read views" policy. The existing "Users can view their own history" and "Admins can view all" policies are sufficient.
 
-**Video #1 Script Outline — "What is Pak Bazaar Connect?"**
-1. Hook (10s) — "Looking for a better way to buy and sell wholesale in Pakistan?"
-2. What PBC is (30s) — B2B marketplace connecting wholesalers and sellers
-3. Who it's for (30s) — Wholesalers who want to sell, Sellers/retailers who want to buy
-4. Key features tour (60s) — Quick visual: shops, products, orders, messaging, analytics
-5. How to get started (20s) — "Sign up free, choose your role, start trading"
-6. CTA (10s) — "Create your account now at pbc.lovable.app"
+### 1D. WARN: Hide commission_rate from non-owners
+**Problem**: All authenticated users see `commission_rate` on shops.
+**Fix**: Create a database view `public_shops_view` excluding `commission_rate`, or add a function that returns only public fields. Alternatively, the simplest fix is to update the frontend queries to not select `commission_rate` and rely on RLS — but the real fix is a restricted policy or view.
+
+**Implementation**: Single SQL migration for all 4 fixes.
 
 ---
 
-### Phase 2: Wholesaler Tutorials (Supply Side)
+## Part 2: Order Management Improvements
 
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 6 | How to Create Your First Shop | Wholesaler | Shops | /dashboard/shops |
-| 7 | How to Add & Manage Products | Wholesaler | Products | /dashboard/products |
-| 8 | How to Set Product Pricing & Variations | Wholesaler | Products | /dashboard/products |
-| 9 | How to Manage Incoming Orders | Wholesaler | Orders | /dashboard/wholesaler-orders |
-| 10 | How to Set Up Payment Methods | Wholesaler | Payments | /dashboard/payment |
-| 11 | How to Configure Shipping | Wholesaler | Shipping | /dashboard/shipping |
-| 12 | How to Create & Manage Coupons | Wholesaler | Orders | /dashboard/coupons |
-| 13 | How to Read Your Analytics | Wholesaler | General | /dashboard/analytics |
+### 2A. Add status filter tabs to UnifiedOrderManagement
+Currently no filtering — all orders shown in a flat grid. Add tab-based filtering: All | Pending | Confirmed | Shipped | Delivered | Rejected.
 
----
+### 2B. Add search by order ID, buyer name, shop name
+Add a search input above the order grid that filters client-side.
 
-### Phase 3: Seller (Buyer) Tutorials
+### 2C. Add real-time order notifications
+Subscribe to Supabase realtime on the orders table so wholesalers see new orders instantly without refreshing.
 
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 14 | How to Browse & Find Shops | Seller | Shops | /dashboard/browse-shops |
-| 15 | How to Place an Order | Seller | Orders | /dashboard/seller-orders |
-| 16 | How to Track Your Orders | Seller | Orders | /dashboard/seller-orders |
-| 17 | How to Message a Wholesaler | Seller | General | none |
+### 2D. Add order status change confirmation dialog
+Currently clicking "Accept" or "Reject" has no confirmation. Add a dialog with optional notes field before status changes.
+
+**Files**: `src/components/orders/UnifiedOrderManagement.tsx`, `src/lib/orders/unified-queries.ts`
 
 ---
 
-### Phase 4: Admin Tutorials (Internal Use)
+## Part 3: Performance Optimization
 
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 18 | Admin: How to Manage Role Requests | Admin | Account | /dashboard/admin |
-| 19 | Admin: How to Add & Manage Tutorials | Admin | General | /dashboard/tutorial-manager |
+### 3A. Add pagination to order queries
+Currently fetching 50-100 orders at once. Add cursor-based pagination (load 20 at a time with "Load More").
+
+### 3B. Lazy load heavy dashboard components
+Ensure analytics charts, tutorial grids, and messaging components use `React.lazy()` with Suspense boundaries.
+
+### 3C. Add image lazy loading with blur placeholder
+Use `loading="lazy"` consistently and add low-quality placeholder blur for product images.
+
+**Files**: `src/components/orders/UnifiedOrderManagement.tsx`, `src/lib/orders/unified-queries.ts`, `src/App.tsx` (lazy imports)
 
 ---
 
-### Recording Tips
+## Implementation Order
+1. Security migration (all 4 fixes in one migration)
+2. Order management UI improvements
+3. Performance optimizations
 
-**Structure each video:**
-1. Intro (10s) — "In this video you'll learn how to..."
-2. Show the page — Navigate to the relevant page
-3. Step-by-step walkthrough — Do the action live on screen
-4. Recap (10s) — "Now you know how to..."
+## Files to Create/Modify
+- New migration SQL (security fixes)
+- `src/components/orders/UnifiedOrderManagement.tsx` — filters, search, confirmation dialog, pagination, realtime
+- `src/lib/orders/unified-queries.ts` — paginated queries, realtime subscription
 
-**Practical advice:**
-- Keep videos under 3-4 minutes
-- Screen record with OBS Studio (free)
-- Record at 1080p minimum
-- Upload to YouTube as Unlisted for privacy
-- Use the **Target Page** field in Tutorial Manager so videos appear contextually on the right page
-- Mark Video #1 as **Featured** so it always shows first
-
-**Recording order:** Phase 1 first (every user needs these), then Phase 2 (wholesalers are your supply side), then Phase 3 and 4.

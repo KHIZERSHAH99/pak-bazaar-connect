@@ -97,8 +97,8 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
   };
 
   // Flatten pages
-  const allOrders = useMemo(() => {
-    return data?.pages.flatMap(p => p.orders) || [];
+  const allOrders = useMemo((): any[] => {
+    return data?.pages.flatMap((p: any) => p.orders) || [];
   }, [data]);
 
   const stats = data?.pages[0]?.stats;

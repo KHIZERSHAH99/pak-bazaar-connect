@@ -20,7 +20,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
     <div>
       {/* Main Image */}
       <div
-        className="aspect-square rounded-lg overflow-hidden bg-gray-100 border relative cursor-pointer group hover-scale"
+        className="aspect-square rounded-lg overflow-hidden bg-muted border relative cursor-pointer group hover-scale"
         onClick={() => setLightbox(true)}
         tabIndex={0}
         aria-label="Zoom product image"

@@ -62,8 +62,8 @@ const BasicBusinessFields: React.FC<BasicBusinessFieldsProps> = ({ form, isLoadi
         name="businessType"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <Briefcase className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <FormLabel className="flex items-center text-foreground font-poppins">
+              <Briefcase className="h-4 w-4 mr-1 text-primary" />
               Business Type
             </FormLabel>
             <Select 

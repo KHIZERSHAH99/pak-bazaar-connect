@@ -65,7 +65,7 @@ const ShippingPolicy = () => {
                 All orders include tracking information provided through your dashboard once shipped.
               </p>
 
-              <div className="mt-4 p-4 bg-pakistani_green-50 rounded-lg">
+              <div className="mt-4 p-4 bg-primary/5 rounded-lg">
                 <p className="text-foreground"><strong>Shipping Support:</strong> khizercoding.com</p>
                 <p className="text-foreground"><strong>Phone:</strong> +92 3149388513</p>
               </div>

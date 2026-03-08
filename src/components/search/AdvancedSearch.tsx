@@ -210,7 +210,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 <X className="h-4 w-4 mr-2" />
                 Clear All
               </Button>
-              <Button onClick={handleSearch} className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+              <Button onClick={handleSearch}>
                 Apply Filters
               </Button>
             </div>

@@ -34,8 +34,8 @@ const Contact: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-pakistani_green-100 rounded-lg">
-                  <Mail className="w-6 h-6 text-pakistani_green-600" />
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <Mail className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground font-poppins">Email</h3>
@@ -44,8 +44,8 @@ const Contact: React.FC = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-pakistani_green-100 rounded-lg">
-                  <Phone className="w-6 h-6 text-pakistani_green-600" />
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <Phone className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground font-poppins">Phone</h3>
@@ -54,8 +54,8 @@ const Contact: React.FC = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-pakistani_green-100 rounded-lg">
-                  <MapPin className="w-6 h-6 text-pakistani_green-600" />
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <MapPin className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground font-poppins">Address</h3>
@@ -65,11 +65,11 @@ const Contact: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-8 p-4 bg-pakistani_green-50 rounded-lg">
-                <h3 className="font-semibold text-pakistani_green-800 mb-2 font-poppins">
+              <div className="mt-8 p-4 bg-primary/5 rounded-lg">
+                <h3 className="font-semibold text-foreground mb-2 font-poppins">
                   Business Hours
                 </h3>
-                <p className="text-pakistani_green-700 font-poppins">
+                <p className="text-muted-foreground font-poppins">
                   Monday - Friday: 9:00 AM - 6:00 PM PKT<br />
                   Saturday: 10:00 AM - 4:00 PM PKT<br />
                   Sunday: Closed
@@ -126,7 +126,7 @@ const Contact: React.FC = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins"
                 >
                   Send Message
                 </Button>

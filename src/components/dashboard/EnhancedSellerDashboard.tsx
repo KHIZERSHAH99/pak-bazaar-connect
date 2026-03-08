@@ -159,8 +159,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                               <action.icon className="h-5 w-5" />
                             </div>
                             <div className="ml-3">
-                              <h4 className="font-medium text-gray-900">{action.title}</h4>
-                              <p className="text-sm text-gray-600">{action.description}</p>
+                              <h4 className="font-medium text-foreground">{action.title}</h4>
+                               <p className="text-sm text-muted-foreground">{action.description}</p>
                             </div>
                           </div>
                         </CardContent>

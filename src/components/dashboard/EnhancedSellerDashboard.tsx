@@ -120,8 +120,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                     <div className="flex items-center">
                       <CheckCircle className="h-8 w-8 text-green-500" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Completed</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.completedOrders}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Completed</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.completedOrders}</p>
                       </div>
                     </div>
                   </CardContent>

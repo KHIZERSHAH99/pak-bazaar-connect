@@ -269,7 +269,7 @@ const OrderManagement: React.FC<OrderManagementProps> = ({ userRole }) => {
                         <Button
                           size="sm"
                           onClick={() => handleStatusUpdate(order.id, 'processing')}
-                          className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                          className=""
                         >
                           Start Processing
                         </Button>

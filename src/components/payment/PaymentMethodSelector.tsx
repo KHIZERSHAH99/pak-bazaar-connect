@@ -103,7 +103,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             </div>
             
             <div className="flex justify-between items-center text-sm">
-              <div className="text-gray-600 font-poppins">
+              <div className="text-muted-foreground font-poppins">
                 Fee: {(method.processingFee * 100).toFixed(1)}%
               </div>
               {method.processingFee > 0 && (

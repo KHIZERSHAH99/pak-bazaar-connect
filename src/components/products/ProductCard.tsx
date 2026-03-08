@@ -107,6 +107,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 Verified
               </Badge>
             )}
+            {product.stock_quantity !== undefined && product.stock_quantity !== null && product.stock_quantity > 0 && product.stock_quantity < 10 && (
+              <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100 shadow-sm text-xs px-2 py-1">
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                Low Stock
+              </Badge>
+            )}
+            {product.stock_quantity === 0 && (
+              <Badge variant="destructive" className="shadow-sm text-xs px-2 py-1">
+                Out of Stock
+              </Badge>
+            )}
           </div>
 
           {/* Favorite Button */}

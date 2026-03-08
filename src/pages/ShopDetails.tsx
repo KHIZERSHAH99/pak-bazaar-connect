@@ -109,7 +109,7 @@ const ShopDetails: React.FC = () => {
           <Card className="mb-8">
             <CardHeader className="relative pb-0">
               <div className="flex flex-col md:flex-row gap-6">
-                <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                <div className="w-32 h-32 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                   {shop.logo ? (
                     <img 
                       src={shop.logo} 
@@ -118,45 +118,55 @@ const ShopDetails: React.FC = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Store className="h-16 w-16 text-gray-400" />
+                      <Store className="h-16 w-16 text-muted-foreground" />
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1">
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between flex-wrap gap-2">
                     <div>
-                      <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
+                      <CardTitle className="text-3xl font-bold text-foreground mb-2 font-poppins">
                         {shop.name}
                       </CardTitle>
-                      <div className="flex items-center gap-2 mb-4">
-                        <Badge className="bg-primary">
+                      <div className="flex items-center gap-2 mb-4 flex-wrap">
+                        <Badge className="bg-primary text-primary-foreground">
                           <Store className="h-3 w-3 mr-1" />
                           Verified Wholesaler
                         </Badge>
-                        <Badge variant="secondary">
-                          <Star className="h-3 w-3 mr-1" />
-                          4.8 Rating
-                        </Badge>
                       </div>
+                    </div>
+                    {shop.owner_id && (
+                      <MessageButton sellerId={shop.owner_id} sellerName={shop.name} />
+                    )}
+                  </div>
+
+                  <Separator className="my-3" />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                    <div className="flex items-center text-muted-foreground">
+                      <Phone className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+                      <span className="text-sm font-medium font-poppins">{shop.contact}</span>
+                    </div>
+                    <div className="flex items-start text-muted-foreground">
+                      <MapPin className="h-4 w-4 mr-2 mt-0.5 text-primary flex-shrink-0" />
+                      <span className="text-sm font-poppins">{shop.address}{shop.postal_code ? ` (${shop.postal_code})` : ''}</span>
+                    </div>
+                    <div className="flex items-center text-muted-foreground">
+                      <Calendar className="h-4 w-4 mr-2 text-primary flex-shrink-0" />
+                      <span className="text-sm font-poppins">Since {format(new Date(shop.created_at), 'MMM yyyy')}</span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div className="flex items-center text-gray-600">
-                      <Phone className="h-5 w-5 mr-2 text-primary" />
-                      <span className="font-medium">{shop.contact}</span>
+                  {/* Quick stats */}
+                  <div className="flex items-center gap-6 mt-4">
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-foreground font-poppins">{products?.length || 0}</p>
+                      <p className="text-xs text-muted-foreground font-poppins">Products</p>
                     </div>
-                    <div className="flex items-start text-gray-600">
-                      <MapPin className="h-5 w-5 mr-2 mt-0.5 text-primary" />
-                      <div>
-                        <div>{shop.address}</div>
-                        {shop.postal_code && (
-                          <div className="text-sm text-primary font-medium mt-1">
-                            Postal Code: {shop.postal_code}
-                          </div>
-                        )}
-                      </div>
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-foreground font-poppins">{orderCount || 0}</p>
+                      <p className="text-xs text-muted-foreground font-poppins">Orders Fulfilled</p>
                     </div>
                   </div>
                 </div>

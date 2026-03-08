@@ -154,7 +154,7 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, selectedCity, minPrice, maxPrice]);
+  }, [selectedCategory, selectedCity, minPrice, maxPrice, debouncedSearch]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);

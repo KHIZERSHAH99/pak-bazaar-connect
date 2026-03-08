@@ -427,7 +427,7 @@ const EmailSignupForm = () => {
         {/* Security Notice */}
         <div className="mt-4 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
           <div className="flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 text-pakistani_green-600 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
             <p className="text-xs text-muted-foreground">
               <strong>Secure Registration:</strong> Your data is protected with industry-standard encryption.
             </p>

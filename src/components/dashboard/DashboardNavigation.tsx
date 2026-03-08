@@ -56,6 +56,11 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
         path: '/profile', 
         icon: <Settings className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
       },
+      { 
+        name: 'Messages', 
+        path: '/messages', 
+        icon: <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> 
+      },
     ];
 
     const adminItems: NavItem[] = [

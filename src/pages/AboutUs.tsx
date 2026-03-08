@@ -76,7 +76,7 @@ const AboutUs: React.FC = () => {
                 <CardContent className="p-6 text-center">
                   <Target className="w-12 h-12 text-primary mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-3 font-poppins">Drive Growth</h3>
-                  <p className="text-gray-600 font-poppins">
+                  <p className="text-muted-foreground font-poppins">
                     Through our comprehensive tools and analytics, we help businesses make informed decisions 
                     and optimize their operations for maximum efficiency.
                   </p>

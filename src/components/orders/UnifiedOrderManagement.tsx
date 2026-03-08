@@ -122,6 +122,28 @@ const OrderCard = memo(({
               </Button>
             </div>
           )}
+
+          {/* PDF & Timeline buttons */}
+          <div className="flex gap-2 pt-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onDownloadReceipt(order)}
+              className="flex-1 text-xs"
+            >
+              <Download className="h-3 w-3 mr-1" />
+              Receipt
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onViewTimeline(order.id)}
+              className="flex-1 text-xs"
+            >
+              <History className="h-3 w-3 mr-1" />
+              Timeline
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

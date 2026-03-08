@@ -34,7 +34,7 @@ const RefundPolicy = () => {
 
           <Card className="p-8">
             <div className="prose prose-lg max-w-none font-poppins">
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Refund Eligibility
               </h2>
               <p className="mb-6 text-foreground">

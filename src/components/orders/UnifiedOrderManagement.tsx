@@ -104,14 +104,14 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
   const stats = data?.pages[0]?.stats;
 
   // Filter + search
-  const filteredOrders = useMemo(() => {
+  const filteredOrders = useMemo((): any[] => {
     let orders = allOrders;
     if (activeTab !== 'all') {
-      orders = orders.filter(o => o.status === activeTab);
+      orders = orders.filter((o: any) => o.status === activeTab);
     }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      orders = orders.filter(o =>
+      orders = orders.filter((o: any) =>
         o.id?.toLowerCase().includes(q) ||
         o.buyer_name?.toLowerCase().includes(q) ||
         o.shops?.name?.toLowerCase().includes(q) ||

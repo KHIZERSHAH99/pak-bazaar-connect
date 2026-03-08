@@ -90,7 +90,7 @@ export const createOrderWithBusinessLogic = async (
     .insert([orderData])
     .select(`
       *,
-      shops!shop_id(name, contact, address, owner_id),
+      shops!fk_orders_shop_id(name, contact, address, owner_id),
       profiles!orders_buyer_id_fkey(email)
     `)
     .single();

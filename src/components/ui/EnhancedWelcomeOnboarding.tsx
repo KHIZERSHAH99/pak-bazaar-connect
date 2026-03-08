@@ -264,6 +264,18 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
             </Button>
           </div>
 
+          {/* Watch Tutorials Link */}
+          <div className="text-center mt-3">
+            <Button
+              variant="link"
+              size="sm"
+              className="font-poppins text-xs text-muted-foreground"
+              onClick={() => { navigate('/dashboard/tutorials'); onComplete(); }}
+            >
+              <Play className="h-3 w-3 mr-1" /> Watch Video Tutorials
+            </Button>
+          </div>
+
           {/* Step Indicators */}
           <div className="flex justify-center mt-8 space-x-2">
             {steps.map((_, index) => (

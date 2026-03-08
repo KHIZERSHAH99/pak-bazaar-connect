@@ -120,7 +120,7 @@ const PrivacyPolicy = () => {
                 We use cookies and similar technologies to enhance your experience on our platform. Cookies help us remember your preferences, analyze site traffic, provide personalized content, and improve our services. You can control cookie settings through your browser preferences, but disabling cookies may affect the functionality of certain features on our platform.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 International Data Transfers
               </h2>
               <p className="mb-6 text-foreground">

@@ -167,7 +167,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-pakistani_green-800 dark:text-emerald-100 font-poppins">Order Management</h1>
+        <h1 className="text-3xl font-bold text-foreground font-poppins">Order Management</h1>
       </div>
 
       <OrderStats counts={counts} />

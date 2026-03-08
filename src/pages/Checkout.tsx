@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { createOrder } from '@/lib/orders';
+import { supabase } from '@/integrations/supabase/client';
 import { MapPin, Package, CreditCard, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,14 +63,17 @@ const Checkout: React.FC = () => {
       for (const [shopId, shopItems] of cartByShop) {
         const totalAmount = shopItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
         
-        await createOrder({
-          shopId,
-          totalAmount,
-          buyerName: orderForm.buyerName,
-          buyerPhone: orderForm.buyerPhone,
-          buyerAddress: orderForm.buyerAddress,
-          paymentMethod: orderForm.paymentMethod
+        const { error } = await supabase.from('orders').insert({
+          shop_id: shopId,
+          buyer_id: user.id,
+          total_amount: totalAmount,
+          buyer_name: orderForm.buyerName,
+          buyer_phone: orderForm.buyerPhone,
+          buyer_address: orderForm.buyerAddress,
+          payment_method: orderForm.paymentMethod,
+          status: 'pending',
         });
+        if (error) throw error;
       }
 
       clearCart();

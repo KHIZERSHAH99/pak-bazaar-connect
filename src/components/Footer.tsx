@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowUp, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { ArrowUp, Mail, Phone, MapPin, Facebook } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Footer = () => {
@@ -56,18 +56,16 @@ const Footer = () => {
 
             {/* Social Media Buttons */}
             <div className="flex gap-2">
-              <Button variant="outline" size="icon" aria-label="Facebook" className="hover:bg-pakistani_green-50">
-                <Facebook className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="icon" aria-label="Twitter" className="hover:bg-pakistani_green-50">
-                <Twitter className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="icon" aria-label="LinkedIn" className="hover:bg-pakistani_green-50">
-                <Linkedin className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="icon" aria-label="Instagram" className="hover:bg-pakistani_green-50">
-                <Instagram className="w-4 h-4" />
-              </Button>
+              <a href="https://www.facebook.com/share/16jNQYcCmK/" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="icon" aria-label="Facebook" className="hover:bg-pakistani_green-50">
+                  <Facebook className="w-4 h-4" />
+                </Button>
+              </a>
+              <a href="https://wa.me/923149388513" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="icon" aria-label="WhatsApp" className="hover:bg-pakistani_green-50">
+                  <Phone className="w-4 h-4" />
+                </Button>
+              </a>
             </div>
           </div>
 
@@ -85,7 +83,7 @@ const Footer = () => {
               </li>
               <li>
                 <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
-                  <Link to="/dashboard/browse-shops" className="text-sm text-foreground/70 hover:text-primary font-poppins transition-colors">
+                  <Link to="/shops" className="text-sm text-foreground/70 hover:text-primary font-poppins transition-colors">
                     Find Wholesalers
                   </Link>
                 </Button>
@@ -161,7 +159,7 @@ const Footer = () => {
         {/* Footer Bottom Section */}
         <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-center text-sm text-foreground/70 font-poppins">
-            © 2024 Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.
+            © {new Date().getFullYear()} Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.
           </p>
           
           {/* Back to Top Button */}

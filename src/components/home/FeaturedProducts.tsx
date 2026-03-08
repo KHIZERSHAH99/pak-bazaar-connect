@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Star, MapPin, Package } from 'lucide-react';
+import { ArrowRight, MapPin, Package } from 'lucide-react';
 import OptimizedImage from '@/components/ui/image-optimizer';
 import LazyLoadWrapper from '@/components/ui/lazy-load-wrapper';
 import { getActiveProducts } from '@/lib/products';
@@ -95,7 +95,7 @@ const FeaturedProducts = () => {
                     {/* Price */}
                     <div className="flex items-center space-x-2">
                       <span className="text-xl font-bold text-pakistani_green-600 dark:text-pakistani_green-400 font-poppins">
-                        PKR {product.price}
+                        PKR {product.price?.toLocaleString()}
                       </span>
                       {product.sample_price && (
                         <span className="text-sm text-gray-500 font-poppins">
@@ -119,15 +119,6 @@ const FeaturedProducts = () => {
 
                     {/* MOQ */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">
-                          4.8
-                        </span>
-                        <span className="text-xs text-gray-500 font-poppins">
-                          ({t('featuredProducts.reviews')})
-                        </span>
-                      </div>
                       <span className="text-xs text-gray-500 dark:text-gray-400 font-poppins">
                         {t('featuredProducts.moq')}: {product.moq || 1}
                       </span>

@@ -3,14 +3,40 @@ import { supabase } from '@/integrations/supabase/client';
 import { PaymentMethod } from './types';
 import { mockPaymentMethods } from './mockData';
 
-// Get available payment methods
-export const getPaymentMethods = async (): Promise<PaymentMethod[]> => {
+// Get available payment methods from database
+export const getPaymentMethods = async (wholesalerId?: string): Promise<PaymentMethod[]> => {
   try {
-    // Always return mock data since payment_methods table doesn't exist yet
-    console.log('Using mock payment methods until database is ready');
-    return mockPaymentMethods;
+    let query = supabase
+      .from('payment_methods')
+      .select('*')
+      .eq('is_active', true);
+    
+    if (wholesalerId) {
+      query = query.eq('wholesaler_id', wholesalerId);
+    }
+
+    const { data, error } = await query;
+    
+    if (error) {
+      console.warn('Failed to fetch payment methods, using fallback:', error.message);
+      return mockPaymentMethods;
+    }
+    
+    if (!data || data.length === 0) {
+      return mockPaymentMethods;
+    }
+    
+    return data.map(pm => ({
+      id: pm.id,
+      name: pm.bank_name || 'Bank Transfer',
+      type: pm.jazzcash_number ? 'jazzcash' : pm.easypaisa_number ? 'easypaisa' : 'bank_transfer',
+      is_active: pm.is_active ?? true,
+      processing_fee: 0,
+      min_amount: 0,
+      max_amount: null,
+    }));
   } catch (error) {
-    console.log('Using mock payment methods:', error);
+    console.warn('Payment methods fetch error, using fallback:', error);
     return mockPaymentMethods;
   }
 };

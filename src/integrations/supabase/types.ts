@@ -2506,6 +2506,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          description_ur: string | null
           display_order: number
           duration_seconds: number | null
           id: string
@@ -2516,6 +2517,7 @@ export type Database = {
           target_role: string
           thumbnail_url: string | null
           title: string
+          title_ur: string | null
           youtube_url: string
         }
         Insert: {
@@ -2523,6 +2525,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          description_ur?: string | null
           display_order?: number
           duration_seconds?: number | null
           id?: string
@@ -2533,6 +2536,7 @@ export type Database = {
           target_role?: string
           thumbnail_url?: string | null
           title: string
+          title_ur?: string | null
           youtube_url: string
         }
         Update: {
@@ -2540,6 +2544,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          description_ur?: string | null
           display_order?: number
           duration_seconds?: number | null
           id?: string
@@ -2550,6 +2555,7 @@ export type Database = {
           target_role?: string
           thumbnail_url?: string | null
           title?: string
+          title_ur?: string | null
           youtube_url?: string
         }
         Relationships: []

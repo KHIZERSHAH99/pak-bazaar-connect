@@ -203,8 +203,8 @@ const EmailSignupForm = () => {
                         variant={selectedBusinessType === 'seller' ? 'default' : 'outline'}
                         className={`h-20 flex flex-col items-center justify-center gap-1 ${
                           selectedBusinessType === 'seller'
-                            ? 'bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white'
-                            : 'hover:bg-pakistani_green-50'
+                            ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                            : 'hover:bg-primary/5'
                         }`}
                         onClick={() => field.onChange('seller')}
                       >

@@ -25,7 +25,6 @@ class CleanupManager {
    */
   registerTask(id: string, task: CleanupTask): void {
     this.tasks.set(id, task);
-    console.log(`[CleanupManager] Registered task: ${id}`);
   }
 
   /**

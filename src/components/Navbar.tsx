@@ -111,6 +111,18 @@ const Navbar = () => {
                 </Button>
               )}
 
+              {/* Cart Icon */}
+              <Link to="/checkout" className="relative">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary hover:bg-primary/10">
+                  <ShoppingCart className="w-5 h-5" />
+                  {cartCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-destructive text-destructive-foreground">
+                      {cartCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+
               {/* Language Toggle */}
               <LanguageToggle />
 

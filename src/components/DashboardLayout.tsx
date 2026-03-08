@@ -48,7 +48,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {sidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black/50 z-10 md:hidden backdrop-blur-sm transition-opacity duration-300" 
+            className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm transition-opacity duration-300" 
             onClick={() => setSidebarOpen(false)} 
             aria-hidden="true" 
           />

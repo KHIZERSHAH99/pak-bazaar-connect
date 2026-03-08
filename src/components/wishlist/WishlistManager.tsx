@@ -111,7 +111,7 @@ const WishlistManager: React.FC<WishlistManagerProps> = ({
                   {product.description}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold text-pakistani_green-600 font-poppins">
+                  <span className="text-xl font-bold text-primary font-poppins">
                     PKR {product.price.toLocaleString()}
                   </span>
                   <span className="text-sm text-gray-500 font-poppins">

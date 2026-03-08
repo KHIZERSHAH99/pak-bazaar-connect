@@ -41,7 +41,7 @@ const ShippingPolicy = () => {
                 We facilitate shipping across all major cities in Pakistan through our network of verified wholesalers.
               </p>
 
-              <h3 className="text-xl font-semibold text-pakistani_green-600 mb-3">
+              <h3 className="text-xl font-semibold text-primary mb-3">
                 Delivery Areas
               </h3>
               <ul className="list-disc pl-6 mb-6 text-foreground">

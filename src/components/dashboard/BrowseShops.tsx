@@ -208,12 +208,6 @@ const BrowseShops: React.FC = () => {
                     Verified
                   </Badge>
                 </div>
-                <div className="absolute top-3 right-3">
-                  <Badge className="bg-primary text-primary-foreground shadow-sm">
-                    <Star className="h-3 w-3 mr-1" />
-                    4.8
-                  </Badge>
-                </div>
               </div>
 
               <CardHeader className="pb-3">

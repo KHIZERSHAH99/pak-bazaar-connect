@@ -112,12 +112,12 @@ const Navbar = () => {
 
               {user ? <UserMenu email={profile?.email || user.email} role={profile?.role} onLogout={handleLogout} getRoleBadge={getRoleBadge} /> : <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   <Link to="/login">
-                    <Button variant="ghost" className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins">
+                    <Button variant="ghost" className="text-primary hover:text-primary/80 hover:bg-primary/10 font-poppins">
                       {t('login')}
                     </Button>
                   </Link>
                   <Link to="/signup">
-                    <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins shadow-md transition-all duration-200 hover:shadow-lg">
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins shadow-md transition-all duration-200 hover:shadow-lg">
                       {t('signup')}
                     </Button>
                   </Link>

@@ -42,10 +42,10 @@ const Navbar = () => {
   const getRoleBadge = () => {
     if (!profile?.role) return null;
     const roleColors = {
-      admin: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
-      wholesaler: 'bg-pakistani_green-100 text-pakistani_green-800 dark:bg-pakistani_green-900/20 dark:text-pakistani_green-300',
+      admin: 'bg-destructive/10 text-destructive',
+      wholesaler: 'bg-primary/10 text-primary',
       seller: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
-      pending: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300'
+      pending: 'bg-muted text-muted-foreground'
     };
     return <span className={`px-2 py-0.5 text-xs font-medium rounded-full font-poppins ${roleColors[profile.role as keyof typeof roleColors] || roleColors.pending}`}>
         {profile.role}

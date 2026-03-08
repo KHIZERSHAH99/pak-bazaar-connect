@@ -63,7 +63,7 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
   const content = (
     <div className={cn(
       "flex flex-col items-center justify-center gap-3",
-      fullscreen && "min-h-screen bg-white/80 backdrop-blur-sm",
+      fullscreen && "min-h-screen bg-background/80 backdrop-blur-sm",
       className
     )}>
       {renderSpinner()}

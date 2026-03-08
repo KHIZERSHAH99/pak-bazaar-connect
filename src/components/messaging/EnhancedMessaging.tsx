@@ -222,7 +222,10 @@ const EnhancedMessaging: React.FC = () => {
       {showList && (
         <div className={`${isMobile ? 'w-full' : 'w-1/3'} border-r bg-muted/30 flex flex-col`}>
           <div className="p-4 border-b bg-background">
-            <h3 className="font-semibold font-poppins mb-3">Messages</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold font-poppins">Messages</h3>
+              <NewConversationDialog onConversationCreated={handleNewConversation} />
+            </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input

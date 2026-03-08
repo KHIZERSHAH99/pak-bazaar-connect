@@ -71,7 +71,7 @@ class CleanupManager {
     }
 
     this.isRunning = false;
-    console.log('[CleanupManager] Stopped');
+    // Stopped silently
   }
 
   /**

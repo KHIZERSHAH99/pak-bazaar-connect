@@ -81,7 +81,7 @@ const Navbar = () => {
               {/* Main Navigation Links */}
               <div className="flex items-center space-x-1">
                 <Link to="/products">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
+                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
                     <ShoppingBag className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
                     {t('products')}
                   </Button>

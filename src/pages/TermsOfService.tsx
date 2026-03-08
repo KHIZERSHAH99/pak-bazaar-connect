@@ -51,7 +51,7 @@ const TermsOfService = () => {
                 <li>Respect other users and their intellectual property</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Platform Usage
               </h2>
               <p className="mb-6 text-foreground">

@@ -242,7 +242,7 @@ const OrderManagement: React.FC<OrderManagementProps> = ({ userRole }) => {
 
                   <div className="flex justify-between items-center pt-4 border-t">
                     <div>
-                      <p className="text-2xl font-bold text-pakistani_green-600 font-poppins">
+                      <p className="text-2xl font-bold text-primary font-poppins">
                         PKR {order.totalAmount.toLocaleString()}
                       </p>
                     </div>

@@ -281,7 +281,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
 
           {/* Progress Text */}
           <div className="text-center mt-4">
-            <p className="text-sm text-gray-500 font-poppins">
+            <p className="text-sm text-muted-foreground font-poppins">
               {currentStep === steps.length - 1 ? 
                 'Ready to get started?' : 
                 `${steps.length - currentStep - 1} more steps to complete`

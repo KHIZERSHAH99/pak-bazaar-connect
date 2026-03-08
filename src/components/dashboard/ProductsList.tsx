@@ -184,11 +184,11 @@ const ProductsList: React.FC = () => {
   if (products.length === 0) {
     return (
       <div className="text-center py-8">
-        <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">
+        <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-foreground mb-2 font-poppins">
           {t('noProductsYet')}
         </h3>
-        <p className="text-gray-600 font-poppins">
+        <p className="text-muted-foreground font-poppins">
           {t('startAddingProducts')}
         </p>
       </div>
@@ -264,18 +264,36 @@ const ProductsList: React.FC = () => {
                 </h3>
                 
                 <div className="space-y-2 mb-4">
-                  <p className="text-xl font-bold text-pakistani_green-600 font-poppins">
+                  <p className="text-xl font-bold text-primary font-poppins">
                     PKR {product.price.toLocaleString()}
                   </p>
                   
                   {product.moq && product.moq > 1 && (
-                    <p className="text-sm text-gray-600 font-poppins">
+                    <p className="text-sm text-muted-foreground font-poppins">
                       {t('moq')}: {product.moq} {t('productsAvailable').split(' ')[0]}
                     </p>
                   )}
+
+                  {/* Stock quantity display */}
+                  {product.stock_quantity !== undefined && product.stock_quantity !== null && (
+                    <div className="flex items-center gap-2">
+                      <Package className="w-3.5 h-3.5 text-muted-foreground" />
+                      <span className={`text-sm font-poppins font-medium ${
+                        product.stock_quantity === 0 
+                          ? 'text-destructive' 
+                          : product.stock_quantity < 10 
+                            ? 'text-yellow-600 dark:text-yellow-400' 
+                            : 'text-muted-foreground'
+                      }`}>
+                        {product.stock_quantity === 0 
+                          ? 'Out of stock' 
+                          : `${product.stock_quantity} in stock`}
+                      </span>
+                    </div>
+                  )}
                   
                   {product.categories && (
-                    <p className="text-sm text-gray-600 font-poppins">
+                    <p className="text-sm text-muted-foreground font-poppins">
                       {t('category')}: {product.categories.name}
                     </p>
                   )}

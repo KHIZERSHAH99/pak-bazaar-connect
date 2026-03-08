@@ -127,14 +127,33 @@ const AdminUserManagement: React.FC = () => {
     },
   });
 
+  const toggleSuspend = useMutation({
+    mutationFn: async ({ userId, suspend }: { userId: string; suspend: boolean }) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          is_suspended: suspend,
+          suspension_reason: suspend ? 'Suspended by admin' : null,
+          suspended_until: null,
+        })
+        .eq('id', userId);
+      if (error) throw error;
+    },
+    onSuccess: (_, { suspend }) => {
+      toast({ title: suspend ? 'User suspended' : 'User unsuspended' });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+    onError: (err: any) => {
+      toast({ title: 'Action failed', description: err.message, variant: 'destructive' });
+    },
+  });
+
   const filteredUsers = users.filter(u =>
     !search ||
     u.email?.toLowerCase().includes(search.toLowerCase()) ||
     u.business_name?.toLowerCase().includes(search.toLowerCase()) ||
     u.phone_number?.includes(search)
   );
-
-  const roleCounts = users.reduce((acc, u) => {
     acc[u.role] = (acc[u.role] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);

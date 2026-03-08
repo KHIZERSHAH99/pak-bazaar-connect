@@ -96,8 +96,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                     <div className="flex items-center">
                       <ShoppingCart className="h-8 w-8 text-primary" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Total Orders</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.totalOrders}</p>
                       </div>
                     </div>
                   </CardContent>

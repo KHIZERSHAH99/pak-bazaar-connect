@@ -12,6 +12,24 @@ const HeroSection: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Fetch real stats
+  const { data: stats } = useQuery({
+    queryKey: ['hero-stats'],
+    queryFn: async () => {
+      const [products, shops, cities] = await Promise.all([
+        supabase.from('products').select('id', { count: 'exact', head: true }).eq('is_active', true),
+        supabase.from('shops').select('id', { count: 'exact', head: true }),
+        supabase.from('cities').select('id', { count: 'exact', head: true }),
+      ]);
+      return {
+        products: products.count || 0,
+        shops: shops.count || 0,
+        cities: cities.count || 0,
+      };
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {

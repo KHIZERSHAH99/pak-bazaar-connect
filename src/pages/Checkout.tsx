@@ -95,26 +95,43 @@ const Checkout: React.FC = () => {
     }
   };
 
+  // Redirect unauthenticated users
+  if (!user) {
+    return (
+      <Layout>
+        <div className="min-h-[60vh] flex items-center justify-center py-8">
+          <div className="max-w-md mx-auto text-center px-4">
+            <LogIn className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-foreground mb-2 font-poppins">Login Required</h1>
+            <p className="text-muted-foreground mb-6 font-poppins">Please log in to proceed with checkout</p>
+            <Button onClick={() => navigate('/login?redirect=/checkout')}>
+              Log In to Continue
+            </Button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-muted/50 py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto text-center">
+      <Layout>
+        <div className="min-h-[60vh] flex items-center justify-center py-8">
+          <div className="max-w-md mx-auto text-center px-4">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-foreground mb-2">Your cart is empty</h1>
-            <p className="text-muted-foreground mb-6">Add some products to your cart to checkout</p>
-            <Button 
-              onClick={() => navigate('/products')}
-            >
+            <h1 className="text-2xl font-bold text-foreground mb-2 font-poppins">Your cart is empty</h1>
+            <p className="text-muted-foreground mb-6 font-poppins">Add some products to your cart to checkout</p>
+            <Button onClick={() => navigate('/products')}>
               Browse Products
             </Button>
           </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
+    <Layout>
     <div className="min-h-screen bg-muted/50 py-8">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">

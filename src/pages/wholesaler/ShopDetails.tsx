@@ -129,8 +129,8 @@ const ShopDetails: React.FC = () => {
                   </div>
                 )}
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2 font-poppins">{shop.name}</h2>
-                  <div className="space-y-2 text-sm text-gray-600">
+                  <h2 className="text-xl font-semibold text-foreground mb-2 font-poppins">{shop.name}</h2>
+                  <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <MapPin className="h-4 w-4 mr-2" />
                       <span className="font-poppins">{shop.address}</span>

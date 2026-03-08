@@ -90,8 +90,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
                   <div className="text-white">{getIcon(method.type)}</div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-800 font-poppins">{method.name}</h4>
-                  <p className="text-sm text-gray-600 font-poppins capitalize">
+                  <h4 className="font-semibold text-foreground font-poppins">{method.name}</h4>
+                  <p className="text-sm text-muted-foreground font-poppins capitalize">
                     {method.type.replace('_', ' ')}
                   </p>
                 </div>

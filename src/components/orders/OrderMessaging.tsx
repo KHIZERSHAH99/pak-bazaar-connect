@@ -64,7 +64,7 @@ const OrderMessaging: React.FC<OrderMessagingProps> = ({ orderId }) => {
               key={message.id}
               className={`p-3 rounded-lg ${
                 message.sender_id === profile?.id
-                  ? 'bg-pakistani_green-50 ml-8'
+                  ? 'bg-primary/5 ml-8'
                   : 'bg-gray-50 mr-8'
               }`}
             >

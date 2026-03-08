@@ -41,13 +41,28 @@ const ShopDetails: React.FC = () => {
       
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('*, categories!products_category_id_fkey(name)')
         .eq('shop_id', shopId)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data;
+    },
+    enabled: !!shopId,
+  });
+
+  // Fetch order count for this shop
+  const { data: orderCount } = useQuery({
+    queryKey: ['shop-order-count', shopId],
+    queryFn: async () => {
+      if (!shopId) return 0;
+      const { count } = await supabase
+        .from('orders')
+        .select('id', { count: 'exact', head: true })
+        .eq('shop_id', shopId)
+        .in('status', ['confirmed', 'shipped', 'delivered']);
+      return count || 0;
     },
     enabled: !!shopId,
   });

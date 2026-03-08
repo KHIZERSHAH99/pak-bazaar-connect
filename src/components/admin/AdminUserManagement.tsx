@@ -279,6 +279,9 @@ const AdminUserManagement: React.FC = () => {
                         <Badge variant={u.role === 'admin' ? 'default' : 'secondary'} className="capitalize text-[10px] shrink-0">
                           {u.role}
                         </Badge>
+                        {u.is_suspended && (
+                          <Badge variant="destructive" className="text-[10px] shrink-0">Suspended</Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{u.email}</span>

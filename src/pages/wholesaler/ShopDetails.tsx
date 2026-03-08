@@ -81,9 +81,9 @@ const ShopDetails: React.FC = () => {
     return (
       <DashboardLayout>
         <div className="text-center py-12">
-          <Store className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Shop Not Found</h2>
-          <p className="text-gray-600 mb-4">The shop you're looking for doesn't exist or has been removed.</p>
+          <Store className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-foreground mb-2">Shop Not Found</h2>
+          <p className="text-muted-foreground mb-4">The shop you're looking for doesn't exist or has been removed.</p>
           <Button onClick={() => navigate('/dashboard/shops')} variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Shops

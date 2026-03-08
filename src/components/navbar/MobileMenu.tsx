@@ -101,18 +101,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               </div>
             )}
 
-            {/* User Actions */}
+            {/* Quick Actions */}
             <div className="space-y-1">
-              <Link to="/profile" onClick={handleLinkClick}>
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  Profile
-                </Button>
-              </Link>
-
               <Link to="/dashboard" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
@@ -123,37 +113,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 </Button>
               </Link>
 
-              <Link to="/favorites" onClick={handleLinkClick}>
+              <Link to="/profile" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
                   className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins"
                 >
-                  <Heart className="w-4 h-4 mr-2" />
-                  Favorites
+                  <User className="w-4 h-4 mr-2" />
+                  Profile
                 </Button>
               </Link>
-
-              <Link to="/messages" onClick={handleLinkClick}>
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins"
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Messages
-                </Button>
-              </Link>
-
-              {profile?.role === 'wholesaler' && (
-                <Link to="/analytics" onClick={handleLinkClick}>
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins"
-                  >
-                    <BarChart className="w-4 h-4 mr-2" />
-                    Analytics
-                  </Button>
-                </Link>
-              )}
             </div>
 
             {/* Controls Section */}

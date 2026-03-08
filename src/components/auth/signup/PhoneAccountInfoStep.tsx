@@ -130,7 +130,7 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
                   />
                   {phoneCheckState === 'checking' && (
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-pakistani_green-600 border-t-transparent"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
                     </div>
                   )}
                   {phoneCheckState === 'available' && (

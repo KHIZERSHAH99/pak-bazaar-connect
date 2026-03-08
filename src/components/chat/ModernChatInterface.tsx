@@ -46,15 +46,15 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
     scrollToBottom();
   }, [chatHistory]);
 
-  const handleSend = async () => {
-    if (!message.trim() || sending) return;
+  const handleSend = async (directMessage?: string) => {
+    const msgToSend = directMessage || message;
+    if (!msgToSend.trim() || sending) return;
     
-    const messageToSend = message;
     setMessage('');
     setIsTyping(true);
     
     try {
-      await sendMessage(messageToSend);
+      await sendMessage(msgToSend);
     } finally {
       setIsTyping(false);
     }
@@ -161,8 +161,8 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                   {quickQuestions.map((question, index) => (
                     <button
                       key={index}
-                      onClick={() => setMessage(question)}
-                      className="block w-full text-left p-2 text-xs bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors font-poppins"
+                      onClick={() => handleSend(question)}
+                      className="block w-full text-left p-2 text-xs bg-muted hover:bg-muted/80 rounded-md transition-colors font-poppins"
                     >
                       <HelpCircle className="h-3 w-3 inline mr-2 text-primary" />
                       {question}
@@ -265,7 +265,7 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                 className="flex-1 bg-white dark:bg-gray-800 font-poppins"
               />
               <Button 
-                onClick={handleSend}
+                onClick={() => handleSend()}
                 disabled={!message.trim() || sending}
                 className="bg-primary hover:bg-primary/90 px-3"
               >

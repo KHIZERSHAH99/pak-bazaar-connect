@@ -106,7 +106,8 @@ const BrowseShops: React.FC = () => {
     const nameMatch = shop.name.toLowerCase().includes(searchLower);
     const addressMatch = shop.address?.toLowerCase().includes(searchLower) || false;
     const contactMatch = shop.contact?.toLowerCase().includes(searchLower) || false;
-    return nameMatch || addressMatch || contactMatch;
+    const cityMatch = selectedCity === 'all' || shop.city_id === selectedCity;
+    return (nameMatch || addressMatch || contactMatch) && cityMatch;
   });
 
   const handleViewShop = (shopId: string) => {

@@ -41,7 +41,7 @@ const RefundPolicy = () => {
                 Refunds are available for orders that meet specific criteria within our return window.
               </p>
 
-              <h3 className="text-xl font-semibold text-pakistani_green-600 mb-3">
+              <h3 className="text-xl font-semibold text-primary mb-3">
                 Eligible Items
               </h3>
               <ul className="list-disc pl-6 mb-6 text-foreground">

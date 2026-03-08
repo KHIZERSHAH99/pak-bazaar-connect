@@ -154,6 +154,8 @@ const AdminUserManagement: React.FC = () => {
     u.business_name?.toLowerCase().includes(search.toLowerCase()) ||
     u.phone_number?.includes(search)
   );
+
+  const roleCounts = users.reduce((acc, u) => {
     acc[u.role] = (acc[u.role] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);

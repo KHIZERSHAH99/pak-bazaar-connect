@@ -8,8 +8,8 @@ const AboutUs: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 py-12">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-gray-900 mb-6 font-poppins">About PakBazaar Connect</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-poppins leading-relaxed">
+            <h1 className="text-4xl font-bold text-foreground mb-6 font-poppins">About PakBazaar Connect</h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-poppins leading-relaxed">
               Connecting Pakistani wholesalers and retailers through a modern, secure, and efficient B2B marketplace. 
               Empowering businesses to grow together.
             </p>

@@ -47,6 +47,10 @@ const DashboardCoupons = lazy(() => import('@/pages/dashboard/DashboardCoupons')
 const DashboardTutorials = lazy(() => import('@/pages/dashboard/DashboardTutorials'));
 const DashboardTutorialDetail = lazy(() => import('@/pages/dashboard/DashboardTutorialDetail'));
 const DashboardTutorialManager = lazy(() => import('@/pages/dashboard/DashboardTutorialManager'));
+const DashboardAdminUsers = lazy(() => import('@/pages/dashboard/DashboardAdminUsers'));
+const DashboardAdminOrders = lazy(() => import('@/pages/dashboard/DashboardAdminOrders'));
+const DashboardAdminModeration = lazy(() => import('@/pages/dashboard/DashboardAdminModeration'));
+const DashboardAdminAnalytics = lazy(() => import('@/pages/dashboard/DashboardAdminAnalytics'));
 
 // Public pages
 const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));
@@ -113,6 +117,10 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><LazyRoute><DashboardSellerOrders /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardWholesalerOrders /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdmin /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin/users" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdminUsers /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin/orders" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdminOrders /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin/moderation" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdminModeration /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin/analytics" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdminAnalytics /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><LazyRoute><DashboardAnalytics /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/payment" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardPayment /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/coupons" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardCoupons /></LazyRoute></ProtectedRoute>} />

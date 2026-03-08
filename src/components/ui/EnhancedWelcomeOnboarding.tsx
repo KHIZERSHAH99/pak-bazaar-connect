@@ -201,7 +201,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
             </Badge>
           </div>
           
-          <Progress value={progress} className="h-2 bg-white/20" />
+          <Progress value={progress} className="h-2 bg-primary-foreground/20" />
           
           {currentStepData.highlight && (
             <div className="mt-4 bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full text-center font-semibold animate-pulse">

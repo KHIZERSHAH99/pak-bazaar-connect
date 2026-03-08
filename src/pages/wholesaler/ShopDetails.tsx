@@ -204,7 +204,7 @@ const ShopDetails: React.FC = () => {
 
           <div className="space-y-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 font-poppins">Shop Statistics</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4 font-poppins">Shop Statistics</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 font-poppins">Total Products</span>

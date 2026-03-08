@@ -43,8 +43,8 @@ const Dashboard: React.FC = () => {
     return <DashboardLayout>
         <div className="flex justify-center items-center min-h-96">
           <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-pakistani_green-600 mx-auto mb-4" />
-            <p className="text-gray-600 font-poppins">Loading your dashboard...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground font-poppins">Loading your dashboard...</p>
           </div>
         </div>
       </DashboardLayout>;

@@ -70,7 +70,7 @@ export const getMarketplaceProducts = async (filters?: {
     .select(`
       *,
       categories (id, name),
-      shops!shop_id (
+      shops!fk_products_shop_id (
         id,
         name, 
         contact, 

@@ -124,8 +124,8 @@ const OrderMessagingSystem: React.FC<OrderMessagingSystemProps> = ({
                   <div
                     className={`max-w-xs lg:max-w-md px-3 py-2 rounded-lg ${
                       isMyMessage(message)
-                        ? 'bg-pakistani_green-100 text-pakistani_green-800'
-                        : 'bg-white border'
+                        ? 'bg-primary/10 text-foreground'
+                        : 'bg-card border'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">

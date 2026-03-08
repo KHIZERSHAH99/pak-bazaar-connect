@@ -53,9 +53,9 @@ const Navbar = () => {
   };
   return <>
       {/* Top Banner */}
-      <div className="bg-pakistani_green-700 text-white py-1.5 md:py-2 px-3 md:px-4 text-center relative overflow-hidden">
+      <div className="bg-primary text-primary-foreground py-1.5 md:py-2 px-3 md:px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center opacity-5">
-          <Flag className="w-24 md:w-40 h-24 md:h-40 text-white" />
+          <Flag className="w-24 md:w-40 h-24 md:h-40 text-primary-foreground" />
         </div>
         <p className="text-xs md:text-sm font-medium relative z-10">
           Welcome to Pakistan's Premier B2B Marketplace

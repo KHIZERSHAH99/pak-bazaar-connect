@@ -199,6 +199,25 @@ const EnhancedMessaging: React.FC = () => {
     }
   };
 
+  const handleNewConversation = useCallback(async (conversationId: string) => {
+    await fetchConversations();
+    // Find and select the new conversation
+    const { data } = await supabase
+      .from('conversations')
+      .select('*')
+      .eq('id', conversationId)
+      .single();
+    if (data && user) {
+      const otherId = data.buyer_id === user.id ? data.seller_id : data.buyer_id;
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('id, email, business_name, role')
+        .eq('id', otherId)
+        .maybeSingle();
+      setSelectedConversation({ ...data, other_user: prof || undefined, unread_count: 0 });
+    }
+  }, [user]);
+
   const filteredConversations = conversations.filter(conv =>
     conv.other_user?.business_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     conv.other_user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -124,7 +124,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
-              <Phone className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Phone className="h-4 w-4 mr-1 text-primary" />
               Phone Number
             </FormLabel>
             <FormControl>

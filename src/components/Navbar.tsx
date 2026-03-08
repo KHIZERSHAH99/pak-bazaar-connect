@@ -68,10 +68,10 @@ const Navbar = () => {
             <div className="flex justify-between items-center h-14 md:h-16">
               {/* Logo */}
               <Link to="/" className="flex items-center space-x-2 md:space-x-3 hover:opacity-80 transition-opacity">
-                <div className="bg-pakistani_green-700 rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
-                  <span className="text-white text-lg md:text-xl font-bold">PBC</span>
+                <div className="bg-primary rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-primary-foreground text-lg md:text-xl font-bold">PBC</span>
                 </div>
-                <span className="text-lg md:text-xl font-bold text-pakistani_green-800 dark:text-white hidden sm:inline font-poppins">
+                <span className="text-lg md:text-xl font-bold text-foreground hidden sm:inline font-poppins">
                   Pak Bazaar Connect
                 </span>
               </Link>

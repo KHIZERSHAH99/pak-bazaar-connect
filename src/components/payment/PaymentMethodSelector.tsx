@@ -79,8 +79,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             key={method.id}
             className={`p-4 cursor-pointer transition-all duration-300 hover:shadow-lg ${
               selectedMethod === method.id
-                ? 'ring-2 ring-pakistani_green-500 bg-pakistani_green-50'
-                : 'hover:border-pakistani_green-300'
+                ? 'ring-2 ring-primary bg-primary/5'
+                : 'hover:border-primary/30'
             }`}
             onClick={() => onSelectMethod(method.id)}
           >

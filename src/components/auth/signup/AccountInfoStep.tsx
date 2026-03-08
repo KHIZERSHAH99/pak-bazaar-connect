@@ -130,7 +130,7 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Lock className="h-4 w-4 mr-1 text-primary" />
               Confirm Password
             </FormLabel>
             <FormControl>

@@ -37,7 +37,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
         {images.map((img, idx) => (
           <button
             key={idx}
-            className={`h-14 w-14 rounded border focus:outline-none p-1 ${selected === idx ? "border-pakistani_green-600 ring-2 ring-pakistani_green-400" : "hover:border-gray-400"}`}
+            className={`h-14 w-14 rounded border focus:outline-none p-1 ${selected === idx ? "border-primary ring-2 ring-primary/40" : "hover:border-muted-foreground"}`}
             onClick={() => setSelected(idx)}
             aria-label={`View product image ${idx + 1}`}
             type="button"

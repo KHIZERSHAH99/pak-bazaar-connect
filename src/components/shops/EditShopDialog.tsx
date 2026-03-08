@@ -254,7 +254,7 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
+              className="flex-1 bg-primary hover:bg-primary/90 font-poppins"
             >
               {isSubmitting ? t('updating') : t('updateShop')}
             </Button>

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from '@/components/Layout';
 import { Product } from '@/lib/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,6 +24,7 @@ const Products: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(urlParams.get('search') || '');
   const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
 
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const { toast } = useToast();
 
   // Debounce search term
@@ -31,6 +32,13 @@ const Products: React.FC = () => {
     const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
     return () => clearTimeout(timer);
   }, [searchTerm]);
+
+  // Show/hide scroll-to-top based on scroll position
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -202,16 +210,19 @@ const Products: React.FC = () => {
         
         <ProductsGrid products={products} loading={loading} />
 
-        {/* Back to Top Button - Fixed Position */}
-        <div className="fixed bottom-6 right-6 z-50">
-          <Button 
-            onClick={scrollToTop}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200"
-            size="icon"
-          >
-            <ArrowUp className="w-5 h-5" />
-          </Button>
-        </div>
+        {/* Back to Top Button - Fixed Position, scroll-aware */}
+        {showScrollTop && (
+          <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <Button 
+              onClick={scrollToTop}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200"
+              size="icon"
+              aria-label="Back to top"
+            >
+              <ArrowUp className="w-5 h-5" />
+            </Button>
+          </div>
+        )}
       </div>
     </Layout>
   );

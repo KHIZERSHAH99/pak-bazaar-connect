@@ -3,13 +3,13 @@ import Layout from '@/components/Layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, Award, Shield } from 'lucide-react';
 const AboutUs: React.FC = () => {
-  return <Layout>
-      <div className="min-h-screen bg-gray-50">
+  return <Layout title="About Us - Pak Bazaar Connect" description="Learn about Pak Bazaar Connect — Pakistan's modern B2B marketplace connecting wholesalers and retailers for seamless trade.">
+      <div className="min-h-screen bg-background">
         <div className="max-w-6xl mx-auto px-4 py-12">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-gray-900 mb-6 font-poppins">About PakBazaar Connect</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-poppins leading-relaxed">
+            <h1 className="text-4xl font-bold text-foreground mb-6 font-poppins">About PakBazaar Connect</h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-poppins leading-relaxed">
               Connecting Pakistani wholesalers and retailers through a modern, secure, and efficient B2B marketplace. 
               Empowering businesses to grow together.
             </p>
@@ -23,10 +23,10 @@ const AboutUs: React.FC = () => {
                   <Target className="w-8 h-8 text-primary mr-3" />
                   <h2 className="text-2xl font-bold font-poppins">Our Mission</h2>
                 </div>
-                <p className="text-gray-600 leading-relaxed font-poppins">
-                  To revolutionize B2B commerce in Pakistan by providing a transparent, efficient, and trustworthy 
-                  platform that connects wholesalers with retailers, enabling business growth and economic prosperity 
-                  across the country.
+                <p className="text-muted-foreground leading-relaxed font-poppins">
+                   To revolutionize B2B commerce in Pakistan by providing a transparent, efficient, and trustworthy 
+                   platform that connects wholesalers with retailers, enabling business growth and economic prosperity 
+                   across the country.
                 </p>
               </CardContent>
             </Card>
@@ -37,7 +37,7 @@ const AboutUs: React.FC = () => {
                   <Award className="w-8 h-8 text-primary mr-3" />
                   <h2 className="text-2xl font-bold font-poppins">Our Vision</h2>
                 </div>
-                <p className="text-gray-600 leading-relaxed font-poppins">
+                <p className="text-muted-foreground leading-relaxed font-poppins">
                   To become Pakistan's leading B2B marketplace, fostering a thriving ecosystem where businesses 
                   of all sizes can discover opportunities, build partnerships, and achieve sustainable growth 
                   through technology and innovation.

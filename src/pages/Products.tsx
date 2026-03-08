@@ -9,6 +9,7 @@ import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);

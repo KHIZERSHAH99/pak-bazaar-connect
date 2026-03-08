@@ -33,7 +33,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ onSubmit, isLoading = false, ti
       <h3 className="text-lg font-semibold mb-4 font-poppins">{title}</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2 font-poppins">
+          <label className="block text-sm font-medium text-foreground mb-2 font-poppins">
             Rating *
           </label>
           <StarRating
@@ -45,7 +45,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ onSubmit, isLoading = false, ti
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2 font-poppins">
+          <label className="block text-sm font-medium text-foreground mb-2 font-poppins">
             Comment (optional)
           </label>
           <Textarea
@@ -60,7 +60,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ onSubmit, isLoading = false, ti
         <Button
           type="submit"
           disabled={rating === 0 || isLoading}
-          className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins"
+          className="font-poppins"
         >
           {isLoading ? 'Submitting...' : 'Submit Review'}
         </Button>

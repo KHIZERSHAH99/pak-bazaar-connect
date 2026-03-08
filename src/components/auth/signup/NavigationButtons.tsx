@@ -56,7 +56,7 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
       <Button
         type="button"
         onClick={handleButtonClick}
-        className="ml-auto bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins disabled:opacity-50 disabled:cursor-not-allowed"
+        className="ml-auto font-poppins disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={isDisabled}
       >
         {isLoading 

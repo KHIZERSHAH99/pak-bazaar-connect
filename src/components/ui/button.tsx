@@ -10,15 +10,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-pakistani_green-600 text-white hover:bg-pakistani_green-700 shadow-md hover:shadow-lg active:scale-[0.98]",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg active:scale-[0.98]",
         destructive:
-          "bg-red-500 text-white hover:bg-red-600 shadow-md hover:shadow-lg active:scale-[0.98]",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md hover:shadow-lg active:scale-[0.98]",
         outline:
-          "border-2 border-pakistani_green-600 bg-background text-pakistani_green-600 hover:bg-pakistani_green-50 hover:text-pakistani_green-700 dark:border-pakistani_green-400 dark:text-pakistani_green-200 dark:hover:bg-pakistani_green-900/30 dark:hover:text-white shadow-sm hover:shadow-md active:scale-[0.98]",
+          "border-2 border-primary bg-background text-primary hover:bg-primary/5 hover:text-primary shadow-sm hover:shadow-md active:scale-[0.98]",
         secondary:
-          "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 shadow-sm hover:shadow-md active:scale-[0.98]",
-        ghost: "hover:bg-pakistani_green-50 hover:text-pakistani_green-700 dark:hover:bg-pakistani_green-900/20 dark:hover:text-pakistani_green-300",
-        link: "text-pakistani_green-600 underline-offset-4 hover:underline dark:text-pakistani_green-400",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm hover:shadow-md active:scale-[0.98]",
+        ghost: "hover:bg-accent/10 hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
         success: "bg-green-500 text-white hover:bg-green-600 shadow-md hover:shadow-lg active:scale-[0.98]",
         warning: "bg-yellow-500 text-white hover:bg-yellow-600 shadow-md hover:shadow-lg active:scale-[0.98]",
       },

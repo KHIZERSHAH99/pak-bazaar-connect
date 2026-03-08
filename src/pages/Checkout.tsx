@@ -63,14 +63,14 @@ const Checkout: React.FC = () => {
       for (const [shopId, shopItems] of cartByShop) {
         const totalAmount = shopItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
         
-        await createOrder({
+        await createOrderWithPayment(
           shopId,
           totalAmount,
-          buyerName: orderForm.buyerName,
-          buyerPhone: orderForm.buyerPhone,
-          buyerAddress: orderForm.buyerAddress,
-          paymentMethod: orderForm.paymentMethod
-        });
+          orderForm.buyerName,
+          orderForm.buyerPhone,
+          orderForm.buyerAddress,
+          orderForm.paymentMethod
+        );
       }
 
       clearCart();

@@ -95,7 +95,7 @@ const FeaturedProducts = () => {
                     {/* Price */}
                     <div className="flex items-center space-x-2">
                       <span className="text-xl font-bold text-pakistani_green-600 dark:text-pakistani_green-400 font-poppins">
-                        PKR {product.price}
+                        PKR {product.price?.toLocaleString()}
                       </span>
                       {product.sample_price && (
                         <span className="text-sm text-gray-500 font-poppins">

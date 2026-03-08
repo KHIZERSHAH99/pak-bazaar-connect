@@ -159,7 +159,7 @@ const Footer = () => {
         {/* Footer Bottom Section */}
         <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-center text-sm text-foreground/70 font-poppins">
-            © 2024 Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.
+            © {new Date().getFullYear()} Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.
           </p>
           
           {/* Back to Top Button */}

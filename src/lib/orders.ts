@@ -257,7 +257,7 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, owner_id)
+        shops!fk_orders_shop_id(id, name, contact, address, owner_id)
       `)
       .eq('id', orderId)
       .single();

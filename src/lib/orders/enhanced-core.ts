@@ -157,7 +157,7 @@ export const confirmOrderWithBusinessLogic = async (orderId: string, notes?: str
     .eq('id', orderId)
     .select(`
       *,
-      shops!shop_id(owner_id, name)
+      shops!fk_orders_shop_id(owner_id, name)
     `)
     .single();
 

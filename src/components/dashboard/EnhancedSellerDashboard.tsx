@@ -132,8 +132,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                     <div className="flex items-center">
                       <DollarSign className="h-8 w-8 text-blue-500" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Total Spent</p>
-                        <p className="text-2xl font-bold text-gray-900">Rs. {stats.totalSpent.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
+                        <p className="text-2xl font-bold text-foreground">Rs. {stats.totalSpent.toLocaleString()}</p>
                       </div>
                     </div>
                   </CardContent>

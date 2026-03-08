@@ -11,6 +11,7 @@ import NotFound from '@/pages/NotFound';
 // Lazy load all other pages
 const Login = lazy(() => import('@/pages/Login'));
 const Signup = lazy(() => import('@/pages/Signup'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Profile = lazy(() => import('@/pages/Profile'));
 const Products = lazy(() => import('@/pages/Products'));
@@ -71,6 +72,7 @@ const AppRoutes: React.FC = () => {
         {/* Auth routes */}
         <Route path="/login" element={<LazyRoute><Login /></LazyRoute>} />
         <Route path="/signup" element={<LazyRoute><Signup /></LazyRoute>} />
+        <Route path="/forgot-password" element={<LazyRoute><ForgotPassword /></LazyRoute>} />
         
         {/* Product routes */}
         <Route path="/products" element={<LazyRoute><Products /></LazyRoute>} />

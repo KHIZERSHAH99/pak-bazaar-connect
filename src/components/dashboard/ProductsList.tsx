@@ -1,11 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2, Eye, EyeOff, Package } from 'lucide-react';
+import { Edit, Trash2, Eye, EyeOff, Package, Copy } from 'lucide-react';
 import { Product } from '@/lib/types';
-import { getProductsByWholesaler, updateProduct, deleteProduct } from '@/lib/products';
+import { getProductsByWholesaler, updateProduct, deleteProduct, createProduct } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import EditProductDialog from '@/components/products/EditProductDialog';
@@ -69,6 +69,24 @@ const ProductsList: React.FC = () => {
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
     setIsEditDialogOpen(true);
+  };
+
+  const handleClone = async (product: Product) => {
+    try {
+      await createProduct({
+        name: `${product.name} (Copy)`,
+        price: product.price,
+        image: product.image || '',
+        shop_id: product.shop_id || '',
+        description: product.description || '',
+        moq: product.moq || 1,
+        category_id: product.category_id || undefined,
+      });
+      queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] });
+      toast({ title: 'Product cloned', description: 'The copy has been created as inactive. Edit it to customize.' });
+    } catch (error: any) {
+      toast({ title: 'Clone failed', description: error.message, variant: 'destructive' });
+    }
   };
 
   const handleToggleStatus = (product: Product) => {
@@ -217,6 +235,15 @@ const ProductsList: React.FC = () => {
                         {t('show')}
                       </>
                     )}
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleClone(product)}
+                    title="Clone product"
+                  >
+                    <Copy className="w-4 h-4" />
                   </Button>
                   
                   <Button

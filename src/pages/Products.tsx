@@ -9,8 +9,10 @@ import ProductsFilters from '@/components/products/ProductsFilters';
 import ProductsGrid from '@/components/products/ProductsGrid';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 const Products: React.FC = () => {
+  const [urlParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
@@ -19,7 +21,7 @@ const Products: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState('all');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(urlParams.get('search') || '');
 
   const { toast } = useToast();
 

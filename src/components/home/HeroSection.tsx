@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Users, ShieldCheck, TrendingUp } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ArrowRight, Users, ShieldCheck, TrendingUp, Search } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+
 const HeroSection: React.FC = () => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  return <div className="relative bg-gradient-to-br from-pakistani_green-600 via-pakistani_green-700 to-pakistani_green-800 text-white py-24 overflow-hidden">
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  return (
+    <div className="relative bg-gradient-to-br from-pakistani_green-600 via-pakistani_green-700 to-pakistani_green-800 text-white py-24 overflow-hidden">
       {/* Modern Background Pattern */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl"></div>
@@ -37,6 +47,23 @@ const HeroSection: React.FC = () => {
                 negotiate better prices, and grow your business with confidence.
               </p>
             </div>
+
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="flex gap-2 max-w-lg">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search products, shops..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 h-12 bg-white text-foreground border-0 font-poppins rounded-xl shadow-lg"
+                />
+              </div>
+              <Button type="submit" size="lg" className="bg-yellow-400 text-primary hover:bg-yellow-300 font-poppins h-12 px-6 rounded-xl shadow-lg">
+                Search
+              </Button>
+            </form>
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="bg-white text-primary hover:bg-gray-100 font-poppins min-h-[48px]" onClick={() => navigate(user ? '/dashboard' : '/signup')}>
@@ -112,6 +139,7 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
 export default HeroSection;

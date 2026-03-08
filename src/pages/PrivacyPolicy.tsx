@@ -90,7 +90,7 @@ const PrivacyPolicy = () => {
                 <li><strong>Emergency situations:</strong> To protect the safety and security of our users and platform</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Data Security and Protection
               </h2>
               <p className="mb-6 text-foreground">

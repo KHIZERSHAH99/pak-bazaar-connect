@@ -97,7 +97,7 @@ const QuoteManager: React.FC<QuoteManagerProps> = ({ userRole }) => {
         {userRole === 'buyer' && (
           <Dialog open={showCreateQuote} onOpenChange={setShowCreateQuote}>
             <DialogTrigger asChild>
-              <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+              <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Request Quote
               </Button>

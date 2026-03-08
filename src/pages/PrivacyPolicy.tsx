@@ -140,7 +140,7 @@ const PrivacyPolicy = () => {
               <p className="mb-4 text-foreground">
                 If you have any questions about this Privacy Policy, our data practices, or your rights regarding your personal information, please contact us through any of the following methods:
               </p>
-              <div className="mt-4 p-4 bg-pakistani_green-50 rounded-lg">
+              <div className="mt-4 p-4 bg-primary/5 rounded-lg">
                 <p className="text-foreground"><strong>Email:</strong> khizercoding.com</p>
                 <p className="text-foreground"><strong>Phone:</strong> +92 3149388513</p>
                 <p className="text-foreground"><strong>Address:</strong> Mardan, Pakistan</p>

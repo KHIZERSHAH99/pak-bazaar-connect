@@ -224,7 +224,7 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center font-poppins">
-                <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
+                <Lock className="h-4 w-4 mr-2 text-primary" />
                 Confirm Password
               </FormLabel>
               <FormControl>

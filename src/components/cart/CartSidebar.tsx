@@ -98,7 +98,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
         <div className="border-t pt-4 space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-lg font-semibold">Total:</span>
-            <span className="text-xl font-bold text-pakistani_green-600">
+            <span className="text-xl font-bold text-primary">
               PKR {getTotalPrice().toLocaleString()}
             </span>
           </div>

@@ -23,7 +23,7 @@ const PromotionBanner: React.FC<PromotionBannerProps> = ({
         {showCloseButton && (
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-primary-foreground/80 hover:text-primary-foreground"
             aria-label="Close promotion banner"
           >
             <X className="h-4 w-4" />

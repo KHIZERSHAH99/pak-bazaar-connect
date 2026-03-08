@@ -118,7 +118,7 @@ const WishlistManager: React.FC<WishlistManagerProps> = ({
                     MOQ: {product.minOrder}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 font-poppins">
+                <p className="text-sm text-muted-foreground font-poppins">
                   by {product.wholesaler}
                 </p>
               </div>

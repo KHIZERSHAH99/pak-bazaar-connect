@@ -57,7 +57,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       case 'cash on delivery':
         return 'from-gray-600 to-gray-700';
       default:
-        return 'from-pakistani_green-500 to-pakistani_green-600';
+        return 'from-primary to-primary/80';
     }
   };
 

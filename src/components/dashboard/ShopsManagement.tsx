@@ -66,7 +66,7 @@ const ShopsManagement: React.FC = () => {
   );
   if (isLoading) {
     return <div className="space-y-4">
-        {[...Array(2)].map((_, i) => <div key={i} className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>)}
+        {[...Array(2)].map((_, i) => <div key={i} className="animate-pulse bg-muted h-48 rounded-lg"></div>)}
       </div>;
   }
   return <div className="space-y-3 sm:space-y-4 py-2 sm:py-4">
@@ -91,8 +91,8 @@ const ShopsManagement: React.FC = () => {
       )}
 
       <div className="flex justify-between items-center">
-        <h1 className="text-xl sm:text-2xl font-bold font-poppins text-gray-900">{t('myShops')}</h1>
-        <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
+        <h1 className="text-xl sm:text-2xl font-bold font-poppins text-foreground">{t('myShops')}</h1>
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 rtl:mr-0 rtl:ml-1 sm:rtl:mr-0 sm:rtl:ml-2" />
           <span className="hidden sm:inline">{t('createShop')}</span>
           <span className="sm:hidden">{t('create')}</span>
@@ -101,14 +101,14 @@ const ShopsManagement: React.FC = () => {
 
       {shops.length === 0 ? <Card>
           <CardContent className="flex flex-col items-center justify-center py-6 sm:py-8">
-            <Store className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400 mb-3" />
-            <h3 className="text-sm sm:text-base font-medium text-gray-700 mb-2 font-poppins">
+            <Store className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground mb-3" />
+            <h3 className="text-sm sm:text-base font-medium text-foreground mb-2 font-poppins">
               {t('noShopsYet')}
             </h3>
-            <p className="text-xs sm:text-sm text-gray-600 mb-3 font-poppins text-center px-4">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-3 font-poppins text-center px-4">
               {t('createFirstShop')}
             </p>
-            <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
               <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 rtl:mr-0 rtl:ml-1 sm:rtl:mr-0 sm:rtl:ml-2" />
               {t('createYourFirstShop')}
             </Button>
@@ -129,12 +129,12 @@ const ShopsManagement: React.FC = () => {
               </CardHeader>
               
               <CardContent className="space-y-2 p-3 sm:p-4 pt-0 sm:pt-0">
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-muted-foreground">
                   <Phone className="w-3 h-3 mr-1.5" />
                   <span className="font-poppins text-xs sm:text-sm">{shop.contact}</span>
                 </div>
                 
-                <div className="flex items-start text-gray-600">
+                <div className="flex items-start text-muted-foreground">
                   <MapPin className="w-3 h-3 mr-1.5 rtl:mr-0 rtl:ml-1.5 mt-0.5" />
                   <div className="font-poppins">
                     <p className="text-xs sm:text-sm">{shop.address}</p>
@@ -150,15 +150,15 @@ const ShopsManagement: React.FC = () => {
                 </div>
 
                 {/* Payment Methods Summary */}
-                <div className="pt-3 mt-3 border-t border-gray-200">
-                  <p className="text-xs font-medium text-gray-600 mb-2 font-poppins">Payment Methods:</p>
+                <div className="pt-3 mt-3 border-t border-border">
+                  <p className="text-xs font-medium text-muted-foreground mb-2 font-poppins">Payment Methods:</p>
                   <div className="flex flex-wrap gap-1.5">
                     {paymentMethods?.bank_name && paymentMethods?.account_number ? (
                       <Badge variant="success" size="sm" className="font-poppins">
                         Bank
                       </Badge>
                     ) : (
-                      <Badge variant="outline" size="sm" className="font-poppins text-gray-400">
+                      <Badge variant="outline" size="sm" className="font-poppins text-muted-foreground">
                         Bank
                       </Badge>
                     )}
@@ -168,7 +168,7 @@ const ShopsManagement: React.FC = () => {
                         JazzCash
                       </Badge>
                     ) : (
-                      <Badge variant="outline" size="sm" className="font-poppins text-gray-400">
+                      <Badge variant="outline" size="sm" className="font-poppins text-muted-foreground">
                         JazzCash
                       </Badge>
                     )}
@@ -178,7 +178,7 @@ const ShopsManagement: React.FC = () => {
                         EasyPaisa
                       </Badge>
                     ) : (
-                      <Badge variant="outline" size="sm" className="font-poppins text-gray-400">
+                      <Badge variant="outline" size="sm" className="font-poppins text-muted-foreground">
                         EasyPaisa
                       </Badge>
                     )}

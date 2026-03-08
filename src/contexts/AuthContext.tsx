@@ -7,6 +7,8 @@ import { getUserProfile } from '@/lib/auth/profile';
 import { ensureProfileSync } from '@/lib/auth/profile-sync';
 import { UserRole } from '@/lib/types';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
+import { cacheManager } from '@/lib/performance/cache-manager';
+import { CSRFProtection } from '@/lib/security/csrf-protection';
 
 export interface Profile {
   id: string;
@@ -27,7 +29,6 @@ export interface Profile {
   verification_status?: string;
   is_suspended?: boolean;
   suspension_reason?: string;
-  
 }
 
 interface AuthContextType {
@@ -49,6 +50,9 @@ export const LoadingScreen: React.FC = () => (
   </div>
 );
 
+// Session validation interval (5 minutes)
+const SESSION_CHECK_INTERVAL = 5 * 60 * 1000;
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -56,6 +60,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const profileFetchedRef = React.useRef(false);
+
+  // Clear all client-side cached state
+  const clearAllClientState = () => {
+    cacheManager.clear();
+    CSRFProtection.clearToken();
+    profileFetchedRef.current = false;
+  };
 
   // Fetch user profile with JWT expiry handling
   const fetchProfile = async (userId: string, retryCount = 0) => {
@@ -113,6 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let mounted = true;
     let refreshTimer: NodeJS.Timeout | null = null;
+    let sessionCheckTimer: NodeJS.Timeout | null = null;
 
     const setupSessionRefresh = (sess: Session) => {
       if (refreshTimer) clearTimeout(refreshTimer);
@@ -138,6 +150,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
 
+    // Periodic session integrity check — validates session server-side
+    const startSessionIntegrityCheck = () => {
+      if (sessionCheckTimer) clearInterval(sessionCheckTimer);
+      sessionCheckTimer = setInterval(async () => {
+        if (!mounted) return;
+        try {
+          const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+          if (error || !currentSession) {
+            if (mounted) {
+              setUser(null);
+              setSession(null);
+              setProfile(null);
+              clearAllClientState();
+            }
+            return;
+          }
+          // Verify the session is still valid by making a lightweight authenticated call
+          const { error: verifyError } = await supabase.auth.getUser();
+          if (verifyError) {
+            if (import.meta.env.DEV) console.warn('Session integrity check failed:', verifyError.message);
+            await supabase.auth.signOut();
+            if (mounted) {
+              setUser(null);
+              setSession(null);
+              setProfile(null);
+              clearAllClientState();
+            }
+          }
+        } catch {
+          // Silently fail — network issues shouldn't force logout
+        }
+      }, SESSION_CHECK_INTERVAL);
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, sess) => {
         if (!mounted) return;
@@ -150,14 +196,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(sess?.user ?? null);
         
         if (sess?.user && event === 'SIGNED_IN' && !profileFetchedRef.current) {
-          // Only fetch profile on first SIGNED_IN, not on token refreshes
+          startSessionIntegrityCheck();
           ensureProfileSync(sess.user.id, sess.user.email || '', sess.user.user_metadata).then(() => {
             fetchProfile(sess.user.id);
           });
         } else if (event === 'SIGNED_OUT') {
           setProfile(null);
-          profileFetchedRef.current = false;
+          clearAllClientState();
           if (refreshTimer) clearTimeout(refreshTimer);
+          if (sessionCheckTimer) clearInterval(sessionCheckTimer);
         }
         
         if (mounted) setLoading(false);
@@ -173,6 +220,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (sess?.user) {
         setupSessionRefresh(sess);
+        startSessionIntegrityCheck();
         if (!profileFetchedRef.current) {
           ensureProfileSync(sess.user.id, sess.user.email || '', sess.user.user_metadata).then(() => {
             fetchProfile(sess.user.id);
@@ -186,6 +234,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       mounted = false;
       if (refreshTimer) clearTimeout(refreshTimer);
+      if (sessionCheckTimer) clearInterval(sessionCheckTimer);
       subscription.unsubscribe();
     };
   }, []);
@@ -195,15 +244,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
-      // Security validation before attempting login
       const securityCheck = await authSecurityManager.enforceSecureLogin(phoneOrEmail, password);
       if (!securityCheck.allowed) {
         throw new Error(securityCheck.message || 'Sign in blocked for security reasons');
       }
       
       await authenticateUser(phoneOrEmail, password);
-      
-      // Record successful login
       await authSecurityManager.recordAuthAttempt(phoneOrEmail, true);
       
       toast({
@@ -214,8 +260,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return {};
     } catch (error: any) {
       const errorMessage = error.message || 'Sign in failed';
-      
-      // Record failed login attempt
       await authSecurityManager.recordAuthAttempt(phoneOrEmail, false);
       
       toast({
@@ -264,9 +308,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleSignOut = async (): Promise<void> => {
     try {
       setLoading(true);
+      
+      // Clear all client state before sign out
+      clearAllClientState();
+      
       await signOutUser();
       
-      // Note: signOutUser handles page reload, so these may not execute
       setUser(null);
       setSession(null);
       setProfile(null);

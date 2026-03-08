@@ -23,32 +23,32 @@ const Features: React.FC = () => {
 
   const features = [
     {
-      icon: <Shield className="w-8 h-8 text-pakistani_green-600" />,
+      icon: <Shield className="w-8 h-8 text-primary" />,
       title: "Secure Transactions",
       description: "End-to-end encryption and secure payment processing for all your business transactions."
     },
     {
-      icon: <Users className="w-8 h-8 text-pakistani_green-600" />,
+      icon: <Users className="w-8 h-8 text-primary" />,
       title: "Verified Sellers",
       description: "All sellers are thoroughly verified to ensure legitimate business relationships."
     },
     {
-      icon: <Zap className="w-8 h-8 text-pakistani_green-600" />,
+      icon: <Zap className="w-8 h-8 text-primary" />,
       title: "Fast Processing",
       description: "Quick order processing and real-time updates on all your business activities."
     },
     {
-      icon: <ShoppingCart className="w-8 h-8 text-pakistani_green-600" />,
+      icon: <ShoppingCart className="w-8 h-8 text-primary" />,
       title: "Bulk Ordering",
       description: "Efficient bulk ordering system designed for wholesale and retail businesses."
     },
     {
-      icon: <MessageSquare className="w-8 h-8 text-pakistani_green-600" />,
+      icon: <MessageSquare className="w-8 h-8 text-primary" />,
       title: "24/7 Support",
       description: "Round-the-clock customer support with AI chatbot and human assistance."
     },
     {
-      icon: <BarChart3 className="w-8 h-8 text-pakistani_green-600" />,
+      icon: <BarChart3 className="w-8 h-8 text-primary" />,
       title: "Analytics Dashboard",
       description: "Comprehensive analytics and insights to grow your business."
     }
@@ -62,14 +62,14 @@ const Features: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 font-poppins">
+            <h1 className="text-4xl font-bold text-foreground mb-4 font-poppins">
               Platform Features
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 font-poppins mb-6">
+            <p className="text-xl text-muted-foreground font-poppins mb-6">
               Everything you need to grow your B2B business in Pakistan
             </p>
             <div className="flex justify-center gap-4">
-              <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700" onClick={() => window.location.href = '/signup'}>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => window.location.href = '/signup'}>
                 Get Started Free
               </Button>
               <Button variant="outline" onClick={() => window.location.href = '/products'}>
@@ -88,7 +88,7 @@ const Features: React.FC = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 dark:text-gray-300 font-poppins">
+                  <p className="text-muted-foreground font-poppins">
                     {feature.description}
                   </p>
                 </CardContent>
@@ -96,12 +96,10 @@ const Features: React.FC = () => {
             ))}
           </div>
 
-          
-
           {/* Why Choose Us Section */}
-          <Card className="bg-pakistani_green-50 dark:bg-pakistani_green-900/20 border-pakistani_green-200 dark:border-pakistani_green-800 mb-12">
+          <Card className="bg-primary/5 border-primary/20 mb-12">
             <CardHeader>
-              <CardTitle className="text-center text-pakistani_green-800 dark:text-pakistani_green-200 font-poppins">
+              <CardTitle className="text-center text-foreground font-poppins">
                 Why Choose Pak Bazaar Connect?
               </CardTitle>
             </CardHeader>
@@ -116,8 +114,8 @@ const Features: React.FC = () => {
                   "Dedicated Pakistan market focus"
                 ].map((benefit, index) => (
                   <div key={index} className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-pakistani_green-600 flex-shrink-0" />
-                    <span className="text-pakistani_green-800 dark:text-pakistani_green-200 font-poppins">
+                    <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-foreground font-poppins">
                       {benefit}
                     </span>
                   </div>
@@ -130,33 +128,29 @@ const Features: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <Card className="text-center">
               <CardContent className="py-8">
-                <TrendingUp className="w-12 h-12 text-pakistani_green-600 mx-auto mb-4" />
+                <TrendingUp className="w-12 h-12 text-primary mx-auto mb-4" />
                 <h3 className="text-3xl font-bold text-foreground mb-2 font-poppins">10,000+</h3>
                 <p className="text-muted-foreground font-poppins">Active Users</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="py-8">
-                <ShoppingCart className="w-12 h-12 text-pakistani_green-600 mx-auto mb-4" />
+                <ShoppingCart className="w-12 h-12 text-primary mx-auto mb-4" />
                 <h3 className="text-3xl font-bold text-foreground mb-2 font-poppins">50,000+</h3>
                 <p className="text-muted-foreground font-poppins">Orders Processed</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="py-8">
-                <Star className="w-12 h-12 text-pakistani_green-600 mx-auto mb-4" />
+                <Star className="w-12 h-12 text-primary mx-auto mb-4" />
                 <h3 className="text-3xl font-bold text-foreground mb-2 font-poppins">4.8/5</h3>
                 <p className="text-muted-foreground font-poppins">User Rating</p>
               </CardContent>
             </Card>
           </div>
 
-          <div className="flex justify-center my-8">
-            
-          </div>
-
           {/* Call to Action */}
-          <Card className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 text-white">
+          <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
             <CardContent className="py-12 text-center">
               <h2 className="text-3xl font-bold mb-4 font-poppins">
                 Ready to Transform Your Business?
@@ -168,23 +162,12 @@ const Features: React.FC = () => {
                 <Button variant="secondary" size="lg" onClick={() => window.location.href = '/signup'}>
                   Start Free Trial
                 </Button>
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-pakistani_green-600" onClick={() => window.location.href = '/contact'}>
+                <Button variant="outline" size="lg" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" onClick={() => window.location.href = '/contact'}>
                   Contact Sales
                 </Button>
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Back to Top Button - Fixed Position */}
-        <div className="fixed bottom-6 right-6 z-50">
-          <Button 
-            onClick={scrollToTop}
-            className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-            size="icon"
-          >
-            <ArrowUp className="w-5 h-5" />
-          </Button>
         </div>
       </div>
     </Layout>

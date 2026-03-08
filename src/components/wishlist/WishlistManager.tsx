@@ -114,7 +114,7 @@ const WishlistManager: React.FC<WishlistManagerProps> = ({
                   <span className="text-xl font-bold text-primary font-poppins">
                     PKR {product.price.toLocaleString()}
                   </span>
-                  <span className="text-sm text-gray-500 font-poppins">
+                  <span className="text-sm text-muted-foreground font-poppins">
                     MOQ: {product.minOrder}
                   </span>
                 </div>

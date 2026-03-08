@@ -30,10 +30,10 @@ const MobileDropdown: React.FC<MobileDropdownProps> = ({
         </SheetTrigger>
         <SheetContent 
           side="bottom" 
-          className="max-h-[80vh] overflow-y-auto rounded-t-xl border-none bg-white shadow-2xl"
+          className="max-h-[80vh] overflow-y-auto rounded-t-xl border-none bg-card shadow-2xl"
         >
           <SheetHeader className="text-left pb-4 border-b">
-            <SheetTitle className="font-poppins text-pakistani_green-800">
+            <SheetTitle className="font-poppins text-foreground">
               {title}
             </SheetTitle>
           </SheetHeader>
@@ -41,7 +41,7 @@ const MobileDropdown: React.FC<MobileDropdownProps> = ({
             {React.Children.map(children, (child, index) => (
               <div 
                 key={index}
-                className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors border border-gray-100"
+                className="w-full p-3 text-left hover:bg-muted rounded-lg transition-colors border border-border"
                 onClick={() => setOpen(false)}
               >
                 {child}

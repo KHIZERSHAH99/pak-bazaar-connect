@@ -122,7 +122,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       
       {filteredMethods.length === 0 && (
         <Card className="p-6 text-center">
-          <p className="text-gray-600 font-poppins">
+          <p className="text-muted-foreground font-poppins">
             No payment methods available for this amount. Please adjust your order total.
           </p>
         </Card>

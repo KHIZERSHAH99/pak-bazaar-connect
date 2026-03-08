@@ -225,7 +225,7 @@ const ShopDetails: React.FC = () => {
             </Card>
 
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 font-poppins">Quick Actions</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4 font-poppins">Quick Actions</h3>
               <div className="space-y-3">
                 <Button className="w-full" onClick={() => navigate('/dashboard/products')}>
                   Add New Product

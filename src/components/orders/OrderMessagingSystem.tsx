@@ -165,7 +165,7 @@ const OrderMessagingSystem: React.FC<OrderMessagingSystemProps> = ({
                   onClick={handleSendMessage}
                   disabled={!newMessage.trim() || isSending}
                   size="sm"
-                  className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Send className="h-4 w-4 mr-2" />
                   {isSending ? 'Sending...' : 'Send'}

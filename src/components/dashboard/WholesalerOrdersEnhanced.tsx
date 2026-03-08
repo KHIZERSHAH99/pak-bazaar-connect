@@ -195,9 +195,9 @@ const WholesalerOrdersEnhanced: React.FC = () => {
       )}
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-emerald-900/95 backdrop-blur-md border-emerald-200 dark:border-emerald-700">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-md border-border">
           <DialogHeader>
-            <DialogTitle className="font-poppins text-pakistani_green-800 dark:text-emerald-100">
+            <DialogTitle className="font-poppins text-foreground">
               Order #{selectedOrder?.id.slice(0, 8)} - Management
             </DialogTitle>
           </DialogHeader>

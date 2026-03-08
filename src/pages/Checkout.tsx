@@ -257,7 +257,7 @@ const Checkout: React.FC = () => {
                     {loading ? 'Placing Orders...' : `Place ${cartByShop.length} Order(s)`}
                   </Button>
 
-                  <div className="text-xs text-gray-500 text-center">
+                  <div className="text-xs text-muted-foreground text-center">
                     By placing your order, you agree to our Terms of Service and Privacy Policy
                   </div>
                 </CardContent>

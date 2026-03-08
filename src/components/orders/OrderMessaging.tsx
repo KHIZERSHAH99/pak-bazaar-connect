@@ -93,7 +93,7 @@ const OrderMessaging: React.FC<OrderMessagingProps> = ({ orderId }) => {
           <Button
             onClick={handleSendMessage}
             disabled={!newMessage.trim()}
-            className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             Send
           </Button>

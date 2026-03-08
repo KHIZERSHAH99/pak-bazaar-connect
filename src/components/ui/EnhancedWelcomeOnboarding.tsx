@@ -257,7 +257,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
             
             <Button
               onClick={handleAction}
-              className="flex-1 bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 text-white font-poppins shadow-lg hover:shadow-xl transition-all duration-200"
+              className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-poppins shadow-lg hover:shadow-xl transition-all duration-200"
             >
               {currentStepData.action}
               <ArrowRight className="h-4 w-4 ml-2" />

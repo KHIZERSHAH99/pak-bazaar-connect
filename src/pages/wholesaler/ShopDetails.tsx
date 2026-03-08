@@ -194,7 +194,7 @@ const ShopDetails: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
                   <p className="font-poppins">No products added yet</p>
                 </div>

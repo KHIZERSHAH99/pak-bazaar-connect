@@ -228,7 +228,7 @@ const EditShopDialog: React.FC<EditShopDialogProps> = ({
               type="file"
               accept="image/*"
               onChange={handleLogoChange}
-              className="file:mr-4 rtl:file:mr-0 rtl:file:ml-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pakistani_green-50 file:text-pakistani_green-700 hover:file:bg-pakistani_green-100"
+              className="file:mr-4 rtl:file:mr-0 rtl:file:ml-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
             />
             {formData.logo && (
               <div className="mt-2">

@@ -265,7 +265,7 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                 className="flex-1 bg-white dark:bg-gray-800 font-poppins"
               />
               <Button 
-                onClick={handleSend}
+                onClick={() => handleSend()}
                 disabled={!message.trim() || sending}
                 className="bg-primary hover:bg-primary/90 px-3"
               >

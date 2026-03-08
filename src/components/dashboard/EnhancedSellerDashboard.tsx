@@ -58,8 +58,8 @@ const EnhancedSellerDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 font-poppins">Seller Dashboard</h1>
-          <p className="text-gray-600 font-poppins mt-1">Welcome back! Manage your purchases and orders</p>
+          <h1 className="text-3xl font-bold text-foreground font-poppins">Seller Dashboard</h1>
+          <p className="text-muted-foreground font-poppins mt-1">Welcome back! Manage your purchases and orders</p>
         </div>
         <Button
           onClick={() => navigate('/products')}

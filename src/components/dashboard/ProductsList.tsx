@@ -1,11 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2, Eye, EyeOff, Package } from 'lucide-react';
+import { Edit, Trash2, Eye, EyeOff, Package, Copy } from 'lucide-react';
 import { Product } from '@/lib/types';
-import { getProductsByWholesaler, updateProduct, deleteProduct } from '@/lib/products';
+import { getProductsByWholesaler, updateProduct, deleteProduct, createProduct } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import EditProductDialog from '@/components/products/EditProductDialog';

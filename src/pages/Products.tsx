@@ -22,8 +22,15 @@ const Products: React.FC = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [searchTerm, setSearchTerm] = useState(urlParams.get('search') || '');
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
 
   const { toast } = useToast();
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -88,8 +95,15 @@ const Products: React.FC = () => {
       
       // Filter by city if selected (client-side filtering since it's a nested field)
       let filteredData = data || [];
-      if (selectedCity !== 'all') {
-        // City filtering disabled as cities relationship doesn't exist
+      
+      // Client-side search filtering
+      if (debouncedSearch.trim()) {
+        const term = debouncedSearch.toLowerCase();
+        filteredData = filteredData.filter(p =>
+          p.name?.toLowerCase().includes(term) ||
+          p.description?.toLowerCase().includes(term) ||
+          (p as any).shops?.name?.toLowerCase().includes(term)
+        );
       }
 
       setProducts(filteredData);
@@ -140,7 +154,7 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, selectedCity, minPrice, maxPrice]);
+  }, [selectedCategory, selectedCity, minPrice, maxPrice, debouncedSearch]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, Package, Heart, ShoppingCart, Eye, Verified } from 'lucide-react';
+import { Star, MapPin, Package, Heart, ShoppingCart, Eye, Verified, AlertTriangle } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
@@ -105,6 +105,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 shadow-sm text-xs md:text-sm px-2 py-1">
                 <Verified className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                 Verified
+              </Badge>
+            )}
+            {product.stock_quantity !== undefined && product.stock_quantity !== null && product.stock_quantity > 0 && product.stock_quantity < 10 && (
+              <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100 shadow-sm text-xs px-2 py-1">
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                Low Stock
+              </Badge>
+            )}
+            {product.stock_quantity === 0 && (
+              <Badge variant="destructive" className="shadow-sm text-xs px-2 py-1">
+                Out of Stock
               </Badge>
             )}
           </div>

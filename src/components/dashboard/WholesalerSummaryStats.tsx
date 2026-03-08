@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
-import { ShoppingCart, DollarSign, Store, Package, MessageSquare, TrendingUp } from 'lucide-react';
+import { ShoppingCart, DollarSign, Store, Package, MessageSquare, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 const WholesalerSummaryStats: React.FC = () => {
   const { user } = useAuth();
@@ -53,12 +53,25 @@ const WholesalerSummaryStats: React.FC = () => {
       const convIds = new Set(convs?.map(c => c.id) || []);
       const unreadMessages = (messagesResult.data || []).filter(m => convIds.has(m.conversation_id));
 
-      const today = new Date().toISOString().split('T')[0];
-      const todayOrders = orders.filter(o => o.created_at?.startsWith(today));
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+      const todayOrders = orders.filter(o => o.created_at?.startsWith(todayStr));
       const pendingOrders = orders.filter(o => o.status === 'pending');
-      const totalRevenue = orders
-        .filter(o => ['confirmed', 'shipped', 'delivered'].includes(o.status))
+      const completedOrders = orders.filter(o => ['confirmed', 'shipped', 'delivered'].includes(o.status));
+      const totalRevenue = completedOrders.reduce((sum, o) => sum + Number(o.total_amount), 0);
+
+      // Calculate this week vs last week revenue for trend
+      const weekAgo = new Date(today.getTime() - 7 * 86400000).toISOString();
+      const twoWeeksAgo = new Date(today.getTime() - 14 * 86400000).toISOString();
+      const thisWeekRevenue = completedOrders
+        .filter(o => o.created_at && o.created_at >= weekAgo)
         .reduce((sum, o) => sum + Number(o.total_amount), 0);
+      const lastWeekRevenue = completedOrders
+        .filter(o => o.created_at && o.created_at >= twoWeeksAgo && o.created_at < weekAgo)
+        .reduce((sum, o) => sum + Number(o.total_amount), 0);
+      const revenueTrend = lastWeekRevenue > 0 
+        ? Math.round(((thisWeekRevenue - lastWeekRevenue) / lastWeekRevenue) * 100) 
+        : thisWeekRevenue > 0 ? 100 : 0;
 
       return {
         totalShops: shopIds.length,
@@ -69,6 +82,7 @@ const WholesalerSummaryStats: React.FC = () => {
         pendingOrders: pendingOrders.length,
         totalRevenue,
         unreadMessages: unreadMessages.length,
+        revenueTrend,
       };
     },
     enabled: !!user,
@@ -80,7 +94,7 @@ const WholesalerSummaryStats: React.FC = () => {
   const cards = [
     { label: "Today's Orders", value: stats.todayOrders, icon: ShoppingCart, color: 'text-blue-600' },
     { label: 'Pending Orders', value: stats.pendingOrders, icon: TrendingUp, color: 'text-orange-600' },
-    { label: 'Total Revenue', value: `PKR ${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-emerald-600' },
+    { label: 'Total Revenue', value: `PKR ${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-emerald-600', trend: stats.revenueTrend },
     { label: 'Shops', value: stats.totalShops, icon: Store, color: 'text-purple-600' },
     { label: 'Active Products', value: `${stats.activeProducts}/${stats.totalProducts}`, icon: Package, color: 'text-primary' },
     { label: 'Unread Messages', value: stats.unreadMessages, icon: MessageSquare, color: 'text-rose-600' },
@@ -95,7 +109,15 @@ const WholesalerSummaryStats: React.FC = () => {
               <card.icon className={`w-4 h-4 ${card.color}`} />
               <span className="text-xs text-muted-foreground font-poppins">{card.label}</span>
             </div>
-            <p className="text-lg font-bold text-foreground font-poppins">{card.value}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-lg font-bold text-foreground font-poppins">{card.value}</p>
+              {card.trend !== undefined && card.trend !== 0 && (
+                <span className={`flex items-center text-xs font-medium ${card.trend > 0 ? 'text-emerald-600' : 'text-destructive'}`}>
+                  {card.trend > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                  {Math.abs(card.trend)}%
+                </span>
+              )}
+            </div>
           </CardContent>
         </Card>
       ))}

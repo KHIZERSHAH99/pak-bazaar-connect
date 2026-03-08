@@ -66,7 +66,7 @@ const ShopsManagement: React.FC = () => {
   );
   if (isLoading) {
     return <div className="space-y-4">
-        {[...Array(2)].map((_, i) => <div key={i} className="animate-pulse bg-gray-200 h-48 rounded-lg"></div>)}
+        {[...Array(2)].map((_, i) => <div key={i} className="animate-pulse bg-muted h-48 rounded-lg"></div>)}
       </div>;
   }
   return <div className="space-y-3 sm:space-y-4 py-2 sm:py-4">

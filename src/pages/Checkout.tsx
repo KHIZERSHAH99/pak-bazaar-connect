@@ -203,7 +203,7 @@ const Checkout: React.FC = () => {
                               />
                               <div>
                                 <h4 className="font-medium">{item.product.name}</h4>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-muted-foreground">
                                   PKR {item.product.price.toLocaleString()} × {item.quantity}
                                 </p>
                               </div>

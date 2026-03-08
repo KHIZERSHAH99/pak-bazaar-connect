@@ -63,14 +63,17 @@ const Checkout: React.FC = () => {
       for (const [shopId, shopItems] of cartByShop) {
         const totalAmount = shopItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
         
-        await createOrderWithPayment(
-          shopId,
-          totalAmount,
-          orderForm.buyerName,
-          orderForm.buyerPhone,
-          orderForm.buyerAddress,
-          orderForm.paymentMethod
-        );
+        const { error } = await supabase.from('orders').insert({
+          shop_id: shopId,
+          buyer_id: user.id,
+          total_amount: totalAmount,
+          buyer_name: orderForm.buyerName,
+          buyer_phone: orderForm.buyerPhone,
+          buyer_address: orderForm.buyerAddress,
+          payment_method: orderForm.paymentMethod,
+          status: 'pending',
+        });
+        if (error) throw error;
       }
 
       clearCart();

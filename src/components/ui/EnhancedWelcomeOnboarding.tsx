@@ -234,11 +234,11 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           {/* Benefits List */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
             {currentStepData.benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <div className="bg-green-100 dark:bg-green-800/50 p-1 rounded-full">
-                  <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <div key={index} className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg">
+                <div className="bg-primary/10 p-1 rounded-full">
+                  <CheckCircle className="h-4 w-4 text-primary" />
                 </div>
-                <span className="text-sm text-gray-700 dark:text-gray-300 font-poppins">
+                <span className="text-sm text-foreground font-poppins">
                   {benefit}
                 </span>
               </div>

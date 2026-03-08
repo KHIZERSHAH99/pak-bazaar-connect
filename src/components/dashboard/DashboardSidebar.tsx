@@ -18,7 +18,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
   return (
     <aside 
-      className={`fixed inset-y-0 left-0 z-20 transform md:relative md:translate-x-0 transition-transform duration-300 ease-in-out 
+      className={`fixed inset-y-0 left-0 z-40 transform md:relative md:translate-x-0 transition-transform duration-300 ease-in-out 
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
         md:block bg-card md:bg-card backdrop-blur-sm md:backdrop-blur-none border-r border-border w-64 sm:w-60 flex-shrink-0 h-full overflow-y-auto`}
     >

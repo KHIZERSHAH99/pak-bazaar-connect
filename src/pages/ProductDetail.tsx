@@ -17,10 +17,7 @@ const ProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('ProductDetail - Product ID from params:', id);
-    
     if (!id) {
-      console.log('No product ID provided');
       setLoading(false);
       return;
     }
@@ -28,16 +25,10 @@ const ProductDetail: React.FC = () => {
     const fetchProduct = async () => {
       try {
         const foundProduct = await getProductById(id);
-        console.log('Found product:', foundProduct);
-        
         setProduct(foundProduct);
 
-        // Track recently viewed
         if (foundProduct) {
           trackRecentlyViewed(foundProduct.id);
-        }
-        if (foundProduct && foundProduct.moq) {
-          console.log('Product MOQ:', foundProduct.moq);
         }
       } catch (error) {
         console.error('Error fetching product:', error);

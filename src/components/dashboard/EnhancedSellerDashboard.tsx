@@ -58,8 +58,8 @@ const EnhancedSellerDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 font-poppins">Seller Dashboard</h1>
-          <p className="text-gray-600 font-poppins mt-1">Welcome back! Manage your purchases and orders</p>
+          <h1 className="text-3xl font-bold text-foreground font-poppins">Seller Dashboard</h1>
+          <p className="text-muted-foreground font-poppins mt-1">Welcome back! Manage your purchases and orders</p>
         </div>
         <Button
           onClick={() => navigate('/products')}
@@ -96,8 +96,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                     <div className="flex items-center">
                       <ShoppingCart className="h-8 w-8 text-primary" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Total Orders</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.totalOrders}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -108,8 +108,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                     <div className="flex items-center">
                       <Clock className="h-8 w-8 text-yellow-500" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Pending</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.pendingOrders}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Pending</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.pendingOrders}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -120,8 +120,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                     <div className="flex items-center">
                       <CheckCircle className="h-8 w-8 text-green-500" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Completed</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.completedOrders}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Completed</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.completedOrders}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -132,8 +132,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                     <div className="flex items-center">
                       <DollarSign className="h-8 w-8 text-blue-500" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Total Spent</p>
-                        <p className="text-2xl font-bold text-gray-900">Rs. {stats.totalSpent.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
+                        <p className="text-2xl font-bold text-foreground">Rs. {stats.totalSpent.toLocaleString()}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -159,8 +159,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                               <action.icon className="h-5 w-5" />
                             </div>
                             <div className="ml-3">
-                              <h4 className="font-medium text-gray-900">{action.title}</h4>
-                              <p className="text-sm text-gray-600">{action.description}</p>
+                              <h4 className="font-medium text-foreground">{action.title}</h4>
+                               <p className="text-sm text-muted-foreground">{action.description}</p>
                             </div>
                           </div>
                         </CardContent>
@@ -179,10 +179,10 @@ const EnhancedSellerDashboard: React.FC = () => {
                   <CardContent>
                     <div className="space-y-3">
                       {orders.slice(0, 3).map((order) => (
-                        <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div key={order.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                           <div>
-                            <p className="font-medium">{order.shops?.name || 'Unknown Shop'}</p>
-                            <p className="text-sm text-gray-600">Rs. {order.total_amount?.toLocaleString()}</p>
+                            <p className="font-medium text-foreground">{order.shops?.name || 'Unknown Shop'}</p>
+                            <p className="text-sm text-muted-foreground">Rs. {order.total_amount?.toLocaleString()}</p>
                           </div>
                           <Badge variant={
                             order.status === 'completed' ? 'default' :
@@ -209,9 +209,9 @@ const EnhancedSellerDashboard: React.FC = () => {
               {!isLoading && orders.length === 0 && (
                 <Card>
                   <CardContent className="p-12 text-center">
-                    <ShoppingCart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">No Orders Yet</h3>
-                    <p className="text-gray-600 font-poppins mb-6">
+                    <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2 font-poppins">No Orders Yet</h3>
+                    <p className="text-muted-foreground font-poppins mb-6">
                       Start browsing products and place your first order to get started!
                     </p>
                     <Button 
@@ -235,7 +235,7 @@ const EnhancedSellerDashboard: React.FC = () => {
                   <CardTitle className="font-poppins">Browse Wholesale Shops</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-muted-foreground mb-4">
                     Discover verified wholesale suppliers across Pakistan and browse their product catalogs.
                   </p>
                   <Button 

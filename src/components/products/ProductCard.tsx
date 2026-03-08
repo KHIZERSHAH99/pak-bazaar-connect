@@ -8,6 +8,8 @@ import { Star, MapPin, Package, Heart, ShoppingCart, Eye, Verified, AlertTriangl
 import { Product } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
+import { addToFavorites, removeFromFavorites, getFavoriteProducts } from '@/lib/favorites';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProductCardProps {
   product: Product;
@@ -22,6 +24,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const cartContext = useCart();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [isFavorite, setIsFavorite] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!user) return;
+    getFavoriteProducts().then(favs => {
+      setIsFavorite(favs.some(f => f.product_id === product.id));
+    }).catch(() => {});
+  }, [product.id, user]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -53,11 +64,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const handleToggleFavorite = (e: React.MouseEvent) => {
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Toggle favorite logic here
-    console.log('Toggled favorite:', product.name);
+    if (!user) {
+      toast({ title: "Login Required", description: "Please log in to save favorites", variant: "destructive" });
+      return;
+    }
+    try {
+      if (isFavorite) {
+        await removeFromFavorites(product.id);
+        setIsFavorite(false);
+        toast({ title: "Removed from favorites" });
+      } else {
+        await addToFavorites(product.id);
+        setIsFavorite(true);
+        toast({ title: "Added to favorites" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to update favorites", variant: "destructive" });
+    }
   };
 
   const getProductImageSrc = (image?: string) => {
@@ -128,7 +154,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               onClick={handleToggleFavorite}
               className="absolute top-2 right-2 bg-background/90 rounded-full p-2 md:p-2.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
             >
-              <Heart className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
+              <Heart className={`w-4 h-4 md:w-5 md:h-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
             </button>
           )}
         </div>
@@ -152,12 +178,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </Badge>
               )}
             </div>
-            {/* Bulk pricing indicator */}
-            <div className="flex items-center gap-1">
-              <Badge className="text-xs md:text-sm bg-primary/10 text-primary px-2 py-1">
-                Bulk discounts available
-              </Badge>
-            </div>
+            {/* Bulk pricing indicator - only show when tiers exist */}
+            {(product as any).pricing_tiers && (product as any).pricing_tiers.length > 0 && (
+              <div className="flex items-center gap-1">
+                <Badge className="text-xs md:text-sm bg-primary/10 text-primary px-2 py-1">
+                  Bulk discounts available
+                </Badge>
+              </div>
+            )}
           </div>
 
           {/* Supplier Info */}

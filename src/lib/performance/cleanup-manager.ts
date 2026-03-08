@@ -153,14 +153,7 @@ export function initializeCleanupTasks(): void {
   });
 
   // Memory usage logging (dev only)
-  if (process.env.NODE_ENV === 'development') {
-    cleanupManager.registerTask('memory-logging', () => {
-      if ('memory' in performance) {
-        const memory = (performance as any).memory;
-        console.log(`[Memory] Used: ${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`);
-      }
-    });
-  }
+  // Memory logging removed to reduce console noise
 
   // Start the cleanup manager
   cleanupManager.start();

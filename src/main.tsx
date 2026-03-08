@@ -6,19 +6,28 @@ import './index.css'
 import './styles/urdu.css'
 import { applyCSP } from './lib/security/content-security-policy'
 import { HelmetProvider } from 'react-helmet-async'
-import { initializeCleanupTasks } from './lib/performance/cleanup-manager'
-import { registerCacheCleanup } from './lib/performance/cache-manager'
-import { registerQueryOptimizerCleanup } from './lib/performance/query-optimizer'
-import { registerEnhancedQueryCleanup } from './lib/performance/query-optimizer-enhanced'
 
-// Apply Content Security Policy headers for security
+// Apply CSP once at startup
 applyCSP();
 
-// Initialize centralized cleanup manager to prevent memory leaks
-initializeCleanupTasks();
-registerCacheCleanup();
-registerQueryOptimizerCleanup();
-registerEnhancedQueryCleanup();
+// Defer non-critical cleanup initialization
+if ('requestIdleCallback' in window) {
+  (window as any).requestIdleCallback(() => {
+    import('./lib/performance/cleanup-manager').then(m => {
+      m.initializeCleanupTasks();
+    });
+    import('./lib/performance/cache-manager').then(m => m.registerCacheCleanup());
+    import('./lib/performance/query-optimizer').then(m => m.registerQueryOptimizerCleanup());
+    import('./lib/performance/query-optimizer-enhanced').then(m => m.registerEnhancedQueryCleanup());
+  });
+} else {
+  setTimeout(() => {
+    import('./lib/performance/cleanup-manager').then(m => m.initializeCleanupTasks());
+    import('./lib/performance/cache-manager').then(m => m.registerCacheCleanup());
+    import('./lib/performance/query-optimizer').then(m => m.registerQueryOptimizerCleanup());
+    import('./lib/performance/query-optimizer-enhanced').then(m => m.registerEnhancedQueryCleanup());
+  }, 3000);
+}
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

@@ -104,6 +104,47 @@ const ProductsList: React.FC = () => {
     }
   };
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === products.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(products.map(p => p.id)));
+    }
+  };
+
+  const bulkToggleStatus = async (activate: boolean) => {
+    const ids = Array.from(selectedIds);
+    try {
+      await Promise.all(ids.map(id => updateProduct(id, { is_active: activate })));
+      queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] });
+      setSelectedIds(new Set());
+      toast({ title: `${ids.length} products ${activate ? 'activated' : 'deactivated'}` });
+    } catch (e: any) {
+      toast({ title: 'Bulk action failed', description: e.message, variant: 'destructive' });
+    }
+  };
+
+  const bulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (!window.confirm(`Delete ${ids.length} products? This cannot be undone.`)) return;
+    try {
+      await Promise.all(ids.map(id => deleteProduct(id)));
+      queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] });
+      setSelectedIds(new Set());
+      toast({ title: `${ids.length} products deleted` });
+    } catch (e: any) {
+      toast({ title: 'Bulk delete failed', description: e.message, variant: 'destructive' });
+    }
+  };
+
   const getStatusBadge = (product: Product) => {
     if (!product.is_active) {
       return <Badge variant="secondary">{t('inactive')}</Badge>;

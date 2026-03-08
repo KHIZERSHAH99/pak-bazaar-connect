@@ -184,7 +184,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-2xl mx-auto shadow-2xl border-0 overflow-hidden">
         {/* Header with Progress */}
-        <div className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 text-white p-6 relative">
+        <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground p-6 relative">
           <button
             onClick={handleSkip}
             className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors"

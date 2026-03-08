@@ -9,15 +9,15 @@ const PendingDashboard: React.FC = () => (
   <div className="animate-fadeIn">
     <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6 font-poppins">Complete Your Profile Setup</h1>
     
-    <Card className="p-6 mb-6 bg-gradient-to-r from-pakistani_green-50 to-green-50 dark:from-pakistani_green-900/30 dark:to-green-900/30 border-pakistani_green-200 dark:border-pakistani_green-800">
+    <Card className="p-6 mb-6 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
         <div className="flex items-center mb-4 md:mb-0">
-          <div className="bg-pakistani_green-100 dark:bg-pakistani_green-800/50 p-3 rounded-full mr-4">
-            <UserCheck className="h-6 w-6 text-pakistani_green-700 dark:text-pakistani_green-400" />
+          <div className="bg-primary/10 p-3 rounded-full mr-4">
+            <UserCheck className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold font-poppins text-pakistani_green-800 dark:text-pakistani_green-200">One More Step to Get Started</h3>
-            <p className="text-pakistani_green-700 dark:text-pakistani_green-300 font-poppins text-sm md:text-base">
+            <h3 className="text-lg font-semibold font-poppins text-foreground">One More Step to Get Started</h3>
+            <p className="text-muted-foreground font-poppins text-sm md:text-base">
               Choose your business role to unlock all platform features and start trading immediately.
             </p>
           </div>

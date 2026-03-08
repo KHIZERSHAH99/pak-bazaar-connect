@@ -161,8 +161,8 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                   {quickQuestions.map((question, index) => (
                     <button
                       key={index}
-                      onClick={() => setMessage(question)}
-                      className="block w-full text-left p-2 text-xs bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors font-poppins"
+                      onClick={() => { setMessage(question); handleSend(); }}
+                      className="block w-full text-left p-2 text-xs bg-muted hover:bg-muted/80 rounded-md transition-colors font-poppins"
                     >
                       <HelpCircle className="h-3 w-3 inline mr-2 text-primary" />
                       {question}

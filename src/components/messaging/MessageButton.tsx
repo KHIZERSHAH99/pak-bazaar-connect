@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MessageSquare } from 'lucide-react';
-import ChatWindow from './ChatWindow';
+import RealTimeChatWindow from './RealTimeChatWindow';
 import { createConversation } from '@/lib/messaging';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -23,7 +22,6 @@ const MessageButton: React.FC<MessageButtonProps> = ({ sellerId, sellerName, pro
         alert('Please login to start a conversation');
         return;
       }
-
       if (user.id === sellerId) {
         alert('You cannot message yourself');
         return;
@@ -44,17 +42,13 @@ const MessageButton: React.FC<MessageButtonProps> = ({ sellerId, sellerName, pro
 
   return (
     <>
-      <Button 
-        onClick={handleStartChat}
-        variant="outline"
-        className="flex items-center gap-2"
-      >
+      <Button onClick={handleStartChat} variant="outline" className="flex items-center gap-2">
         <MessageSquare className="h-4 w-4" />
         Message Seller
       </Button>
 
       {showChat && conversationId && (
-        <ChatWindow
+        <RealTimeChatWindow
           conversationId={conversationId}
           recipientName={sellerName}
           onClose={() => setShowChat(false)}

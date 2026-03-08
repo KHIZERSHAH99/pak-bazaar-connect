@@ -3,10 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Store, Search, MapPin, Phone, Package, Star, Users, Clock, Lock } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Store, Search, MapPin, Phone, Package, Users, Clock, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
 interface PublicShop {
   id: string;
@@ -24,9 +26,19 @@ const BrowseShops: React.FC = () => {
   const [shops, setShops] = useState<PublicShop[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCity, setSelectedCity] = useState<string>('all');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Fetch cities for filter
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities-list'],
+    queryFn: async () => {
+      const { data } = await supabase.from('cities').select('id, name').order('name');
+      return data || [];
+    },
+  });
 
   const fetchShops = async () => {
     try {
@@ -94,7 +106,8 @@ const BrowseShops: React.FC = () => {
     const nameMatch = shop.name.toLowerCase().includes(searchLower);
     const addressMatch = shop.address?.toLowerCase().includes(searchLower) || false;
     const contactMatch = shop.contact?.toLowerCase().includes(searchLower) || false;
-    return nameMatch || addressMatch || contactMatch;
+    const cityMatch = selectedCity === 'all' || shop.city_id === selectedCity;
+    return (nameMatch || addressMatch || contactMatch) && cityMatch;
   });
 
   const handleViewShop = (shopId: string) => {
@@ -139,14 +152,27 @@ const BrowseShops: React.FC = () => {
 
       <Card className="bg-card shadow-sm">
         <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search shops by name..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="pl-10 bg-muted/50 border-border focus:border-primary font-poppins"
-            />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search shops by name..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="pl-10 bg-muted/50 border-border focus:border-primary font-poppins"
+              />
+            </div>
+            <Select value={selectedCity} onValueChange={setSelectedCity}>
+              <SelectTrigger className="w-full sm:w-[200px] font-poppins">
+                <SelectValue placeholder="All Cities" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Cities</SelectItem>
+                {cities.map((city: any) => (
+                  <SelectItem key={city.id} value={city.id}>{city.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -180,12 +206,6 @@ const BrowseShops: React.FC = () => {
                   <Badge className="bg-background/90 text-foreground shadow-sm">
                     <Store className="h-3 w-3 mr-1" />
                     Verified
-                  </Badge>
-                </div>
-                <div className="absolute top-3 right-3">
-                  <Badge className="bg-primary text-primary-foreground shadow-sm">
-                    <Star className="h-3 w-3 mr-1" />
-                    4.8
                   </Badge>
                 </div>
               </div>

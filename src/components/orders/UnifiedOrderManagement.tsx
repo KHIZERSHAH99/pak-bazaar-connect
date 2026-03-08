@@ -5,12 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Package, CheckCircle, XCircle, Clock, TrendingUp, RotateCcw, FileText, Download } from 'lucide-react';
+import { Package, CheckCircle, XCircle, Clock, TrendingUp, RotateCcw, FileText, Download, History } from 'lucide-react';
 import { getUnifiedOrders, optimisticUpdateOrderStatus } from '@/lib/orders/unified-queries';
 import { reusePreviousOrder } from '@/lib/orders/core';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { generateOrderReceipt } from '@/utils/orderPdf';
+import OrderTimeline from '@/components/orders/OrderTimeline';
 
 interface UnifiedOrderManagementProps {
   userRole: 'seller' | 'wholesaler';
@@ -21,11 +23,15 @@ const OrderCard = memo(({
   order, 
   onStatusUpdate,
   onReorder,
+  onDownloadReceipt,
+  onViewTimeline,
   userRole
 }: { 
   order: any; 
   onStatusUpdate: (orderId: string, status: string) => void;
   onReorder: (orderId: string) => void;
+  onDownloadReceipt: (order: any) => void;
+  onViewTimeline: (orderId: string) => void;
   userRole: 'seller' | 'wholesaler';
 }) => {
   const getStatusColor = (status: string) => {
@@ -116,6 +122,28 @@ const OrderCard = memo(({
               </Button>
             </div>
           )}
+
+          {/* PDF & Timeline buttons */}
+          <div className="flex gap-2 pt-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onDownloadReceipt(order)}
+              className="flex-1 text-xs"
+            >
+              <Download className="h-3 w-3 mr-1" />
+              Receipt
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onViewTimeline(order.id)}
+              className="flex-1 text-xs"
+            >
+              <History className="h-3 w-3 mr-1" />
+              Timeline
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -189,6 +217,7 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [timelineOrderId, setTimelineOrderId] = useState<string | null>(null);
 
   // Single query for orders and stats with 30-second stale time
   const { data, isLoading } = useQuery({
@@ -308,11 +337,23 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
               order={order} 
               onStatusUpdate={handleStatusUpdate}
               onReorder={handleReorder}
+              onDownloadReceipt={generateOrderReceipt}
+              onViewTimeline={(id) => setTimelineOrderId(id)}
               userRole={userRole}
             />
           ))
         )}
       </div>
+
+      {/* Timeline Dialog */}
+      <Dialog open={!!timelineOrderId} onOpenChange={() => setTimelineOrderId(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-poppins">Order Timeline</DialogTitle>
+          </DialogHeader>
+          {timelineOrderId && <OrderTimeline orderId={timelineOrderId} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

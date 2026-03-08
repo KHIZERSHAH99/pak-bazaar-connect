@@ -62,6 +62,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <h3 className="text-base sm:text-lg font-semibold font-poppins truncate">
                 Order #{order.id.slice(0, 8)}
               </h3>
+              <button onClick={copyOrderId} className="text-muted-foreground hover:text-foreground p-1 rounded" title="Copy Order ID">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
               <Badge className={`flex items-center gap-1 text-xs sm:text-sm ${getStatusColor(order.status)}`}>
                 {getStatusIcon(order.status)}
                 <span className="hidden sm:inline">{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>

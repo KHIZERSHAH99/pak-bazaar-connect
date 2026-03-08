@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Flag, Menu, X, ShoppingBag, Users, Zap, Package, BookOpen, HelpCircle } from 'lucide-react';
+import { Flag, Menu, X, ShoppingBag, ShoppingCart, Users, Zap, Package, BookOpen, HelpCircle } from 'lucide-react';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';
@@ -16,6 +18,8 @@ const Navbar = () => {
     profile
   } = useAuth();
   const { t } = useLanguage();
+  const { getTotalItems } = useCart();
+  const cartCount = getTotalItems();
   const navigate = useNavigate();
   const {
     toast
@@ -107,6 +111,18 @@ const Navbar = () => {
                 </Button>
               )}
 
+              {/* Cart Icon */}
+              <Link to="/checkout" className="relative">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary hover:bg-primary/10">
+                  <ShoppingCart className="w-5 h-5" />
+                  {cartCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-destructive text-destructive-foreground">
+                      {cartCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+
               {/* Language Toggle */}
               <LanguageToggle />
 
@@ -125,7 +141,18 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Button and Language Toggle */}
-            <div className="md:hidden flex items-center gap-2">
+            <div className="md:hidden flex items-center gap-1">
+              {/* Mobile Cart */}
+              <Link to="/checkout" className="relative">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-9 w-9">
+                  <ShoppingCart className="w-4 h-4" />
+                  {cartCount > 0 && (
+                    <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 text-[9px] bg-destructive text-destructive-foreground">
+                      {cartCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
               <LanguageToggle />
               <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
                 {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

@@ -272,8 +272,8 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
                 onClick={() => setCurrentStep(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-200 ${
                   index <= currentStep 
-                    ? 'bg-pakistani_green-600 shadow-md' 
-                    : 'bg-gray-300 hover:bg-gray-400'
+                    ? 'bg-primary shadow-md' 
+                    : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
                 }`}
               />
             ))}

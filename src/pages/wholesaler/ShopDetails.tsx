@@ -167,7 +167,7 @@ const ShopDetails: React.FC = () => {
               ) : products && products.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {products.slice(0, 6).map((product) => (
-                    <div key={product.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    <div key={product.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
                       <div className="flex items-start space-x-3">
                         {product.image ? (
                           <img 

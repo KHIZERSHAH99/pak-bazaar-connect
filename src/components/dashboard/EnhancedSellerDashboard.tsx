@@ -179,10 +179,10 @@ const EnhancedSellerDashboard: React.FC = () => {
                   <CardContent>
                     <div className="space-y-3">
                       {orders.slice(0, 3).map((order) => (
-                        <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div key={order.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                           <div>
-                            <p className="font-medium">{order.shops?.name || 'Unknown Shop'}</p>
-                            <p className="text-sm text-gray-600">Rs. {order.total_amount?.toLocaleString()}</p>
+                            <p className="font-medium text-foreground">{order.shops?.name || 'Unknown Shop'}</p>
+                            <p className="text-sm text-muted-foreground">Rs. {order.total_amount?.toLocaleString()}</p>
                           </div>
                           <Badge variant={
                             order.status === 'completed' ? 'default' :

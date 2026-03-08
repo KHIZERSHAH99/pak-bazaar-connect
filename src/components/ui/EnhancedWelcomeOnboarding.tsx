@@ -213,7 +213,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
         <CardContent className="p-8">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
-              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 p-6 rounded-full shadow-lg">
+              <div className="bg-gradient-to-br from-muted to-muted/80 p-6 rounded-full shadow-lg">
                 {currentStepData.icon}
               </div>
             </div>

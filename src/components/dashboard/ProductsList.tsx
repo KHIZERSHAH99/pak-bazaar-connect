@@ -71,6 +71,25 @@ const ProductsList: React.FC = () => {
     setIsEditDialogOpen(true);
   };
 
+  const handleClone = async (product: Product) => {
+    try {
+      await createProduct({
+        name: `${product.name} (Copy)`,
+        price: product.price,
+        image: product.image || '',
+        shop_id: product.shop_id || '',
+        is_active: false,
+        description: product.description || '',
+        moq: product.moq || 1,
+        category_id: product.category_id || undefined,
+      });
+      queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] });
+      toast({ title: 'Product cloned', description: 'The copy has been created as inactive. Edit it to customize.' });
+    } catch (error: any) {
+      toast({ title: 'Clone failed', description: error.message, variant: 'destructive' });
+    }
+  };
+
   const handleToggleStatus = (product: Product) => {
     toggleProductStatus.mutate({
       productId: product.id,

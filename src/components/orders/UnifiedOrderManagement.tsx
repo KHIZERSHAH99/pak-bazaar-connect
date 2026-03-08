@@ -337,11 +337,23 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
               order={order} 
               onStatusUpdate={handleStatusUpdate}
               onReorder={handleReorder}
+              onDownloadReceipt={generateOrderReceipt}
+              onViewTimeline={(id) => setTimelineOrderId(id)}
               userRole={userRole}
             />
           ))
         )}
       </div>
+
+      {/* Timeline Dialog */}
+      <Dialog open={!!timelineOrderId} onOpenChange={() => setTimelineOrderId(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-poppins">Order Timeline</DialogTitle>
+          </DialogHeader>
+          {timelineOrderId && <OrderTimeline orderId={timelineOrderId} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -250,10 +250,10 @@ const Shops: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {shops.map((shop) => (
-              <Card key={shop.id} className="overflow-hidden bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
+              <Card key={shop.id} className="overflow-hidden bg-background/50 backdrop-blur-sm border-border">
                 <div className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="h-12 w-12 bg-pakistani_green-100/50 dark:bg-pakistani_green-900/30 rounded-full flex items-center justify-center mr-4">
+                    <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center mr-4">
                       {shop.logo ? (
                         <img 
                           src={shop.logo} 

@@ -252,7 +252,7 @@ const CouponManagement: React.FC = () => {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+                    className="w-full font-poppins"
                     disabled={createMutation.isPending}
                   >
                     {createMutation.isPending ? 'Creating...' : 'Create Coupon'}

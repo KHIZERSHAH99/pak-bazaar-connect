@@ -29,8 +29,8 @@ const SellerAnalytics: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-pakistani_green-700 font-poppins">0</p>
-            <p className="text-sm text-gray-600 font-poppins">Total Orders</p>
+            <p className="text-2xl font-bold text-primary font-poppins">0</p>
+            <p className="text-sm text-muted-foreground font-poppins">Total Orders</p>
           </CardContent>
         </Card>
         

@@ -51,7 +51,7 @@ const ShippingPolicy = () => {
                 <li>Other major cities - 3-5 business days</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Shipping Costs
               </h2>
               <p className="mb-6 text-foreground">

@@ -23,10 +23,10 @@ const AboutUs: React.FC = () => {
                   <Target className="w-8 h-8 text-primary mr-3" />
                   <h2 className="text-2xl font-bold font-poppins">Our Mission</h2>
                 </div>
-                <p className="text-gray-600 leading-relaxed font-poppins">
-                  To revolutionize B2B commerce in Pakistan by providing a transparent, efficient, and trustworthy 
-                  platform that connects wholesalers with retailers, enabling business growth and economic prosperity 
-                  across the country.
+                <p className="text-muted-foreground leading-relaxed font-poppins">
+                   To revolutionize B2B commerce in Pakistan by providing a transparent, efficient, and trustworthy 
+                   platform that connects wholesalers with retailers, enabling business growth and economic prosperity 
+                   across the country.
                 </p>
               </CardContent>
             </Card>

@@ -169,10 +169,10 @@ const EmailSignupForm = () => {
 
   return (
     <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-card">
-      <CardHeader className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 text-white pb-6 pt-8">
+      <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-6 pt-8">
         <div className="flex justify-center mb-3">
-          <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm border border-white/20">
-            <Phone className="h-6 w-6 text-white" />
+          <div className="bg-primary-foreground/10 p-3 rounded-full backdrop-blur-sm border border-primary-foreground/20">
+            <Phone className="h-6 w-6 text-primary-foreground" />
           </div>
         </div>
         

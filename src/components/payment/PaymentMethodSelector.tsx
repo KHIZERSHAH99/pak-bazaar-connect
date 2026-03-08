@@ -57,7 +57,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       case 'cash on delivery':
         return 'from-gray-600 to-gray-700';
       default:
-        return 'from-pakistani_green-500 to-pakistani_green-600';
+        return 'from-primary to-primary/80';
     }
   };
 
@@ -69,7 +69,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-800 font-poppins mb-4">
+      <h3 className="text-lg font-semibold text-foreground font-poppins mb-4">
         Select Payment Method
       </h3>
       
@@ -79,8 +79,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             key={method.id}
             className={`p-4 cursor-pointer transition-all duration-300 hover:shadow-lg ${
               selectedMethod === method.id
-                ? 'ring-2 ring-pakistani_green-500 bg-pakistani_green-50'
-                : 'hover:border-pakistani_green-300'
+                ? 'ring-2 ring-primary bg-primary/5'
+                : 'hover:border-primary/30'
             }`}
             onClick={() => onSelectMethod(method.id)}
           >
@@ -90,8 +90,8 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
                   <div className="text-white">{getIcon(method.type)}</div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-800 font-poppins">{method.name}</h4>
-                  <p className="text-sm text-gray-600 font-poppins capitalize">
+                  <h4 className="font-semibold text-foreground font-poppins">{method.name}</h4>
+                  <p className="text-sm text-muted-foreground font-poppins capitalize">
                     {method.type.replace('_', ' ')}
                   </p>
                 </div>
@@ -103,7 +103,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             </div>
             
             <div className="flex justify-between items-center text-sm">
-              <div className="text-gray-600 font-poppins">
+              <div className="text-muted-foreground font-poppins">
                 Fee: {(method.processingFee * 100).toFixed(1)}%
               </div>
               {method.processingFee > 0 && (
@@ -113,7 +113,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
               )}
             </div>
             
-            <div className="mt-2 text-xs text-gray-500 font-poppins">
+            <div className="mt-2 text-xs text-muted-foreground font-poppins">
               Range: PKR {method.minAmount.toLocaleString()} - {method.maxAmount ? `PKR ${method.maxAmount.toLocaleString()}` : 'No limit'}
             </div>
           </Card>
@@ -122,7 +122,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       
       {filteredMethods.length === 0 && (
         <Card className="p-6 text-center">
-          <p className="text-gray-600 font-poppins">
+          <p className="text-muted-foreground font-poppins">
             No payment methods available for this amount. Please adjust your order total.
           </p>
         </Card>

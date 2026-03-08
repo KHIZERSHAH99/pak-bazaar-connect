@@ -21,8 +21,8 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form, isLoading, user
         name="businessName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <Building2 className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <FormLabel className="flex items-center text-foreground font-poppins">
+              <Building2 className="h-4 w-4 mr-1 text-primary" />
               Business Name
             </FormLabel>
             <FormControl>

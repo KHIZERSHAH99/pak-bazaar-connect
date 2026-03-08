@@ -31,19 +31,19 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       
       {/* AI response */}
       <div className="flex flex-col items-start animate-slideIn" style={{ animationDelay: '0.2s' }}>
-        <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl rounded-tl-sm p-4 max-w-[80%] shadow-md">
+        <div className="bg-gradient-to-r from-muted to-muted/80 rounded-2xl rounded-tl-sm p-4 max-w-[80%] shadow-md">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center">
-              <div className="bg-pakistani_green-200 rounded-full p-1 mr-1">
-                <MessageSquare className="h-3 w-3 text-pakistani_green-700" />
+              <div className="bg-primary/20 rounded-full p-1 mr-1">
+                <MessageSquare className="h-3 w-3 text-primary" />
               </div>
-              <div className="font-medium text-gray-800">AI Support</div>
+              <div className="font-medium text-foreground">AI Support</div>
             </div>
-            <div className="text-xs text-gray-500 ml-2">
+            <div className="text-xs text-muted-foreground ml-2">
               {formatTimestamp(message.created_at)}
             </div>
           </div>
-          <div className="text-gray-700 whitespace-pre-wrap">{message.reply}</div>
+          <div className="text-foreground whitespace-pre-wrap">{message.reply}</div>
         </div>
       </div>
     </div>

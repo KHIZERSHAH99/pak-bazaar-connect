@@ -109,7 +109,7 @@ const OrderMessagingSystem: React.FC<OrderMessagingSystemProps> = ({
       {isExpanded && (
         <CardContent className="space-y-4">
           {/* Message Display Area */}
-          <div className="max-h-64 overflow-y-auto space-y-3 border rounded-lg p-3 bg-gray-50">
+          <div className="max-h-64 overflow-y-auto space-y-3 border rounded-lg p-3 bg-muted/50">
             {messages.length === 0 ? (
               <div className="text-center text-gray-500 py-4">
                 <MessageSquare className="h-8 w-8 mx-auto mb-2 text-gray-400" />
@@ -124,8 +124,8 @@ const OrderMessagingSystem: React.FC<OrderMessagingSystemProps> = ({
                   <div
                     className={`max-w-xs lg:max-w-md px-3 py-2 rounded-lg ${
                       isMyMessage(message)
-                        ? 'bg-pakistani_green-100 text-pakistani_green-800'
-                        : 'bg-white border'
+                        ? 'bg-primary/10 text-foreground'
+                        : 'bg-card border'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
@@ -165,7 +165,7 @@ const OrderMessagingSystem: React.FC<OrderMessagingSystemProps> = ({
                   onClick={handleSendMessage}
                   disabled={!newMessage.trim() || isSending}
                   size="sm"
-                  className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Send className="h-4 w-4 mr-2" />
                   {isSending ? 'Sending...' : 'Send'}

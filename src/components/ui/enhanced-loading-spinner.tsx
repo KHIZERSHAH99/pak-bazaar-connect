@@ -53,7 +53,7 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
       default:
         return (
           <div className={cn(
-            "animate-spin rounded-full border-2 border-pakistani_green-200 border-t-pakistani_green-600",
+            "animate-spin rounded-full border-2 border-primary/20 border-t-primary",
             sizeClasses[size]
           )} />
         );
@@ -63,7 +63,7 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
   const content = (
     <div className={cn(
       "flex flex-col items-center justify-center gap-3",
-      fullscreen && "min-h-screen bg-white/80 backdrop-blur-sm",
+      fullscreen && "min-h-screen bg-background/80 backdrop-blur-sm",
       className
     )}>
       {renderSpinner()}
@@ -80,7 +80,7 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
 
   if (fullscreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
         {content}
       </div>
     );

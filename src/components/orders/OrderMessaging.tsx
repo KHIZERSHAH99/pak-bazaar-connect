@@ -64,15 +64,15 @@ const OrderMessaging: React.FC<OrderMessagingProps> = ({ orderId }) => {
               key={message.id}
               className={`p-3 rounded-lg ${
                 message.sender_id === profile?.id
-                  ? 'bg-pakistani_green-50 ml-8'
-                  : 'bg-gray-50 mr-8'
+                  ? 'bg-primary/5 ml-8'
+                  : 'bg-muted mr-8'
               }`}
             >
               <div className="flex justify-between items-start mb-1">
                 <span className="font-medium text-sm">
                   {message.profiles?.business_name || message.profiles?.email}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {new Date(message.created_at).toLocaleString()}
                 </span>
               </div>
@@ -93,7 +93,7 @@ const OrderMessaging: React.FC<OrderMessagingProps> = ({ orderId }) => {
           <Button
             onClick={handleSendMessage}
             disabled={!newMessage.trim()}
-            className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             Send
           </Button>

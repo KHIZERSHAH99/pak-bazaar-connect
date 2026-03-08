@@ -153,7 +153,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="font-poppins">Create Order - {shopName}</CardTitle>
-        <p className="text-lg font-semibold text-pakistani_green-600">
+        <p className="text-lg font-semibold text-primary">
           Total Amount: PKR {totalAmount.toLocaleString()}
         </p>
       </CardHeader>

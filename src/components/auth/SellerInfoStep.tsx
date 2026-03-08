@@ -15,8 +15,8 @@ const SellerInfoStep: React.FC<SellerInfoStepProps> = ({ form, isLoading }) => {
   return (
     <div className="space-y-4 animate-fadeIn">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 font-poppins">Basic Business Information</h3>
-        <p className="text-gray-600 font-poppins text-sm">Simple setup to get you started quickly</p>
+        <h3 className="text-lg font-semibold text-foreground mb-2 font-poppins">Basic Business Information</h3>
+        <p className="text-muted-foreground font-poppins text-sm">Simple setup to get you started quickly</p>
       </div>
 
       <BasicInfoFields form={form} isLoading={isLoading} userRole="seller" />
@@ -26,8 +26,8 @@ const SellerInfoStep: React.FC<SellerInfoStepProps> = ({ form, isLoading }) => {
         name="address"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <MapPin className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <FormLabel className="flex items-center text-foreground font-poppins">
+              <MapPin className="h-4 w-4 mr-1 text-primary" />
               Business Address
             </FormLabel>
             <FormControl>
@@ -49,8 +49,8 @@ const SellerInfoStep: React.FC<SellerInfoStepProps> = ({ form, isLoading }) => {
           name="city"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center text-gray-700 font-poppins">
-                <MapPin className="h-4 w-4 mr-1 text-pakistani_green-700" />
+              <FormLabel className="flex items-center text-foreground font-poppins">
+                <MapPin className="h-4 w-4 mr-1 text-primary" />
                 City
               </FormLabel>
               <FormControl>
@@ -71,8 +71,8 @@ const SellerInfoStep: React.FC<SellerInfoStepProps> = ({ form, isLoading }) => {
           name="postalCode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center text-gray-700 font-poppins">
-                <MapPin className="h-4 w-4 mr-1 text-pakistani_green-700" />
+              <FormLabel className="flex items-center text-foreground font-poppins">
+                <MapPin className="h-4 w-4 mr-1 text-primary" />
                 Postal Code
               </FormLabel>
               <FormControl>
@@ -91,8 +91,8 @@ const SellerInfoStep: React.FC<SellerInfoStepProps> = ({ form, isLoading }) => {
       
       <ContactFields form={form} isLoading={isLoading} />
       
-      <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-        <p className="text-sm text-green-800 font-poppins">
+      <div className="p-4 bg-primary/5 border border-primary/20 rounded-md">
+        <p className="text-sm text-primary font-poppins">
           <strong>Quick Setup:</strong> As a seller, you can start browsing and purchasing immediately after registration. 
           Additional verification can be completed later for enhanced features.
         </p>

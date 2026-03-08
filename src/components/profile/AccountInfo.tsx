@@ -24,20 +24,20 @@ const AccountInfo: React.FC<AccountInfoProps> = ({ email, createdAt }) => {
 
   return (
     <Card className="mb-4 sm:mb-6 overflow-hidden border-none shadow-md">
-      <div className="bg-pakistani_green-500/20 dark:bg-pakistani_green-600/30 backdrop-blur-sm p-3 sm:p-4 md:p-6 border-b border-pakistani_green-200/50 dark:border-pakistani_green-700/50">
-        <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 font-poppins text-pakistani_green-800 dark:text-pakistani_green-100">
+      <div className="bg-primary/20 backdrop-blur-sm p-3 sm:p-4 md:p-6 border-b border-primary/20">
+        <h2 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 font-poppins text-foreground">
           {t('account_information')}
         </h2>
-        <p className="text-pakistani_green-700 dark:text-pakistani_green-200 text-xs sm:text-sm font-poppins">
+        <p className="text-muted-foreground text-xs sm:text-sm font-poppins">
           {t('account_details')}
         </p>
       </div>
       
-      <div className="p-3 sm:p-4 md:p-6 bg-background/95 dark:bg-background/95">
+      <div className="p-3 sm:p-4 md:p-6 bg-background/95">
         <div className="grid gap-3 sm:gap-4 md:gap-6">
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 bg-muted/50 dark:bg-muted/30 rounded-lg border border-border/50">
-            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-800/50 p-2 sm:p-2.5 md:p-3 rounded-full">
-              <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-pakistani_green-700 dark:text-pakistani_green-300" />
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 bg-muted/50 rounded-lg border border-border/50">
+            <div className="bg-primary/10 p-2 sm:p-2.5 md:p-3 rounded-full">
+              <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             </div>
             <div className="flex-1">
               <p className="text-xs sm:text-sm text-muted-foreground font-poppins mb-0.5 sm:mb-1">
@@ -49,9 +49,9 @@ const AccountInfo: React.FC<AccountInfoProps> = ({ email, createdAt }) => {
             </div>
           </div>
           
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 bg-muted/50 dark:bg-muted/30 rounded-lg border border-border/50">
-            <div className="bg-pakistani_green-100 dark:bg-pakistani_green-800/50 p-2 sm:p-2.5 md:p-3 rounded-full">
-              <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-pakistani_green-700 dark:text-pakistani_green-300" />
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 bg-muted/50 rounded-lg border border-border/50">
+            <div className="bg-primary/10 p-2 sm:p-2.5 md:p-3 rounded-full">
+              <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             </div>
             <div className="flex-1">
               <p className="text-xs sm:text-sm text-muted-foreground font-poppins mb-0.5 sm:mb-1">

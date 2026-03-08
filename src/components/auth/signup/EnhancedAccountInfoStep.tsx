@@ -124,7 +124,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
-              <Phone className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Phone className="h-4 w-4 mr-1 text-primary" />
               Phone Number
             </FormLabel>
             <FormControl>
@@ -141,7 +141,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
                 />
                 {phoneStatus === 'checking' && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <Loader2 className="h-4 w-4 animate-spin text-pakistani_green-700 dark:text-pakistani_green-400" />
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   </div>
                 )}
                 {phoneStatus === 'available' && (
@@ -168,7 +168,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Lock className="h-4 w-4 mr-1 text-primary" />
               Password
             </FormLabel>
             <FormControl>
@@ -234,7 +234,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Lock className="h-4 w-4 mr-1 text-primary" />
               Confirm Password
             </FormLabel>
             <FormControl>

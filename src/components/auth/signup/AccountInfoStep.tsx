@@ -48,7 +48,7 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
-              <Mail className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Mail className="h-4 w-4 mr-1 text-primary" />
               Email Address
             </FormLabel>
             <FormControl>
@@ -62,7 +62,7 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
                 />
                 {emailStatus === 'checking' && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pakistani_green-700 dark:border-pakistani_green-400"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                   </div>
                 )}
                 {emailStatus === 'available' && (
@@ -94,7 +94,7 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Lock className="h-4 w-4 mr-1 text-primary" />
               Password
             </FormLabel>
             <FormControl>
@@ -130,7 +130,7 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center text-foreground font-poppins">
-              <Lock className="h-4 w-4 mr-1 text-pakistani_green-700 dark:text-pakistani_green-400" />
+              <Lock className="h-4 w-4 mr-1 text-primary" />
               Confirm Password
             </FormLabel>
             <FormControl>

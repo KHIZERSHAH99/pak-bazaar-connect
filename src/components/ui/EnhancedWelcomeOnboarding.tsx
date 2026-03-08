@@ -38,7 +38,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
     if (userRole === 'wholesaler') {
       return [
         {
-          icon: <Store className="h-12 w-12 text-pakistani_green-600" />,
+          icon: <Store className="h-12 w-12 text-primary" />,
           title: 'Welcome to Pak Bazaar Connect!',
           subtitle: 'Your B2B Success Starts Here',
           description: 'Join thousands of successful wholesalers who are growing their business with our platform. Get ready to expand your reach across Pakistan!',
@@ -98,7 +98,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
     } else if (userRole === 'seller') {
       return [
         {
-          icon: <Users className="h-12 w-12 text-pakistani_green-600" />,
+          icon: <Users className="h-12 w-12 text-primary" />,
           title: 'Welcome to Your Marketplace!',
           subtitle: 'Discover Quality Wholesale Products',
           description: 'Connect with verified wholesalers across Pakistan and access thousands of quality products at wholesale prices.',
@@ -184,7 +184,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-2xl mx-auto shadow-2xl border-0 overflow-hidden">
         {/* Header with Progress */}
-        <div className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 text-white p-6 relative">
+        <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground p-6 relative">
           <button
             onClick={handleSkip}
             className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors"
@@ -193,15 +193,15 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           </button>
           
           <div className="flex items-center justify-between mb-4">
-            <Badge variant="secondary" className="bg-white/20 text-white border-white/30 font-poppins">
+            <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 font-poppins">
               {userRole === 'wholesaler' ? 'Wholesaler' : 'Seller'} Journey
             </Badge>
-            <Badge variant="secondary" className="bg-white/20 text-white border-white/30 font-poppins">
+            <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 font-poppins">
               Step {currentStep + 1} of {steps.length}
             </Badge>
           </div>
           
-          <Progress value={progress} className="h-2 bg-white/20" />
+          <Progress value={progress} className="h-2 bg-primary-foreground/20" />
           
           {currentStepData.highlight && (
             <div className="mt-4 bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full text-center font-semibold animate-pulse">
@@ -213,20 +213,20 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
         <CardContent className="p-8">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
-              <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 p-6 rounded-full shadow-lg">
+              <div className="bg-gradient-to-br from-muted to-muted/80 p-6 rounded-full shadow-lg">
                 {currentStepData.icon}
               </div>
             </div>
             
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">
+            <h2 className="text-2xl font-bold text-foreground mb-2 font-poppins">
               {currentStepData.title}
             </h2>
             
-            <p className="text-lg text-pakistani_green-600 font-semibold mb-4 font-poppins">
+            <p className="text-lg text-primary font-semibold mb-4 font-poppins">
               {currentStepData.subtitle}
             </p>
             
-            <p className="text-gray-600 dark:text-gray-300 mb-6 font-poppins leading-relaxed">
+            <p className="text-muted-foreground mb-6 font-poppins leading-relaxed">
               {currentStepData.description}
             </p>
           </div>
@@ -234,11 +234,11 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           {/* Benefits List */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
             {currentStepData.benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <div className="bg-green-100 dark:bg-green-800/50 p-1 rounded-full">
-                  <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <div key={index} className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg">
+                <div className="bg-primary/10 p-1 rounded-full">
+                  <CheckCircle className="h-4 w-4 text-primary" />
                 </div>
-                <span className="text-sm text-gray-700 dark:text-gray-300 font-poppins">
+                <span className="text-sm text-foreground font-poppins">
                   {benefit}
                 </span>
               </div>
@@ -257,7 +257,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
             
             <Button
               onClick={handleAction}
-              className="flex-1 bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 text-white font-poppins shadow-lg hover:shadow-xl transition-all duration-200"
+              className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-poppins shadow-lg hover:shadow-xl transition-all duration-200"
             >
               {currentStepData.action}
               <ArrowRight className="h-4 w-4 ml-2" />
@@ -272,8 +272,8 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
                 onClick={() => setCurrentStep(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-200 ${
                   index <= currentStep 
-                    ? 'bg-pakistani_green-600 shadow-md' 
-                    : 'bg-gray-300 hover:bg-gray-400'
+                    ? 'bg-primary shadow-md' 
+                    : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
                 }`}
               />
             ))}
@@ -281,7 +281,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
 
           {/* Progress Text */}
           <div className="text-center mt-4">
-            <p className="text-sm text-gray-500 font-poppins">
+            <p className="text-sm text-muted-foreground font-poppins">
               {currentStep === steps.length - 1 ? 
                 'Ready to get started?' : 
                 `${steps.length - currentStep - 1} more steps to complete`

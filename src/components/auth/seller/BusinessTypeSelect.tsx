@@ -37,8 +37,8 @@ const BusinessTypeSelect: React.FC<BusinessTypeSelectProps> = ({ form, isLoading
       name="businessType"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="flex items-center text-gray-700 font-poppins">
-            <Building2 className="h-4 w-4 mr-1 text-pakistani_green-700" />
+          <FormLabel className="flex items-center text-foreground font-poppins">
+            <Building2 className="h-4 w-4 mr-1 text-primary" />
             Business Type
           </FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>

@@ -154,10 +154,10 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-pakistani_green-800 dark:text-emerald-100 font-poppins">Order Management</h1>
+        <h1 className="text-3xl font-bold text-foreground font-poppins">Order Management</h1>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-white/20 dark:bg-emerald-800/20 backdrop-blur-sm h-20 rounded-lg border border-emerald-200 dark:border-emerald-700"></div>
+            <div key={i} className="animate-pulse bg-muted/20 backdrop-blur-sm h-20 rounded-lg border border-border"></div>
           ))}
         </div>
       </div>
@@ -167,7 +167,7 @@ const WholesalerOrdersEnhanced: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-pakistani_green-800 dark:text-emerald-100 font-poppins">Order Management</h1>
+        <h1 className="text-3xl font-bold text-foreground font-poppins">Order Management</h1>
       </div>
 
       <OrderStats counts={counts} />
@@ -195,9 +195,9 @@ const WholesalerOrdersEnhanced: React.FC = () => {
       )}
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-emerald-900/95 backdrop-blur-md border-emerald-200 dark:border-emerald-700">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-md border-border">
           <DialogHeader>
-            <DialogTitle className="font-poppins text-pakistani_green-800 dark:text-emerald-100">
+            <DialogTitle className="font-poppins text-foreground">
               Order #{selectedOrder?.id.slice(0, 8)} - Management
             </DialogTitle>
           </DialogHeader>

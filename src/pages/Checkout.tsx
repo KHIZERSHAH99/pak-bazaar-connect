@@ -96,7 +96,7 @@ const Checkout: React.FC = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-muted/50 py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto text-center">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -114,10 +114,10 @@ const Checkout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-muted/50 py-8">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 font-poppins">Checkout</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-8 font-poppins">Checkout</h1>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Order Details */}
@@ -203,12 +203,12 @@ const Checkout: React.FC = () => {
                               />
                               <div>
                                 <h4 className="font-medium">{item.product.name}</h4>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-muted-foreground">
                                   PKR {item.product.price.toLocaleString()} × {item.quantity}
                                 </p>
                               </div>
                             </div>
-                            <p className="font-bold text-pakistani_green-600">
+                            <p className="font-bold text-primary">
                               PKR {(item.product.price * item.quantity).toLocaleString()}
                             </p>
                           </div>
@@ -216,7 +216,7 @@ const Checkout: React.FC = () => {
                         <Separator />
                         <div className="flex justify-between items-center font-bold">
                           <span>Shop Total:</span>
-                          <span className="text-pakistani_green-600">PKR {shopTotal.toLocaleString()}</span>
+                          <span className="text-primary">PKR {shopTotal.toLocaleString()}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -244,7 +244,7 @@ const Checkout: React.FC = () => {
                     <Separator />
                     <div className="flex justify-between items-center font-bold text-lg">
                       <span>Total:</span>
-                      <span className="text-pakistani_green-600">PKR {getTotalPrice().toLocaleString()}</span>
+                      <span className="text-primary">PKR {getTotalPrice().toLocaleString()}</span>
                     </div>
                   </div>
 
@@ -257,7 +257,7 @@ const Checkout: React.FC = () => {
                     {loading ? 'Placing Orders...' : `Place ${cartByShop.length} Order(s)`}
                   </Button>
 
-                  <div className="text-xs text-gray-500 text-center">
+                  <div className="text-xs text-muted-foreground text-center">
                     By placing your order, you agree to our Terms of Service and Privacy Policy
                   </div>
                 </CardContent>

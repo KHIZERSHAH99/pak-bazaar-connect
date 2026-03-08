@@ -77,7 +77,7 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
             <ul className="space-y-2">
               {role.features.map((feature, index) => (
                 <li key={index} className="flex items-center text-sm text-foreground font-poppins">
-                  <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                   {feature}
                 </li>
               ))}

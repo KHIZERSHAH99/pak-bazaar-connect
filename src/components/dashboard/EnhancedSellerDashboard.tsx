@@ -209,9 +209,9 @@ const EnhancedSellerDashboard: React.FC = () => {
               {!isLoading && orders.length === 0 && (
                 <Card>
                   <CardContent className="p-12 text-center">
-                    <ShoppingCart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">No Orders Yet</h3>
-                    <p className="text-gray-600 font-poppins mb-6">
+                    <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2 font-poppins">No Orders Yet</h3>
+                    <p className="text-muted-foreground font-poppins mb-6">
                       Start browsing products and place your first order to get started!
                     </p>
                     <Button 

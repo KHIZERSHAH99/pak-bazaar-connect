@@ -11,23 +11,23 @@ const FinalStep: React.FC<FinalStepProps> = ({ selectedRole }) => {
   return (
     <div className="text-center space-y-6 animate-fadeIn">
       <div className="flex justify-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-          <CheckCircle className="w-8 h-8 text-green-600" />
+        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+          <CheckCircle className="w-8 h-8 text-primary" />
         </div>
       </div>
       
       <div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2 font-poppins">
+        <h3 className="text-xl font-semibold text-foreground mb-2 font-poppins">
           Ready to Create Your Account
         </h3>
-        <p className="text-gray-600 font-poppins">
+        <p className="text-muted-foreground font-poppins">
           You're all set to join Pak Bazaar Connect as a {selectedRole}
         </p>
       </div>
 
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <h4 className="font-medium text-green-800 mb-2 font-poppins">What happens next?</h4>
-        <ul className="text-sm text-green-700 space-y-1 font-poppins">
+      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+        <h4 className="font-medium text-primary mb-2 font-poppins">What happens next?</h4>
+        <ul className="text-sm text-foreground/80 space-y-1 font-poppins">
           {selectedRole === 'wholesaler' ? (
             <>
               <li>• Your account will be created instantly</li>
@@ -46,7 +46,7 @@ const FinalStep: React.FC<FinalStepProps> = ({ selectedRole }) => {
         </ul>
       </div>
 
-      <div className="flex items-center justify-center text-pakistani_green-600 font-poppins">
+      <div className="flex items-center justify-center text-primary font-poppins">
         <ArrowRight className="w-4 h-4 mr-2" />
         <span>Click "Create Account" to continue</span>
       </div>

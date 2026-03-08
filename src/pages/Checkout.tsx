@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { createOrderWithPayment } from '@/lib/orders';
+import { supabase } from '@/integrations/supabase/client';
 import { MapPin, Package, CreditCard, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

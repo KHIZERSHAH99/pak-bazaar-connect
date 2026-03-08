@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input';
 import { ArrowRight, Users, ShieldCheck, TrendingUp, Search } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const HeroSection: React.FC = () => {
   const { user } = useAuth();

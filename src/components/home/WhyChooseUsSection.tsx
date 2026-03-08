@@ -12,21 +12,21 @@ const WhyChooseUsSection: React.FC = () => {
       icon: <Store className="h-8 w-8" />,
       titleKey: 'whyChoose.wholesalers.title',
       descriptionKey: 'whyChoose.wholesalers.description',
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-primary/80 to-primary',
       benefitKeys: ['whyChoose.wholesalers.benefit1', 'whyChoose.wholesalers.benefit2', 'whyChoose.wholesalers.benefit3'],
     },
     {
       icon: <ShoppingBag className="h-8 w-8" />,
       titleKey: 'whyChoose.sellers.title',
       descriptionKey: 'whyChoose.sellers.description',
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-accent to-accent/80',
       benefitKeys: ['whyChoose.sellers.benefit1', 'whyChoose.sellers.benefit2', 'whyChoose.sellers.benefit3'],
     },
     {
       icon: <Shield className="h-8 w-8" />,
       titleKey: 'whyChoose.secure.title',
       descriptionKey: 'whyChoose.secure.description',
-      color: 'from-green-500 to-green-600',
+      color: 'from-primary to-primary/70',
       benefitKeys: ['whyChoose.secure.benefit1', 'whyChoose.secure.benefit2', 'whyChoose.secure.benefit3'],
     },
   ];
@@ -46,7 +46,7 @@ const WhyChooseUsSection: React.FC = () => {
           {featuresData.map((feature, index) => (
             <Card key={index} className="p-6 md:p-8 border border-border shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2 bg-card">
               <div className={`bg-gradient-to-r ${feature.color} p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                <div className="text-white">{feature.icon}</div>
+                <div className="text-primary-foreground">{feature.icon}</div>
               </div>
               
               <h3 className="text-xl font-bold text-foreground mb-3 font-poppins">{t(feature.titleKey)}</h3>

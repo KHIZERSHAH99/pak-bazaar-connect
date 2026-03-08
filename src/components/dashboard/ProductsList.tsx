@@ -198,7 +198,31 @@ const ProductsList: React.FC = () => {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-wrap justify-between items-center gap-2 mb-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleSelectAll}
+              className="text-xs"
+            >
+              {selectedIds.size === products.length && products.length > 0 ? <CheckSquare className="w-4 h-4 mr-1" /> : <Square className="w-4 h-4 mr-1" />}
+              {selectedIds.size > 0 ? `${selectedIds.size} selected` : 'Select all'}
+            </Button>
+            {selectedIds.size > 0 && (
+              <>
+                <Button variant="outline" size="sm" onClick={() => bulkToggleStatus(true)} className="text-xs">
+                  <Eye className="w-3 h-3 mr-1" /> Activate
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => bulkToggleStatus(false)} className="text-xs">
+                  <EyeOff className="w-3 h-3 mr-1" /> Deactivate
+                </Button>
+                <Button variant="outline" size="sm" onClick={bulkDelete} className="text-xs text-destructive">
+                  <Trash2 className="w-3 h-3 mr-1" /> Delete
+                </Button>
+              </>
+            )}
+          </div>
           <Button
             variant="outline"
             onClick={() => setShowInactive(!showInactive)}
@@ -206,7 +230,7 @@ const ProductsList: React.FC = () => {
           >
             {showInactive ? t('hideInactiveProducts') : t('showInactiveProducts')}
             {!showInactive && allProducts.filter(p => !p.is_active).length > 0 && (
-              <span className="ml-2 rtl:ml-0 rtl:mr-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+              <span className="ml-2 rtl:ml-0 rtl:mr-2 bg-destructive text-destructive-foreground rounded-full px-2 py-1 text-xs">
                 {allProducts.filter(p => !p.is_active).length}
               </span>
             )}

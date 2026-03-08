@@ -90,7 +90,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
 
     const sellerItems: NavItem[] = [
       { name: 'Browse Shops', path: '/dashboard/browse-shops', icon: <Store className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
-      { name: 'My Orders', path: '/dashboard/seller-orders', icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
+      { name: 'My Orders', path: '/dashboard/seller-orders', icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
     ];
 
     if (profile?.role === 'admin') return [...commonItems, ...adminItems];

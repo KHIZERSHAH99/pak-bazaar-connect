@@ -55,16 +55,16 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
             key={role.id}
             className={`p-6 border-2 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-lg ${
               selectedRole === role.id
-                ? 'border-pakistani_green-500 bg-pakistani_green-50 dark:bg-pakistani_green-950/30 shadow-md'
-                : 'border-border hover:border-pakistani_green-300 bg-card dark:bg-card'
+                ? 'border-primary bg-primary/5 shadow-md'
+                : 'border-border hover:border-primary/30 bg-card'
             }`}
             onClick={() => onRoleSelect(role.id)}
           >
             <div className="flex items-center mb-4">
               <div className={`p-3 rounded-full mr-4 ${
-                selectedRole === role.id ? 'bg-pakistani_green-100 dark:bg-pakistani_green-950/50' : 'bg-muted'
+                selectedRole === role.id ? 'bg-primary/10' : 'bg-muted'
               }`}>
-                <div className={selectedRole === role.id ? 'text-pakistani_green-600 dark:text-pakistani_green-200' : 'text-muted-foreground'}>
+                <div className={selectedRole === role.id ? 'text-primary' : 'text-muted-foreground'}>
                   {role.icon}
                 </div>
               </div>

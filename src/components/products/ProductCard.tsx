@@ -24,6 +24,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const cartContext = useCart();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [isFavorite, setIsFavorite] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!user) return;
+    getFavoriteProducts().then(favs => {
+      setIsFavorite(favs.some(f => f.product_id === product.id));
+    }).catch(() => {});
+  }, [product.id, user]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

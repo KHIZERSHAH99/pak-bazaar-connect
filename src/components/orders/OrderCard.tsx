@@ -19,6 +19,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
   showReorderButton = false,
   userRole
 }) => {
+  const { toast } = useToast();
+
+  const copyOrderId = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(order.id);
+    toast({ title: 'Copied', description: 'Order ID copied to clipboard' });
+  };
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending':

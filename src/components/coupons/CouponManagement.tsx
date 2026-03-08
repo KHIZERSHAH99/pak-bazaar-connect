@@ -154,7 +154,7 @@ const CouponManagement: React.FC = () => {
             </div>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
+                <Button className="font-poppins">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Coupon
                 </Button>

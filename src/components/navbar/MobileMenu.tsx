@@ -60,7 +60,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             </Button>
           </Link>
           
-          <Link to="/dashboard/browse-shops" onClick={handleLinkClick}>
+          <Link to="/shops" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
               className="w-full justify-start h-10 text-sm text-foreground hover:bg-accent font-poppins"

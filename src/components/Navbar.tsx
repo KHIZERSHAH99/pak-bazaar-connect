@@ -100,7 +100,7 @@ const Navbar = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowTutorial(true)}
-                  className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins"
                 >
                   <HelpCircle className="w-4 h-4 mr-2" />
                   Tutorial

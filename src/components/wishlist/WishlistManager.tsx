@@ -107,7 +107,7 @@ const WishlistManager: React.FC<WishlistManagerProps> = ({
                 <h3 className="font-semibold text-lg font-poppins line-clamp-2">
                   {product.name}
                 </h3>
-                <p className="text-sm text-gray-600 font-poppins line-clamp-2">
+                <p className="text-sm text-muted-foreground font-poppins line-clamp-2">
                   {product.description}
                 </p>
                 <div className="flex items-center justify-between">

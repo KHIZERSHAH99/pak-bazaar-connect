@@ -116,7 +116,7 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center font-poppins">
-                <Phone className="h-4 w-4 mr-2 text-pakistani_green-600" />
+                <Phone className="h-4 w-4 mr-2 text-primary" />
                 Phone Number
               </FormLabel>
               <FormControl>
@@ -130,7 +130,7 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
                   />
                   {phoneCheckState === 'checking' && (
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-pakistani_green-600 border-t-transparent"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
                     </div>
                   )}
                   {phoneCheckState === 'available' && (
@@ -162,7 +162,7 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center font-poppins">
-                <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
+                <Lock className="h-4 w-4 mr-2 text-primary" />
                 Password
               </FormLabel>
               <FormControl>
@@ -224,7 +224,7 @@ const PhoneAccountInfoStep: React.FC<PhoneAccountInfoStepProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center font-poppins">
-                <Lock className="h-4 w-4 mr-2 text-pakistani_green-600" />
+                <Lock className="h-4 w-4 mr-2 text-primary" />
                 Confirm Password
               </FormLabel>
               <FormControl>

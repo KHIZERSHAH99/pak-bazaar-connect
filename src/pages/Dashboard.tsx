@@ -43,8 +43,8 @@ const Dashboard: React.FC = () => {
     return <DashboardLayout>
         <div className="flex justify-center items-center min-h-96">
           <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-pakistani_green-600 mx-auto mb-4" />
-            <p className="text-gray-600 font-poppins">Loading your dashboard...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground font-poppins">Loading your dashboard...</p>
           </div>
         </div>
       </DashboardLayout>;
@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-600 mb-4 font-poppins">
               Please log in to access your dashboard
             </p>
-            <button onClick={() => window.location.href = '/login'} className="bg-pakistani_green-600 text-white px-4 py-2 rounded-lg hover:bg-pakistani_green-700 font-poppins">
+            <button onClick={() => window.location.href = '/login'} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 font-poppins">
               Go to Login
             </button>
           </div>

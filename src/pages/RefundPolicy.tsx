@@ -34,14 +34,14 @@ const RefundPolicy = () => {
 
           <Card className="p-8">
             <div className="prose prose-lg max-w-none font-poppins">
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Refund Eligibility
               </h2>
               <p className="mb-6 text-foreground">
                 Refunds are available for orders that meet specific criteria within our return window.
               </p>
 
-              <h3 className="text-xl font-semibold text-pakistani_green-600 mb-3">
+              <h3 className="text-xl font-semibold text-primary mb-3">
                 Eligible Items
               </h3>
               <ul className="list-disc pl-6 mb-6 text-foreground">
@@ -51,21 +51,21 @@ const RefundPolicy = () => {
                 <li>Quality issues with products</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Refund Process
               </h2>
               <p className="mb-6 text-foreground">
                 To request a refund, contact our support team with your order details and reason for return.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Processing Time
               </h2>
               <p className="mb-6 text-foreground">
                 Refunds are typically processed within 5-7 business days after approval.
               </p>
 
-              <div className="mt-4 p-4 bg-pakistani_green-50 rounded-lg">
+              <div className="mt-4 p-4 bg-primary/5 rounded-lg">
                 <p className="text-foreground"><strong>Support Email:</strong> khizercoding.com</p>
                 <p className="text-foreground"><strong>Phone:</strong> +92 3149388513</p>
               </div>

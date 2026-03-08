@@ -18,11 +18,11 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
 
   return (
     <Card className="overflow-hidden border-none shadow-md">
-      <div className="bg-pakistani_green-500/20 dark:bg-pakistani_green-600/30 backdrop-blur-sm p-4 md:p-6 border-b border-pakistani_green-200/50 dark:border-pakistani_green-700/50">
-        <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins text-pakistani_green-800 dark:text-pakistani_green-100">
+      <div className="bg-primary/10 backdrop-blur-sm p-4 md:p-6 border-b border-primary/20">
+        <h2 className="text-lg md:text-xl font-semibold mb-2 font-poppins text-foreground">
           {t('role_management')}
         </h2>
-        <p className="text-pakistani_green-700 dark:text-pakistani_green-200 text-sm font-poppins">
+        <p className="text-muted-foreground text-sm font-poppins">
           {t('your_current_role')}
         </p>
       </div>

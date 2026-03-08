@@ -114,7 +114,7 @@ class EnhancedErrorBoundary extends Component<Props, State> {
               <div className="flex flex-col gap-2">
                 <Button 
                   onClick={this.handleRetry}
-                  className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                  className="w-full"
                   disabled={this.state.retryCount >= 3}
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />

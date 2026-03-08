@@ -27,7 +27,7 @@ const WholesalerOrders: React.FC = () => {
     <DashboardLayout>
       <div className="max-w-4xl mx-auto px-2 py-8">
         <div className="flex items-center mb-6">
-          <ShoppingCart className="h-6 w-6 mr-2 text-pakistani_green-700" />
+          <ShoppingCart className="h-6 w-6 mr-2 text-primary" />
           <h1 className="text-2xl font-semibold font-poppins">Wholesaler Orders</h1>
         </div>
         <Card>

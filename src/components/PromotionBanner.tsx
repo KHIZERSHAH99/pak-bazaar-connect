@@ -16,14 +16,14 @@ const PromotionBanner: React.FC<PromotionBannerProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="bg-pakistani_green-700 text-white py-3 px-4 text-center relative animate-pulse">
+    <div className="bg-primary text-primary-foreground py-3 px-4 text-center relative animate-pulse">
       <div className="container mx-auto flex justify-center items-center">
         <span className="text-sm font-medium">{message}</span>
         
         {showCloseButton && (
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-primary-foreground/80 hover:text-primary-foreground"
             aria-label="Close promotion banner"
           >
             <X className="h-4 w-4" />

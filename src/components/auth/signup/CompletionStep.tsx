@@ -9,23 +9,23 @@ const CompletionStep: React.FC = () => {
         <p className="text-gray-600 font-poppins">Review your information and create your wholesaler account</p>
       </div>
 
-      <div className="bg-gradient-to-r from-pakistani_green-50 to-green-50 p-6 rounded-lg border border-pakistani_green-200">
-        <h4 className="font-semibold text-pakistani_green-800 mb-3 font-poppins">What happens next?</h4>
-        <ul className="space-y-2 text-sm text-pakistani_green-700 font-poppins">
+      <div className="bg-primary/5 p-6 rounded-lg border border-primary/20">
+        <h4 className="font-semibold text-foreground mb-3 font-poppins">What happens next?</h4>
+        <ul className="space-y-2 text-sm text-foreground/80 font-poppins">
           <li className="flex items-center">
-            <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+            <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
             Your account will be created immediately
           </li>
           <li className="flex items-center">
-            <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+            <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
             You can start using basic features right away
           </li>
           <li className="flex items-center">
-            <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+            <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
             Complete business verification for full access
           </li>
           <li className="flex items-center">
-            <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-3"></div>
+            <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
             Start creating shops and listing products
           </li>
         </ul>

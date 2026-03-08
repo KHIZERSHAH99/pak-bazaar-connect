@@ -251,7 +251,7 @@ const Checkout: React.FC = () => {
                   <Button
                     onClick={handlePlaceOrders}
                     disabled={loading}
-                    className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                    className="w-full"
                     size="lg"
                   >
                     {loading ? 'Placing Orders...' : `Place ${cartByShop.length} Order(s)`}

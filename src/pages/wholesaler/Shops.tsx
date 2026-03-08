@@ -234,7 +234,7 @@ const Shops: React.FC = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : shops.length === 0 ? (
-          <Card className="p-8 text-center bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
+          <Card className="p-8 text-center bg-background/50 backdrop-blur-sm border-border">
             <div className="flex justify-center mb-4">
               <Store className="h-16 w-16 text-gray-300 dark:text-gray-600" />
             </div>
@@ -250,10 +250,10 @@ const Shops: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {shops.map((shop) => (
-              <Card key={shop.id} className="overflow-hidden bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
+              <Card key={shop.id} className="overflow-hidden bg-background/50 backdrop-blur-sm border-border">
                 <div className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="h-12 w-12 bg-pakistani_green-100/50 dark:bg-pakistani_green-900/30 rounded-full flex items-center justify-center mr-4">
+                    <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center mr-4">
                       {shop.logo ? (
                         <img 
                           src={shop.logo} 
@@ -283,13 +283,13 @@ const Shops: React.FC = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => handleViewProducts(shop.id)}
-                      className="flex-1 border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+                      className="flex-1 border-border hover:bg-accent/10"
                     >
                       <Package className="h-4 w-4 mr-2" /> Products
                     </Button>
                     <Button 
                       variant="outline"
-                      className="flex-1 border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+                      className="flex-1 border-border hover:bg-accent/10"
                       onClick={() => openEditDialog(shop)}
                     >
                       <Edit className="h-4 w-4 mr-2" /> Edit
@@ -405,7 +405,7 @@ const Shops: React.FC = () => {
                   resetForm();
                 }}
                 disabled={isSubmitting}
-                className="border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+                className="border-border hover:bg-accent/10"
               >
                 Cancel
               </Button>
@@ -525,7 +525,7 @@ const Shops: React.FC = () => {
                   setEditingShop(null);
                 }}
                 disabled={isSubmitting}
-                className="border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+                className="border-border hover:bg-accent/10"
               >
                 Cancel
               </Button>

@@ -427,7 +427,7 @@ const EmailSignupForm = () => {
         {/* Security Notice */}
         <div className="mt-4 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
           <div className="flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 text-pakistani_green-600 mt-0.5 flex-shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
             <p className="text-xs text-muted-foreground">
               <strong>Secure Registration:</strong> Your data is protected with industry-standard encryption.
             </p>
@@ -438,7 +438,7 @@ const EmailSignupForm = () => {
       <CardFooter className="border-t border-border bg-muted/30 dark:bg-muted/50 flex justify-center p-4">
         <p className="text-sm text-muted-foreground font-poppins">
           Already have an account?{' '}
-          <Link to="/login" className="text-pakistani_green-600 dark:text-pakistani_green-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-100 font-medium">
+          <Link to="/login" className="text-primary hover:text-primary/80 font-medium">
             Sign in here
           </Link>
         </p>

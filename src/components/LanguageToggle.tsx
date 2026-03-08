@@ -31,31 +31,31 @@ const LanguageToggle: React.FC = () => {
         <Button 
           variant="ghost" 
           size="sm" 
-          className="h-9 px-3 gap-2 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 transition-all duration-200"
+          className="h-9 px-3 gap-2 transition-all duration-200"
           aria-label={`Switch language - Currently ${currentLang.name}`}
         >
-          <Globe className="h-4 w-4 text-pakistani_green-600 dark:text-pakistani_green-400" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <Globe className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium text-foreground">
             {currentLang.label}
           </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="min-w-[140px] bg-white dark:bg-gray-800 z-50"
+        className="min-w-[140px] bg-popover z-50"
       >
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
             onClick={() => handleLanguageChange(lang.code)}
             className={`cursor-pointer flex items-center gap-3 ${
-              language === lang.code ? 'bg-pakistani_green-50 dark:bg-pakistani_green-900/20 text-pakistani_green-700 dark:text-pakistani_green-300' : ''
+              language === lang.code ? 'bg-primary/5 text-primary' : ''
             }`}
           >
             <span className="text-lg">{lang.flag}</span>
             <span className="font-poppins font-medium">{lang.name}</span>
             {language === lang.code && (
-              <span className="ml-auto text-pakistani_green-600 dark:text-pakistani_green-400 text-sm">✓</span>
+              <span className="ml-auto text-primary text-sm">✓</span>
             )}
           </DropdownMenuItem>
         ))}

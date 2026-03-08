@@ -98,7 +98,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
               </div>
               
               {selectedMethod === method.id && (
-                <CheckCircle className="h-5 w-5 text-pakistani_green-600" />
+                <CheckCircle className="h-5 w-5 text-primary" />
               )}
             </div>
             

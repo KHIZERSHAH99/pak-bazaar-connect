@@ -151,7 +151,7 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onBackToRegular }) => {
       <div className="text-center">
         <button
           onClick={onBackToRegular}
-          className="text-sm text-pakistani_green-600 dark:text-pakistani_green-400 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 font-poppins transition-colors"
+          className="text-sm text-primary hover:text-primary/80 font-poppins transition-colors"
           disabled={isLoading}
         >
           ← Back to Regular Login

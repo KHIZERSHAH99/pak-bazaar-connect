@@ -242,7 +242,7 @@ const OrderManagement: React.FC<OrderManagementProps> = ({ userRole }) => {
 
                   <div className="flex justify-between items-center pt-4 border-t">
                     <div>
-                      <p className="text-2xl font-bold text-pakistani_green-600 font-poppins">
+                      <p className="text-2xl font-bold text-primary font-poppins">
                         PKR {order.totalAmount.toLocaleString()}
                       </p>
                     </div>
@@ -259,7 +259,7 @@ const OrderManagement: React.FC<OrderManagementProps> = ({ userRole }) => {
                           <Button
                             size="sm"
                             onClick={() => handleStatusUpdate(order.id, 'confirmed')}
-                            className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                            className=""
                           >
                             Accept
                           </Button>
@@ -269,7 +269,7 @@ const OrderManagement: React.FC<OrderManagementProps> = ({ userRole }) => {
                         <Button
                           size="sm"
                           onClick={() => handleStatusUpdate(order.id, 'processing')}
-                          className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                          className=""
                         >
                           Start Processing
                         </Button>
@@ -278,7 +278,7 @@ const OrderManagement: React.FC<OrderManagementProps> = ({ userRole }) => {
                         <Button
                           size="sm"
                           onClick={() => handleStatusUpdate(order.id, 'shipped')}
-                          className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                          className=""
                         >
                           Mark as Shipped
                         </Button>

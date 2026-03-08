@@ -54,11 +54,11 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
                 />
                 <div className="flex-1">
                   <h4 className="font-medium text-sm line-clamp-2">{item.product.name}</h4>
-                  <p className="text-pakistani_green-600 font-bold">
+                  <p className="text-primary font-bold">
                     PKR {item.product.price.toLocaleString()}
                   </p>
                   {item.product.shops && (
-                    <p className="text-xs text-gray-500">{item.product.shops.name}</p>
+                    <p className="text-xs text-muted-foreground">{item.product.shops.name}</p>
                   )}
                 </div>
                 <div className="flex flex-col items-center space-y-2">
@@ -98,7 +98,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
         <div className="border-t pt-4 space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-lg font-semibold">Total:</span>
-            <span className="text-xl font-bold text-pakistani_green-600">
+            <span className="text-xl font-bold text-primary">
               PKR {getTotalPrice().toLocaleString()}
             </span>
           </div>

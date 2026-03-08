@@ -38,15 +38,15 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
       case 'dots':
         return (
           <div className="flex space-x-1">
-            <div className={cn("bg-pakistani_green-600 rounded-full animate-bounce", sizeClasses[size])} style={{ animationDelay: '0ms' }} />
-            <div className={cn("bg-pakistani_green-600 rounded-full animate-bounce", sizeClasses[size])} style={{ animationDelay: '150ms' }} />
-            <div className={cn("bg-pakistani_green-600 rounded-full animate-bounce", sizeClasses[size])} style={{ animationDelay: '300ms' }} />
+            <div className={cn("bg-primary rounded-full animate-bounce", sizeClasses[size])} style={{ animationDelay: '0ms' }} />
+            <div className={cn("bg-primary rounded-full animate-bounce", sizeClasses[size])} style={{ animationDelay: '150ms' }} />
+            <div className={cn("bg-primary rounded-full animate-bounce", sizeClasses[size])} style={{ animationDelay: '300ms' }} />
           </div>
         );
       case 'pulse':
         return (
           <div className={cn(
-            "bg-pakistani_green-600 rounded-full animate-pulse",
+            "bg-primary rounded-full animate-pulse",
             sizeClasses[size]
           )} />
         );
@@ -69,7 +69,7 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
       {renderSpinner()}
       {text && (
         <p className={cn(
-          "text-pakistani_green-700 font-poppins animate-pulse",
+          "text-primary font-poppins animate-pulse",
           textSizeClasses[size]
         )}>
           {text}

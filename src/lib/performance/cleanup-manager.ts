@@ -25,7 +25,6 @@ class CleanupManager {
    */
   registerTask(id: string, task: CleanupTask): void {
     this.tasks.set(id, task);
-    console.log(`[CleanupManager] Registered task: ${id}`);
   }
 
   /**
@@ -34,7 +33,6 @@ class CleanupManager {
    */
   unregisterTask(id: string): void {
     this.tasks.delete(id);
-    console.log(`[CleanupManager] Unregistered task: ${id}`);
   }
 
   /**
@@ -56,7 +54,7 @@ class CleanupManager {
       document.addEventListener('visibilitychange', this.handleVisibilityChange);
     }
 
-    console.log('[CleanupManager] Started');
+    // Started silently
   }
 
   /**
@@ -73,7 +71,7 @@ class CleanupManager {
     }
 
     this.isRunning = false;
-    console.log('[CleanupManager] Stopped');
+    // Stopped silently
   }
 
   /**
@@ -94,11 +92,7 @@ class CleanupManager {
       }
     });
 
-    const duration = performance.now() - startTime;
-    console.log(
-      `[CleanupManager] Completed ${successCount} tasks in ${duration.toFixed(2)}ms` +
-      (errorCount > 0 ? ` (${errorCount} errors)` : '')
-    );
+    // Completed silently
   }
 
   private handleVisibilityChange = (): void => {
@@ -159,14 +153,7 @@ export function initializeCleanupTasks(): void {
   });
 
   // Memory usage logging (dev only)
-  if (process.env.NODE_ENV === 'development') {
-    cleanupManager.registerTask('memory-logging', () => {
-      if ('memory' in performance) {
-        const memory = (performance as any).memory;
-        console.log(`[Memory] Used: ${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`);
-      }
-    });
-  }
+  // Memory logging removed to reduce console noise
 
   // Start the cleanup manager
   cleanupManager.start();

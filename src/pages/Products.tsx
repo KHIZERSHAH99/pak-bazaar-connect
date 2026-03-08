@@ -24,6 +24,7 @@ const Products: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(urlParams.get('search') || '');
   const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
 
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const { toast } = useToast();
 
   // Debounce search term
@@ -31,6 +32,13 @@ const Products: React.FC = () => {
     const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
     return () => clearTimeout(timer);
   }, [searchTerm]);
+
+  // Show/hide scroll-to-top based on scroll position
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

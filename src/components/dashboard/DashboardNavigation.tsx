@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { ChevronRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Home, Package, ShoppingCart, MessageSquare, Settings, Store,
   BarChart3, Truck, CreditCard, Ticket, BookOpen, Video
@@ -21,9 +23,41 @@ interface DashboardNavigationProps {
 }
 
 const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate }) => {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const location = useLocation();
   const unreadCount = useUnreadMessages();
+
+  // Fetch pending order count for badge
+  const { data: pendingOrderCount = 0 } = useQuery({
+    queryKey: ['pending-order-count', user?.id, profile?.role],
+    queryFn: async () => {
+      if (!user?.id) return 0;
+      if (profile?.role === 'seller') {
+        const { count } = await supabase
+          .from('orders')
+          .select('*', { count: 'exact', head: true })
+          .eq('buyer_id', user.id)
+          .in('status', ['pending', 'confirmed', 'processing']);
+        return count || 0;
+      }
+      if (profile?.role === 'wholesaler') {
+        const { data: shops } = await supabase
+          .from('shops')
+          .select('id')
+          .eq('owner_id', user.id);
+        if (!shops?.length) return 0;
+        const { count } = await supabase
+          .from('orders')
+          .select('*', { count: 'exact', head: true })
+          .in('shop_id', shops.map(s => s.id))
+          .in('status', ['pending', 'requires_attention']);
+        return count || 0;
+      }
+      return 0;
+    },
+    enabled: !!user?.id && (profile?.role === 'seller' || profile?.role === 'wholesaler'),
+    refetchInterval: 30000,
+  });
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 
@@ -48,7 +82,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
       { name: 'Shops', path: '/dashboard/shops', icon: <Store className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
       { name: 'Products', path: '/dashboard/products', icon: <Package className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
       { name: 'Shipping', path: '/dashboard/shipping', icon: <Truck className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
-      { name: 'Orders', path: '/dashboard/wholesaler-orders', icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
+      { name: 'Orders', path: '/dashboard/wholesaler-orders', icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
       { name: 'Coupons', path: '/dashboard/coupons', icon: <Ticket className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
       { name: 'Payment', path: '/dashboard/payment', icon: <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
       { name: 'Analytics', path: '/dashboard/analytics', icon: <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
@@ -56,7 +90,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
 
     const sellerItems: NavItem[] = [
       { name: 'Browse Shops', path: '/dashboard/browse-shops', icon: <Store className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
-      { name: 'My Orders', path: '/dashboard/seller-orders', icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" /> },
+      { name: 'My Orders', path: '/dashboard/seller-orders', icon: <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
     ];
 
     if (profile?.role === 'admin') return [...commonItems, ...adminItems];

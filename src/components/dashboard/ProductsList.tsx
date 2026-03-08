@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2, Eye, EyeOff, Package, Copy } from 'lucide-react';
+import { Edit, Trash2, Eye, EyeOff, Package, Copy, CheckSquare, Square } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Product } from '@/lib/types';
 import { getProductsByWholesaler, updateProduct, deleteProduct, createProduct } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +16,7 @@ const ProductsList: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showInactive, setShowInactive] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const { t } = useLanguage();
   const queryClient = useQueryClient();
@@ -102,6 +104,47 @@ const ProductsList: React.FC = () => {
     }
   };
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === products.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(products.map(p => p.id)));
+    }
+  };
+
+  const bulkToggleStatus = async (activate: boolean) => {
+    const ids = Array.from(selectedIds);
+    try {
+      await Promise.all(ids.map(id => updateProduct(id, { is_active: activate })));
+      queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] });
+      setSelectedIds(new Set());
+      toast({ title: `${ids.length} products ${activate ? 'activated' : 'deactivated'}` });
+    } catch (e: any) {
+      toast({ title: 'Bulk action failed', description: e.message, variant: 'destructive' });
+    }
+  };
+
+  const bulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (!window.confirm(`Delete ${ids.length} products? This cannot be undone.`)) return;
+    try {
+      await Promise.all(ids.map(id => deleteProduct(id)));
+      queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] });
+      setSelectedIds(new Set());
+      toast({ title: `${ids.length} products deleted` });
+    } catch (e: any) {
+      toast({ title: 'Bulk delete failed', description: e.message, variant: 'destructive' });
+    }
+  };
+
   const getStatusBadge = (product: Product) => {
     if (!product.is_active) {
       return <Badge variant="secondary">{t('inactive')}</Badge>;
@@ -155,7 +198,31 @@ const ProductsList: React.FC = () => {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-wrap justify-between items-center gap-2 mb-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleSelectAll}
+              className="text-xs"
+            >
+              {selectedIds.size === products.length && products.length > 0 ? <CheckSquare className="w-4 h-4 mr-1" /> : <Square className="w-4 h-4 mr-1" />}
+              {selectedIds.size > 0 ? `${selectedIds.size} selected` : 'Select all'}
+            </Button>
+            {selectedIds.size > 0 && (
+              <>
+                <Button variant="outline" size="sm" onClick={() => bulkToggleStatus(true)} className="text-xs">
+                  <Eye className="w-3 h-3 mr-1" /> Activate
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => bulkToggleStatus(false)} className="text-xs">
+                  <EyeOff className="w-3 h-3 mr-1" /> Deactivate
+                </Button>
+                <Button variant="outline" size="sm" onClick={bulkDelete} className="text-xs text-destructive">
+                  <Trash2 className="w-3 h-3 mr-1" /> Delete
+                </Button>
+              </>
+            )}
+          </div>
           <Button
             variant="outline"
             onClick={() => setShowInactive(!showInactive)}
@@ -163,7 +230,7 @@ const ProductsList: React.FC = () => {
           >
             {showInactive ? t('hideInactiveProducts') : t('showInactiveProducts')}
             {!showInactive && allProducts.filter(p => !p.is_active).length > 0 && (
-              <span className="ml-2 rtl:ml-0 rtl:mr-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+              <span className="ml-2 rtl:ml-0 rtl:mr-2 bg-destructive text-destructive-foreground rounded-full px-2 py-1 text-xs">
                 {allProducts.filter(p => !p.is_active).length}
               </span>
             )}
@@ -172,8 +239,15 @@ const ProductsList: React.FC = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
+            <Card key={product.id} className={`overflow-hidden ${selectedIds.has(product.id) ? 'ring-2 ring-primary' : ''}`}>
               <div className="aspect-video relative">
+                <div className="absolute top-2 left-2 z-10">
+                  <Checkbox
+                    checked={selectedIds.has(product.id)}
+                    onCheckedChange={() => toggleSelect(product.id)}
+                    className="bg-background/80 backdrop-blur-sm"
+                  />
+                </div>
                 <img
                   src={product.image || "https://via.placeholder.com/400x300?text=Product"}
                   alt={product.name}

@@ -46,7 +46,7 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
       case 'pulse':
         return (
           <div className={cn(
-            "bg-pakistani_green-600 rounded-full animate-pulse",
+            "bg-primary rounded-full animate-pulse",
             sizeClasses[size]
           )} />
         );

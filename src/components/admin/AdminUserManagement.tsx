@@ -300,9 +300,15 @@ const AdminUserManagement: React.FC = () => {
                         <Shield className="h-4 w-4 mr-2" /> Change Role
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
-                        <UserX className="h-4 w-4 mr-2" /> Suspend User
-                      </DropdownMenuItem>
+                      {u.is_suspended ? (
+                        <DropdownMenuItem onClick={() => toggleSuspend.mutate({ userId: u.id, suspend: false })}>
+                          <UserCheck className="h-4 w-4 mr-2" /> Unsuspend User
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem className="text-destructive" onClick={() => toggleSuspend.mutate({ userId: u.id, suspend: true })}>
+                          <UserX className="h-4 w-4 mr-2" /> Suspend User
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>

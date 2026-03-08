@@ -3,7 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 export interface Tutorial {
   id: string;
   title: string;
+  title_ur: string | null;
   description: string | null;
+  description_ur: string | null;
   youtube_url: string;
   thumbnail_url: string | null;
   category: string;
@@ -44,7 +46,7 @@ export const formatDuration = (seconds: number | null | undefined): string | nul
   return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
-// Extract YouTube video ID from various URL formats
+// Extract YouTube video ID
 export const extractYouTubeId = (url: string): string | null => {
   const patterns = [
     /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/|youtube-nocookie\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
@@ -57,7 +59,6 @@ export const extractYouTubeId = (url: string): string | null => {
   return null;
 };
 
-// Validate generic video URL (http/https)
 export const isValidVideoUrl = (url: string): boolean => {
   try {
     const parsed = new URL(url);
@@ -100,6 +101,15 @@ export const getYouTubeThumbnail = (url: string): string | null => {
 };
 
 export type TutorialSortOption = 'featured' | 'newest' | 'popular';
+
+// Helper to get localized title/description
+export const getLocalizedField = (tutorial: any, field: 'title' | 'description', language: string): string | null => {
+  if (language === 'ur') {
+    const urduField = tutorial[`${field}_ur`];
+    if (urduField) return urduField;
+  }
+  return tutorial[field];
+};
 
 // Fetch tutorials for users
 export const fetchTutorials = async (userRole?: string, sort: TutorialSortOption = 'featured') => {
@@ -163,13 +173,20 @@ export const fetchUserWatchedTutorials = async (userId: string): Promise<Set<str
   return new Set((data || []).map((v: any) => v.tutorial_id));
 };
 
-// Fetch all tutorials for admin
-export const fetchAllTutorials = async () => {
-  const { data, error } = await supabase
+// Fetch all tutorials for admin (includes search)
+export const fetchAllTutorials = async (searchQuery?: string) => {
+  let query = supabase
     .from('tutorials')
     .select('*')
     .order('display_order', { ascending: true })
     .order('created_at', { ascending: false });
+
+  // Server-side search for admin
+  if (searchQuery && searchQuery.trim()) {
+    query = query.or(`title.ilike.%${searchQuery.trim()}%,description.ilike.%${searchQuery.trim()}%,title_ur.ilike.%${searchQuery.trim()}%`);
+  }
+
+  const { data, error } = await query;
   if (error) throw error;
   return data || [];
 };
@@ -215,7 +232,8 @@ export const fetchPageTutorials = async (pagePath: string, userRole?: string) =>
     .from('tutorials')
     .select('*')
     .eq('is_active', true)
-    .eq('target_page', pagePath);
+    .eq('target_page', pagePath)
+    .order('display_order', { ascending: true });
   if (error) throw error;
 
   let results = data || [];
@@ -225,7 +243,7 @@ export const fetchPageTutorials = async (pagePath: string, userRole?: string) =>
     );
   }
 
-  // Fallback: if no page-specific tutorials, show "Getting Started"
+  // Fallback: if no page-specific tutorials, show "Getting Started" category
   if (results.length === 0) {
     const { data: fallback } = await supabase
       .from('tutorials')

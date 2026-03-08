@@ -134,7 +134,7 @@ const QuoteManager: React.FC<QuoteManagerProps> = ({ userRole }) => {
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
-                  <FileText className="h-8 w-8 text-pakistani_green-600" />
+                  <FileText className="h-8 w-8 text-primary" />
                   <div>
                     <h3 className="font-semibold font-poppins">{quote.quoteNumber}</h3>
                     <p className="text-sm text-gray-600 font-poppins">{quote.productName}</p>

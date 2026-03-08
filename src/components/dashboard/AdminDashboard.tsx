@@ -93,7 +93,7 @@ const AdminDashboard: React.FC = () => {
                         <button
                           onClick={() => approveMutation.mutate(request.id)}
                           disabled={approveMutation.isPending}
-                          className="bg-pakistani_green-600 text-white px-4 py-2 rounded hover:bg-pakistani_green-700 disabled:opacity-50 font-poppins"
+                          className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 disabled:opacity-50 font-poppins"
                         >
                           {approveMutation.isPending ? 'Approving...' : 'Approve'}
                         </button>

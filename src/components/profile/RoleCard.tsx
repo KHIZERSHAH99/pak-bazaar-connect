@@ -59,7 +59,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
         
         {!isCurrentRole && (
           <div className="text-center">
-            <p className="text-sm text-gray-500 font-poppins">
+            <p className="text-sm text-muted-foreground font-poppins">
               Contact administrator to change your role
             </p>
           </div>

@@ -94,8 +94,8 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-pakistani_green-50 to-green-50 dark:from-pakistani_green-950/40 dark:to-pakistani_green-900/50 p-4 rounded-lg border border-pakistani_green-200 dark:border-pakistani_green-800">
-        <p className="text-sm text-pakistani_green-700 dark:text-pakistani_green-200 font-poppins text-center">
+      <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 rounded-lg border border-primary/20">
+        <p className="text-sm text-primary font-poppins text-center">
           <strong>Note:</strong> {selectedRole === 'wholesaler' 
             ? 'Wholesalers need to provide business verification documents for security and trust.'
             : 'Sellers have a simplified registration process to get started quickly.'

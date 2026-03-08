@@ -54,7 +54,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       case 'warning':
         return "bg-yellow-600 hover:bg-yellow-700 text-white";
       default:
-        return "bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white";
+        return "bg-primary hover:bg-primary/90 text-primary-foreground";
     }
   };
 

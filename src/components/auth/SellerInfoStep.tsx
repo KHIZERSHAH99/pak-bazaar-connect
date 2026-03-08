@@ -91,8 +91,8 @@ const SellerInfoStep: React.FC<SellerInfoStepProps> = ({ form, isLoading }) => {
       
       <ContactFields form={form} isLoading={isLoading} />
       
-      <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-        <p className="text-sm text-green-800 font-poppins">
+      <div className="p-4 bg-primary/5 border border-primary/20 rounded-md">
+        <p className="text-sm text-primary font-poppins">
           <strong>Quick Setup:</strong> As a seller, you can start browsing and purchasing immediately after registration. 
           Additional verification can be completed later for enhanced features.
         </p>

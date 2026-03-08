@@ -12,7 +12,7 @@ const Card = React.forwardRef<
   const variantClasses = {
     default: "bg-card text-card-foreground shadow-sm border",
     elevated: "bg-card text-card-foreground shadow-lg border-0",
-    outlined: "bg-card text-card-foreground border-2 border-pakistani_green-200 dark:border-pakistani_green-800 shadow-none",
+    outlined: "bg-card text-card-foreground border-2 border-primary/20 shadow-none",
     ghost: "bg-transparent text-card-foreground shadow-none border-0"
   }
   

@@ -60,7 +60,7 @@ const MobileDropdown: React.FC<MobileDropdownProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align={align} 
-        className="min-w-48 bg-white border shadow-lg z-50"
+        className="min-w-48 bg-popover border shadow-lg z-50"
       >
         {React.Children.map(children, (child, index) => (
           <DropdownMenuItem key={index} className="cursor-pointer">

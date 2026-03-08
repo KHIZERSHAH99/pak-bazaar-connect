@@ -1,348 +1,187 @@
-import React, { memo, useMemo, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { memo, useMemo, useState, useEffect, useCallback } from 'react';
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Package, CheckCircle, XCircle, Clock, TrendingUp, RotateCcw, FileText, Download, History } from 'lucide-react';
-import { getUnifiedOrders, optimisticUpdateOrderStatus } from '@/lib/orders/unified-queries';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Package, CheckCircle, Clock, TrendingUp, Search, Loader2, Bell } from 'lucide-react';
+import { getUnifiedOrders, optimisticUpdateOrderStatus, subscribeToOrders } from '@/lib/orders/unified-queries';
 import { reusePreviousOrder } from '@/lib/orders/core';
 import { useToast } from '@/hooks/use-toast';
-import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { generateOrderReceipt } from '@/utils/orderPdf';
 import OrderTimeline from '@/components/orders/OrderTimeline';
+import OrderCardCompact from '@/components/orders/OrderCardCompact';
+import OrderStatusConfirmDialog from '@/components/orders/OrderStatusConfirmDialog';
 
 interface UnifiedOrderManagementProps {
   userRole: 'seller' | 'wholesaler';
 }
 
-// Memoized Order Card Component
-const OrderCard = memo(({ 
-  order, 
-  onStatusUpdate,
-  onReorder,
-  onDownloadReceipt,
-  onViewTimeline,
-  userRole
-}: { 
-  order: any; 
-  onStatusUpdate: (orderId: string, status: string) => void;
-  onReorder: (orderId: string) => void;
-  onDownloadReceipt: (order: any) => void;
-  onViewTimeline: (orderId: string) => void;
-  userRole: 'seller' | 'wholesaler';
-}) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300';
-      case 'confirmed': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
-      case 'completed': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300';
-      case 'delivered': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300';
-      case 'rejected': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
-      default: return 'bg-muted text-muted-foreground';
-    }
-  };
+const STATUS_TABS = ['all', 'pending', 'confirmed', 'shipped', 'delivered', 'rejected'] as const;
 
-  const showReorderButton = userRole === 'seller' && ['completed', 'delivered'].includes(order.status);
-
-  return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-base">{order.shops?.name || 'Order'}</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}
-            </p>
-          </div>
-          <Badge className={getStatusColor(order.status)}>
-            {order.status}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Amount:</span>
-            <span className="font-semibold">Rs. {Number(order.total_amount).toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Customer:</span>
-            <span>{order.buyer_name || order.profiles?.business_name || 'N/A'}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Payment:</span>
-            <span className="capitalize">{order.payment_method?.replace('_', ' ')}</span>
-          </div>
-          
-          {/* Order Notes if present */}
-          {order.order_notes && (
-            <div className="pt-2 border-t">
-              <p className="text-xs text-muted-foreground">Notes:</p>
-              <p className="text-sm">{order.order_notes}</p>
-            </div>
-          )}
-          
-          {/* Wholesaler actions */}
-          {userRole === 'wholesaler' && order.status === 'pending' && (
-            <div className="flex gap-2 pt-2">
-              <Button 
-                size="sm" 
-                onClick={() => onStatusUpdate(order.id, 'confirmed')}
-                className="flex-1"
-              >
-                <CheckCircle className="h-4 w-4 mr-1" />
-                Accept
-              </Button>
-              <Button 
-                size="sm" 
-                variant="destructive"
-                onClick={() => onStatusUpdate(order.id, 'rejected')}
-                className="flex-1"
-              >
-                <XCircle className="h-4 w-4 mr-1" />
-                Reject
-              </Button>
-            </div>
-          )}
-
-          {/* Wholesaler: confirmed → mark shipped */}
-          {userRole === 'wholesaler' && order.status === 'confirmed' && (
-            <div className="pt-2">
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => onStatusUpdate(order.id, 'shipped')}
-                className="w-full"
-              >
-                <Package className="h-4 w-4 mr-1" />
-                Mark as Shipped
-              </Button>
-            </div>
-          )}
-
-          {/* Wholesaler: shipped → mark delivered */}
-          {userRole === 'wholesaler' && order.status === 'shipped' && (
-            <div className="pt-2">
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => onStatusUpdate(order.id, 'delivered')}
-                className="w-full"
-              >
-                <CheckCircle className="h-4 w-4 mr-1" />
-                Mark as Delivered
-              </Button>
-            </div>
-          )}
-
-          {/* Seller reorder button */}
-          {showReorderButton && (
-            <div className="pt-2 border-t mt-2">
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => onReorder(order.id)}
-                className="w-full"
-              >
-                <RotateCcw className="h-4 w-4 mr-1" />
-                Reorder
-              </Button>
-            </div>
-          )}
-
-          {/* PDF & Timeline buttons */}
-          <div className="flex gap-2 pt-2">
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => onDownloadReceipt(order)}
-              className="flex-1 text-xs"
-            >
-              <Download className="h-3 w-3 mr-1" />
-              Receipt
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => onViewTimeline(order.id)}
-              className="flex-1 text-xs"
-            >
-              <History className="h-3 w-3 mr-1" />
-              Timeline
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-});
-
-OrderCard.displayName = 'OrderCard';
-
-// Memoized Stats Component
+// Memoized Stats
 const OrderStats = memo(({ stats }: { stats: any }) => {
   if (!stats) return null;
+  const items = [
+    { icon: Package, label: 'Total', value: stats.total, color: 'text-muted-foreground' },
+    { icon: Clock, label: 'Pending', value: stats.pending || 0, color: 'text-yellow-600' },
+    { icon: CheckCircle, label: 'Confirmed', value: stats.confirmed || 0, color: 'text-blue-600' },
+    { icon: CheckCircle, label: 'Delivered', value: stats.delivered || 0, color: 'text-green-600' },
+    { icon: TrendingUp, label: 'Value', value: `Rs. ${(stats.totalValue || 0).toLocaleString()}`, color: 'text-primary' },
+  ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-      <Card>
-        <CardContent className="pt-6">
-          <div className="text-center">
-            <Package className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-            <p className="text-2xl font-bold">{stats.total}</p>
-            <p className="text-xs text-muted-foreground">Total Orders</p>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent className="pt-6">
-          <div className="text-center">
-            <Clock className="h-8 w-8 mx-auto mb-2 text-yellow-600" />
-            <p className="text-2xl font-bold">{stats.pending || 0}</p>
-            <p className="text-xs text-muted-foreground">Pending</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-6">
-          <div className="text-center">
-            <CheckCircle className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-            <p className="text-2xl font-bold">{stats.confirmed || 0}</p>
-            <p className="text-xs text-muted-foreground">Confirmed</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-6">
-          <div className="text-center">
-            <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-600" />
-            <p className="text-2xl font-bold">{stats.completed || 0}</p>
-            <p className="text-xs text-muted-foreground">Completed</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-6">
-          <div className="text-center">
-            <TrendingUp className="h-8 w-8 mx-auto mb-2 text-primary" />
-            <p className="text-2xl font-bold">Rs. {stats.totalValue?.toLocaleString() || 0}</p>
-            <p className="text-xs text-muted-foreground">Total Value</p>
-          </div>
-        </CardContent>
-      </Card>
+      {items.map((item) => (
+        <Card key={item.label}>
+          <CardContent className="pt-6 text-center">
+            <item.icon className={`h-8 w-8 mx-auto mb-2 ${item.color}`} />
+            <p className="text-2xl font-bold">{item.value}</p>
+            <p className="text-xs text-muted-foreground">{item.label}</p>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 });
-
 OrderStats.displayName = 'OrderStats';
 
 const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRole }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [timelineOrderId, setTimelineOrderId] = useState<string | null>(null);
 
-  // Single query for orders and stats with 30-second stale time
-  const { data, isLoading } = useQuery({
+  const [activeTab, setActiveTab] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [timelineOrderId, setTimelineOrderId] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{ orderId: string; status: string } | null>(null);
+  const [newOrderCount, setNewOrderCount] = useState(0);
+
+  // Paginated query
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
     queryKey: ['unified-orders', userRole],
-    queryFn: () => getUnifiedOrders(userRole),
-    staleTime: 30 * 1000, // 30 seconds
-    refetchOnWindowFocus: false
+    queryFn: ({ pageParam = 0 }) => getUnifiedOrders(userRole, pageParam),
+    getNextPageParam: (lastPage, allPages) => lastPage.hasMore ? allPages.length : undefined,
+    initialPageParam: 0,
+    staleTime: 30 * 1000,
+    refetchOnWindowFocus: false,
   });
 
-  // Optimistic update mutation
+  // Realtime subscription
+  useEffect(() => {
+    const unsub = subscribeToOrders(
+      userRole,
+      () => {
+        setNewOrderCount(c => c + 1);
+      },
+      () => {
+        queryClient.invalidateQueries({ queryKey: ['unified-orders', userRole] });
+      }
+    );
+    return unsub;
+  }, [userRole, queryClient]);
+
+  const handleRefreshNewOrders = () => {
+    setNewOrderCount(0);
+    queryClient.invalidateQueries({ queryKey: ['unified-orders', userRole] });
+  };
+
+  // Flatten pages
+  const allOrders = useMemo(() => {
+    return data?.pages.flatMap(p => p.orders) || [];
+  }, [data]);
+
+  const stats = data?.pages[0]?.stats;
+
+  // Filter + search
+  const filteredOrders = useMemo(() => {
+    let orders = allOrders;
+    if (activeTab !== 'all') {
+      orders = orders.filter(o => o.status === activeTab);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      orders = orders.filter(o =>
+        o.id?.toLowerCase().includes(q) ||
+        o.buyer_name?.toLowerCase().includes(q) ||
+        o.shops?.name?.toLowerCase().includes(q) ||
+        o.profiles?.business_name?.toLowerCase().includes(q)
+      );
+    }
+    return orders;
+  }, [allOrders, activeTab, searchQuery]);
+
+  // Status update mutation with optimistic updates
   const updateStatusMutation = useMutation({
-    mutationFn: (variables: { orderId: string; status: string }) =>
-      optimisticUpdateOrderStatus(variables.orderId, variables.status)(),
-    onMutate: async (variables) => {
-      // Cancel outgoing queries
+    mutationFn: (vars: { orderId: string; status: string; notes?: string }) =>
+      optimisticUpdateOrderStatus(vars.orderId, vars.status, vars.notes)(),
+    onMutate: async (vars) => {
       await queryClient.cancelQueries({ queryKey: ['unified-orders', userRole] });
-
-      // Snapshot previous value
-      const previousData = queryClient.getQueryData(['unified-orders', userRole]);
-
-      // Optimistically update
+      const prev = queryClient.getQueryData(['unified-orders', userRole]);
       queryClient.setQueryData(['unified-orders', userRole], (old: any) => {
-        if (!old) return old;
+        if (!old?.pages) return old;
         return {
           ...old,
-          orders: old.orders.map((o: any) =>
-            o.id === variables.orderId ? { ...o, status: variables.status } : o
-          )
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            orders: page.orders.map((o: any) =>
+              o.id === vars.orderId ? { ...o, status: vars.status } : o
+            )
+          }))
         };
       });
-
-      return { previousData };
+      return { prev };
     },
-    onError: (err, variables, context) => {
-      // Rollback on error
-      queryClient.setQueryData(['unified-orders', userRole], context?.previousData);
-      toast({
-        title: 'Update Failed',
-        description: 'Could not update order status',
-        variant: 'destructive'
-      });
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(['unified-orders', userRole], ctx?.prev);
+      toast({ title: 'Update Failed', description: 'Could not update order status', variant: 'destructive' });
     },
-    onSuccess: (data, variables) => {
-      toast({
-        title: 'Order Updated',
-        description: `Order ${variables.status}`,
-      });
+    onSuccess: (_data, vars) => {
+      toast({ title: 'Order Updated', description: `Order ${vars.status}` });
     },
     onSettled: () => {
-      // Refetch to ensure sync
       queryClient.invalidateQueries({ queryKey: ['unified-orders', userRole] });
     }
   });
 
-  const handleStatusUpdate = (orderId: string, status: string) => {
-    updateStatusMutation.mutate({ orderId, status });
-  };
+  const handleStatusUpdate = useCallback((orderId: string, status: string) => {
+    setConfirmDialog({ orderId, status });
+  }, []);
 
-  const handleReorder = async (orderId: string) => {
+  const handleConfirmStatusUpdate = useCallback((orderId: string, status: string, notes?: string) => {
+    updateStatusMutation.mutate({ orderId, status, notes });
+  }, [updateStatusMutation]);
+
+  const handleReorder = useCallback(async (orderId: string) => {
     try {
       const orderData = await reusePreviousOrder(orderId);
-      // Navigate to shop with order data pre-filled
-      toast({
-        title: 'Order Data Loaded',
-        description: 'Redirecting to create new order with same details...',
-      });
-      // Store reorder data in sessionStorage for the order form to pick up
+      toast({ title: 'Order Data Loaded', description: 'Redirecting to create new order...' });
       sessionStorage.setItem('reorder_data', JSON.stringify(orderData));
       navigate(`/shop/${orderData.shop_id}`);
     } catch (error: any) {
-      toast({
-        title: 'Reorder Failed',
-        description: error.message || 'Could not load previous order details',
-        variant: 'destructive'
-      });
+      toast({ title: 'Reorder Failed', description: error.message || 'Could not load previous order', variant: 'destructive' });
     }
-  };
-
-  // Memoize filtered orders
-  const filteredOrders = useMemo(() => {
-    return data?.orders || [];
-  }, [data?.orders]);
+  }, [navigate, toast]);
 
   if (isLoading) {
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
+          {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-24" />)}
         </div>
+        <Skeleton className="h-10 w-full" />
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="h-48" />
-          ))}
+          {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-48" />)}
         </div>
       </div>
     );
@@ -350,8 +189,39 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
 
   return (
     <div className="space-y-6">
-      <OrderStats stats={data?.stats} />
+      <OrderStats stats={stats} />
 
+      {/* New order notification banner */}
+      {newOrderCount > 0 && (
+        <Button variant="outline" className="w-full" onClick={handleRefreshNewOrders}>
+          <Bell className="h-4 w-4 mr-2" />
+          {newOrderCount} new order{newOrderCount > 1 ? 's' : ''} — Click to refresh
+        </Button>
+      )}
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
+          <TabsList className="w-full flex-wrap h-auto">
+            {STATUS_TABS.map(tab => (
+              <TabsTrigger key={tab} value={tab} className="capitalize text-xs sm:text-sm">
+                {tab}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search orders..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+      </div>
+
+      {/* Orders grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredOrders.length === 0 ? (
           <Card className="col-span-full">
@@ -362,9 +232,9 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
           </Card>
         ) : (
           filteredOrders.map((order) => (
-            <OrderCard 
-              key={order.id} 
-              order={order} 
+            <OrderCardCompact
+              key={order.id}
+              order={order}
               onStatusUpdate={handleStatusUpdate}
               onReorder={handleReorder}
               onDownloadReceipt={generateOrderReceipt}
@@ -374,6 +244,26 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
           ))
         )}
       </div>
+
+      {/* Load More */}
+      {hasNextPage && (
+        <div className="text-center">
+          <Button variant="outline" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
+            {isFetchingNextPage ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Loading...</> : 'Load More Orders'}
+          </Button>
+        </div>
+      )}
+
+      {/* Status Confirm Dialog */}
+      {confirmDialog && (
+        <OrderStatusConfirmDialog
+          open={!!confirmDialog}
+          onOpenChange={() => setConfirmDialog(null)}
+          orderId={confirmDialog.orderId}
+          newStatus={confirmDialog.status}
+          onConfirm={handleConfirmStatusUpdate}
+        />
+      )}
 
       {/* Timeline Dialog */}
       <Dialog open={!!timelineOrderId} onOpenChange={() => setTimelineOrderId(null)}>

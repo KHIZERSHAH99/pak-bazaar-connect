@@ -19,7 +19,7 @@ const FeaturedProducts = () => {
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        const activeProducts = await getActiveProducts(4); // Get 4 featured products
+        const activeProducts = await getActiveProducts(4);
         setProducts(activeProducts);
       } catch (error) {
         console.error('Error fetching featured products:', error);
@@ -32,18 +32,18 @@ const FeaturedProducts = () => {
   }, []);
 
   return (
-    <section className="py-12 md:py-20 bg-white dark:bg-gray-900">
+    <section className="py-12 md:py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 font-poppins">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 md:mb-4 font-poppins">
             {t('featuredProducts.title')}
           </h2>
-          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6 md:mb-8 font-poppins px-2">
+          <p className="text-base md:text-lg text-muted-foreground mb-6 md:mb-8 font-poppins px-2">
             {t('featuredProducts.description')}
           </p>
           <Link to="/products">
-            <Button variant="outline" className="border-pakistani_green-600 text-pakistani_green-600 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-950 font-poppins">
+            <Button variant="outline" className="border-primary text-primary hover:bg-primary/5 font-poppins">
               {t('featuredProducts.viewAll')}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -68,7 +68,7 @@ const FeaturedProducts = () => {
           <LazyLoadWrapper height="400px" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {products.map((product) => (
               <Link key={product.id} to={`/product/${product.id}`}>
-                <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-pakistani_green-300/30 dark:bg-gray-800/80 dark:hover:shadow-pakistani_green-700/40 hover:scale-[1.02] hover:-translate-y-1">
+                <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-card/80 backdrop-blur-sm hover:shadow-primary/20 hover:scale-[1.02] hover:-translate-y-1">
                   {/* Product Image */}
                   <div className="relative overflow-hidden">
                     <OptimizedImage
@@ -78,27 +78,27 @@ const FeaturedProducts = () => {
                       quality="medium"
                       containerClassName="h-48"
                     />
-                    <Badge className="absolute top-3 left-3 bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
+                    <Badge className="absolute top-3 left-3 bg-primary hover:bg-primary/90 text-primary-foreground font-poppins">
                       {product.categories?.name || "Featured"}
                     </Badge>
-                    <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110">
-                      <Package className="w-4 h-4 text-pakistani_green-600" />
+                    <div className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110">
+                      <Package className="w-4 h-4 text-primary" />
                     </div>
                   </div>
 
                   {/* Product Details */}
                   <div className="p-5 space-y-3">
-                    <h3 className="font-semibold text-lg text-gray-900 dark:text-white group-hover:text-pakistani_green-600 transition-colors font-poppins line-clamp-2">
+                    <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors font-poppins line-clamp-2">
                       {product.name}
                     </h3>
                     
                     {/* Price */}
                     <div className="flex items-center space-x-2">
-                      <span className="text-xl font-bold text-pakistani_green-600 dark:text-pakistani_green-400 font-poppins">
+                      <span className="text-xl font-bold text-primary font-poppins">
                         PKR {product.price?.toLocaleString()}
                       </span>
                       {product.sample_price && (
-                        <span className="text-sm text-gray-500 font-poppins">
+                        <span className="text-sm text-muted-foreground font-poppins">
                           {t('featuredProducts.sample')}: PKR {product.sample_price}
                         </span>
                       )}
@@ -106,10 +106,10 @@ const FeaturedProducts = () => {
 
                     {/* Supplier Info */}
                     <div className="space-y-2">
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 font-poppins">
+                      <p className="text-sm font-medium text-foreground font-poppins">
                         {product.shops?.name || "Verified Supplier"}
                       </p>
-                      <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center text-xs text-muted-foreground">
                         <MapPin className="w-3 h-3 mr-1" />
                         <span className="font-poppins">
                           {product.shops?.cities?.name ? `${product.shops.cities.name}, ${product.shops.cities.province}` : "Pakistan"}
@@ -119,13 +119,13 @@ const FeaturedProducts = () => {
 
                     {/* MOQ */}
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500 dark:text-gray-400 font-poppins">
+                      <span className="text-xs text-muted-foreground font-poppins">
                         {t('featuredProducts.moq')}: {product.moq || 1}
                       </span>
                     </div>
 
                     {/* Action Button */}
-                    <Button className="w-full bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 text-white font-poppins mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 rounded-xl shadow-lg hover:shadow-pakistani_green-600/30">
+                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 rounded-xl shadow-lg hover:shadow-primary/30">
                       {t('featuredProducts.viewDetails')}
                       <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                     </Button>
@@ -144,7 +144,7 @@ const FeaturedProducts = () => {
         {/* Call to Action */}
         <div className="text-center mt-12">
           <Link to="/signup">
-            <Button size="lg" className="bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white font-poppins shadow-lg">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins shadow-lg">
               {t('featuredProducts.startJourney')}
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>

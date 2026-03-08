@@ -127,7 +127,7 @@ const PrivacyPolicy = () => {
                 While our primary operations are based in Pakistan, we may transfer your data to other countries for processing or storage. When we do so, we ensure appropriate safeguards are in place to protect your personal information in accordance with applicable data protection laws.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Children's Privacy
               </h2>
               <p className="mb-6 text-foreground">

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, Package, Heart, ShoppingCart, Eye, Verified } from 'lucide-react';
+import { Star, MapPin, Package, Heart, ShoppingCart, Eye, Verified, AlertTriangle } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';

@@ -75,7 +75,7 @@ const PrivacyPolicy = () => {
                 <li>To conduct market research and business analytics</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Information Sharing and Disclosure
               </h2>
               <p className="mb-4 text-foreground">

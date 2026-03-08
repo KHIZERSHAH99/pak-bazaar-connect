@@ -2471,6 +2471,8 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          display_order: number
+          duration_seconds: number | null
           id: string
           is_active: boolean
           is_featured: boolean
@@ -2486,6 +2488,8 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          display_order?: number
+          duration_seconds?: number | null
           id?: string
           is_active?: boolean
           is_featured?: boolean
@@ -2501,6 +2505,8 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          display_order?: number
+          duration_seconds?: number | null
           id?: string
           is_active?: boolean
           is_featured?: boolean

@@ -16,7 +16,8 @@ import {
   X,
   Gift,
   Star,
-  Zap
+  Zap,
+  Play
 } from 'lucide-react';
 import { UserRole } from '@/lib/types';
 
@@ -261,6 +262,18 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
             >
               {currentStepData.action}
               <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+
+          {/* Watch Tutorials Link */}
+          <div className="text-center mt-3">
+            <Button
+              variant="link"
+              size="sm"
+              className="font-poppins text-xs text-muted-foreground"
+              onClick={() => { navigate('/dashboard/tutorials'); onComplete(); }}
+            >
+              <Play className="h-3 w-3 mr-1" /> Watch Video Tutorials
             </Button>
           </div>
 

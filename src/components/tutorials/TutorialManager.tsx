@@ -94,7 +94,8 @@ const TutorialManager: React.FC = () => {
   });
 
   const filtered = tutorials.filter((t: any) => {
-    const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase());
+    const q = search.toLowerCase();
+    const matchesSearch = t.title.toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q);
     const matchesRole = roleFilter === 'all' || t.target_role === roleFilter;
     const matchesCategory = categoryFilter === 'all' || t.category === categoryFilter;
     return matchesSearch && matchesRole && matchesCategory;
@@ -254,6 +255,8 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
   const [isFeatured, setIsFeatured] = useState(tutorial?.is_featured || false);
   const [isImportant, setIsImportant] = useState(tutorial?.is_important || false);
   const [isActive, setIsActive] = useState(tutorial?.is_active ?? true);
+  const [displayOrder, setDisplayOrder] = useState<number>((tutorial as any)?.display_order ?? 0);
+  const [durationSeconds, setDurationSeconds] = useState<string>((tutorial as any)?.duration_seconds?.toString() || '');
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -287,6 +290,8 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
       is_featured: isFeatured,
       is_important: isImportant,
       is_active: isActive,
+      display_order: displayOrder,
+      duration_seconds: durationSeconds ? parseInt(durationSeconds, 10) : null,
       created_by: userId,
     });
   };
@@ -370,6 +375,16 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
             {TARGET_PAGES.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
           </SelectContent>
         </Select>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="font-poppins">Display Order</Label>
+          <Input type="number" value={displayOrder} onChange={(e) => setDisplayOrder(parseInt(e.target.value, 10) || 0)} placeholder="0" className="font-poppins" />
+        </div>
+        <div>
+          <Label className="font-poppins">Duration (seconds)</Label>
+          <Input type="number" value={durationSeconds} onChange={(e) => setDurationSeconds(e.target.value)} placeholder="e.g. 180" className="font-poppins" />
+        </div>
       </div>
       <div className="flex flex-wrap gap-6">
         <div className="flex items-center gap-2">

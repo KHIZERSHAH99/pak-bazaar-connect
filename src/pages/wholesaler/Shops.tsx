@@ -289,7 +289,7 @@ const Shops: React.FC = () => {
                     </Button>
                     <Button 
                       variant="outline"
-                      className="flex-1 border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+                      className="flex-1 border-border hover:bg-accent/10"
                       onClick={() => openEditDialog(shop)}
                     >
                       <Edit className="h-4 w-4 mr-2" /> Edit

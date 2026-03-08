@@ -208,7 +208,7 @@ const Checkout: React.FC = () => {
                                 </p>
                               </div>
                             </div>
-                            <p className="font-bold text-pakistani_green-600">
+                            <p className="font-bold text-primary">
                               PKR {(item.product.price * item.quantity).toLocaleString()}
                             </p>
                           </div>

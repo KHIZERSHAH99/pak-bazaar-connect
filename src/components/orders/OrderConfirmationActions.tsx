@@ -164,7 +164,7 @@ const OrderConfirmationActions: React.FC<OrderConfirmationActionsProps> = ({
               <Button
                 onClick={() => initiateAction('confirm')}
                 disabled={isSubmitting}
-                className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                className="flex-1"
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Confirm Order

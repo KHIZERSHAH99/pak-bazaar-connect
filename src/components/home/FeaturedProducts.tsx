@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Star, MapPin, Package } from 'lucide-react';
+import { ArrowRight, MapPin, Package } from 'lucide-react';
 import OptimizedImage from '@/components/ui/image-optimizer';
 import LazyLoadWrapper from '@/components/ui/lazy-load-wrapper';
 import { getActiveProducts } from '@/lib/products';

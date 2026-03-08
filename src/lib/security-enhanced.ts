@@ -154,7 +154,7 @@ export class SecurityManager {
         case 'product':
           const { data: product } = await supabase
             .from('products')
-            .select('shops!shop_id(owner_id)')
+            .select('shops!fk_products_shop_id(owner_id)')
             .eq('id', resourceId)
             .single();
           return product?.shops?.owner_id === targetUserId;

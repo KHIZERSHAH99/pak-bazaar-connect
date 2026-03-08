@@ -4,11 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, Store, MapPin, Phone, Package, Star } from 'lucide-react';
+import { ArrowLeft, Store, MapPin, Phone, Package, Calendar, ShoppingCart, MessageSquare } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import Layout from '@/components/Layout';
+import MessageButton from '@/components/messaging/MessageButton';
+import { format } from 'date-fns';
 
 const ShopDetails: React.FC = () => {
   const { shopId } = useParams<{ shopId: string }>();

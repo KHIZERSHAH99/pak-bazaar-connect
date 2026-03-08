@@ -53,7 +53,7 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
       default:
         return (
           <div className={cn(
-            "animate-spin rounded-full border-2 border-pakistani_green-200 border-t-pakistani_green-600",
+            "animate-spin rounded-full border-2 border-primary/20 border-t-primary",
             sizeClasses[size]
           )} />
         );

@@ -428,7 +428,7 @@ export const AddressBook = ({ onSelectAddress, showSelection = false }: AddressB
       ) : (
         <div className="grid gap-4">
           {addresses.map((address) => (
-            <Card key={address.id} className={`p-4 ${address.is_default ? 'border-pakistani_green-500' : ''}`}>
+            <Card key={address.id} className={`p-4 ${address.is_default ? 'border-primary' : ''}`}>
               <div className="flex justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">

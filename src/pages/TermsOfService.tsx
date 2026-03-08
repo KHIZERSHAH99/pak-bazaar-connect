@@ -68,7 +68,7 @@ const TermsOfService = () => {
                 <li>Violation of intellectual property rights</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Contact Information
               </h2>
               <div className="mt-4 p-4 bg-pakistani_green-50 rounded-lg">

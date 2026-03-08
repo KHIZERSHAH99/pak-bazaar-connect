@@ -2,8 +2,9 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, RotateCcw, Clock, CheckCircle, XCircle, Package } from 'lucide-react';
+import { Eye, RotateCcw, Clock, CheckCircle, XCircle, Package, Copy } from 'lucide-react';
 import { Order } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 interface OrderCardProps {
   order: Order;
   onViewOrder: (order: Order) => void;
@@ -18,6 +19,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
   showReorderButton = false,
   userRole
 }) => {
+  const { toast } = useToast();
+
+  const copyOrderId = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(order.id);
+    toast({ title: 'Copied', description: 'Order ID copied to clipboard' });
+  };
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending':
@@ -54,6 +62,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <h3 className="text-base sm:text-lg font-semibold font-poppins truncate">
                 Order #{order.id.slice(0, 8)}
               </h3>
+              <button onClick={copyOrderId} className="text-muted-foreground hover:text-foreground p-1 rounded" title="Copy Order ID">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
               <Badge className={`flex items-center gap-1 text-xs sm:text-sm ${getStatusColor(order.status)}`}>
                 {getStatusIcon(order.status)}
                 <span className="hidden sm:inline">{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>

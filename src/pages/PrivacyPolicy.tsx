@@ -41,7 +41,7 @@ const PrivacyPolicy = () => {
                 <li>Communication preferences and marketing consent settings</li>
               </ul>
 
-              <h3 className="text-xl font-semibold text-pakistani_green-600 mb-3">
+              <h3 className="text-xl font-semibold text-primary mb-3">
                 Automatically Collected Information
               </h3>
               <p className="mb-4 text-foreground">

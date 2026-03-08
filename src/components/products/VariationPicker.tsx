@@ -25,7 +25,7 @@ const VariationPicker: React.FC<VariationPickerProps> = ({ variations, selected,
                 color ? (
                   <button
                     key={color}
-                    className={`px-3 py-1 rounded border font-poppins ${selected?.color === color ? "bg-pakistani_green-600 text-white" : "bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border font-poppins ${selected?.color === color ? "bg-primary text-primary-foreground" : "bg-muted"}`}
                     onClick={() => {
                       const firstMatching = variations.find(v => v.color === color);
                       if (firstMatching) onSelect(firstMatching);
@@ -47,7 +47,7 @@ const VariationPicker: React.FC<VariationPickerProps> = ({ variations, selected,
                 size ? (
                   <button
                     key={size}
-                    className={`px-3 py-1 rounded border font-poppins ${selected?.size === size ? "bg-pakistani_green-600 text-white" : "bg-gray-50"}`}
+                    className={`px-3 py-1 rounded border font-poppins ${selected?.size === size ? "bg-primary text-primary-foreground" : "bg-muted"}`}
                     onClick={() => {
                       const firstMatching = variations.find(v => v.size === size && (!selected?.color || v.color === selected.color));
                       if (firstMatching) onSelect(firstMatching);

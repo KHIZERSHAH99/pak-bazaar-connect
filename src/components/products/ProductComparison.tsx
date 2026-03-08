@@ -133,7 +133,7 @@ const ProductComparison: React.FC<ProductComparisonProps> = ({
             {products.map((product) => (
               <div key={product.id} className="space-y-2">
                 <Button
-                  className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                  className="w-full"
                   disabled={!product.inStock}
                 >
                   {product.inStock ? 'Add to Cart' : 'Out of Stock'}

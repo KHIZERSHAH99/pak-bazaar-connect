@@ -106,7 +106,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
           <div className="space-y-2">
             <Button 
               onClick={handleCheckout}
-              className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
+              className="w-full"
             >
               Proceed to Checkout
             </Button>

@@ -428,14 +428,14 @@ export const AddressBook = ({ onSelectAddress, showSelection = false }: AddressB
       ) : (
         <div className="grid gap-4">
           {addresses.map((address) => (
-            <Card key={address.id} className={`p-4 ${address.is_default ? 'border-pakistani_green-500' : ''}`}>
+            <Card key={address.id} className={`p-4 ${address.is_default ? 'border-primary' : ''}`}>
               <div className="flex justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     {getAddressIcon(address.label)}
                     <span className="font-semibold">{address.label || 'Delivery Address'}</span>
                     {address.is_default && (
-                      <span className="bg-pakistani_green-100 text-pakistani_green-700 px-2 py-1 rounded text-xs">
+                      <span className="bg-primary/10 text-primary px-2 py-1 rounded text-xs">
                         Default
                       </span>
                     )}

@@ -102,10 +102,10 @@ const AnalyticsDashboard: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Events</p>
+                <p className="text-sm text-muted-foreground">Total Events</p>
                 <p className="text-2xl font-bold">{data.total_events.toLocaleString()}</p>
               </div>
-              <Activity className="h-8 w-8 text-pakistani_green-600" />
+              <Activity className="h-8 w-8 text-primary" />
             </div>
           </CardContent>
         </Card>

@@ -97,7 +97,7 @@ const QuoteManager: React.FC<QuoteManagerProps> = ({ userRole }) => {
         {userRole === 'buyer' && (
           <Dialog open={showCreateQuote} onOpenChange={setShowCreateQuote}>
             <DialogTrigger asChild>
-              <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700">
+              <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Request Quote
               </Button>
@@ -119,7 +119,7 @@ const QuoteManager: React.FC<QuoteManagerProps> = ({ userRole }) => {
                   <label className="text-sm font-medium">Additional Notes</label>
                   <Textarea placeholder="Any specific requirements..." />
                 </div>
-                <Button className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700">
+                <Button className="w-full">
                   Send Quote Request
                 </Button>
               </div>
@@ -196,7 +196,7 @@ const QuoteManager: React.FC<QuoteManagerProps> = ({ userRole }) => {
                       <Button
                         size="sm"
                         onClick={() => handleStatusUpdate(quote.id, 'approved')}
-                        className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                        className=""
                       >
                         Approve
                       </Button>

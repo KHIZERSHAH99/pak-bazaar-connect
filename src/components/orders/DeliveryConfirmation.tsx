@@ -96,7 +96,7 @@ const DeliveryConfirmation: React.FC<DeliveryConfirmationProps> = ({
         <Button
           onClick={handleConfirmDelivery}
           disabled={isConfirming}
-          className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+          className="w-full font-poppins"
         >
           {isConfirming ? (
             'Confirming Delivery...'

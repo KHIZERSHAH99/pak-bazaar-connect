@@ -34,14 +34,14 @@ const TermsOfService = () => {
 
           <Card className="p-8">
             <div className="prose prose-lg max-w-none font-poppins">
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Acceptance of Terms
               </h2>
               <p className="mb-6 text-foreground">
                 By accessing and using Pak Bazaar Connect, you accept and agree to be bound by the terms and provision of this agreement.
               </p>
 
-              <h3 className="text-xl font-semibold text-pakistani_green-600 mb-3">
+              <h3 className="text-xl font-semibold text-primary mb-3">
                 User Responsibilities
               </h3>
               <ul className="list-disc pl-6 mb-6 text-foreground">
@@ -51,14 +51,14 @@ const TermsOfService = () => {
                 <li>Respect other users and their intellectual property</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Platform Usage
               </h2>
               <p className="mb-6 text-foreground">
                 Pak Bazaar Connect is a B2B marketplace designed to connect wholesalers and retailers in Pakistan. Users must be legitimate businesses to participate.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Prohibited Activities
               </h2>
               <ul className="list-disc pl-6 mb-6 text-foreground">
@@ -68,10 +68,10 @@ const TermsOfService = () => {
                 <li>Violation of intellectual property rights</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Contact Information
               </h2>
-              <div className="mt-4 p-4 bg-pakistani_green-50 rounded-lg">
+              <div className="mt-4 p-4 bg-primary/5 rounded-lg">
                 <p className="text-foreground"><strong>Email:</strong> khizercoding.com</p>
                 <p className="text-foreground"><strong>Phone:</strong> +92 3149388513</p>
                 <p className="text-foreground"><strong>Address:</strong> Mardan, Pakistan</p>

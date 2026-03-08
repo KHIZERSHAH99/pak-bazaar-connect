@@ -23,7 +23,7 @@ const PendingDashboard: React.FC = () => (
           </div>
         </div>
         <Link to="/profile">
-          <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
+          <Button className="font-poppins">
             Choose Role <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>

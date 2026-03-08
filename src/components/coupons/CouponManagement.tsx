@@ -154,7 +154,7 @@ const CouponManagement: React.FC = () => {
             </div>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins">
+                <Button className="font-poppins">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Coupon
                 </Button>
@@ -252,7 +252,7 @@ const CouponManagement: React.FC = () => {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+                    className="w-full font-poppins"
                     disabled={createMutation.isPending}
                   >
                     {createMutation.isPending ? 'Creating...' : 'Create Coupon'}
@@ -266,24 +266,24 @@ const CouponManagement: React.FC = () => {
           {isLoading ? (
             <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse bg-gray-200 h-20 rounded"></div>
+                <div key={i} className="animate-pulse bg-muted h-20 rounded"></div>
               ))}
             </div>
           ) : coupons.length === 0 ? (
             <div className="text-center py-8">
-              <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 font-poppins">No coupons created yet</p>
-              <p className="text-sm text-gray-400 font-poppins">Create your first coupon to start offering discounts</p>
+              <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground font-poppins">No coupons created yet</p>
+              <p className="text-sm text-muted-foreground/70 font-poppins">Create your first coupon to start offering discounts</p>
             </div>
           ) : (
             <div className="space-y-4">
               {coupons.map((coupon) => (
-                <Card key={coupon.id} className="border-l-4 border-l-pakistani_green-500">
+                <Card key={coupon.id} className="border-l-4 border-l-primary">
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <code className="bg-gray-100 px-3 py-1 rounded font-mono text-lg font-bold">
+                          <code className="bg-muted px-3 py-1 rounded font-mono text-lg font-bold">
                             {coupon.code}
                           </code>
                           <Badge variant={coupon.is_active ? 'default' : 'secondary'}>

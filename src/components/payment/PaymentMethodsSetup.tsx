@@ -194,7 +194,7 @@ const PaymentMethodsSetup: React.FC = () => {
               )}
               <Button
                 type="submit"
-                className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+                className="font-poppins"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Saving...' : 'Save Payment Methods'}

@@ -99,12 +99,11 @@ const Checkout: React.FC = () => {
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto text-center">
-            <ShoppingCart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h1>
-            <p className="text-gray-600 mb-6">Add some products to your cart to checkout</p>
+            <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-foreground mb-2">Your cart is empty</h1>
+            <p className="text-muted-foreground mb-6">Add some products to your cart to checkout</p>
             <Button 
               onClick={() => navigate('/products')}
-              className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
             >
               Browse Products
             </Button>

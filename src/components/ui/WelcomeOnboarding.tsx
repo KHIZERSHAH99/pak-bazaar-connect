@@ -32,21 +32,21 @@ const WelcomeOnboarding: React.FC<WelcomeOnboardingProps> = ({
     if (userRole === 'wholesaler') {
       return [
         {
-          icon: <Store className="h-8 w-8 text-pakistani_green-600" />,
+          icon: <Store className="h-8 w-8 text-primary" />,
           title: 'Create Your Shop',
           description: 'Set up your wholesale business profile and showcase your products to retailers across Pakistan.',
           action: 'Go to Shops',
           link: '/dashboard/shops'
         },
         {
-          icon: <ShoppingCart className="h-8 w-8 text-blue-600" />,
+          icon: <ShoppingCart className="h-8 w-8 text-primary" />,
           title: 'Add Products',
           description: 'List your wholesale products with competitive pricing, MOQ, and detailed descriptions.',
           action: 'Add Products',
           link: '/dashboard/products'
         },
         {
-          icon: <TrendingUp className="h-8 w-8 text-green-600" />,
+          icon: <TrendingUp className="h-8 w-8 text-primary" />,
           title: 'Manage Orders',
           description: 'Track and manage your orders efficiently from your dashboard.',
           action: 'View Orders',
@@ -56,21 +56,21 @@ const WelcomeOnboarding: React.FC<WelcomeOnboardingProps> = ({
     } else if (userRole === 'seller') {
       return [
         {
-          icon: <Users className="h-8 w-8 text-pakistani_green-600" />,
+          icon: <Users className="h-8 w-8 text-primary" />,
           title: 'Browse Suppliers',
           description: 'Discover verified wholesalers and explore their product catalogs.',
           action: 'Browse Shops',
           link: '/dashboard/browse-shops'
         },
         {
-          icon: <ShoppingCart className="h-8 w-8 text-blue-600" />,
+          icon: <ShoppingCart className="h-8 w-8 text-primary" />,
           title: 'Place Orders',
           description: 'Order products directly from wholesalers with secure payment methods.',
           action: 'View Products',
           link: '/products'
         },
         {
-          icon: <MessageCircle className="h-8 w-8 text-green-600" />,
+          icon: <MessageCircle className="h-8 w-8 text-primary" />,
           title: 'Communicate',
           description: 'Chat with suppliers, negotiate prices, and track your order status.',
           action: 'Check Orders',
@@ -102,16 +102,16 @@ const WelcomeOnboarding: React.FC<WelcomeOnboardingProps> = ({
         <CardHeader className="text-center relative">
           <button
             onClick={onSkip}
-            className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full"
+            className="absolute top-4 right-4 p-1 hover:bg-muted rounded-full"
           >
-            <X className="h-4 w-4 text-gray-500" />
+            <X className="h-4 w-4 text-muted-foreground" />
           </button>
           
           <div className="mb-4">
             {currentStepData.icon}
           </div>
           
-          <CardTitle className="text-xl font-bold text-gray-900 font-poppins">
+          <CardTitle className="text-xl font-bold text-foreground font-poppins">
             Welcome to Pak Bazaar Connect!
           </CardTitle>
           
@@ -127,10 +127,10 @@ const WelcomeOnboarding: React.FC<WelcomeOnboardingProps> = ({
         
         <CardContent className="space-y-6">
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2 font-poppins">
+            <h3 className="text-lg font-semibold text-foreground mb-2 font-poppins">
               {currentStepData.title}
             </h3>
-            <p className="text-gray-600 font-poppins">
+            <p className="text-muted-foreground font-poppins">
               {currentStepData.description}
             </p>
           </div>
@@ -141,7 +141,7 @@ const WelcomeOnboarding: React.FC<WelcomeOnboardingProps> = ({
                 <div
                   key={index}
                   className={`w-3 h-3 rounded-full ${
-                    index <= currentStep ? 'bg-pakistani_green-600' : 'bg-gray-300'
+                    index <= currentStep ? 'bg-primary' : 'bg-muted'
                   }`}
                 />
               ))}
@@ -159,7 +159,7 @@ const WelcomeOnboarding: React.FC<WelcomeOnboardingProps> = ({
             
             <Button
               onClick={handleAction}
-              className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+              className="flex-1 font-poppins"
             >
               {currentStepData.action}
               <ArrowRight className="h-4 w-4 ml-2" />

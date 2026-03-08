@@ -107,18 +107,18 @@ const WishlistManager: React.FC<WishlistManagerProps> = ({
                 <h3 className="font-semibold text-lg font-poppins line-clamp-2">
                   {product.name}
                 </h3>
-                <p className="text-sm text-gray-600 font-poppins line-clamp-2">
+                <p className="text-sm text-muted-foreground font-poppins line-clamp-2">
                   {product.description}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold text-pakistani_green-600 font-poppins">
+                  <span className="text-xl font-bold text-primary font-poppins">
                     PKR {product.price.toLocaleString()}
                   </span>
-                  <span className="text-sm text-gray-500 font-poppins">
+                  <span className="text-sm text-muted-foreground font-poppins">
                     MOQ: {product.minOrder}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 font-poppins">
+                <p className="text-sm text-muted-foreground font-poppins">
                   by {product.wholesaler}
                 </p>
               </div>
@@ -127,7 +127,7 @@ const WishlistManager: React.FC<WishlistManagerProps> = ({
                 <Button
                   onClick={() => handleAddToCart(product)}
                   disabled={!product.inStock}
-                  className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                  className="flex-1"
                   size="sm"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />

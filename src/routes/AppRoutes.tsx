@@ -47,6 +47,10 @@ const DashboardCoupons = lazy(() => import('@/pages/dashboard/DashboardCoupons')
 const DashboardTutorials = lazy(() => import('@/pages/dashboard/DashboardTutorials'));
 const DashboardTutorialDetail = lazy(() => import('@/pages/dashboard/DashboardTutorialDetail'));
 const DashboardTutorialManager = lazy(() => import('@/pages/dashboard/DashboardTutorialManager'));
+const DashboardAdminUsers = lazy(() => import('@/pages/dashboard/DashboardAdminUsers'));
+const DashboardAdminOrders = lazy(() => import('@/pages/dashboard/DashboardAdminOrders'));
+const DashboardAdminModeration = lazy(() => import('@/pages/dashboard/DashboardAdminModeration'));
+const DashboardAdminAnalytics = lazy(() => import('@/pages/dashboard/DashboardAdminAnalytics'));
 
 // Public pages
 const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));

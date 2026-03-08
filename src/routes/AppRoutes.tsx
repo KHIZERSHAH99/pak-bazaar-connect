@@ -72,6 +72,7 @@ const AppRoutes: React.FC = () => {
         {/* Auth routes */}
         <Route path="/login" element={<LazyRoute><Login /></LazyRoute>} />
         <Route path="/signup" element={<LazyRoute><Signup /></LazyRoute>} />
+        <Route path="/forgot-password" element={<LazyRoute><ForgotPassword /></LazyRoute>} />
         
         {/* Product routes */}
         <Route path="/products" element={<LazyRoute><Products /></LazyRoute>} />

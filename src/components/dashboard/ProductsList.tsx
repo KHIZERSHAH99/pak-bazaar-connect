@@ -15,6 +15,7 @@ const ProductsList: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showInactive, setShowInactive] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const { t } = useLanguage();
   const queryClient = useQueryClient();

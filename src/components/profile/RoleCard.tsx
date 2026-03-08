@@ -51,7 +51,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
           )}
         </div>
         
-        <ul className="text-sm text-gray-600 space-y-2 mb-4 ml-4 list-disc font-poppins">
+        <ul className="text-sm text-muted-foreground space-y-2 mb-4 ml-4 list-disc font-poppins">
           {features.map((feature, index) => (
             <li key={index}>{feature}</li>
           ))}

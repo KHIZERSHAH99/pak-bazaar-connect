@@ -62,7 +62,7 @@ const AccountInfoStep: React.FC<AccountInfoStepProps> = ({ form, isLoading, sele
                 />
                 {emailStatus === 'checking' && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pakistani_green-700 dark:border-pakistani_green-400"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                   </div>
                 )}
                 {emailStatus === 'available' && (

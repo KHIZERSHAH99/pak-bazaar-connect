@@ -103,7 +103,7 @@ export const createOrder = async (orderData: {
     .insert([orderPayload])
     .select(`
       *,
-      shops!shop_id(id, name, contact, address, owner_id)
+      shops!fk_orders_shop_id(id, name, contact, address, owner_id)
     `)
     .single();
   

@@ -7,6 +7,17 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { confirmOrder, rejectOrder } from '@/lib/orders/core';
 import { Order, OrderStatus, PaymentMethod } from '@/lib/types';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface OrderActionsProps {
   order: Order;
@@ -139,18 +150,43 @@ const OrderActions: React.FC<OrderActionsProps> = ({ order, onOrderUpdate }) => 
         </div>
         
         <div className="flex gap-4">
-          <Button
-            onClick={handleRejectOrder}
-            disabled={isSubmitting}
-            variant="outline"
-            className="flex-1 text-red-600 border-red-300 hover:bg-red-50"
-          >
-            {isSubmitting ? 'Processing...' : 'Reject Order'}
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                disabled={isSubmitting}
+                variant="outline"
+                className="flex-1 text-destructive border-destructive/30 hover:bg-destructive/10"
+              >
+                Reject Order
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reject this order?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. The buyer will be notified that their order has been rejected.
+                  {!wholesalerNotes.trim() && (
+                    <span className="block mt-2 text-destructive font-medium">Please add a rejection reason in the notes field first.</span>
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleRejectOrder}
+                  disabled={!wholesalerNotes.trim()}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Reject Order
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
           <Button
             onClick={handleConfirmOrder}
             disabled={isSubmitting}
-            className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700"
+            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             {isSubmitting ? 'Processing...' : 'Confirm Order'}
           </Button>

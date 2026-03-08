@@ -27,7 +27,7 @@ export const getOptimizedSellerOrders = async (): Promise<any[]> => {
       rejected_at,
       wholesaler_notes,
       commission_id,
-      shops!shop_id(id, name, contact, address, postal_code, owner_id)
+      shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id)
     `)
     .eq('buyer_id', user.id)
     .order('created_at', { ascending: false })

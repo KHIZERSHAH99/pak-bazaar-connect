@@ -124,8 +124,8 @@ const ShopDetails: React.FC = () => {
                     className="w-16 h-16 rounded-lg object-cover border"
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-pakistani_green-100 rounded-lg flex items-center justify-center">
-                    <Store className="h-8 w-8 text-pakistani_green-700" />
+                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Store className="h-8 w-8 text-primary" />
                   </div>
                 )}
                 <div className="flex-1">

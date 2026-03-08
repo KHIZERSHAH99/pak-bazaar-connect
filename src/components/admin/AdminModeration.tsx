@@ -37,7 +37,7 @@ const AdminModeration: React.FC = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('shops')
-        .select('*, profiles!shops_owner_id_fkey(email, business_name)')
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
       if (error) throw error;

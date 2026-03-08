@@ -226,7 +226,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
               {currentStepData.subtitle}
             </p>
             
-            <p className="text-gray-600 dark:text-gray-300 mb-6 font-poppins leading-relaxed">
+            <p className="text-muted-foreground mb-6 font-poppins leading-relaxed">
               {currentStepData.description}
             </p>
           </div>

@@ -7,6 +7,7 @@ import SellerDashboard from '@/components/dashboard/SellerDashboard';
 import WelcomeOnboarding from '@/components/ui/WelcomeOnboarding';
 import DashboardLayout from '@/components/DashboardLayout';
 import ShopsManagement from '@/components/dashboard/ShopsManagement';
+import WholesalerSummaryStats from '@/components/dashboard/WholesalerSummaryStats';
 const Dashboard: React.FC = () => {
   const {
     user,

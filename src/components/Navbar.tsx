@@ -87,7 +87,7 @@ const Navbar = () => {
                   </Button>
                 </Link>
                 <Link to="/shops">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins transition-all duration-200">
+                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
                     <Users className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
                     Wholesalers
                   </Button>

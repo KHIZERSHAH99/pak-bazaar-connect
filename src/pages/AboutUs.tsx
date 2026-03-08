@@ -90,22 +90,22 @@ const AboutUs: React.FC = () => {
             <CardContent className="p-8">
               <h2 className="text-3xl font-bold mb-6 font-poppins text-center">Our Story</h2>
               <div className="prose max-w-none">
-                <p className="text-gray-600 mb-4 font-poppins leading-relaxed">
-                  PakBazaar Connect was founded with a simple yet powerful vision: to transform the way businesses 
-                  interact and trade in Pakistan. Recognizing the challenges faced by both wholesalers and retailers 
-                  in finding reliable partners and conducting efficient transactions, we set out to create a platform 
-                  that would bridge these gaps.
+                <p className="text-muted-foreground mb-4 font-poppins leading-relaxed">
+                   PakBazaar Connect was founded with a simple yet powerful vision: to transform the way businesses 
+                   interact and trade in Pakistan. Recognizing the challenges faced by both wholesalers and retailers 
+                   in finding reliable partners and conducting efficient transactions, we set out to create a platform 
+                   that would bridge these gaps.
                 </p>
-                <p className="text-gray-600 mb-4 font-poppins leading-relaxed">
-                  Our platform emerged from understanding the unique needs of Pakistani businesses. We recognized 
-                  that traditional methods of B2B commerce were often inefficient, time-consuming, and lacked 
-                  transparency. This insight drove us to develop a modern, technology-driven solution that addresses 
-                  these pain points while respecting local business practices and cultural nuances.
+                <p className="text-muted-foreground mb-4 font-poppins leading-relaxed">
+                   Our platform emerged from understanding the unique needs of Pakistani businesses. We recognized 
+                   that traditional methods of B2B commerce were often inefficient, time-consuming, and lacked 
+                   transparency. This insight drove us to develop a modern, technology-driven solution that addresses 
+                   these pain points while respecting local business practices and cultural nuances.
                 </p>
-                <p className="text-gray-600 font-poppins leading-relaxed">
-                  Today, PakBazaar Connect serves as a trusted intermediary, facilitating thousands of successful 
-                  business connections and transactions. We continue to evolve and improve our platform, always 
-                  keeping our users' success at the heart of everything we do.
+                <p className="text-muted-foreground font-poppins leading-relaxed">
+                   Today, PakBazaar Connect serves as a trusted intermediary, facilitating thousands of successful 
+                   business connections and transactions. We continue to evolve and improve our platform, always 
+                   keeping our users' success at the heart of everything we do.
                 </p>
               </div>
             </CardContent>

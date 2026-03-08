@@ -19,7 +19,7 @@ const StatsDisplay: React.FC = () => {
       {statsData.map((stat, index) => (
         <Card
           key={index}
-          className="p-5 md:p-6 bg-card/80 backdrop-blur-sm border-border shadow-xl hover:shadow-2xl transition-all duration-300 group focus-within:ring-2 focus-within:ring-pakistani_green-300"
+          className="p-5 md:p-6 bg-card/80 backdrop-blur-sm border-border shadow-xl hover:shadow-2xl transition-all duration-300 group focus-within:ring-2 focus-within:ring-primary/30"
           tabIndex={0}
           aria-label={stat.label}
         >

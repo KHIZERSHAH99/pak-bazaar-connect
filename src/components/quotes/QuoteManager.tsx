@@ -119,7 +119,7 @@ const QuoteManager: React.FC<QuoteManagerProps> = ({ userRole }) => {
                   <label className="text-sm font-medium">Additional Notes</label>
                   <Textarea placeholder="Any specific requirements..." />
                 </div>
-                <Button className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700">
+                <Button className="w-full">
                   Send Quote Request
                 </Button>
               </div>

@@ -195,8 +195,8 @@ const OrderConfirmationActions: React.FC<OrderConfirmationActionsProps> = ({
                 disabled={isSubmitting}
                 className={`flex-1 ${
                   actionType === 'confirm' 
-                    ? 'bg-pakistani_green-600 hover:bg-pakistani_green-700' 
-                    : 'bg-red-600 hover:bg-red-700'
+                    ? '' 
+                    : 'bg-destructive hover:bg-destructive/90'
                 }`}
               >
                 {isSubmitting ? 'Processing...' : `${actionType === 'confirm' ? 'Confirm' : 'Reject'} Order`}

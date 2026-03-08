@@ -409,7 +409,7 @@ const EmailSignupForm = () => {
 
             <Button 
               type="submit" 
-              className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700 text-white py-6 font-semibold"
+              className="w-full py-6 font-semibold"
               disabled={isLoading || phoneCheckStatus === 'taken'}
             >
               {isLoading ? (

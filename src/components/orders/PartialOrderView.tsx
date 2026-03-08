@@ -105,7 +105,7 @@ const PartialOrderView: React.FC<PartialOrderViewProps> = ({
                   <Button
                     size="sm"
                     onClick={() => setShowActions(true)}
-                    className="bg-pakistani_green-600 hover:bg-pakistani_green-700 font-poppins"
+                    className="font-poppins"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Confirm

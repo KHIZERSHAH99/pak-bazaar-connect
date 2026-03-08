@@ -272,7 +272,7 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700"
+              className="flex-1"
             >
               {isSubmitting ? 'Creating Order...' : 'Create Order'}
             </Button>

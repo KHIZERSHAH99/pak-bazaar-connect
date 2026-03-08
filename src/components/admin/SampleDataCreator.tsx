@@ -45,7 +45,7 @@ const SampleDataCreator: React.FC = () => {
         <Button 
           onClick={handleCreateSampleProducts}
           disabled={loading}
-          className="w-full bg-pakistani_green-600 hover:bg-pakistani_green-700"
+          className="w-full"
         >
           <Plus className="h-4 w-4 mr-2" />
           {loading ? 'Creating...' : 'Create Sample Products'}

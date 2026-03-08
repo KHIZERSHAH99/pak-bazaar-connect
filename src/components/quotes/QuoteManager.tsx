@@ -196,7 +196,7 @@ const QuoteManager: React.FC<QuoteManagerProps> = ({ userRole }) => {
                       <Button
                         size="sm"
                         onClick={() => handleStatusUpdate(quote.id, 'approved')}
-                        className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                        className=""
                       >
                         Approve
                       </Button>

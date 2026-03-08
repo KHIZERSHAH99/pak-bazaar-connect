@@ -376,6 +376,16 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
           </SelectContent>
         </Select>
       </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="font-poppins">Display Order</Label>
+          <Input type="number" value={displayOrder} onChange={(e) => setDisplayOrder(parseInt(e.target.value, 10) || 0)} placeholder="0" className="font-poppins" />
+        </div>
+        <div>
+          <Label className="font-poppins">Duration (seconds)</Label>
+          <Input type="number" value={durationSeconds} onChange={(e) => setDurationSeconds(e.target.value)} placeholder="e.g. 180" className="font-poppins" />
+        </div>
+      </div>
       <div className="flex flex-wrap gap-6">
         <div className="flex items-center gap-2">
           <Switch checked={isFeatured} onCheckedChange={setIsFeatured} />

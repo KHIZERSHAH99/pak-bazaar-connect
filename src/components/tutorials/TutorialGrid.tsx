@@ -5,15 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Play, Star, BookOpen, ChevronDown } from 'lucide-react';
+import { Search, Play, Star, BookOpen, ChevronDown, CheckCircle, Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { fetchTutorials, getYouTubeThumbnail, TUTORIAL_CATEGORIES, type Tutorial, type TutorialSortOption } from '@/lib/tutorials';
+import { fetchTutorials, fetchUserWatchedTutorials, getYouTubeThumbnail, formatDuration, TUTORIAL_CATEGORIES, type TutorialSortOption } from '@/lib/tutorials';
 import { useNavigate } from 'react-router-dom';
 
 const PAGE_SIZE = 9;
 
 const TutorialGrid: React.FC = () => {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -25,6 +25,12 @@ const TutorialGrid: React.FC = () => {
     queryFn: () => fetchTutorials(profile?.role || undefined, sortBy),
   });
 
+  const { data: watchedSet = new Set<string>() } = useQuery({
+    queryKey: ['watched-tutorials', user?.id],
+    queryFn: () => fetchUserWatchedTutorials(user!.id),
+    enabled: !!user?.id,
+  });
+
   const filtered = tutorials.filter((t: any) => {
     const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase()) ||
       (t.description || '').toLowerCase().includes(search.toLowerCase());
@@ -32,6 +38,7 @@ const TutorialGrid: React.FC = () => {
     return matchesSearch && matchesCategory;
   });
 
+  const watchedCount = filtered.filter((t: any) => watchedSet.has(t.id)).length;
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
@@ -40,13 +47,21 @@ const TutorialGrid: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground font-poppins flex items-center gap-2">
-          <BookOpen className="h-6 w-6" /> Tutorials
-        </h1>
-        <p className="text-muted-foreground font-poppins text-sm mt-1">
-          Learn how to use PBC platform step by step
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground font-poppins flex items-center gap-2">
+            <BookOpen className="h-6 w-6" /> Tutorials
+          </h1>
+          <p className="text-muted-foreground font-poppins text-sm mt-1">
+            Learn how to use PBC platform step by step
+          </p>
+        </div>
+        {filtered.length > 0 && (
+          <Badge variant="outline" className="font-poppins text-xs self-start sm:self-auto">
+            <CheckCircle className="h-3 w-3 mr-1 text-green-600" />
+            {watchedCount} of {filtered.length} watched
+          </Badge>
+        )}
       </div>
 
       {/* Search, filter and sort */}
@@ -93,7 +108,6 @@ const TutorialGrid: React.FC = () => {
         </Card>
       ) : (
         <>
-          {/* Featured */}
           {featured.length > 0 && (
             <div className="space-y-3">
               <h2 className="text-lg font-semibold text-foreground font-poppins flex items-center gap-2">
@@ -101,20 +115,18 @@ const TutorialGrid: React.FC = () => {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {featured.map((t: any) => (
-                  <TutorialCard key={t.id} tutorial={t} onClick={() => navigate(`/dashboard/tutorials/${t.id}`)} />
+                  <TutorialCard key={t.id} tutorial={t} watched={watchedSet.has(t.id)} onClick={() => navigate(`/dashboard/tutorials/${t.id}`)} />
                 ))}
               </div>
             </div>
           )}
 
-          {/* Regular */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {regular.map((t: any) => (
-              <TutorialCard key={t.id} tutorial={t} onClick={() => navigate(`/dashboard/tutorials/${t.id}`)} />
+              <TutorialCard key={t.id} tutorial={t} watched={watchedSet.has(t.id)} onClick={() => navigate(`/dashboard/tutorials/${t.id}`)} />
             ))}
           </div>
 
-          {/* Load More */}
           {hasMore && (
             <div className="flex justify-center pt-4">
               <Button
@@ -132,8 +144,9 @@ const TutorialGrid: React.FC = () => {
   );
 };
 
-const TutorialCard: React.FC<{ tutorial: any; onClick: () => void }> = ({ tutorial, onClick }) => {
+const TutorialCard: React.FC<{ tutorial: any; watched: boolean; onClick: () => void }> = ({ tutorial, watched, onClick }) => {
   const thumbnail = tutorial.thumbnail_url || getYouTubeThumbnail(tutorial.youtube_url) || '/placeholder.svg';
+  const duration = formatDuration(tutorial.duration_seconds);
 
   return (
     <Card className="overflow-hidden cursor-pointer group hover:shadow-md transition-shadow" onClick={onClick}>
@@ -144,13 +157,23 @@ const TutorialCard: React.FC<{ tutorial: any; onClick: () => void }> = ({ tutori
             <Play className="h-6 w-6 text-foreground fill-current" />
           </div>
         </div>
+        {watched && (
+          <div className="absolute top-2 right-2 bg-green-600 text-white rounded-full p-1">
+            <CheckCircle className="h-3.5 w-3.5" />
+          </div>
+        )}
         {tutorial.is_featured && (
           <Badge className="absolute top-2 left-2 bg-amber-500 text-white text-[10px]">
             <Star className="h-2.5 w-2.5 mr-0.5" /> Featured
           </Badge>
         )}
-        {tutorial.is_important && (
-          <Badge variant="destructive" className="absolute top-2 right-2 text-[10px]">Important</Badge>
+        {tutorial.is_important && !tutorial.is_featured && (
+          <Badge variant="destructive" className="absolute top-2 left-2 text-[10px]">Important</Badge>
+        )}
+        {duration && (
+          <Badge variant="secondary" className="absolute bottom-2 right-2 text-[10px] bg-black/70 text-white border-0">
+            <Clock className="h-2.5 w-2.5 mr-0.5" /> {duration}
+          </Badge>
         )}
       </div>
       <CardContent className="p-4">

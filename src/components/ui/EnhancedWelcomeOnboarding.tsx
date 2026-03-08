@@ -16,7 +16,8 @@ import {
   X,
   Gift,
   Star,
-  Zap
+  Zap,
+  Play
 } from 'lucide-react';
 import { UserRole } from '@/lib/types';
 

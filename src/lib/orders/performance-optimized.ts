@@ -206,7 +206,7 @@ export const createOptimizedOrder = async (orderData: {
     }])
     .select(`
       *,
-      shops!shop_id(id, name, contact, address, owner_id)
+      shops!fk_orders_shop_id(id, name, contact, address, owner_id)
     `)
     .single();
   

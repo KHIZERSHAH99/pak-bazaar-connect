@@ -525,7 +525,7 @@ const Shops: React.FC = () => {
                   setEditingShop(null);
                 }}
                 disabled={isSubmitting}
-                className="border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+                className="border-border hover:bg-accent/10"
               >
                 Cancel
               </Button>

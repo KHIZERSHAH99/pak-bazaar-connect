@@ -22,8 +22,15 @@ const Products: React.FC = () => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [searchTerm, setSearchTerm] = useState(urlParams.get('search') || '');
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
 
   const { toast } = useToast();
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

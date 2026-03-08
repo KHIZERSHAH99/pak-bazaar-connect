@@ -8,7 +8,7 @@ import LazyLoadFallback from '@/components/ui/LazyLoadFallback';
 import Index from '@/pages/Index';
 import NotFound from '@/pages/NotFound';
 
-// Lazy load all other pages for better initial load performance
+// Lazy load all other pages
 const Login = lazy(() => import('@/pages/Login'));
 const Signup = lazy(() => import('@/pages/Signup'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -23,14 +23,12 @@ const AboutUs = lazy(() => import('@/pages/AboutUs'));
 const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
 const RefundPolicy = lazy(() => import('@/pages/RefundPolicy'));
 const ShippingPolicy = lazy(() => import('@/pages/ShippingPolicy'));
-const Blog = lazy(() => import('@/pages/Blog'));
-const BlogPost = lazy(() => import('@/pages/BlogPost'));
 const Checkout = lazy(() => import('@/pages/Checkout'));
 const Favorites = lazy(() => import('@/pages/Favorites'));
 const Messages = lazy(() => import('@/pages/Messages'));
 const Analytics = lazy(() => import('@/pages/Analytics'));
 
-// Dashboard pages - lazy load
+// Dashboard pages
 const DashboardSellerDashboard = lazy(() => import('@/pages/dashboard/DashboardSellerDashboard'));
 const DashboardShops = lazy(() => import('@/pages/dashboard/DashboardShops'));
 const DashboardProducts = lazy(() => import('@/pages/dashboard/DashboardProducts'));
@@ -49,27 +47,14 @@ const DashboardTutorials = lazy(() => import('@/pages/dashboard/DashboardTutoria
 const DashboardTutorialDetail = lazy(() => import('@/pages/dashboard/DashboardTutorialDetail'));
 const DashboardTutorialManager = lazy(() => import('@/pages/dashboard/DashboardTutorialManager'));
 
-// Seller pages - lazy load
-const SellerOrders = lazy(() => import('@/pages/seller/SellerOrders'));
-const BrowseShops = lazy(() => import('@/pages/seller/BrowseShops'));
+// Public pages
+const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));
+const ShopDetails = lazy(() => import('@/pages/ShopDetails'));
+
+// Seller sub-pages (used by /seller/ routes, now redirected)
 const SellerShopDetails = lazy(() => import('@/pages/seller/ShopDetails'));
 const ShopProducts = lazy(() => import('@/pages/seller/ShopProducts'));
 
-// Wholesaler pages - lazy load
-const WholesalerOrders = lazy(() => import('@/pages/wholesaler/WholesalerOrders'));
-const Shops = lazy(() => import('@/pages/wholesaler/Shops'));
-const WholesalerProducts = lazy(() => import('@/pages/wholesaler/Products'));
-
-// Admin pages - lazy load
-const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
-const AdminPanel = lazy(() => import('@/pages/admin/AdminPanel'));
-
-// Public pages - lazy load
-const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));
-const EmailConfirmationPending = lazy(() => import('@/pages/EmailConfirmationPending'));
-const ShopDetails = lazy(() => import('@/pages/ShopDetails'));
-
-// Wrapper component for lazy loaded routes
 const LazyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Suspense fallback={<LazyLoadFallback />}>
     {children}
@@ -80,7 +65,7 @@ const AppRoutes: React.FC = () => {
   return (
     <ErrorBoundary>
       <Routes>
-        {/* Public routes - Index loads immediately */}
+        {/* Public routes */}
         <Route path="/" element={<Index />} />
         
         {/* Auth routes */}
@@ -95,16 +80,13 @@ const AppRoutes: React.FC = () => {
         <Route path="/features" element={<LazyRoute><Features /></LazyRoute>} />
         <Route path="/stats" element={<LazyRoute><Stats /></LazyRoute>} />
         
-        {/* Public shops and confirmation */}
+        {/* Public shops */}
         <Route path="/shops" element={<LazyRoute><PublicBrowseShops /></LazyRoute>} />
         <Route path="/shop/:shopId" element={<LazyRoute><ShopDetails /></LazyRoute>} />
-        <Route path="/email-confirmation-pending" element={<LazyRoute><EmailConfirmationPending /></LazyRoute>} />
         
         {/* Legal pages */}
         <Route path="/contact" element={<LazyRoute><Contact /></LazyRoute>} />
         <Route path="/about" element={<LazyRoute><AboutUs /></LazyRoute>} />
-        <Route path="/blog" element={<LazyRoute><Blog /></LazyRoute>} />
-        <Route path="/blog/:id" element={<LazyRoute><BlogPost /></LazyRoute>} />
         <Route path="/privacy-policy" element={<LazyRoute><PrivacyPolicy /></LazyRoute>} />
         <Route path="/terms-of-service" element={<LazyRoute><TermsOfService /></LazyRoute>} />
         <Route path="/refund-policy" element={<LazyRoute><RefundPolicy /></LazyRoute>} />
@@ -139,23 +121,22 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/tutorials/:id" element={<ProtectedRoute><LazyRoute><DashboardTutorialDetail /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/tutorial-manager" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardTutorialManager /></LazyRoute></ProtectedRoute>} />
 
-        {/* Redirect old chat route to dashboard */}
-        <Route path="/dashboard/chat" element={<Navigate to="/dashboard" replace />} />
-
-        {/* Seller routes */}
-        <Route path="/seller/orders" element={<ProtectedRoute requiredRole="seller"><LazyRoute><SellerOrders /></LazyRoute></ProtectedRoute>} />
-        <Route path="/seller/browse-shops" element={<ProtectedRoute requiredRole="seller"><LazyRoute><BrowseShops /></LazyRoute></ProtectedRoute>} />
+        {/* Seller sub-pages (kept for shop detail navigation) */}
         <Route path="/seller/shop/:shopId" element={<ProtectedRoute requiredRole="seller"><LazyRoute><SellerShopDetails /></LazyRoute></ProtectedRoute>} />
         <Route path="/seller/shop/:shopId/products" element={<ProtectedRoute requiredRole="seller"><LazyRoute><ShopProducts /></LazyRoute></ProtectedRoute>} />
 
-        {/* Wholesaler routes */}
-        <Route path="/wholesaler/orders" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><WholesalerOrders /></LazyRoute></ProtectedRoute>} />
-        <Route path="/wholesaler/shops" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><Shops /></LazyRoute></ProtectedRoute>} />
-        <Route path="/wholesaler/products" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><WholesalerProducts /></LazyRoute></ProtectedRoute>} />
-
-        {/* Admin routes */}
-        <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><LazyRoute><AdminDashboard /></LazyRoute></ProtectedRoute>} />
-        <Route path="/admin/panel" element={<ProtectedRoute requiredRole="admin"><LazyRoute><AdminPanel /></LazyRoute></ProtectedRoute>} />
+        {/* Redirect old routes to dashboard equivalents */}
+        <Route path="/seller/orders" element={<Navigate to="/dashboard/seller-orders" replace />} />
+        <Route path="/seller/browse-shops" element={<Navigate to="/dashboard/browse-shops" replace />} />
+        <Route path="/wholesaler/orders" element={<Navigate to="/dashboard/wholesaler-orders" replace />} />
+        <Route path="/wholesaler/shops" element={<Navigate to="/dashboard/shops" replace />} />
+        <Route path="/wholesaler/products" element={<Navigate to="/dashboard/products" replace />} />
+        <Route path="/admin/dashboard" element={<Navigate to="/dashboard/admin" replace />} />
+        <Route path="/admin/panel" element={<Navigate to="/dashboard/admin" replace />} />
+        <Route path="/dashboard/chat" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/blog" element={<Navigate to="/" replace />} />
+        <Route path="/blog/:id" element={<Navigate to="/" replace />} />
+        <Route path="/email-confirmation-pending" element={<Navigate to="/login" replace />} />
 
         {/* 404 route */}
         <Route path="*" element={<NotFound />} />

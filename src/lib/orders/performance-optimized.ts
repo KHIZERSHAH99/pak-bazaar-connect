@@ -238,7 +238,7 @@ export const updateOptimizedOrderStatus = async (
     .from('orders')
     .select(`
       *,
-      shops!shop_id(owner_id)
+      shops!fk_orders_shop_id(owner_id)
     `)
     .eq('id', orderId)
     .single();

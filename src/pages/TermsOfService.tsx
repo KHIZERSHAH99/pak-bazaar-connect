@@ -58,7 +58,7 @@ const TermsOfService = () => {
                 Pak Bazaar Connect is a B2B marketplace designed to connect wholesalers and retailers in Pakistan. Users must be legitimate businesses to participate.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Prohibited Activities
               </h2>
               <ul className="list-disc pl-6 mb-6 text-foreground">

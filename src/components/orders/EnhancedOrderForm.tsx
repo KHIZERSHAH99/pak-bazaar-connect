@@ -168,6 +168,14 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
       });
       return;
     }
+    if (!validatePakistaniPhone(buyerInfo.phone)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid Pakistani phone number (e.g. 03001234567 or +923001234567)",
+        variant: "destructive"
+      });
+      return;
+    }
     setIsSubmitting(true);
     try {
       const finalAmount = totalAmount + (shippingInfo?.cost || 0);

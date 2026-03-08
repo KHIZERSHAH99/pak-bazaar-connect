@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-600 mb-4 font-poppins">
               Please log in to access your dashboard
             </p>
-            <button onClick={() => window.location.href = '/login'} className="bg-pakistani_green-600 text-white px-4 py-2 rounded-lg hover:bg-pakistani_green-700 font-poppins">
+            <button onClick={() => window.location.href = '/login'} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 font-poppins">
               Go to Login
             </button>
           </div>

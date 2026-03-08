@@ -25,7 +25,7 @@ const PrivacyPolicy = () => {
                 At Pak Bazaar Connect, we are committed to protecting your privacy and ensuring the security of your personal information. As Pakistan's leading B2B marketplace, we collect various types of information to provide you with the best possible service and to facilitate secure business transactions between wholesalers and retailers.
               </p>
 
-              <h3 className="text-xl font-semibold text-pakistani_green-600 mb-3">
+              <h3 className="text-xl font-semibold text-primary mb-3">
                 Personal Information
               </h3>
               <p className="mb-4 text-foreground">

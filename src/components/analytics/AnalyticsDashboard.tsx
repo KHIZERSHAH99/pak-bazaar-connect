@@ -199,9 +199,9 @@ const AnalyticsDashboard: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <Users className="h-8 w-8 text-pakistani_green-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-600">Unique Sessions</p>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <Users className="h-8 w-8 text-primary mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Unique Sessions</p>
               <p className="text-xl font-bold">{data.unique_sessions}</p>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-lg">

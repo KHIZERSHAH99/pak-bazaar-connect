@@ -69,7 +69,7 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
       {renderSpinner()}
       {text && (
         <p className={cn(
-          "text-pakistani_green-700 font-poppins animate-pulse",
+          "text-primary font-poppins animate-pulse",
           textSizeClasses[size]
         )}>
           {text}

@@ -96,7 +96,7 @@ const ProductComparison: React.FC<ProductComparisonProps> = ({
                   {products.map((product) => (
                     <div key={product.id} className="flex items-center">
                       {feature.key === 'price' && (
-                        <span className="font-semibold text-pakistani_green-600 font-poppins">
+                        <span className="font-semibold text-primary font-poppins">
                           PKR {product.price.toLocaleString()}
                         </span>
                       )}

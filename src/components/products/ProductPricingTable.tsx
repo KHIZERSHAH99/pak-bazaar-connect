@@ -25,7 +25,7 @@ const ProductPricingTable: React.FC<ProductPricingTableProps> = ({ tiers, curren
               <td className="border px-2 py-1">
                 {tier.maxQty ? `${tier.minQty} - ${tier.maxQty}` : `≥ ${tier.minQty}`}
               </td>
-              <td className="border px-2 py-1 text-pakistani_green-600 font-bold">
+              <td className="border px-2 py-1 text-primary font-bold">
                 {currency} {tier.price.toLocaleString()}
               </td>
             </tr>

@@ -179,7 +179,7 @@ const QuoteManager: React.FC<QuoteManagerProps> = ({ userRole }) => {
 
               <div className="flex justify-between items-center pt-4 border-t">
                 <div>
-                  <p className="text-lg font-bold text-pakistani_green-600 font-poppins">
+                  <p className="text-lg font-bold text-primary font-poppins">
                     Total: PKR {quote.totalAmount.toLocaleString()}
                   </p>
                 </div>

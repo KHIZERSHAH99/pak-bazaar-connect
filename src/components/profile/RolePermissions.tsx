@@ -99,7 +99,7 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
     <Card className="p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-pakistani_green-600" />
+          <Shield className="h-5 w-5 text-primary" />
           <h3 className="font-medium font-poppins">{t('role_permissions')}</h3>
         </div>
         {isMobile && (

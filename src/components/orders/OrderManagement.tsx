@@ -278,7 +278,7 @@ const OrderManagement: React.FC<OrderManagementProps> = ({ userRole }) => {
                         <Button
                           size="sm"
                           onClick={() => handleStatusUpdate(order.id, 'shipped')}
-                          className="bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                          className=""
                         >
                           Mark as Shipped
                         </Button>

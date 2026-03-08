@@ -2,8 +2,9 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, RotateCcw, Clock, CheckCircle, XCircle, Package } from 'lucide-react';
+import { Eye, RotateCcw, Clock, CheckCircle, XCircle, Package, Copy } from 'lucide-react';
 import { Order } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 interface OrderCardProps {
   order: Order;
   onViewOrder: (order: Order) => void;

@@ -99,15 +99,15 @@ const HeroSection: React.FC = () => {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-green-500">
               <div className="text-center">
-                <div className="text-2xl font-bold font-poppins">5000+</div>
+                <div className="text-2xl font-bold font-poppins">{stats ? stats.products.toLocaleString() + '+' : '...'}</div>
                 <div className="text-sm text-green-100 font-poppins">Products</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold font-poppins">250+</div>
+                <div className="text-2xl font-bold font-poppins">{stats ? stats.shops.toLocaleString() + '+' : '...'}</div>
                 <div className="text-sm text-green-100 font-poppins">Verified Suppliers</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold font-poppins">50+</div>
+                <div className="text-2xl font-bold font-poppins">{stats ? stats.cities.toLocaleString() + '+' : '...'}</div>
                 <div className="text-sm text-green-100 font-poppins">Cities</div>
               </div>
             </div>

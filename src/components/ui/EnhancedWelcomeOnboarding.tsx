@@ -98,7 +98,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
     } else if (userRole === 'seller') {
       return [
         {
-          icon: <Users className="h-12 w-12 text-pakistani_green-600" />,
+          icon: <Users className="h-12 w-12 text-primary" />,
           title: 'Welcome to Your Marketplace!',
           subtitle: 'Discover Quality Wholesale Products',
           description: 'Connect with verified wholesalers across Pakistan and access thousands of quality products at wholesale prices.',

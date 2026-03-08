@@ -18,6 +18,8 @@ const Navbar = () => {
     profile
   } = useAuth();
   const { t } = useLanguage();
+  const { getTotalItems } = useCart();
+  const cartCount = getTotalItems();
   const navigate = useNavigate();
   const {
     toast

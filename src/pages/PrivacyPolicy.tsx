@@ -134,7 +134,7 @@ const PrivacyPolicy = () => {
                 Our services are designed for businesses and individuals who are at least 18 years old. We do not knowingly collect personal information from children under 18. If we become aware that we have collected such information, we will take steps to delete it promptly.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Contact Us
               </h2>
               <p className="mb-4 text-foreground">

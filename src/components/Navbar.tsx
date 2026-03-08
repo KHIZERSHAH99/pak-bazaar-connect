@@ -53,9 +53,9 @@ const Navbar = () => {
   };
   return <>
       {/* Top Banner */}
-      <div className="bg-pakistani_green-700 text-white py-1.5 md:py-2 px-3 md:px-4 text-center relative overflow-hidden">
+      <div className="bg-primary text-primary-foreground py-1.5 md:py-2 px-3 md:px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center opacity-5">
-          <Flag className="w-24 md:w-40 h-24 md:h-40 text-white" />
+          <Flag className="w-24 md:w-40 h-24 md:h-40 text-primary-foreground" />
         </div>
         <p className="text-xs md:text-sm font-medium relative z-10">
           Welcome to Pakistan's Premier B2B Marketplace
@@ -63,15 +63,15 @@ const Navbar = () => {
       </div>
 
       {/* Main Navbar */}
-      <header className="bg-white dark:bg-gray-950 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+      <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-14 md:h-16">
               {/* Logo */}
               <Link to="/" className="flex items-center space-x-2 md:space-x-3 hover:opacity-80 transition-opacity">
-                <div className="bg-pakistani_green-700 rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
-                  <span className="text-white text-lg md:text-xl font-bold">PBC</span>
+                <div className="bg-primary rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-primary-foreground text-lg md:text-xl font-bold">PBC</span>
                 </div>
-                <span className="text-lg md:text-xl font-bold text-pakistani_green-800 dark:text-white hidden sm:inline font-poppins">
+                <span className="text-lg md:text-xl font-bold text-foreground hidden sm:inline font-poppins">
                   Pak Bazaar Connect
                 </span>
               </Link>
@@ -81,13 +81,13 @@ const Navbar = () => {
               {/* Main Navigation Links */}
               <div className="flex items-center space-x-1">
                 <Link to="/products">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins transition-all duration-200">
+                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
                     <ShoppingBag className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
                     {t('products')}
                   </Button>
                 </Link>
                 <Link to="/shops">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 font-poppins transition-all duration-200">
+                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
                     <Users className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
                     Wholesalers
                   </Button>
@@ -100,7 +100,7 @@ const Navbar = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowTutorial(true)}
-                  className="text-gray-700 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins"
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins"
                 >
                   <HelpCircle className="w-4 h-4 mr-2" />
                   Tutorial
@@ -112,12 +112,12 @@ const Navbar = () => {
 
               {user ? <UserMenu email={profile?.email || user.email} role={profile?.role} onLogout={handleLogout} getRoleBadge={getRoleBadge} /> : <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   <Link to="/login">
-                    <Button variant="ghost" className="text-pakistani_green-700 dark:text-pakistani_green-300 hover:text-pakistani_green-800 dark:hover:text-pakistani_green-200 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20 font-poppins">
+                    <Button variant="ghost" className="text-primary hover:text-primary/80 hover:bg-primary/10 font-poppins">
                       {t('login')}
                     </Button>
                   </Link>
                   <Link to="/signup">
-                    <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 text-white font-poppins shadow-md transition-all duration-200 hover:shadow-lg">
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins shadow-md transition-all duration-200 hover:shadow-lg">
                       {t('signup')}
                     </Button>
                   </Link>
@@ -127,7 +127,7 @@ const Navbar = () => {
             {/* Mobile Menu Button and Language Toggle */}
             <div className="md:hidden flex items-center gap-2">
               <LanguageToggle />
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 dark:text-gray-300 hover:text-pakistani_green-700 dark:hover:text-pakistani_green-300 hover:bg-pakistani_green-50 dark:hover:bg-pakistani_green-900/20" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
                 {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>

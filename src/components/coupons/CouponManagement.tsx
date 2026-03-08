@@ -266,7 +266,7 @@ const CouponManagement: React.FC = () => {
           {isLoading ? (
             <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse bg-gray-200 h-20 rounded"></div>
+                <div key={i} className="animate-pulse bg-muted h-20 rounded"></div>
               ))}
             </div>
           ) : coupons.length === 0 ? (

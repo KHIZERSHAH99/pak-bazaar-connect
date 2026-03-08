@@ -234,7 +234,7 @@ const Shops: React.FC = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : shops.length === 0 ? (
-          <Card className="p-8 text-center bg-background/50 dark:bg-background/30 backdrop-blur-sm border-pakistani_green-200/30">
+          <Card className="p-8 text-center bg-background/50 backdrop-blur-sm border-border">
             <div className="flex justify-center mb-4">
               <Store className="h-16 w-16 text-gray-300 dark:text-gray-600" />
             </div>

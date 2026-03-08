@@ -86,7 +86,7 @@ const OrderCard = memo(({
           )}
           
           {/* Wholesaler actions */}
-          {order.status === 'pending' && userRole === 'wholesaler' && (
+          {userRole === 'wholesaler' && order.status === 'pending' && (
             <div className="flex gap-2 pt-2">
               <Button 
                 size="sm" 
@@ -104,6 +104,36 @@ const OrderCard = memo(({
               >
                 <XCircle className="h-4 w-4 mr-1" />
                 Reject
+              </Button>
+            </div>
+          )}
+
+          {/* Wholesaler: confirmed → mark shipped */}
+          {userRole === 'wholesaler' && order.status === 'confirmed' && (
+            <div className="pt-2">
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => onStatusUpdate(order.id, 'shipped')}
+                className="w-full"
+              >
+                <Package className="h-4 w-4 mr-1" />
+                Mark as Shipped
+              </Button>
+            </div>
+          )}
+
+          {/* Wholesaler: shipped → mark delivered */}
+          {userRole === 'wholesaler' && order.status === 'shipped' && (
+            <div className="pt-2">
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => onStatusUpdate(order.id, 'delivered')}
+                className="w-full"
+              >
+                <CheckCircle className="h-4 w-4 mr-1" />
+                Mark as Delivered
               </Button>
             </div>
           )}

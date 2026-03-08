@@ -184,11 +184,11 @@ const ProductsList: React.FC = () => {
   if (products.length === 0) {
     return (
       <div className="text-center py-8">
-        <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-700 mb-2 font-poppins">
+        <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-foreground mb-2 font-poppins">
           {t('noProductsYet')}
         </h3>
-        <p className="text-gray-600 font-poppins">
+        <p className="text-muted-foreground font-poppins">
           {t('startAddingProducts')}
         </p>
       </div>

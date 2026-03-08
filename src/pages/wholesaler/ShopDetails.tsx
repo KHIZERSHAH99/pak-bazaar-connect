@@ -207,7 +207,7 @@ const ShopDetails: React.FC = () => {
               <h3 className="text-lg font-semibold text-foreground mb-4 font-poppins">Shop Statistics</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-poppins">Total Products</span>
+                  <span className="text-muted-foreground font-poppins">Total Products</span>
                   <span className="font-semibold font-poppins">{products?.length || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">

@@ -278,7 +278,7 @@ const CouponManagement: React.FC = () => {
           ) : (
             <div className="space-y-4">
               {coupons.map((coupon) => (
-                <Card key={coupon.id} className="border-l-4 border-l-pakistani_green-500">
+                <Card key={coupon.id} className="border-l-4 border-l-primary">
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">

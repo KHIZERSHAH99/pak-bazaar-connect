@@ -117,6 +117,10 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/seller-orders" element={<ProtectedRoute requiredRole="seller"><LazyRoute><DashboardSellerOrders /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/wholesaler-orders" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardWholesalerOrders /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/admin" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdmin /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin/users" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdminUsers /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin/orders" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdminOrders /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin/moderation" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdminModeration /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/admin/analytics" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardAdminAnalytics /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/analytics" element={<ProtectedRoute><LazyRoute><DashboardAnalytics /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/payment" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardPayment /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/coupons" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardCoupons /></LazyRoute></ProtectedRoute>} />

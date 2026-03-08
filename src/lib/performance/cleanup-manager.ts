@@ -33,7 +33,6 @@ class CleanupManager {
    */
   unregisterTask(id: string): void {
     this.tasks.delete(id);
-    console.log(`[CleanupManager] Unregistered task: ${id}`);
   }
 
   /**

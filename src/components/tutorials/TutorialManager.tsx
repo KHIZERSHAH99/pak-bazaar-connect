@@ -94,7 +94,8 @@ const TutorialManager: React.FC = () => {
   });
 
   const filtered = tutorials.filter((t: any) => {
-    const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase());
+    const q = search.toLowerCase();
+    const matchesSearch = t.title.toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q);
     const matchesRole = roleFilter === 'all' || t.target_role === roleFilter;
     const matchesCategory = categoryFilter === 'all' || t.category === categoryFilter;
     return matchesSearch && matchesRole && matchesCategory;

@@ -30,7 +30,7 @@ const RecentlyViewedProducts: React.FC = () => {
 
         const { data } = await supabase
           .from('products')
-          .select('id, name, price, image, shop_id, is_active, shops(name)')
+          .select('id, name, price, image, shop_id, is_active')
           .in('id', ids)
           .eq('is_active', true)
           .limit(MAX_RECENT);
@@ -38,7 +38,7 @@ const RecentlyViewedProducts: React.FC = () => {
         // Sort by the order in localStorage
         const sorted = ids
           .map(id => (data || []).find((p: any) => p.id === id))
-          .filter(Boolean) as Product[];
+          .filter(Boolean) as any[];
         
         setProducts(sorted);
       } catch (e) {

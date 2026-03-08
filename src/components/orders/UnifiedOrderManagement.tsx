@@ -217,6 +217,7 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [timelineOrderId, setTimelineOrderId] = useState<string | null>(null);
 
   // Single query for orders and stats with 30-second stale time
   const { data, isLoading } = useQuery({

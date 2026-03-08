@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
-import { ShoppingCart, DollarSign, Store, Package, MessageSquare, TrendingUp } from 'lucide-react';
+import { ShoppingCart, DollarSign, Store, Package, MessageSquare, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 const WholesalerSummaryStats: React.FC = () => {
   const { user } = useAuth();

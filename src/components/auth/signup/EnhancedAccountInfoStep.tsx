@@ -141,7 +141,7 @@ const EnhancedAccountInfoStep: React.FC<EnhancedAccountInfoStepProps> = ({
                 />
                 {phoneStatus === 'checking' && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <Loader2 className="h-4 w-4 animate-spin text-pakistani_green-700 dark:text-pakistani_green-400" />
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   </div>
                 )}
                 {phoneStatus === 'available' && (

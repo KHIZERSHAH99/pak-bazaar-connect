@@ -142,7 +142,7 @@ export const getOrdersForWholesaler = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, owner_id)
+        shops!fk_orders_shop_id(id, name, contact, address, owner_id)
       `)
       .in('shop_id', shopIds)
       .order('created_at', { ascending: false });

@@ -41,7 +41,7 @@ const TermsOfService = () => {
                 By accessing and using Pak Bazaar Connect, you accept and agree to be bound by the terms and provision of this agreement.
               </p>
 
-              <h3 className="text-xl font-semibold text-pakistani_green-600 mb-3">
+              <h3 className="text-xl font-semibold text-primary mb-3">
                 User Responsibilities
               </h3>
               <ul className="list-disc pl-6 mb-6 text-foreground">

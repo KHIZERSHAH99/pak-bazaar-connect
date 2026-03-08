@@ -150,8 +150,8 @@ const ShopsManagement: React.FC = () => {
                 </div>
 
                 {/* Payment Methods Summary */}
-                <div className="pt-3 mt-3 border-t border-gray-200">
-                  <p className="text-xs font-medium text-gray-600 mb-2 font-poppins">Payment Methods:</p>
+                <div className="pt-3 mt-3 border-t border-border">
+                  <p className="text-xs font-medium text-muted-foreground mb-2 font-poppins">Payment Methods:</p>
                   <div className="flex flex-wrap gap-1.5">
                     {paymentMethods?.bank_name && paymentMethods?.account_number ? (
                       <Badge variant="success" size="sm" className="font-poppins">

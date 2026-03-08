@@ -11,8 +11,6 @@ import { ThemeProvider } from "next-themes";
 import AppErrorBoundary from "@/components/ui/AppErrorBoundary";
 import AppRoutes from "@/routes/AppRoutes";
 
-// Lazy load admin-only performance monitor
-const PerformanceMonitor = lazy(() => import("@/components/ui/performance-monitor"));
 
 const queryClient = new QueryClient({
   defaultOptions: {

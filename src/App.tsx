@@ -47,9 +47,6 @@ const App = () => {
                 <BrowserRouter>
                   <AuthProvider>
                     <AppRoutes />
-                    <Suspense fallback={null}>
-                      <PerformanceMonitor />
-                    </Suspense>
                   </AuthProvider>
                 </BrowserRouter>
               </div>

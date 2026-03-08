@@ -61,7 +61,7 @@ const PendingDashboard: React.FC = () => (
         </div>
       </Card>
       
-      <Card className="p-6 border-2 border-dashed border-muted hover:border-pakistani_green-300 dark:hover:border-pakistani_green-700 transition-colors">
+      <Card className="p-6 border-2 border-dashed border-muted hover:border-primary/30 transition-colors">
         <div className="text-center">
           <div className="bg-purple-100 dark:bg-purple-900/50 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
             <ShoppingCart className="h-8 w-8 text-purple-700 dark:text-purple-400" />

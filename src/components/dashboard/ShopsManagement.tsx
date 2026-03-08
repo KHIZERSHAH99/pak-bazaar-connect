@@ -91,8 +91,8 @@ const ShopsManagement: React.FC = () => {
       )}
 
       <div className="flex justify-between items-center">
-        <h1 className="text-xl sm:text-2xl font-bold font-poppins text-gray-900">{t('myShops')}</h1>
-        <Button className="bg-pakistani_green-700 hover:bg-pakistani_green-800 font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
+        <h1 className="text-xl sm:text-2xl font-bold font-poppins text-foreground">{t('myShops')}</h1>
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 rtl:mr-0 rtl:ml-1 sm:rtl:mr-0 sm:rtl:ml-2" />
           <span className="hidden sm:inline">{t('createShop')}</span>
           <span className="sm:hidden">{t('create')}</span>

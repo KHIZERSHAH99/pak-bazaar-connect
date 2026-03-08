@@ -101,7 +101,7 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
     return data?.pages.flatMap((p: any) => p.orders) || [];
   }, [data]);
 
-  const stats = data?.pages[0]?.stats;
+  const stats = (data?.pages[0] as any)?.stats;
 
   // Filter + search
   const filteredOrders = useMemo((): any[] => {

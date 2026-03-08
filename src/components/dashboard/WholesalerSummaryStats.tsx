@@ -53,12 +53,25 @@ const WholesalerSummaryStats: React.FC = () => {
       const convIds = new Set(convs?.map(c => c.id) || []);
       const unreadMessages = (messagesResult.data || []).filter(m => convIds.has(m.conversation_id));
 
-      const today = new Date().toISOString().split('T')[0];
-      const todayOrders = orders.filter(o => o.created_at?.startsWith(today));
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+      const todayOrders = orders.filter(o => o.created_at?.startsWith(todayStr));
       const pendingOrders = orders.filter(o => o.status === 'pending');
-      const totalRevenue = orders
-        .filter(o => ['confirmed', 'shipped', 'delivered'].includes(o.status))
+      const completedOrders = orders.filter(o => ['confirmed', 'shipped', 'delivered'].includes(o.status));
+      const totalRevenue = completedOrders.reduce((sum, o) => sum + Number(o.total_amount), 0);
+
+      // Calculate this week vs last week revenue for trend
+      const weekAgo = new Date(today.getTime() - 7 * 86400000).toISOString();
+      const twoWeeksAgo = new Date(today.getTime() - 14 * 86400000).toISOString();
+      const thisWeekRevenue = completedOrders
+        .filter(o => o.created_at && o.created_at >= weekAgo)
         .reduce((sum, o) => sum + Number(o.total_amount), 0);
+      const lastWeekRevenue = completedOrders
+        .filter(o => o.created_at && o.created_at >= twoWeeksAgo && o.created_at < weekAgo)
+        .reduce((sum, o) => sum + Number(o.total_amount), 0);
+      const revenueTrend = lastWeekRevenue > 0 
+        ? Math.round(((thisWeekRevenue - lastWeekRevenue) / lastWeekRevenue) * 100) 
+        : thisWeekRevenue > 0 ? 100 : 0;
 
       return {
         totalShops: shopIds.length,
@@ -69,6 +82,7 @@ const WholesalerSummaryStats: React.FC = () => {
         pendingOrders: pendingOrders.length,
         totalRevenue,
         unreadMessages: unreadMessages.length,
+        revenueTrend,
       };
     },
     enabled: !!user,

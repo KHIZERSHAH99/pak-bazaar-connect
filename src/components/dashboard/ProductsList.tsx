@@ -239,8 +239,15 @@ const ProductsList: React.FC = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
+            <Card key={product.id} className={`overflow-hidden ${selectedIds.has(product.id) ? 'ring-2 ring-primary' : ''}`}>
               <div className="aspect-video relative">
+                <div className="absolute top-2 left-2 z-10">
+                  <Checkbox
+                    checked={selectedIds.has(product.id)}
+                    onCheckedChange={() => toggleSelect(product.id)}
+                    className="bg-background/80 backdrop-blur-sm"
+                  />
+                </div>
                 <img
                   src={product.image || "https://via.placeholder.com/400x300?text=Product"}
                   alt={product.name}

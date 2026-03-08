@@ -8,6 +8,8 @@ import { Star, MapPin, Package, Heart, ShoppingCart, Eye, Verified, AlertTriangl
 import { Product } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
+import { addToFavorites, removeFromFavorites, getFavoriteProducts } from '@/lib/favorites';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProductCardProps {
   product: Product;

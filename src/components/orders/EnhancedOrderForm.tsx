@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { SecureOrderFormInput } from './SecureOrderFormInput';
 import { Upload, CreditCard, Smartphone, Building, AlertCircle, CheckCircle, Loader2, Truck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { validatePakistaniPhone } from '@/lib/validation';
 import { createOrderWithPayment } from '@/lib/orders-enhanced';
 import { getPaymentMethodsForShop } from '@/lib/payment-methods';
 import { getProductById } from '@/lib/products';

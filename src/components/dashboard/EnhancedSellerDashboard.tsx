@@ -108,8 +108,8 @@ const EnhancedSellerDashboard: React.FC = () => {
                     <div className="flex items-center">
                       <Clock className="h-8 w-8 text-yellow-500" />
                       <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-600">Pending</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.pendingOrders}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Pending</p>
+                        <p className="text-2xl font-bold text-foreground">{stats.pendingOrders}</p>
                       </div>
                     </div>
                   </CardContent>

@@ -283,7 +283,7 @@ const Shops: React.FC = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => handleViewProducts(shop.id)}
-                      className="flex-1 border-pakistani_green-200/50 hover:bg-pakistani_green-50/50 dark:hover:bg-pakistani_green-900/30"
+                      className="flex-1 border-border hover:bg-accent/10"
                     >
                       <Package className="h-4 w-4 mr-2" /> Products
                     </Button>

@@ -58,7 +58,7 @@ const RefundPolicy = () => {
                 To request a refund, contact our support team with your order details and reason for return.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Processing Time
               </h2>
               <p className="mb-6 text-foreground">

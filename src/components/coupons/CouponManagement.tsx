@@ -271,9 +271,9 @@ const CouponManagement: React.FC = () => {
             </div>
           ) : coupons.length === 0 ? (
             <div className="text-center py-8">
-              <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 font-poppins">No coupons created yet</p>
-              <p className="text-sm text-gray-400 font-poppins">Create your first coupon to start offering discounts</p>
+              <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground font-poppins">No coupons created yet</p>
+              <p className="text-sm text-muted-foreground/70 font-poppins">Create your first coupon to start offering discounts</p>
             </div>
           ) : (
             <div className="space-y-4">

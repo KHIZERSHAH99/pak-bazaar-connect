@@ -65,7 +65,7 @@ const OrderMessaging: React.FC<OrderMessagingProps> = ({ orderId }) => {
               className={`p-3 rounded-lg ${
                 message.sender_id === profile?.id
                   ? 'bg-primary/5 ml-8'
-                  : 'bg-gray-50 mr-8'
+                  : 'bg-muted mr-8'
               }`}
             >
               <div className="flex justify-between items-start mb-1">

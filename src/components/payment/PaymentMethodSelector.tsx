@@ -69,7 +69,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-800 font-poppins mb-4">
+      <h3 className="text-lg font-semibold text-foreground font-poppins mb-4">
         Select Payment Method
       </h3>
       

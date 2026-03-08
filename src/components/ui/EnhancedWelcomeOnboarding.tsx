@@ -38,7 +38,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
     if (userRole === 'wholesaler') {
       return [
         {
-          icon: <Store className="h-12 w-12 text-pakistani_green-600" />,
+          icon: <Store className="h-12 w-12 text-primary" />,
           title: 'Welcome to Pak Bazaar Connect!',
           subtitle: 'Your B2B Success Starts Here',
           description: 'Join thousands of successful wholesalers who are growing their business with our platform. Get ready to expand your reach across Pakistan!',

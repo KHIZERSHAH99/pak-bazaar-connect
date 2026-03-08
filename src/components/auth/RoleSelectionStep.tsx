@@ -84,8 +84,8 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
             </ul>
 
             {selectedRole === role.id && (
-              <div className="mt-4 p-3 bg-pakistani_green-100 dark:bg-pakistani_green-950/40 rounded-lg">
-                <p className="text-sm font-medium text-pakistani_green-800 dark:text-pakistani_green-200 font-poppins">
+              <div className="mt-4 p-3 bg-primary/10 rounded-lg">
+                <p className="text-sm font-medium text-primary font-poppins">
                   ✓ Selected - Continue to {role.id === 'wholesaler' ? 'business verification' : 'basic information'}
                 </p>
               </div>

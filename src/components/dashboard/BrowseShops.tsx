@@ -178,12 +178,21 @@ const BrowseShops: React.FC = () => {
       </Card>
 
       {filteredShops.length === 0 ? (
-        <Card className="p-8 text-center bg-muted/30">
+        <Card className="p-12 text-center bg-muted/30 border-dashed">
           <Store className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2 font-poppins">No shops found</h3>
-          <p className="text-muted-foreground font-poppins">
-            {searchTerm ? 'No shops match your search.' : 'There are no shops available at the moment.'}
+          <p className="text-muted-foreground font-poppins mb-4">
+            {searchTerm
+              ? `No shops match "${searchTerm}". Try a different search term.`
+              : selectedCity !== 'all'
+                ? 'No shops in this city yet. Try selecting "All Cities".'
+                : 'There are no shops available at the moment. Check back soon!'}
           </p>
+          {(searchTerm || selectedCity !== 'all') && (
+            <Button variant="outline" onClick={() => { setSearchTerm(''); setSelectedCity('all'); }} className="font-poppins">
+              Clear Filters
+            </Button>
+          )}
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

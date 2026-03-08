@@ -37,7 +37,7 @@ const AboutUs: React.FC = () => {
                   <Award className="w-8 h-8 text-primary mr-3" />
                   <h2 className="text-2xl font-bold font-poppins">Our Vision</h2>
                 </div>
-                <p className="text-gray-600 leading-relaxed font-poppins">
+                <p className="text-muted-foreground leading-relaxed font-poppins">
                   To become Pakistan's leading B2B marketplace, fostering a thriving ecosystem where businesses 
                   of all sizes can discover opportunities, build partnerships, and achieve sustainable growth 
                   through technology and innovation.

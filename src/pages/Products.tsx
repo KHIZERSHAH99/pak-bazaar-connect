@@ -210,16 +210,19 @@ const Products: React.FC = () => {
         
         <ProductsGrid products={products} loading={loading} />
 
-        {/* Back to Top Button - Fixed Position */}
-        <div className="fixed bottom-6 right-6 z-50">
-          <Button 
-            onClick={scrollToTop}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200"
-            size="icon"
-          >
-            <ArrowUp className="w-5 h-5" />
-          </Button>
-        </div>
+        {/* Back to Top Button - Fixed Position, scroll-aware */}
+        {showScrollTop && (
+          <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <Button 
+              onClick={scrollToTop}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200"
+              size="icon"
+              aria-label="Back to top"
+            >
+              <ArrowUp className="w-5 h-5" />
+            </Button>
+          </div>
+        )}
       </div>
     </Layout>
   );

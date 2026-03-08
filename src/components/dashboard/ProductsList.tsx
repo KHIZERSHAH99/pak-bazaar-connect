@@ -78,7 +78,6 @@ const ProductsList: React.FC = () => {
         price: product.price,
         image: product.image || '',
         shop_id: product.shop_id || '',
-        is_active: false,
         description: product.description || '',
         moq: product.moq || 1,
         category_id: product.category_id || undefined,

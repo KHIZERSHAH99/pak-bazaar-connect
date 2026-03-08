@@ -26,25 +26,25 @@ const RoleCard: React.FC<RoleCardProps> = ({
 
   return (
     <Card className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md ${
-      isCurrentRole ? 'ring-2 ring-pakistani_green-500 bg-pakistani_green-50' : 'hover:border-pakistani_green-300'
+      isCurrentRole ? 'ring-2 ring-primary bg-primary/5' : 'hover:border-primary/30'
     }`}>
       <div className="p-4 md:p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">
             <div className={`p-3 rounded-full ${
-              isCurrentRole ? 'bg-pakistani_green-100' : 'bg-gray-100'
+              isCurrentRole ? 'bg-primary/10' : 'bg-muted'
             }`}>
-              <div className={isCurrentRole ? 'text-pakistani_green-700' : 'text-gray-600'}>
+              <div className={isCurrentRole ? 'text-primary' : 'text-muted-foreground'}>
                 {icon}
               </div>
             </div>
             <div>
               <h3 className="font-semibold text-lg font-poppins">{title}</h3>
-              <p className="text-sm text-gray-600 font-poppins">{description}</p>
+              <p className="text-sm text-muted-foreground font-poppins">{description}</p>
             </div>
           </div>
           {isCurrentRole && (
-            <Badge variant="default" className="flex items-center gap-1 font-poppins bg-pakistani_green-100 text-pakistani_green-800">
+            <Badge variant="default" className="flex items-center gap-1 font-poppins bg-primary/10 text-primary">
               <CheckCircle className="h-3 w-3" />
               Current
             </Badge>

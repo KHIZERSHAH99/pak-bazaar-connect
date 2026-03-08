@@ -290,6 +290,8 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
       is_featured: isFeatured,
       is_important: isImportant,
       is_active: isActive,
+      display_order: displayOrder,
+      duration_seconds: durationSeconds ? parseInt(durationSeconds, 10) : null,
       created_by: userId,
     });
   };

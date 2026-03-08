@@ -23,11 +23,15 @@ const OrderCard = memo(({
   order, 
   onStatusUpdate,
   onReorder,
+  onDownloadReceipt,
+  onViewTimeline,
   userRole
 }: { 
   order: any; 
   onStatusUpdate: (orderId: string, status: string) => void;
   onReorder: (orderId: string) => void;
+  onDownloadReceipt: (order: any) => void;
+  onViewTimeline: (orderId: string) => void;
   userRole: 'seller' | 'wholesaler';
 }) => {
   const getStatusColor = (status: string) => {

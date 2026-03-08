@@ -25,8 +25,8 @@ const ContactFields: React.FC<ContactFieldsProps> = ({ form, isLoading }) => {
         name="contactName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center text-gray-700 font-poppins">
-              <User className="h-4 w-4 mr-1 text-pakistani_green-700" />
+            <FormLabel className="flex items-center text-foreground font-poppins">
+              <User className="h-4 w-4 mr-1 text-primary" />
               Contact Name
             </FormLabel>
             <FormControl>

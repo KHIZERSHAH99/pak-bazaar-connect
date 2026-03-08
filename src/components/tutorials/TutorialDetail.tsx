@@ -4,15 +4,17 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft, Star, Clock, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { markTutorialViewed, fetchTutorials, getYouTubeThumbnail, isDirectVideoFile, toEmbeddableVideoUrl } from '@/lib/tutorials';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { markTutorialViewed, fetchTutorials, getYouTubeThumbnail, getLocalizedField, formatDuration, isDirectVideoFile, toEmbeddableVideoUrl } from '@/lib/tutorials';
 
 const TutorialDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { language, setLanguage } = useLanguage();
 
   const { data: tutorial, isLoading } = useQuery({
     queryKey: ['tutorial', id],
@@ -35,7 +37,6 @@ const TutorialDetail: React.FC = () => {
     enabled: !!tutorial,
   });
 
-  // Mark as viewed
   useEffect(() => {
     if (tutorial && user) {
       markTutorialViewed(tutorial.id, user.id);
@@ -57,12 +58,21 @@ const TutorialDetail: React.FC = () => {
 
   const embedUrl = toEmbeddableVideoUrl(tutorial.youtube_url);
   const isDirectFile = isDirectVideoFile(tutorial.youtube_url);
+  const title = getLocalizedField(tutorial, 'title', language) || tutorial.title;
+  const description = getLocalizedField(tutorial, 'description', language);
+  const duration = formatDuration(tutorial.duration_seconds);
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <Button variant="ghost" onClick={() => navigate('/dashboard/tutorials')} className="font-poppins">
-        <ArrowLeft className="h-4 w-4 mr-2" /> Back to Tutorials
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" onClick={() => navigate('/dashboard/tutorials')} className="font-poppins">
+          <ArrowLeft className="h-4 w-4 mr-2" /> {language === 'ur' ? 'واپس' : 'Back to Tutorials'}
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => setLanguage(language === 'en' ? 'ur' : 'en')} className="font-poppins text-xs gap-1">
+          <Globe className="h-3.5 w-3.5" />
+          {language === 'en' ? 'اردو' : 'English'}
+        </Button>
+      </div>
 
       {/* Video Player */}
       <div className="aspect-video rounded-lg overflow-hidden bg-black">
@@ -72,7 +82,7 @@ const TutorialDetail: React.FC = () => {
           ) : (
             <iframe
               src={embedUrl}
-              title={tutorial.title}
+              title={title}
               className="w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
               allowFullScreen
@@ -84,32 +94,42 @@ const TutorialDetail: React.FC = () => {
       </div>
 
       {/* Title and info */}
-      <div>
+      <div dir={language === 'ur' ? 'rtl' : 'ltr'}>
         <div className="flex items-start gap-2 flex-wrap mb-2">
-          {tutorial.is_featured && <Badge className="bg-amber-500 text-white"><Star className="h-3 w-3 mr-1" />Featured</Badge>}
+          {tutorial.is_featured && <Badge className="bg-amber-500 text-white"><Star className="h-3 w-3 mr-1" />{language === 'ur' ? 'نمایاں' : 'Featured'}</Badge>}
           <Badge variant="outline">{tutorial.category}</Badge>
+          {duration && (
+            <Badge variant="secondary" className="text-xs">
+              <Clock className="h-3 w-3 mr-1" /> {duration}
+            </Badge>
+          )}
         </div>
-        <h1 className="text-2xl font-bold text-foreground font-poppins">{tutorial.title}</h1>
-        {tutorial.description && (
-          <p className="text-muted-foreground font-poppins mt-2 leading-relaxed">{tutorial.description}</p>
+        <h1 className="text-2xl font-bold text-foreground font-poppins">{title}</h1>
+        {description && (
+          <p className="text-muted-foreground font-poppins mt-2 leading-relaxed">{description}</p>
         )}
       </div>
 
       {/* Related tutorials */}
       {related.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground font-poppins">Related Tutorials</h2>
+          <h2 className="text-lg font-semibold text-foreground font-poppins">
+            {language === 'ur' ? 'متعلقہ ٹیوٹوریلز' : 'Related Tutorials'}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {related.map((r: any) => (
-              <Card key={r.id} className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/dashboard/tutorials/${r.id}`)}>
-                <div className="aspect-video bg-muted">
-                  <img src={r.thumbnail_url || getYouTubeThumbnail(r.youtube_url) || '/placeholder.svg'} alt={r.title} className="w-full h-full object-cover" loading="lazy" />
-                </div>
-                <CardContent className="p-3">
-                  <h3 className="font-medium text-sm text-foreground font-poppins line-clamp-2">{r.title}</h3>
-                </CardContent>
-              </Card>
-            ))}
+            {related.map((r: any) => {
+              const rTitle = getLocalizedField(r, 'title', language) || r.title;
+              return (
+                <Card key={r.id} className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/dashboard/tutorials/${r.id}`)}>
+                  <div className="aspect-video bg-muted">
+                    <img src={r.thumbnail_url || getYouTubeThumbnail(r.youtube_url) || '/placeholder.svg'} alt={rTitle} className="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                  <CardContent className="p-3">
+                    <h3 className="font-medium text-sm text-foreground font-poppins line-clamp-2" dir={language === 'ur' ? 'rtl' : 'ltr'}>{rTitle}</h3>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       )}

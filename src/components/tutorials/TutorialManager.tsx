@@ -27,6 +27,7 @@ import {
   TUTORIAL_TARGET_ROLES,
   type Tutorial,
 } from '@/lib/tutorials';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const TARGET_PAGES = [
   { value: 'none', label: 'None (Global)' },
@@ -52,9 +53,11 @@ const TutorialManager: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTutorial, setEditingTutorial] = useState<Tutorial | null>(null);
 
+  const debouncedSearch = useDebounce(search, 300);
+
   const { data: tutorials = [], isLoading } = useQuery({
-    queryKey: ['admin-tutorials'],
-    queryFn: fetchAllTutorials,
+    queryKey: ['admin-tutorials', debouncedSearch],
+    queryFn: () => fetchAllTutorials(debouncedSearch || undefined),
   });
 
   const { data: viewCounts = {} } = useQuery({
@@ -93,12 +96,11 @@ const TutorialManager: React.FC = () => {
     onError: (e: any) => toast({ title: 'Error', description: e.message, variant: 'destructive' }),
   });
 
+  // Client-side role/category filter on server-searched results
   const filtered = tutorials.filter((t: any) => {
-    const q = search.toLowerCase();
-    const matchesSearch = t.title.toLowerCase().includes(q) || (t.description || '').toLowerCase().includes(q);
     const matchesRole = roleFilter === 'all' || t.target_role === roleFilter;
     const matchesCategory = categoryFilter === 'all' || t.category === categoryFilter;
-    return matchesSearch && matchesRole && matchesCategory;
+    return matchesRole && matchesCategory;
   });
 
   return (
@@ -196,6 +198,9 @@ const TutorialManager: React.FC = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className="font-semibold text-sm text-foreground font-poppins truncate">{tutorial.title}</h3>
+                      {tutorial.title_ur && (
+                        <p className="text-xs text-muted-foreground font-poppins truncate" dir="rtl">{tutorial.title_ur}</p>
+                      )}
                       <div className="flex flex-wrap gap-1 mt-1">
                         <Badge variant="outline" className="text-[10px]">{tutorial.category}</Badge>
                         <Badge variant="secondary" className="text-[10px]">{tutorial.target_role}</Badge>
@@ -204,6 +209,9 @@ const TutorialManager: React.FC = () => {
                         <Badge variant="outline" className="text-[10px] gap-0.5">
                           <Eye className="h-2.5 w-2.5" /> {viewCounts[tutorial.id] || 0}
                         </Badge>
+                        {tutorial.display_order > 0 && (
+                          <Badge variant="outline" className="text-[10px]">Order: {tutorial.display_order}</Badge>
+                        )}
                       </div>
                     </div>
                     <div className="flex gap-1 flex-shrink-0">
@@ -237,7 +245,7 @@ const TutorialManager: React.FC = () => {
   );
 };
 
-// Form component
+// Form component with Urdu fields
 interface TutorialFormProps {
   tutorial: Tutorial | null;
   userId: string;
@@ -247,7 +255,9 @@ interface TutorialFormProps {
 
 const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit, isLoading }) => {
   const [title, setTitle] = useState(tutorial?.title || '');
+  const [titleUr, setTitleUr] = useState(tutorial?.title_ur || '');
   const [description, setDescription] = useState(tutorial?.description || '');
+  const [descriptionUr, setDescriptionUr] = useState(tutorial?.description_ur || '');
   const [videoUrl, setVideoUrl] = useState(tutorial?.youtube_url || '');
   const [category, setCategory] = useState(tutorial?.category || 'General');
   const [targetRole, setTargetRole] = useState(tutorial?.target_role || 'all');
@@ -255,8 +265,8 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
   const [isFeatured, setIsFeatured] = useState(tutorial?.is_featured || false);
   const [isImportant, setIsImportant] = useState(tutorial?.is_important || false);
   const [isActive, setIsActive] = useState(tutorial?.is_active ?? true);
-  const [displayOrder, setDisplayOrder] = useState<number>((tutorial as any)?.display_order ?? 0);
-  const [durationSeconds, setDurationSeconds] = useState<string>((tutorial as any)?.duration_seconds?.toString() || '');
+  const [displayOrder, setDisplayOrder] = useState<number>(tutorial?.display_order ?? 0);
+  const [durationSeconds, setDurationSeconds] = useState<string>(tutorial?.duration_seconds?.toString() || '');
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -281,7 +291,9 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
 
     onSubmit({
       title: title.trim(),
+      title_ur: titleUr.trim() || null,
       description: description.trim() || null,
+      description_ur: descriptionUr.trim() || null,
       youtube_url: videoUrl.trim(),
       thumbnail_url: thumbnailUrl,
       category,
@@ -299,12 +311,20 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label className="font-poppins">Title *</Label>
+        <Label className="font-poppins">Title (English) *</Label>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. How to create a shop" className="font-poppins" required />
       </div>
       <div>
-        <Label className="font-poppins">Description</Label>
-        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Brief description of this tutorial" className="font-poppins" rows={3} />
+        <Label className="font-poppins">Title (Urdu) — اردو عنوان</Label>
+        <Input value={titleUr} onChange={(e) => setTitleUr(e.target.value)} placeholder="مثلاً دکان کیسے بنائیں" className="font-poppins" dir="rtl" />
+      </div>
+      <div>
+        <Label className="font-poppins">Description (English)</Label>
+        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Brief description of this tutorial" className="font-poppins" rows={2} />
+      </div>
+      <div>
+        <Label className="font-poppins">Description (Urdu) — اردو تفصیل</Label>
+        <Textarea value={descriptionUr} onChange={(e) => setDescriptionUr(e.target.value)} placeholder="ٹیوٹوریل کی مختصر تفصیل" className="font-poppins" rows={2} dir="rtl" />
       </div>
       <div>
         <Label className="font-poppins">Video URL *</Label>
@@ -316,13 +336,7 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
         )}
         {previewUrl && urlValid && (
           <div className="mt-2 space-y-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="font-poppins text-xs"
-              onClick={() => setShowPreview(!showPreview)}
-            >
+            <Button type="button" variant="outline" size="sm" className="font-poppins text-xs" onClick={() => setShowPreview(!showPreview)}>
               <Play className="h-3 w-3 mr-1" /> {showPreview ? 'Hide Preview' : 'Preview Video'}
             </Button>
             {showPreview && (
@@ -330,13 +344,7 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
                 {directVideo ? (
                   <video src={previewUrl} controls className="w-full h-full" preload="metadata" />
                 ) : (
-                  <iframe
-                    src={previewUrl}
-                    title="Video preview"
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                    allowFullScreen
-                  />
+                  <iframe src={previewUrl} title="Video preview" className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowFullScreen />
                 )}
               </div>
             )}
@@ -344,7 +352,7 @@ const TutorialForm: React.FC<TutorialFormProps> = ({ tutorial, userId, onSubmit,
         )}
       </div>
       <div>
-        <Label className="font-poppins">Thumbnail (optional, auto-detected for YouTube if empty)</Label>
+        <Label className="font-poppins">Thumbnail (optional)</Label>
         <Input type="file" accept="image/*" onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)} className="font-poppins" />
       </div>
       <div className="grid grid-cols-2 gap-3">

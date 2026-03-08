@@ -78,7 +78,7 @@ export const getOptimizedWholesalerOrders = async (): Promise<any[]> => {
       rejected_at,
       wholesaler_notes,
       commission_id,
-      shops!shop_id(id, name, contact, address, postal_code, owner_id),
+      shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id),
       profiles!buyer_id(id, email, business_name)
     `)
     .in('shop_id', shopIds)

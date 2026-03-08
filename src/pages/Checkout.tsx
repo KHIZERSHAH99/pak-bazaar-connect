@@ -244,7 +244,7 @@ const Checkout: React.FC = () => {
                     <Separator />
                     <div className="flex justify-between items-center font-bold text-lg">
                       <span>Total:</span>
-                      <span className="text-pakistani_green-600">PKR {getTotalPrice().toLocaleString()}</span>
+                      <span className="text-primary">PKR {getTotalPrice().toLocaleString()}</span>
                     </div>
                   </div>
 

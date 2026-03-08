@@ -64,11 +64,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const handleToggleFavorite = (e: React.MouseEvent) => {
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Toggle favorite logic here
-    console.log('Toggled favorite:', product.name);
+    if (!user) {
+      toast({ title: "Login Required", description: "Please log in to save favorites", variant: "destructive" });
+      return;
+    }
+    try {
+      if (isFavorite) {
+        await removeFromFavorites(product.id);
+        setIsFavorite(false);
+        toast({ title: "Removed from favorites" });
+      } else {
+        await addToFavorites(product.id);
+        setIsFavorite(true);
+        toast({ title: "Added to favorites" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to update favorites", variant: "destructive" });
+    }
   };
 
   const getProductImageSrc = (image?: string) => {

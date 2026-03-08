@@ -81,6 +81,7 @@ const Dashboard: React.FC = () => {
               <h1 className="text-3xl font-bold text-foreground font-poppins">Wholesaler Dashboard</h1>
               <p className="text-muted-foreground mt-2 font-poppins">Manage your shops from the navigation menu</p>
             </div>
+            <WholesalerSummaryStats />
             <ShopsManagement />
           </div>;
       case 'seller':

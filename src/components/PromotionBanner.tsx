@@ -16,7 +16,7 @@ const PromotionBanner: React.FC<PromotionBannerProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="bg-pakistani_green-700 text-white py-3 px-4 text-center relative animate-pulse">
+    <div className="bg-primary text-primary-foreground py-3 px-4 text-center relative animate-pulse">
       <div className="container mx-auto flex justify-center items-center">
         <span className="text-sm font-medium">{message}</span>
         

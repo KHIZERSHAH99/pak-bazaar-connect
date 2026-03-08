@@ -72,7 +72,7 @@ const OrderMessaging: React.FC<OrderMessagingProps> = ({ orderId }) => {
                 <span className="font-medium text-sm">
                   {message.profiles?.business_name || message.profiles?.email}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {new Date(message.created_at).toLocaleString()}
                 </span>
               </div>

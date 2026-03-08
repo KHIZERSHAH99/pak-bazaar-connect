@@ -283,7 +283,7 @@ const CouponManagement: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <code className="bg-gray-100 px-3 py-1 rounded font-mono text-lg font-bold">
+                          <code className="bg-muted px-3 py-1 rounded font-mono text-lg font-bold">
                             {coupon.code}
                           </code>
                           <Badge variant={coupon.is_active ? 'default' : 'secondary'}>

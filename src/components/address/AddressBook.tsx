@@ -435,7 +435,7 @@ export const AddressBook = ({ onSelectAddress, showSelection = false }: AddressB
                     {getAddressIcon(address.label)}
                     <span className="font-semibold">{address.label || 'Delivery Address'}</span>
                     {address.is_default && (
-                      <span className="bg-pakistani_green-100 text-pakistani_green-700 px-2 py-1 rounded text-xs">
+                      <span className="bg-primary/10 text-primary px-2 py-1 rounded text-xs">
                         Default
                       </span>
                     )}

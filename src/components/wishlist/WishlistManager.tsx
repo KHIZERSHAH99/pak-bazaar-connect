@@ -127,7 +127,7 @@ const WishlistManager: React.FC<WishlistManagerProps> = ({
                 <Button
                   onClick={() => handleAddToCart(product)}
                   disabled={!product.inStock}
-                  className="flex-1 bg-pakistani_green-600 hover:bg-pakistani_green-700"
+                  className="flex-1"
                   size="sm"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />

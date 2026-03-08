@@ -54,7 +54,7 @@ class CleanupManager {
       document.addEventListener('visibilitychange', this.handleVisibilityChange);
     }
 
-    console.log('[CleanupManager] Started');
+    // Started silently
   }
 
   /**

@@ -193,10 +193,10 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
           </button>
           
           <div className="flex items-center justify-between mb-4">
-            <Badge variant="secondary" className="bg-white/20 text-white border-white/30 font-poppins">
+            <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 font-poppins">
               {userRole === 'wholesaler' ? 'Wholesaler' : 'Seller'} Journey
             </Badge>
-            <Badge variant="secondary" className="bg-white/20 text-white border-white/30 font-poppins">
+            <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 font-poppins">
               Step {currentStep + 1} of {steps.length}
             </Badge>
           </div>

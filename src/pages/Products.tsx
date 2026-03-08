@@ -95,8 +95,15 @@ const Products: React.FC = () => {
       
       // Filter by city if selected (client-side filtering since it's a nested field)
       let filteredData = data || [];
-      if (selectedCity !== 'all') {
-        // City filtering disabled as cities relationship doesn't exist
+      
+      // Client-side search filtering
+      if (debouncedSearch.trim()) {
+        const term = debouncedSearch.toLowerCase();
+        filteredData = filteredData.filter(p =>
+          p.name?.toLowerCase().includes(term) ||
+          p.description?.toLowerCase().includes(term) ||
+          (p as any).shops?.name?.toLowerCase().includes(term)
+        );
       }
 
       setProducts(filteredData);

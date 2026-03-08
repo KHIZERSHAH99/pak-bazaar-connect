@@ -158,7 +158,7 @@ const ShopsManagement: React.FC = () => {
                         Bank
                       </Badge>
                     ) : (
-                      <Badge variant="outline" size="sm" className="font-poppins text-gray-400">
+                      <Badge variant="outline" size="sm" className="font-poppins text-muted-foreground">
                         Bank
                       </Badge>
                     )}

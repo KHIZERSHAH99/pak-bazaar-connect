@@ -1,80 +1,151 @@
 
 
-## Complete Tutorial Video Production Plan
+# 100 Improvements and Features for Pak Bazaar Connect
 
-No code changes needed — this is your full recording guide with the intro video added as #1.
-
----
-
-### Phase 1: Getting Started (Record These First)
-
-| # | Video Title | Target Role | Category | Target Page | Duration |
-|---|-------------|-------------|----------|-------------|----------|
-| 1 | **What is Pak Bazaar Connect? (Platform Overview)** | All | Getting Started | none | 2-3 min |
-| 2 | How to Sign Up on PBC | All | Getting Started | none | 2-3 min |
-| 3 | How to Log In & Navigate Your Dashboard | All | Getting Started | /dashboard | 2-3 min |
-| 4 | How to Edit Your Profile | All | Account | /profile | 2 min |
-| 5 | How to Use the Chatbot for Help | All | General | none | 1-2 min |
-
-**Video #1 Script Outline — "What is Pak Bazaar Connect?"**
-1. Hook (10s) — "Looking for a better way to buy and sell wholesale in Pakistan?"
-2. What PBC is (30s) — B2B marketplace connecting wholesalers and sellers
-3. Who it's for (30s) — Wholesalers who want to sell, Sellers/retailers who want to buy
-4. Key features tour (60s) — Quick visual: shops, products, orders, messaging, analytics
-5. How to get started (20s) — "Sign up free, choose your role, start trading"
-6. CTA (10s) — "Create your account now at pbc.lovable.app"
+Organized by category. Each item marked as **ADD**, **IMPROVE**, or **REMOVE**.
 
 ---
 
-### Phase 2: Wholesaler Tutorials (Supply Side)
+## Homepage & Public Pages (1-10)
 
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 6 | How to Create Your First Shop | Wholesaler | Shops | /dashboard/shops |
-| 7 | How to Add & Manage Products | Wholesaler | Products | /dashboard/products |
-| 8 | How to Set Product Pricing & Variations | Wholesaler | Products | /dashboard/products |
-| 9 | How to Manage Incoming Orders | Wholesaler | Orders | /dashboard/wholesaler-orders |
-| 10 | How to Set Up Payment Methods | Wholesaler | Payments | /dashboard/payment |
-| 11 | How to Configure Shipping | Wholesaler | Shipping | /dashboard/shipping |
-| 12 | How to Create & Manage Coupons | Wholesaler | Orders | /dashboard/coupons |
-| 13 | How to Read Your Analytics | Wholesaler | General | /dashboard/analytics |
+1. **IMPROVE** — Hardcoded "4.8" star rating on FeaturedProducts — should pull real reviews or hide rating entirely
+2. **IMPROVE** — Footer copyright says "© 2024" — should be dynamic (current year)
+3. **ADD** — Category browsing page — let visitors filter products by category (categories table exists but no UI)
+4. **ADD** — "Recently Viewed Products" section on homepage for returning visitors (use localStorage)
+5. **IMPROVE** — Social media buttons in footer go nowhere — either link to real profiles or remove them
+6. **ADD** — Testimonials/success stories section on homepage from real wholesalers
+7. **ADD** — Search bar on homepage hero section for instant product/shop search
+8. **IMPROVE** — "Find Wholesalers" footer link goes to `/dashboard/browse-shops` (requires login) — should go to `/shops`
+9. **ADD** — City/province filter on the public shops page for location-based browsing
+10. **REMOVE** — Blog and BlogPost pages if there's no content management — they add dead weight
+
+## Authentication & Onboarding (11-20)
+
+11. **ADD** — "Forgot Password" flow with email reset link
+12. **IMPROVE** — Signup form should auto-focus first field and show password strength meter
+13. **ADD** — Google/social login option for faster onboarding
+14. **IMPROVE** — After signup, redirect to a guided setup wizard instead of raw dashboard
+15. **ADD** — Email verification status indicator on profile page
+16. **REMOVE** — EmailConfirmationPending page if email confirmation is disabled (per project spec)
+17. **ADD** — "Remember me" checkbox on login form
+18. **IMPROVE** — Login error messages are generic — show specific errors (wrong password vs. account not found)
+19. **ADD** — Account deletion/deactivation option in profile settings
+20. **IMPROVE** — Tutorial/onboarding modal should be skippable with a "Don't show again" that persists
+
+## Dashboard & Navigation (21-35)
+
+21. **ADD** — Dashboard home should show a summary card with today's orders, revenue, new messages
+22. **IMPROVE** — Wholesaler dashboard just shows ShopsManagement — add quick stats (total products, orders, revenue)
+23. **ADD** — Breadcrumb navigation on all dashboard sub-pages
+24. **IMPROVE** — Mobile sidebar closes on navigation but re-opens sluggishly — add faster animation
+25. **ADD** — Keyboard shortcuts for power users (Ctrl+K for search, Ctrl+M for messages)
+26. **ADD** — "Quick Actions" floating button on mobile — new product, new order, messages
+27. **IMPROVE** — Navigation should highlight parent item when on child route (e.g., `/dashboard/tutorials/123`)
+28. **ADD** — Collapsible sidebar sections (group "Sales" items vs "Management" items)
+29. **ADD** — Dashboard notification bell with dropdown showing recent notifications
+30. **REMOVE** — Separate `/seller/`, `/wholesaler/`, `/admin/` route groups — consolidate under `/dashboard/` only to reduce route duplication
+31. **ADD** — Dark mode toggle in the dashboard sidebar (currently only in navbar)
+32. **IMPROVE** — "Shops" nav item missing for wholesalers in DashboardNavigation
+33. **ADD** — Order count badges on the Orders nav item (like messages unread badge)
+34. **ADD** — Dashboard search — search across products, orders, shops from one input
+35. **REMOVE** — DashboardWholesalerOrdersEnhanced page if it duplicates DashboardWholesalerOrders
+
+## Products (36-50)
+
+36. **ADD** — Bulk product upload via CSV file (per roadmap)
+37. **ADD** — Product duplication — "Clone this product" button for wholesalers
+38. **IMPROVE** — Product image upload should show preview before saving
+39. **ADD** — Product stock/inventory tracking with low stock alerts
+40. **ADD** — Product categories filtering on the products listing page
+41. **ADD** — "Out of Stock" badge and auto-hide from buyer view when stock is 0
+42. **IMPROVE** — Product search should include fuzzy matching and search-as-you-type
+43. **ADD** — Product import/export (download all products as CSV)
+44. **ADD** — Product SEO fields (meta title, description) for better Google indexing
+45. **ADD** — Product bulk actions (activate/deactivate/delete multiple)
+46. **IMPROVE** — Product price should format with commas (PKR 1,500 not PKR 1500)
+47. **ADD** — Product video support — allow YouTube/video URL alongside images
+48. **ADD** — Product tags/keywords for better search discoverability
+49. **IMPROVE** — MOQ (Minimum Order Quantity) enforcement — block orders below MOQ
+50. **ADD** — Product variation images — different image per color/size variation
+
+## Orders & Payments (51-65)
+
+51. **ADD** — Order summary PDF download (per roadmap — receipt and invoice styles)
+52. **ADD** — Order status email/SMS notifications to buyer
+53. **IMPROVE** — Order form should validate phone number format (Pakistani +92 format)
+54. **ADD** — Repeat/reorder button — one-click reorder from order history
+55. **ADD** — Order cancellation by buyer (within time window, e.g., 1 hour)
+56. **ADD** — Partial order fulfillment — ship available items, backorder rest
+57. **IMPROVE** — Payment screenshot auto-delete is set but no cleanup job runs regularly
+58. **ADD** — Payment confirmation notification to wholesaler when screenshot uploaded
+59. **ADD** — COD (Cash on Delivery) tracking — mark as collected/pending
+60. **ADD** — Order dispute/complaint system with admin mediation
+61. **ADD** — Automatic order confirmation after 48 hours if wholesaler doesn't respond
+62. **IMPROVE** — Cart context uses only memory — loses cart on page refresh (add localStorage persistence)
+63. **ADD** — Saved addresses dropdown in order form (address book exists but may not be connected)
+64. **ADD** — Order timeline view showing all status changes with timestamps
+65. **IMPROVE** — `createOrder` imported in Checkout but `createOrderWithPayment` is the correct function
+
+## Messaging & Communication (66-72)
+
+66. **ADD** — File/image attachment support in messages (attachment field exists in DB but no upload UI)
+67. **ADD** — Typing indicator ("User is typing...")
+68. **ADD** — Message search within conversations
+69. **ADD** — Emoji picker in chat input
+70. **ADD** — Message notification sound/browser notification
+71. **IMPROVE** — Conversation should link to the related product/order for context
+72. **ADD** — Canned/quick reply templates for wholesalers ("Order shipped", "Payment received")
+
+## Admin Panel (73-80)
+
+73. **ADD** — Admin dashboard with platform-wide stats (total users, orders, revenue, growth charts)
+74. **ADD** — User management — search, suspend, delete users
+75. **ADD** — Product moderation — approve/reject new product listings
+76. **ADD** — Admin can impersonate user for debugging (view as seller/wholesaler)
+77. **ADD** — Platform fee configuration — set commission percentages
+78. **ADD** — Bulk email/notification to all users (announcements)
+79. **IMPROVE** — Admin preview pages should show real data, not just role simulation
+80. **ADD** — Export platform data (users, orders, revenue) as CSV for reporting
+
+## Performance & Technical (81-90)
+
+81. **REMOVE** — 30 security files in `src/lib/security/` — most are unused or duplicates (audit.ts vs audit-enhanced.ts vs audit-logger.ts vs audit-scheduler.ts). Consolidate to 5-6 files
+82. **REMOVE** — Duplicate order components — `SellerOrders`, `SellerOrdersEnhanced`, `OptimizedSellerOrders`, `WholesalerOrders`, `WholesalerOrdersEnhanced`. Pick one of each
+83. **REMOVE** — `EnhancedProducts.tsx`, `WholesalerProducts.tsx` pages if they duplicate `Products.tsx`
+84. **IMPROVE** — `payment/paymentMethods.ts` always returns mock data — connect to real `payment_methods` table
+85. **REMOVE** — `InquiryForm.tsx` page exists but has no route — either add it or delete it
+86. **IMPROVE** — Bundle size — too many Radix UI components imported; tree-shake unused ones
+87. **ADD** — Service worker for offline support and faster repeat visits
+88. **IMPROVE** — Image optimization — enforce WebP format and max dimensions on upload
+89. **REMOVE** — `SellerProfile.tsx` page if not routed anywhere
+90. **IMPROVE** — Types file is 3,231 lines — auto-generate it with Supabase CLI instead of manual maintenance
+
+## SEO & Marketing (91-95)
+
+91. **ADD** — Dynamic meta tags per page (product detail, shop page) for social sharing
+92. **ADD** — Structured data (JSON-LD) for products — helps Google show rich results
+93. **IMPROVE** — `robots.txt` and `sitemap.xml` should be dynamically generated with actual product/shop URLs
+94. **ADD** — "Share product" buttons that work (WhatsApp, Facebook, copy link)
+95. **ADD** — Referral system — "Invite a seller, get benefits"
+
+## UX & Design (96-100)
+
+96. **IMPROVE** — Empty states throughout the app are plain text — add illustrations and action buttons
+97. **ADD** — Skeleton loading states on all data-fetching pages (some have it, many don't)
+98. **IMPROVE** — Form validation should show errors inline next to fields, not just toast notifications
+99. **ADD** — Urdu language support completeness — many strings are still hardcoded English
+100. **ADD** — Accessibility audit — add ARIA labels, keyboard navigation, screen reader support
 
 ---
 
-### Phase 3: Seller (Buyer) Tutorials
+## Priority Recommendation
 
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 14 | How to Browse & Find Shops | Seller | Shops | /dashboard/browse-shops |
-| 15 | How to Place an Order | Seller | Orders | /dashboard/seller-orders |
-| 16 | How to Track Your Orders | Seller | Orders | /dashboard/seller-orders |
-| 17 | How to Message a Wholesaler | Seller | General | none |
+**High impact, low effort (do first):**
+- #1 (fake ratings), #5 (dead social links), #8 (wrong footer link), #46 (price formatting), #62 (cart persistence), #65 (wrong import), #84 (mock payment data)
 
----
+**High impact, medium effort:**
+- #3 (categories), #7 (homepage search), #21 (dashboard summary), #36 (CSV upload), #51 (order PDF), #81-83 (code cleanup)
 
-### Phase 4: Admin Tutorials (Internal Use)
+**Deferred:**
+- #13 (social login), #87 (service worker), #95 (referral system)
 
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 18 | Admin: How to Manage Role Requests | Admin | Account | /dashboard/admin |
-| 19 | Admin: How to Add & Manage Tutorials | Admin | General | /dashboard/tutorial-manager |
-
----
-
-### Recording Tips
-
-**Structure each video:**
-1. Intro (10s) — "In this video you'll learn how to..."
-2. Show the page — Navigate to the relevant page
-3. Step-by-step walkthrough — Do the action live on screen
-4. Recap (10s) — "Now you know how to..."
-
-**Practical advice:**
-- Keep videos under 3-4 minutes
-- Screen record with OBS Studio (free)
-- Record at 1080p minimum
-- Upload to YouTube as Unlisted for privacy
-- Use the **Target Page** field in Tutorial Manager so videos appear contextually on the right page
-- Mark Video #1 as **Featured** so it always shows first
-
-**Recording order:** Phase 1 first (every user needs these), then Phase 2 (wholesalers are your supply side), then Phase 3 and 4.

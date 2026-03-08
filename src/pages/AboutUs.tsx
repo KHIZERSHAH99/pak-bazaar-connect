@@ -54,7 +54,7 @@ const AboutUs: React.FC = () => {
                 <CardContent className="p-6 text-center">
                   <Users className="w-12 h-12 text-primary mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-3 font-poppins">Connect Businesses</h3>
-                  <p className="text-gray-600 font-poppins">
+                   <p className="text-muted-foreground font-poppins">
                     We bridge the gap between wholesalers and retailers, creating meaningful business relationships 
                     that drive mutual growth and success.
                   </p>

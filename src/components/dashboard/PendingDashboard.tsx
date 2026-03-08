@@ -96,7 +96,7 @@ const PendingDashboard: React.FC = () => (
       <h3 className="text-lg font-semibold mb-4 font-poppins">Quick Setup Process</h3>
       <div className="space-y-4">
         <div className="flex items-start">
-          <div className="bg-pakistani_green-100 dark:bg-pakistani_green-800/50 p-2 rounded-full mr-4 h-8 w-8 flex items-center justify-center text-pakistani_green-700 dark:text-pakistani_green-400 font-bold text-sm">
+          <div className="bg-primary/10 p-2 rounded-full mr-4 h-8 w-8 flex items-center justify-center text-primary font-bold text-sm">
             1
           </div>
           <div>

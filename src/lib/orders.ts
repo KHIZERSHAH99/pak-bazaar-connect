@@ -169,7 +169,7 @@ export const getOrdersForSeller = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, owner_id)
+        shops!fk_orders_shop_id(id, name, contact, address, owner_id)
       `)
       .eq('buyer_id', user.id)
       .order('created_at', { ascending: false });

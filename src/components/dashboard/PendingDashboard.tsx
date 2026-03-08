@@ -42,19 +42,19 @@ const PendingDashboard: React.FC = () => (
           </p>
           <ul className="text-sm text-muted-foreground space-y-2 text-left font-poppins">
             <li className="flex items-center">
-              <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
               Create and manage multiple shops
             </li>
             <li className="flex items-center">
-              <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
               List unlimited products
             </li>
             <li className="flex items-center">
-              <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
               Create promotional ads
             </li>
             <li className="flex items-center">
-              <div className="w-2 h-2 bg-pakistani_green-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
               Process and fulfill orders
             </li>
           </ul>

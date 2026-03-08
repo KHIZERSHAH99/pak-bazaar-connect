@@ -15,8 +15,8 @@ const SellerInfoStep: React.FC<SellerInfoStepProps> = ({ form, isLoading }) => {
   return (
     <div className="space-y-4 animate-fadeIn">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 font-poppins">Basic Business Information</h3>
-        <p className="text-gray-600 font-poppins text-sm">Simple setup to get you started quickly</p>
+        <h3 className="text-lg font-semibold text-foreground mb-2 font-poppins">Basic Business Information</h3>
+        <p className="text-muted-foreground font-poppins text-sm">Simple setup to get you started quickly</p>
       </div>
 
       <BasicInfoFields form={form} isLoading={isLoading} userRole="seller" />

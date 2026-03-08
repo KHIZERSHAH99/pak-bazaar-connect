@@ -170,7 +170,7 @@ const SearchWithSuggestions: React.FC<SearchWithSuggestionsProps> = ({
             type="button"
             size="sm"
             onClick={() => handleSubmit()}
-            className="h-7 px-3 bg-pakistani_green-600 hover:bg-pakistani_green-700"
+            className="h-7 px-3"
           >
             Search
           </Button>

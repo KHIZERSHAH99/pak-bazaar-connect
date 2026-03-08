@@ -152,14 +152,27 @@ const BrowseShops: React.FC = () => {
 
       <Card className="bg-card shadow-sm">
         <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search shops by name..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="pl-10 bg-muted/50 border-border focus:border-primary font-poppins"
-            />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search shops by name..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="pl-10 bg-muted/50 border-border focus:border-primary font-poppins"
+              />
+            </div>
+            <Select value={selectedCity} onValueChange={setSelectedCity}>
+              <SelectTrigger className="w-full sm:w-[200px] font-poppins">
+                <SelectValue placeholder="All Cities" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Cities</SelectItem>
+                {cities.map((city: any) => (
+                  <SelectItem key={city.id} value={city.id}>{city.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>

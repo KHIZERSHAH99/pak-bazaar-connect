@@ -23,9 +23,41 @@ interface DashboardNavigationProps {
 }
 
 const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate }) => {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const location = useLocation();
   const unreadCount = useUnreadMessages();
+
+  // Fetch pending order count for badge
+  const { data: pendingOrderCount = 0 } = useQuery({
+    queryKey: ['pending-order-count', user?.id, profile?.role],
+    queryFn: async () => {
+      if (!user?.id) return 0;
+      if (profile?.role === 'seller') {
+        const { count } = await supabase
+          .from('orders')
+          .select('*', { count: 'exact', head: true })
+          .eq('buyer_id', user.id)
+          .in('status', ['pending', 'confirmed', 'processing']);
+        return count || 0;
+      }
+      if (profile?.role === 'wholesaler') {
+        const { data: shops } = await supabase
+          .from('shops')
+          .select('id')
+          .eq('owner_id', user.id);
+        if (!shops?.length) return 0;
+        const { count } = await supabase
+          .from('orders')
+          .select('*', { count: 'exact', head: true })
+          .in('shop_id', shops.map(s => s.id))
+          .in('status', ['pending', 'requires_attention']);
+        return count || 0;
+      }
+      return 0;
+    },
+    enabled: !!user?.id && (profile?.role === 'seller' || profile?.role === 'wholesaler'),
+    refetchInterval: 30000,
+  });
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 

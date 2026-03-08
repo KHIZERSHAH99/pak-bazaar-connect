@@ -182,7 +182,7 @@ const SearchWithSuggestions: React.FC<SearchWithSuggestionsProps> = ({
         <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto">
           {loading && (
             <div className="p-3 text-center text-gray-500 dark:text-gray-400">
-              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-pakistani_green-600 mx-auto mb-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-primary mx-auto mb-2"></div>
               <span className="text-sm font-poppins">Searching...</span>
             </div>
           )}

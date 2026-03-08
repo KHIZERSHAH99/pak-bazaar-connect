@@ -11,6 +11,7 @@ import NotFound from '@/pages/NotFound';
 // Lazy load all other pages
 const Login = lazy(() => import('@/pages/Login'));
 const Signup = lazy(() => import('@/pages/Signup'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Profile = lazy(() => import('@/pages/Profile'));
 const Products = lazy(() => import('@/pages/Products'));

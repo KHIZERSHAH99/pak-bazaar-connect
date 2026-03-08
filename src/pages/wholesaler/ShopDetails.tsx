@@ -215,7 +215,7 @@ const ShopDetails: React.FC = () => {
                   <span className="font-semibold font-poppins">{shop.commission_rate || 5}%</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-poppins">Shop Rating</span>
+                  <span className="text-muted-foreground font-poppins">Shop Rating</span>
                   <div className="flex items-center">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
                     <span className="font-semibold ml-1 font-poppins">4.5</span>

@@ -218,7 +218,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
               </div>
             </div>
             
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">
+            <h2 className="text-2xl font-bold text-foreground mb-2 font-poppins">
               {currentStepData.title}
             </h2>
             

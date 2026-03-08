@@ -102,7 +102,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </Badge>
             )}
             {product.verification_status === 'approved' && (
-              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 shadow-sm text-xs md:text-sm px-2 py-1">
+              <Badge className="bg-primary/10 text-primary shadow-sm text-xs md:text-sm px-2 py-1">
                 <Verified className="w-3 h-3 md:w-4 md:h-4 mr-1" />
                 Verified
               </Badge>
@@ -152,7 +152,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
             {/* Bulk pricing indicator */}
             <div className="flex items-center gap-1">
-              <Badge className="text-xs md:text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 px-2 py-1">
+              <Badge className="text-xs md:text-sm bg-primary/10 text-primary px-2 py-1">
                 Bulk discounts available
               </Badge>
             </div>

@@ -9,17 +9,17 @@ const HomeFooter: React.FC = () => {
   };
 
   return (
-    <footer className="bg-pakistani_green-800 dark:bg-pakistani_green-900 text-white py-8 px-3 md:px-6">
+    <footer className="bg-primary text-primary-foreground py-8 px-3 md:px-6">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-center md:text-left">
             <div className="flex justify-center md:justify-start items-center mb-4">
-              <div className="bg-pakistani_green-700 dark:bg-pakistani_green-800 rounded-xl p-2 shadow-md mr-2 md:mr-3">
-                <span className="text-white text-lg font-bold">PBC</span>
+              <div className="bg-primary-foreground/10 rounded-xl p-2 shadow-md mr-2 md:mr-3">
+                <span className="text-primary-foreground text-lg font-bold">PBC</span>
               </div>
               <span className="text-lg md:text-xl font-bold font-poppins">Pak Bazaar Connect</span>
             </div>
-            <p className="text-pakistani_green-200 dark:text-pakistani_green-300 mb-2 md:mb-4 font-poppins">
+            <p className="text-primary-foreground/70 mb-2 md:mb-4 font-poppins">
               Connecting Pakistani businesses for sustainable growth
             </p>
             <div className="flex justify-center md:justify-start items-center space-x-2 md:space-x-4 text-xs md:text-sm">
@@ -35,7 +35,7 @@ const HomeFooter: React.FC = () => {
             variant="outline" 
             size="sm" 
             onClick={scrollToTop}
-            className="bg-transparent border-pakistani_green-300 text-white hover:bg-pakistani_green-700 hover:border-white transition-colors"
+            className="bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground transition-colors"
           >
             <ArrowUp className="w-4 h-4 mr-2" />
             Back to Top

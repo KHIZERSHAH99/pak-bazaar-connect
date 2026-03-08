@@ -285,6 +285,7 @@ const Checkout: React.FC = () => {
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 

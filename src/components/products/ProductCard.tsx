@@ -178,12 +178,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </Badge>
               )}
             </div>
-            {/* Bulk pricing indicator */}
-            <div className="flex items-center gap-1">
-              <Badge className="text-xs md:text-sm bg-primary/10 text-primary px-2 py-1">
-                Bulk discounts available
-              </Badge>
-            </div>
+            {/* Bulk pricing indicator - only show when tiers exist */}
+            {product.pricing_tiers && product.pricing_tiers.length > 0 && (
+              <div className="flex items-center gap-1">
+                <Badge className="text-xs md:text-sm bg-primary/10 text-primary px-2 py-1">
+                  Bulk discounts available
+                </Badge>
+              </div>
+            )}
           </div>
 
           {/* Supplier Info */}

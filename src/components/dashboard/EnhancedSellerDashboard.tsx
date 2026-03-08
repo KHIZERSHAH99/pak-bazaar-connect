@@ -235,7 +235,7 @@ const EnhancedSellerDashboard: React.FC = () => {
                   <CardTitle className="font-poppins">Browse Wholesale Shops</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-muted-foreground mb-4">
                     Discover verified wholesale suppliers across Pakistan and browse their product catalogs.
                   </p>
                   <Button 

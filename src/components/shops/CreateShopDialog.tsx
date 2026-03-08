@@ -209,7 +209,7 @@ const CreateShopDialog: React.FC<CreateShopDialogProps> = ({
               disabled={isSubmitting}
               rows={3}
             />
-            {errors.address && <p className="text-sm text-descriptive mt-1">{errors.address}</p>}
+            {errors.address && <p className="text-sm text-destructive mt-1">{errors.address}</p>}
           </div>
           
           <div>

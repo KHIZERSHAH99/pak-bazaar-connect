@@ -25,16 +25,10 @@ const ProductDetail: React.FC = () => {
     const fetchProduct = async () => {
       try {
         const foundProduct = await getProductById(id);
-        console.log('Found product:', foundProduct);
-        
         setProduct(foundProduct);
 
-        // Track recently viewed
         if (foundProduct) {
           trackRecentlyViewed(foundProduct.id);
-        }
-        if (foundProduct && foundProduct.moq) {
-          console.log('Product MOQ:', foundProduct.moq);
         }
       } catch (error) {
         console.error('Error fetching product:', error);

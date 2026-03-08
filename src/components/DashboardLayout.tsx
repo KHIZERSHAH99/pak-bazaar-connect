@@ -62,7 +62,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
         </main>
       </div>
-      <Footer />
     </div>
   );
 };

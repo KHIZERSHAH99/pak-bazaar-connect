@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from '@/components/Layout';
 import { Product } from '@/lib/types';
 import { supabase } from '@/integrations/supabase/client';

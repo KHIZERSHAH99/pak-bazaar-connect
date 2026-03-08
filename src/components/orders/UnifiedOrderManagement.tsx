@@ -5,12 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Package, CheckCircle, XCircle, Clock, TrendingUp, RotateCcw, FileText, Download } from 'lucide-react';
+import { Package, CheckCircle, XCircle, Clock, TrendingUp, RotateCcw, FileText, Download, History } from 'lucide-react';
 import { getUnifiedOrders, optimisticUpdateOrderStatus } from '@/lib/orders/unified-queries';
 import { reusePreviousOrder } from '@/lib/orders/core';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { generateOrderReceipt } from '@/utils/orderPdf';
+import OrderTimeline from '@/components/orders/OrderTimeline';
 
 interface UnifiedOrderManagementProps {
   userRole: 'seller' | 'wholesaler';

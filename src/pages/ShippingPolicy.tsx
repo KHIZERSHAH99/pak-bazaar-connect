@@ -58,7 +58,7 @@ const ShippingPolicy = () => {
                 Shipping costs are determined by the wholesaler and distance. Most orders over PKR 5,000 qualify for free shipping.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Tracking Orders
               </h2>
               <p className="mb-6 text-foreground">

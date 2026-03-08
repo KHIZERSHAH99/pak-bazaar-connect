@@ -83,7 +83,7 @@ const Footer = () => {
               </li>
               <li>
                 <Button variant="ghost" size="sm" className="h-auto p-0 font-normal justify-start" asChild>
-                  <Link to="/dashboard/browse-shops" className="text-sm text-foreground/70 hover:text-primary font-poppins transition-colors">
+                  <Link to="/shops" className="text-sm text-foreground/70 hover:text-primary font-poppins transition-colors">
                     Find Wholesalers
                   </Link>
                 </Button>

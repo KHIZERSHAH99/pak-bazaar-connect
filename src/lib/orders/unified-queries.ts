@@ -23,7 +23,7 @@ export const getUnifiedOrders = async (
           buyer_name, buyer_phone, buyer_address,
           created_at, confirmed_at, rejected_at, delivered_at,
           wholesaler_notes, order_notes,
-          shops!shop_id(id, name, contact, address, logo, owner_id)
+          shops!fk_orders_shop_id(id, name, contact, address, logo, owner_id)
         `, { count: 'exact' })
         .eq('buyer_id', user.id)
         .order('created_at', { ascending: false })
@@ -51,7 +51,7 @@ export const getUnifiedOrders = async (
           buyer_name, buyer_phone, buyer_address,
           created_at, confirmed_at, rejected_at, delivered_at,
           order_notes, wholesaler_notes,
-          shops!shop_id(id, name),
+          shops!fk_orders_shop_id(id, name),
           profiles!buyer_id(id, email, business_name, phone_number)
         `, { count: 'exact' })
         .in('shop_id', shopIds)

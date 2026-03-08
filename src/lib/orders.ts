@@ -103,7 +103,7 @@ export const createOrder = async (orderData: {
     .insert([orderPayload])
     .select(`
       *,
-      shops!shop_id(id, name, contact, address, owner_id)
+      shops!fk_orders_shop_id(id, name, contact, address, owner_id)
     `)
     .single();
   
@@ -142,7 +142,7 @@ export const getOrdersForWholesaler = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, owner_id)
+        shops!fk_orders_shop_id(id, name, contact, address, owner_id)
       `)
       .in('shop_id', shopIds)
       .order('created_at', { ascending: false });
@@ -169,7 +169,7 @@ export const getOrdersForSeller = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, owner_id)
+        shops!fk_orders_shop_id(id, name, contact, address, owner_id)
       `)
       .eq('buyer_id', user.id)
       .order('created_at', { ascending: false });
@@ -200,7 +200,7 @@ export const updateOrderStatus = async (
       .from('orders')
       .select(`
         *,
-        shops!shop_id(owner_id)
+        shops!fk_orders_shop_id(owner_id)
       `)
       .eq('id', orderId)
       .single();
@@ -234,7 +234,7 @@ export const updateOrderStatus = async (
       .eq('id', orderId)
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, owner_id)
+        shops!fk_orders_shop_id(id, name, contact, address, owner_id)
       `)
       .single();
       
@@ -257,7 +257,7 @@ export const getOrderById = async (orderId: string): Promise<Order | null> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, owner_id)
+        shops!fk_orders_shop_id(id, name, contact, address, owner_id)
       `)
       .eq('id', orderId)
       .single();

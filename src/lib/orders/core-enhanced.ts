@@ -112,7 +112,7 @@ export const confirmOrderEnhanced = async (orderId: string, notes?: string) => {
     .eq('id', orderId)
     .select(`
       *,
-      shops!shop_id(owner_id, name)
+      shops!fk_orders_shop_id(owner_id, name)
     `);
 
   if (error) {
@@ -147,7 +147,7 @@ export const rejectOrderEnhanced = async (orderId: string, notes?: string) => {
     .eq('id', orderId)
     .select(`
       *,
-      shops!shop_id(owner_id, name)
+      shops!fk_orders_shop_id(owner_id, name)
     `);
 
   if (error) {
@@ -176,7 +176,7 @@ export const getOrderWithSecurity = async (orderId: string) => {
     .from('orders')
     .select(`
       *,
-      shops!shop_id(name, contact, address, owner_id),
+      shops!fk_orders_shop_id(name, contact, address, owner_id),
       profiles!orders_buyer_id_fkey(email, business_name)
     `)
     .eq('id', orderId)

@@ -38,7 +38,7 @@ const SellerOrders: React.FC = () => {
           total_amount,
           status,
           created_at,
-          shops!shop_id (name)
+          shops!fk_orders_shop_id (name)
         `)
         .eq('buyer_id', user.id)
         .order('created_at', { ascending: false });

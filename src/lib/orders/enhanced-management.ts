@@ -24,7 +24,7 @@ export const getEnhancedOrdersForWholesaler = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id),
         profiles!buyer_id(id, email, business_name),
         order_items(*),
         order_status_history(*, profiles!changed_by(id, email, business_name))
@@ -53,7 +53,7 @@ export const getEnhancedOrdersForSeller = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id),
         order_items(*),
         order_status_history(*, profiles!changed_by(id, email, business_name))
       `)
@@ -95,7 +95,7 @@ export const updateOrderStatusEnhanced = async (
       .from('orders')
       .select(`
         *,
-        shops!shop_id(owner_id)
+        shops!fk_orders_shop_id(owner_id)
       `)
       .eq('id', orderId)
       .single();
@@ -128,7 +128,7 @@ export const updateOrderStatusEnhanced = async (
       .eq('id', orderId)
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id),
         order_items(*),
         order_status_history(*, profiles!changed_by(id, email, business_name))
       `)
@@ -216,7 +216,7 @@ export const getOrdersByStatus = async (
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id),
         profiles!buyer_id(id, email, business_name),
         order_items(*),
         order_status_history(*, profiles!changed_by(id, email, business_name))

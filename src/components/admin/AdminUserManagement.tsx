@@ -127,6 +127,27 @@ const AdminUserManagement: React.FC = () => {
     },
   });
 
+  const toggleSuspend = useMutation({
+    mutationFn: async ({ userId, suspend }: { userId: string; suspend: boolean }) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          is_suspended: suspend,
+          suspension_reason: suspend ? 'Suspended by admin' : null,
+          suspended_until: null,
+        })
+        .eq('id', userId);
+      if (error) throw error;
+    },
+    onSuccess: (_, { suspend }) => {
+      toast({ title: suspend ? 'User suspended' : 'User unsuspended' });
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+    onError: (err: any) => {
+      toast({ title: 'Action failed', description: err.message, variant: 'destructive' });
+    },
+  });
+
   const filteredUsers = users.filter(u =>
     !search ||
     u.email?.toLowerCase().includes(search.toLowerCase()) ||
@@ -258,6 +279,9 @@ const AdminUserManagement: React.FC = () => {
                         <Badge variant={u.role === 'admin' ? 'default' : 'secondary'} className="capitalize text-[10px] shrink-0">
                           {u.role}
                         </Badge>
+                        {u.is_suspended && (
+                          <Badge variant="destructive" className="text-[10px] shrink-0">Suspended</Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{u.email}</span>
@@ -276,9 +300,15 @@ const AdminUserManagement: React.FC = () => {
                         <Shield className="h-4 w-4 mr-2" /> Change Role
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
-                        <UserX className="h-4 w-4 mr-2" /> Suspend User
-                      </DropdownMenuItem>
+                      {u.is_suspended ? (
+                        <DropdownMenuItem onClick={() => toggleSuspend.mutate({ userId: u.id, suspend: false })}>
+                          <UserCheck className="h-4 w-4 mr-2" /> Unsuspend User
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem className="text-destructive" onClick={() => toggleSuspend.mutate({ userId: u.id, suspend: true })}>
+                          <UserX className="h-4 w-4 mr-2" /> Suspend User
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>

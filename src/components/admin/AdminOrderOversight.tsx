@@ -43,7 +43,7 @@ const AdminOrderOversight: React.FC = () => {
     queryFn: async () => {
       let query = supabase
         .from('orders')
-        .select('*, shops(name, owner_id)')
+        .select('*, shops!fk_orders_shop_id(name, owner_id)')
         .order('created_at', { ascending: false })
         .limit(100);
 

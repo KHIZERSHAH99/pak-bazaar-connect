@@ -90,7 +90,7 @@ export const createOrderWithBusinessLogic = async (
     .insert([orderData])
     .select(`
       *,
-      shops!shop_id(name, contact, address, owner_id),
+      shops!fk_orders_shop_id(name, contact, address, owner_id),
       profiles!orders_buyer_id_fkey(email)
     `)
     .single();
@@ -157,7 +157,7 @@ export const confirmOrderWithBusinessLogic = async (orderId: string, notes?: str
     .eq('id', orderId)
     .select(`
       *,
-      shops!shop_id(owner_id, name)
+      shops!fk_orders_shop_id(owner_id, name)
     `)
     .single();
 

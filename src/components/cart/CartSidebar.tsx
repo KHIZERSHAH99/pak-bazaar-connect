@@ -54,7 +54,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
                 />
                 <div className="flex-1">
                   <h4 className="font-medium text-sm line-clamp-2">{item.product.name}</h4>
-                  <p className="text-pakistani_green-600 font-bold">
+                  <p className="text-primary font-bold">
                     PKR {item.product.price.toLocaleString()}
                   </p>
                   {item.product.shops && (

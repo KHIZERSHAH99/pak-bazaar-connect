@@ -13,35 +13,35 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({ user }) => {
     <header className="bg-card/80 backdrop-blur-sm shadow-lg py-4 px-6 sticky top-0 z-50 border-b border-border">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center group">
-          <div className="bg-gradient-to-r from-pakistani_green-700 to-pakistani_green-600 rounded-xl p-3 shadow-lg group-hover:shadow-xl transition-all duration-300">
-            <span className="text-white text-2xl font-bold">PBC</span>
+          <div className="bg-primary rounded-xl p-3 shadow-lg group-hover:shadow-xl transition-all duration-300">
+            <span className="text-primary-foreground text-2xl font-bold">PBC</span>
           </div>
-          <span className="ml-3 text-xl font-bold bg-gradient-to-r from-pakistani_green-800 to-green-700 bg-clip-text text-transparent hidden md:inline">
+          <span className="ml-3 text-xl font-bold text-foreground hidden md:inline">
             Pak Bazaar Connect
           </span>
         </Link>
         
         <nav className="flex items-center space-x-3">
           <Link to="/products">
-            <Button variant="ghost" size="sm" className="text-pakistani_green-700 hover:bg-pakistani_green-50 dark:text-pakistani_green-400 dark:hover:bg-pakistani_green-950/50 font-poppins">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins">
               Browse Products
             </Button>
           </Link>
           {user ? (
             <Link to="/dashboard">
-              <Button size="sm" className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 font-poppins shadow-lg">
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins shadow-lg">
                 Dashboard
               </Button>
             </Link>
           ) : (
             <>
               <Link to="/login">
-                <Button variant="outline" size="sm" className="border-pakistani_green-700 text-pakistani_green-700 hover:bg-pakistani_green-50 dark:border-pakistani_green-400 dark:text-pakistani_green-400 dark:hover:bg-pakistani_green-950/50 font-poppins">
+                <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/10 font-poppins">
                   Login
                 </Button>
               </Link>
               <Link to="/signup">
-                <Button size="sm" className="bg-gradient-to-r from-pakistani_green-600 to-pakistani_green-700 hover:from-pakistani_green-700 hover:to-pakistani_green-800 font-poppins shadow-lg">
+                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins shadow-lg">
                   Get Started
                 </Button>
               </Link>

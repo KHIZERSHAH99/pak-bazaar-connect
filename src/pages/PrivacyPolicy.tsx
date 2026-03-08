@@ -97,7 +97,7 @@ const PrivacyPolicy = () => {
                 We implement comprehensive security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. Our security practices include encryption of sensitive data, secure servers with regular backups, access controls and authentication systems, regular security assessments and updates, compliance with international security standards, and staff training on data protection protocols. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.
               </p>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Your Rights and Choices
               </h2>
               <p className="mb-4 text-foreground">

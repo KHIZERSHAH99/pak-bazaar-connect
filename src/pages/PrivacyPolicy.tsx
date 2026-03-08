@@ -113,7 +113,7 @@ const PrivacyPolicy = () => {
                 <li><strong>Restriction:</strong> Request limitation of processing under certain circumstances</li>
               </ul>
 
-              <h2 className="text-2xl font-semibold text-pakistani_green-700 mb-4">
+              <h2 className="text-2xl font-semibold text-primary mb-4">
                 Cookies and Tracking Technologies
               </h2>
               <p className="mb-6 text-foreground">

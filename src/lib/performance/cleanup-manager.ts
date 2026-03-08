@@ -92,11 +92,7 @@ class CleanupManager {
       }
     });
 
-    const duration = performance.now() - startTime;
-    console.log(
-      `[CleanupManager] Completed ${successCount} tasks in ${duration.toFixed(2)}ms` +
-      (errorCount > 0 ? ` (${errorCount} errors)` : '')
-    );
+    // Completed silently
   }
 
   private handleVisibilityChange = (): void => {

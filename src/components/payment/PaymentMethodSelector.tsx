@@ -113,7 +113,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
               )}
             </div>
             
-            <div className="mt-2 text-xs text-gray-500 font-poppins">
+            <div className="mt-2 text-xs text-muted-foreground font-poppins">
               Range: PKR {method.minAmount.toLocaleString()} - {method.maxAmount ? `PKR ${method.maxAmount.toLocaleString()}` : 'No limit'}
             </div>
           </Card>

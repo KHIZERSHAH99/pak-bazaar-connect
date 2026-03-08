@@ -24,7 +24,7 @@ export const getEnhancedOrdersForWholesaler = async (): Promise<Order[]> => {
       .from('orders')
       .select(`
         *,
-        shops!shop_id(id, name, contact, address, postal_code, owner_id),
+        shops!fk_orders_shop_id(id, name, contact, address, postal_code, owner_id),
         profiles!buyer_id(id, email, business_name),
         order_items(*),
         order_status_history(*, profiles!changed_by(id, email, business_name))

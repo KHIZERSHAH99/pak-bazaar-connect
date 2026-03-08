@@ -46,15 +46,15 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
     scrollToBottom();
   }, [chatHistory]);
 
-  const handleSend = async () => {
-    if (!message.trim() || sending) return;
+  const handleSend = async (directMessage?: string) => {
+    const msgToSend = directMessage || message;
+    if (!msgToSend.trim() || sending) return;
     
-    const messageToSend = message;
     setMessage('');
     setIsTyping(true);
     
     try {
-      await sendMessage(messageToSend);
+      await sendMessage(msgToSend);
     } finally {
       setIsTyping(false);
     }

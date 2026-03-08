@@ -26,9 +26,19 @@ const BrowseShops: React.FC = () => {
   const [shops, setShops] = useState<PublicShop[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCity, setSelectedCity] = useState<string>('all');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Fetch cities for filter
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities-list'],
+    queryFn: async () => {
+      const { data } = await supabase.from('cities').select('id, name').order('name');
+      return data || [];
+    },
+  });
 
   const fetchShops = async () => {
     try {

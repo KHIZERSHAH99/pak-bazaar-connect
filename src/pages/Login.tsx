@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import PakistaniLoginForm from '@/components/auth/PakistaniLoginForm';
 import { ArrowLeft, Shield, Users, TrendingUp, Package, ShoppingCart, Building } from 'lucide-react';
 
 const Login: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
+      <Helmet>
+        <title>Login - Pak Bazaar Connect</title>
+        <meta name="description" content="Log in to Pak Bazaar Connect — Pakistan's trusted B2B wholesale marketplace. Access your dashboard, manage orders, and grow your business." />
+      </Helmet>
       {/* Background Patterns */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />

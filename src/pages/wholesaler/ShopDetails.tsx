@@ -181,8 +181,8 @@ const ShopDetails: React.FC = () => {
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-gray-800 truncate font-poppins">{product.name}</h4>
-                          <p className="text-sm text-gray-600 font-poppins">Rs. {product.price}</p>
+                          <h4 className="font-medium text-foreground truncate font-poppins">{product.name}</h4>
+                          <p className="text-sm text-muted-foreground font-poppins">Rs. {product.price}</p>
                           {product.categories && (
                             <Badge variant="secondary" size="sm" className="mt-1">
                               {product.categories?.name}

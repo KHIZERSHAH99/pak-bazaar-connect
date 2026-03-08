@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { ChevronRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Home, Package, ShoppingCart, MessageSquare, Settings, Store,
   BarChart3, Truck, CreditCard, Ticket, BookOpen, Video

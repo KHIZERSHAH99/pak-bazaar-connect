@@ -8,6 +8,7 @@ import { getProductById } from '@/lib/products';
 import { Product } from '@/lib/types';
 import OptimizedProductDetail from '@/components/products/OptimizedProductDetail';
 import ProductsErrorBoundary from '@/components/ui/ProductsErrorBoundary';
+import { trackRecentlyViewed } from '@/components/home/RecentlyViewedProducts';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,7 +32,10 @@ const ProductDetail: React.FC = () => {
         
         setProduct(foundProduct);
 
-        // Set MOQ as initial quantity if product found
+        // Track recently viewed
+        if (foundProduct) {
+          trackRecentlyViewed(foundProduct.id);
+        }
         if (foundProduct && foundProduct.moq) {
           console.log('Product MOQ:', foundProduct.moq);
         }

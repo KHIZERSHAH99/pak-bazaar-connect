@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { SecureOrderFormInput } from './SecureOrderFormInput';
 import { Upload, CreditCard, Smartphone, Building, AlertCircle, CheckCircle, Loader2, Truck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { validatePakistaniPhone } from '@/lib/validation';
 import { createOrderWithPayment } from '@/lib/orders-enhanced';
 import { getPaymentMethodsForShop } from '@/lib/payment-methods';
 import { getProductById } from '@/lib/products';
@@ -163,6 +164,14 @@ const EnhancedOrderForm: React.FC<EnhancedOrderFormProps> = ({
       toast({
         title: "Missing Information",
         description: "Please fill in all buyer information fields",
+        variant: "destructive"
+      });
+      return;
+    }
+    if (!validatePakistaniPhone(buyerInfo.phone)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid Pakistani phone number (e.g. 03001234567 or +923001234567)",
         variant: "destructive"
       });
       return;

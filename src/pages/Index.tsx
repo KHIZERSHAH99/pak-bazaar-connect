@@ -4,6 +4,7 @@ import UrduHeroSection from '@/components/home/UrduHeroSection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import CallToActionSection from '@/components/home/CallToActionSection';
+import RecentlyViewedProducts from '@/components/home/RecentlyViewedProducts';
 
 const Index: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const Index: React.FC = () => {
       <div className="min-h-screen">
         <UrduHeroSection />
         <FeaturedProducts />
+        <RecentlyViewedProducts />
         <WhyChooseUsSection />
         <CallToActionSection />
       </div>

@@ -129,12 +129,12 @@ const ShopsManagement: React.FC = () => {
               </CardHeader>
               
               <CardContent className="space-y-2 p-3 sm:p-4 pt-0 sm:pt-0">
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-muted-foreground">
                   <Phone className="w-3 h-3 mr-1.5" />
                   <span className="font-poppins text-xs sm:text-sm">{shop.contact}</span>
                 </div>
                 
-                <div className="flex items-start text-gray-600">
+                <div className="flex items-start text-muted-foreground">
                   <MapPin className="w-3 h-3 mr-1.5 rtl:mr-0 rtl:ml-1.5 mt-0.5" />
                   <div className="font-poppins">
                     <p className="text-xs sm:text-sm">{shop.address}</p>

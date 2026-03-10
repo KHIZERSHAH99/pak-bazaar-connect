@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Flag, Menu, X, ShoppingBag, ShoppingCart, Users, Zap, Package, BookOpen, HelpCircle } from 'lucide-react';
+import { Flag, Menu, X, ShoppingBag, ShoppingCart, Users, Zap, Package, BookOpen, HelpCircle, Video } from 'lucide-react';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';

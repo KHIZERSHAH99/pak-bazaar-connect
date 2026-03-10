@@ -69,6 +69,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               Wholesalers
             </Button>
           </Link>
+
+          <Link to="/tutorials" onClick={handleLinkClick}>
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start h-10 text-sm text-foreground hover:bg-accent font-poppins"
+            >
+              <Video className="w-4 h-4 mr-2" />
+              Tutorials
+            </Button>
+          </Link>
           
           <Link to="/features" onClick={handleLinkClick}>
             <Button 

@@ -96,6 +96,12 @@ const Navbar = () => {
                     Wholesalers
                   </Button>
                 </Link>
+                <Link to="/tutorials">
+                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
+                    <Video className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                    Tutorials
+                  </Button>
+                </Link>
               </div>
 
               {/* Help/Tour Button - Only for wholesalers and sellers */}

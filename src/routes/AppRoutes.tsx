@@ -91,6 +91,9 @@ const AppRoutes: React.FC = () => {
         <Route path="/shops" element={<LazyRoute><PublicBrowseShops /></LazyRoute>} />
         <Route path="/shop/:shopId" element={<LazyRoute><ShopDetails /></LazyRoute>} />
         
+        {/* Public tutorials */}
+        <Route path="/tutorials" element={<LazyRoute><PublicTutorials /></LazyRoute>} />
+
         {/* Legal pages */}
         <Route path="/contact" element={<LazyRoute><Contact /></LazyRoute>} />
         <Route path="/about" element={<LazyRoute><AboutUs /></LazyRoute>} />

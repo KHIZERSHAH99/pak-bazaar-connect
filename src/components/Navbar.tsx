@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Flag, Menu, X, ShoppingBag, ShoppingCart, Users, Zap, Package, BookOpen, HelpCircle } from 'lucide-react';
+import { Flag, Menu, X, ShoppingBag, ShoppingCart, Users, Zap, Package, BookOpen, HelpCircle, Video } from 'lucide-react';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';
@@ -94,6 +94,12 @@ const Navbar = () => {
                   <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
                     <Users className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
                     Wholesalers
+                  </Button>
+                </Link>
+                <Link to="/tutorials">
+                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
+                    <Video className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                    Tutorials
                   </Button>
                 </Link>
               </div>

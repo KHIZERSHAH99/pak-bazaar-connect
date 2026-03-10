@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { User, ShoppingBag, Users, Zap, Home, Settings, Sun, Moon, Heart, MessageSquare, BarChart, LogOut, HelpCircle } from 'lucide-react';
+import { User, ShoppingBag, Users, Zap, Home, Settings, Sun, Moon, Heart, MessageSquare, BarChart, LogOut, HelpCircle, Video } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 interface MobileMenuProps {
@@ -67,6 +67,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             >
               <Users className="w-4 h-4 mr-2" />
               Wholesalers
+            </Button>
+          </Link>
+
+          <Link to="/tutorials" onClick={handleLinkClick}>
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start h-10 text-sm text-foreground hover:bg-accent font-poppins"
+            >
+              <Video className="w-4 h-4 mr-2" />
+              Tutorials
             </Button>
           </Link>
           

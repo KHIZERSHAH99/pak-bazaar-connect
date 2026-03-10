@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { User } from '@supabase/supabase-js';
+import { Video } from 'lucide-react';
 
 interface HomeHeaderProps {
   user: User | null;
@@ -25,6 +26,12 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({ user }) => {
           <Link to="/products">
             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins">
               Browse Products
+            </Button>
+          </Link>
+          <Link to="/tutorials">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins gap-1">
+              <Video className="h-4 w-4" />
+              Tutorials
             </Button>
           </Link>
           {user ? (

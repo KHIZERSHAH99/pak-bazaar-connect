@@ -55,6 +55,7 @@ const DashboardAdminAnalytics = lazy(() => import('@/pages/dashboard/DashboardAd
 // Public pages
 const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));
 const ShopDetails = lazy(() => import('@/pages/ShopDetails'));
+const PublicTutorials = lazy(() => import('@/pages/Tutorials'));
 
 // Seller sub-pages (used by /seller/ routes, now redirected)
 const SellerShopDetails = lazy(() => import('@/pages/seller/ShopDetails'));
@@ -90,6 +91,9 @@ const AppRoutes: React.FC = () => {
         <Route path="/shops" element={<LazyRoute><PublicBrowseShops /></LazyRoute>} />
         <Route path="/shop/:shopId" element={<LazyRoute><ShopDetails /></LazyRoute>} />
         
+        {/* Public tutorials */}
+        <Route path="/tutorials" element={<LazyRoute><PublicTutorials /></LazyRoute>} />
+
         {/* Legal pages */}
         <Route path="/contact" element={<LazyRoute><Contact /></LazyRoute>} />
         <Route path="/about" element={<LazyRoute><AboutUs /></LazyRoute>} />

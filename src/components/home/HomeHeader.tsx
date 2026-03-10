@@ -28,6 +28,12 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({ user }) => {
               Browse Products
             </Button>
           </Link>
+          <Link to="/tutorials">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins gap-1">
+              <Video className="h-4 w-4" />
+              Tutorials
+            </Button>
+          </Link>
           {user ? (
             <Link to="/dashboard">
               <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-poppins shadow-lg">

@@ -41,6 +41,9 @@ export const formSchema = z.object({
     .or(z.literal('')),
   
   industry: z.string().optional(),
+  acceptTerms: z.boolean().refine(val => val === true, {
+    message: "You must accept the Terms & Conditions to create an account"
+  }),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword']

@@ -32,6 +32,7 @@ export const usePhoneSignupForm = () => {
       postalCode: '',
       industry: '',
       contactName: '',
+      acceptTerms: false,
     }
   });
   

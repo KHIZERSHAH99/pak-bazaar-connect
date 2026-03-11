@@ -32,7 +32,10 @@ const signupSchema = z.object({
     .min(8, "Password must be at least 8 characters")
     .regex(/[A-Z]/, "Must contain at least one uppercase letter")
     .regex(/[a-z]/, "Must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Must contain at least one number")
+    .regex(/[0-9]/, "Must contain at least one number"),
+  acceptTerms: z.boolean().refine(val => val === true, {
+    message: "You must accept the Terms & Conditions to create an account"
+  })
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -54,7 +57,8 @@ const EmailSignupForm = () => {
       businessName: '',
       email: '',
       phoneNumber: '',
-      password: ''
+      password: '',
+      acceptTerms: false
     }
   });
 
@@ -403,6 +407,48 @@ const EmailSignupForm = () => {
                     </div>
                   )}
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Terms & Conditions Checkbox */}
+            <FormField
+              control={form.control}
+              name="acceptTerms"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-border p-4">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      disabled={isLoading}
+                      className="mt-0.5 h-4 w-4 rounded border-input accent-primary cursor-pointer"
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-poppins cursor-pointer">
+                      I agree to the{' '}
+                      <Link
+                        to="/terms-and-conditions"
+                        target="_blank"
+                        className="text-primary hover:text-primary/80 underline font-medium"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Terms & Conditions
+                      </Link>
+                      {' '}and{' '}
+                      <Link
+                        to="/privacy-policy"
+                        target="_blank"
+                        className="text-primary hover:text-primary/80 underline font-medium"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Privacy Policy
+                      </Link>
+                    </FormLabel>
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />

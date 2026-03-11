@@ -31,6 +31,7 @@ export const useEnhancedSignupForm = () => {
       industry: '',
       
       contactName: '',
+      acceptTerms: false,
     }
   });
   

@@ -2,12 +2,16 @@
 import React from 'react';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 import { UserRole } from '@/lib/types';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { UseFormReturn } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 interface FinalStepProps {
   selectedRole: UserRole;
+  form?: UseFormReturn<any>;
 }
 
-const FinalStep: React.FC<FinalStepProps> = ({ selectedRole }) => {
+const FinalStep: React.FC<FinalStepProps> = ({ selectedRole, form }) => {
   return (
     <div className="text-center space-y-6 animate-fadeIn">
       <div className="flex justify-center">
@@ -45,6 +49,58 @@ const FinalStep: React.FC<FinalStepProps> = ({ selectedRole }) => {
           )}
         </ul>
       </div>
+
+      {/* Terms & Conditions Checkbox */}
+      {form ? (
+        <FormField
+          control={form.control}
+          name="acceptTerms"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-border p-4 text-left">
+              <FormControl>
+                <input
+                  type="checkbox"
+                  checked={field.value}
+                  onChange={field.onChange}
+                  className="mt-0.5 h-4 w-4 rounded border-input accent-primary cursor-pointer"
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-sm font-poppins cursor-pointer">
+                  I agree to the{' '}
+                  <Link
+                    to="/terms-and-conditions"
+                    target="_blank"
+                    className="text-primary hover:text-primary/80 underline font-medium"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Terms & Conditions
+                  </Link>
+                  {' '}and{' '}
+                  <Link
+                    to="/privacy-policy"
+                    target="_blank"
+                    className="text-primary hover:text-primary/80 underline font-medium"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Privacy Policy
+                  </Link>
+                </FormLabel>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+      ) : (
+        <div className="flex flex-row items-start space-x-3 rounded-md border border-border p-4 text-left">
+          <p className="text-sm text-muted-foreground font-poppins">
+            By clicking "Create Account", you agree to our{' '}
+            <Link to="/terms-and-conditions" target="_blank" className="text-primary underline">Terms & Conditions</Link>
+            {' '}and{' '}
+            <Link to="/privacy-policy" target="_blank" className="text-primary underline">Privacy Policy</Link>.
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center justify-center text-primary font-poppins">
         <ArrowRight className="w-4 h-4 mr-2" />

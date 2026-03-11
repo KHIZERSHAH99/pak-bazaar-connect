@@ -163,7 +163,7 @@ class ProductionSecurityManager {
         p_new_values: JSON.stringify({
           ...details,
           timestamp: new Date().toISOString(),
-          environment: process.env.NODE_ENV,
+          environment: import.meta.env.MODE,
           userAgent: navigator.userAgent
         })
       });

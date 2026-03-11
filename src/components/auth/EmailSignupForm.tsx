@@ -57,7 +57,8 @@ const EmailSignupForm = () => {
       businessName: '',
       email: '',
       phoneNumber: '',
-      password: ''
+      password: '',
+      acceptTerms: false
     }
   });
 

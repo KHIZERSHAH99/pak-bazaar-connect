@@ -48,7 +48,7 @@ class AppErrorBoundary extends Component<Props, State> {
 
     this.props.onError?.(error, errorInfo);
 
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       console.log('Would send to error tracking service:', { error, errorInfo });
     }
   }

@@ -9,7 +9,7 @@ export const usePageAnalytics = () => {
     // Debounce to prevent duplicate calls
     const timeoutId = setTimeout(() => {
       // Track page views only once per location change
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('Page view:', {
           path: location.pathname,
           timestamp: new Date().toISOString(),
@@ -23,7 +23,7 @@ export const usePageAnalytics = () => {
       if ('performance' in window && location.pathname !== '/') {
         setTimeout(() => {
           const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-          if (perfData && process.env.NODE_ENV === 'development') {
+          if (perfData && import.meta.env.DEV) {
             console.log('Performance metrics:', {
               path: location.pathname,
               loadTime: Math.round(perfData.loadEventEnd - perfData.loadEventStart),
@@ -40,7 +40,7 @@ export const usePageAnalytics = () => {
 
   return {
     trackEvent: (eventName: string, properties?: Record<string, any>) => {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('Custom event:', {
           event: eventName,
           properties,

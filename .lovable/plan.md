@@ -1,47 +1,80 @@
 
 
-## Audit & Fix Plan: Tutorials, Auth, UI, and Wholesaler Flow
+## Complete Tutorial Video Production Plan
 
-### Critical Build Errors (Blocking)
+No code changes needed — this is your full recording guide with the intro video added as #1.
 
-All 15 build errors stem from using Node.js-only APIs (`process.env.NODE_ENV`, `NodeJS.Timeout`) in browser code. These must be replaced with Vite equivalents.
+---
 
-| File | Issue | Fix |
-|------|-------|-----|
-| `PerformanceMonitor.tsx` (line 24) | `NodeJS.Timeout` | Change to `ReturnType<typeof setInterval>` |
-| `AuthContext.tsx` (lines 126-127) | `NodeJS.Timeout` | Change to `ReturnType<typeof setTimeout>` / `ReturnType<typeof setInterval>` |
-| `enhanced-rate-limiting.ts` (line 20) | `NodeJS.Timeout` | Change to `ReturnType<typeof setInterval>` |
-| `rateLimit.ts` (line 12) | `NodeJS.Timeout` | Change to `ReturnType<typeof setInterval>` |
-| `AppErrorBoundary.tsx` (line 51) | `process.env.NODE_ENV` | Change to `import.meta.env.PROD` |
-| `ErrorBoundary.tsx` (line 33) | `process.env.NODE_ENV` | Change to `import.meta.env.PROD` |
-| `enhanced-error-boundary.tsx` (line 53) | `process.env.NODE_ENV` | Change to `import.meta.env.PROD` |
-| `usePageAnalytics.tsx` (lines 12, 26, 43) | `process.env.NODE_ENV` | Change to `import.meta.env.DEV` |
-| `enhanced-auth-security.ts` (line 329) | `process.env.NODE_ENV` | Change to `import.meta.env.MODE` |
-| `production-security.ts` (lines 12, 166, 198) | `process.env.NODE_ENV` | Change to `import.meta.env.PROD` / `import.meta.env.MODE` |
+### Phase 1: Getting Started (Record These First)
 
-### Security Issue
+| # | Video Title | Target Role | Category | Target Page | Duration |
+|---|-------------|-------------|----------|-------------|----------|
+| 1 | **What is Pak Bazaar Connect? (Platform Overview)** | All | Getting Started | none | 2-3 min |
+| 2 | How to Sign Up on PBC | All | Getting Started | none | 2-3 min |
+| 3 | How to Log In & Navigate Your Dashboard | All | Getting Started | /dashboard | 2-3 min |
+| 4 | How to Edit Your Profile | All | Account | /profile | 2 min |
+| 5 | How to Use the Chatbot for Help | All | General | none | 1-2 min |
 
-`PerformanceMonitor.tsx` line 30 checks `localStorage.getItem('user_role') === 'admin'` -- this is client-side role checking which is insecure per project rules. Will remove this check and keep it dev-only (`import.meta.env.DEV`).
+**Video #1 Script Outline — "What is Pak Bazaar Connect?"**
+1. Hook (10s) — "Looking for a better way to buy and sell wholesale in Pakistan?"
+2. What PBC is (30s) — B2B marketplace connecting wholesalers and sellers
+3. Who it's for (30s) — Wholesalers who want to sell, Sellers/retailers who want to buy
+4. Key features tour (60s) — Quick visual: shops, products, orders, messaging, analytics
+5. How to get started (20s) — "Sign up free, choose your role, start trading"
+6. CTA (10s) — "Create your account now at pbc.lovable.app"
 
-### Console Warning
+---
 
-`Breadcrumbs.tsx` triggers a React warning about invalid `data-lov-id` prop on `React.Fragment`. This is a Lovable dev-tool artifact and not a production issue -- no fix needed.
+### Phase 2: Wholesaler Tutorials (Supply Side)
 
-### Tutorial System
+| # | Video Title | Target Role | Category | Target Page |
+|---|-------------|-------------|----------|-------------|
+| 6 | How to Create Your First Shop | Wholesaler | Shops | /dashboard/shops |
+| 7 | How to Add & Manage Products | Wholesaler | Products | /dashboard/products |
+| 8 | How to Set Product Pricing & Variations | Wholesaler | Products | /dashboard/products |
+| 9 | How to Manage Incoming Orders | Wholesaler | Orders | /dashboard/wholesaler-orders |
+| 10 | How to Set Up Payment Methods | Wholesaler | Payments | /dashboard/payment |
+| 11 | How to Configure Shipping | Wholesaler | Shipping | /dashboard/shipping |
+| 12 | How to Create & Manage Coupons | Wholesaler | Orders | /dashboard/coupons |
+| 13 | How to Read Your Analytics | Wholesaler | General | /dashboard/analytics |
 
-Reviewed `Tutorials.tsx` and `lib/tutorials.ts` -- both are clean. The public page fetches active tutorials, supports search/category filter, video playback (YouTube + direct files), and localized content. No bugs found.
+---
 
-### Auth System
+### Phase 3: Seller (Buyer) Tutorials
 
-`AuthContext.tsx` logic is sound: session refresh, integrity checks, profile sync on SIGNED_IN, cleanup on SIGNED_OUT. The only issue is the `NodeJS.Timeout` type (covered above).
+| # | Video Title | Target Role | Category | Target Page |
+|---|-------------|-------------|----------|-------------|
+| 14 | How to Browse & Find Shops | Seller | Shops | /dashboard/browse-shops |
+| 15 | How to Place an Order | Seller | Orders | /dashboard/seller-orders |
+| 16 | How to Track Your Orders | Seller | Orders | /dashboard/seller-orders |
+| 17 | How to Message a Wholesaler | Seller | General | none |
 
-### Wholesaler/Ordering Flow
+---
 
-Product creation (`CreateProductDialog`), order management (`EnhancedOrderManagementSystem`, `UnifiedOrderManagement`), and related queries were previously fixed with explicit FK hints. No new issues found.
+### Phase 4: Admin Tutorials (Internal Use)
 
-### Summary of Changes
+| # | Video Title | Target Role | Category | Target Page |
+|---|-------------|-------------|----------|-------------|
+| 18 | Admin: How to Manage Role Requests | Admin | Account | /dashboard/admin |
+| 19 | Admin: How to Add & Manage Tutorials | Admin | General | /dashboard/tutorial-manager |
 
-- **15 files edited** to fix build errors (replace `process.env.NODE_ENV` with `import.meta.env` equivalents, replace `NodeJS.Timeout` with `ReturnType<typeof setTimeout>`)
-- **1 security fix** in PerformanceMonitor (remove localStorage role check)
-- **0 database changes needed**
+---
 
+### Recording Tips
+
+**Structure each video:**
+1. Intro (10s) — "In this video you'll learn how to..."
+2. Show the page — Navigate to the relevant page
+3. Step-by-step walkthrough — Do the action live on screen
+4. Recap (10s) — "Now you know how to..."
+
+**Practical advice:**
+- Keep videos under 3-4 minutes
+- Screen record with OBS Studio (free)
+- Record at 1080p minimum
+- Upload to YouTube as Unlisted for privacy
+- Use the **Target Page** field in Tutorial Manager so videos appear contextually on the right page
+- Mark Video #1 as **Featured** so it always shows first
+
+**Recording order:** Phase 1 first (every user needs these), then Phase 2 (wholesalers are your supply side), then Phase 3 and 4.

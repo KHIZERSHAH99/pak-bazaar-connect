@@ -21,15 +21,14 @@ const PerformanceMonitor: React.FC = () => {
   });
   
   const [isVisible, setIsVisible] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mountedRef = useRef(true);
 
   useEffect(() => {
     // Only show in development or for admin users
     const isDev = import.meta.env.DEV;
-    const isAdmin = localStorage.getItem('user_role') === 'admin';
     
-    if (!isDev && !isAdmin) {
+    if (!isDev) {
       setIsVisible(false);
       return;
     }

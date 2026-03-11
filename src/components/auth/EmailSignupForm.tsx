@@ -411,6 +411,48 @@ const EmailSignupForm = () => {
               )}
             />
 
+            {/* Terms & Conditions Checkbox */}
+            <FormField
+              control={form.control}
+              name="acceptTerms"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-border p-4">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      disabled={isLoading}
+                      className="mt-0.5 h-4 w-4 rounded border-input accent-primary cursor-pointer"
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-poppins cursor-pointer">
+                      I agree to the{' '}
+                      <Link
+                        to="/terms-and-conditions"
+                        target="_blank"
+                        className="text-primary hover:text-primary/80 underline font-medium"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Terms & Conditions
+                      </Link>
+                      {' '}and{' '}
+                      <Link
+                        to="/privacy-policy"
+                        target="_blank"
+                        className="text-primary hover:text-primary/80 underline font-medium"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Privacy Policy
+                      </Link>
+                    </FormLabel>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
             <Button 
               type="submit" 
               className="w-full py-6 font-semibold"

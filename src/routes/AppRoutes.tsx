@@ -102,6 +102,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/terms-of-service" element={<LazyRoute><TermsOfService /></LazyRoute>} />
         <Route path="/refund-policy" element={<LazyRoute><RefundPolicy /></LazyRoute>} />
         <Route path="/shipping-policy" element={<LazyRoute><ShippingPolicy /></LazyRoute>} />
+        <Route path="/terms-and-conditions" element={<LazyRoute><TermsAndConditions /></LazyRoute>} />
         
         {/* Additional routes */}
         <Route path="/favorites" element={<LazyRoute><Favorites /></LazyRoute>} />

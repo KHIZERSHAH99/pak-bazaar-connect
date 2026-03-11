@@ -30,6 +30,7 @@ export const useSignupForm = () => {
       industry: '',
       
       contactName: '',
+      acceptTerms: false,
     }
   });
   

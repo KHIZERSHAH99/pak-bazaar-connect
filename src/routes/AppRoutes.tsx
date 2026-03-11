@@ -56,6 +56,7 @@ const DashboardAdminAnalytics = lazy(() => import('@/pages/dashboard/DashboardAd
 const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));
 const ShopDetails = lazy(() => import('@/pages/ShopDetails'));
 const PublicTutorials = lazy(() => import('@/pages/Tutorials'));
+const TermsAndConditions = lazy(() => import('@/pages/TermsAndConditions'));
 
 // Seller sub-pages (used by /seller/ routes, now redirected)
 const SellerShopDetails = lazy(() => import('@/pages/seller/ShopDetails'));

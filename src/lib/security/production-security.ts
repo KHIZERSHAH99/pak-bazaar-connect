@@ -9,7 +9,7 @@ interface ProductionSecurityConfig {
 
 class ProductionSecurityManager {
   private config: ProductionSecurityConfig = {
-    blockDemoCredentials: process.env.NODE_ENV === 'production',
+    blockDemoCredentials: import.meta.env.PROD,
     enforceStrongPasswords: true,
     enableSuspiciousActivityDetection: true,
     logSecurityEvents: true

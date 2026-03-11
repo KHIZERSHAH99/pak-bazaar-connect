@@ -23,7 +23,7 @@ export const usePageAnalytics = () => {
       if ('performance' in window && location.pathname !== '/') {
         setTimeout(() => {
           const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-          if (perfData && process.env.NODE_ENV === 'development') {
+          if (perfData && import.meta.env.DEV) {
             console.log('Performance metrics:', {
               path: location.pathname,
               loadTime: Math.round(perfData.loadEventEnd - perfData.loadEventStart),

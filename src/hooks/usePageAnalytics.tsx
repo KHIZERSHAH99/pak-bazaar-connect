@@ -9,7 +9,7 @@ export const usePageAnalytics = () => {
     // Debounce to prevent duplicate calls
     const timeoutId = setTimeout(() => {
       // Track page views only once per location change
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('Page view:', {
           path: location.pathname,
           timestamp: new Date().toISOString(),

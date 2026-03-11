@@ -6,7 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const Footer = () => {
   const { t, language } = useLanguage();
-  
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -42,8 +42,8 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-primary" />
-                <a href="tel:+923149388513" className="text-sm text-muted-foreground hover:text-primary transition-colors font-poppins">
-                  +92 3149388513
+                <a className="text-sm text-muted-foreground hover:text-primary transition-colors font-poppins" href="">
+                  ​+92XXXXXXXXX
                 </a>
               </div>
               <div className="flex items-center gap-3">
@@ -162,8 +162,8 @@ const Footer = () => {
           </Button>
         </div>
       </div>
-    </footer>
-  );
+    </footer>);
+
 };
 
 export default Footer;

@@ -17,7 +17,7 @@ interface RateLimitResult {
 
 class EnhancedRateLimiter {
   private attempts = new Map<string, { count: number; resetTime: number; blocked?: number }>();
-  private cleanupInterval: NodeJS.Timeout;
+  private cleanupInterval: ReturnType<typeof setInterval>;
 
   constructor() {
     // Clean up expired entries every 2 minutes

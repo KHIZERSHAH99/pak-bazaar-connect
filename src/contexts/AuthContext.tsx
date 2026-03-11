@@ -123,8 +123,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Initialize auth state
   useEffect(() => {
     let mounted = true;
-    let refreshTimer: NodeJS.Timeout | null = null;
-    let sessionCheckTimer: NodeJS.Timeout | null = null;
+    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+    let sessionCheckTimer: ReturnType<typeof setInterval> | null = null;
 
     const setupSessionRefresh = (sess: Session) => {
       if (refreshTimer) clearTimeout(refreshTimer);

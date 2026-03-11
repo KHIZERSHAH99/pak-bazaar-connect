@@ -326,7 +326,7 @@ class AuthSecurityManager {
     if (this.isDemoCredentials(identifier, password)) {
       await this.logSecurityEvent('demo_credentials_blocked', {
         identifier,
-        environment: process.env.NODE_ENV
+        environment: import.meta.env.MODE
       });
       
       return {

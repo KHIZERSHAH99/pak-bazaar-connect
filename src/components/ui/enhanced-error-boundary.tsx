@@ -50,7 +50,7 @@ class EnhancedErrorBoundary extends Component<Props, State> {
     this.props.onError?.(error, errorInfo);
 
     // Log to external service in production
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       // TODO: Integrate with error tracking service
       console.log('Would send to error tracking service:', { error, errorInfo });
     }

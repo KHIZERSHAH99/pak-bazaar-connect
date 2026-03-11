@@ -27,9 +27,8 @@ const PerformanceMonitor: React.FC = () => {
   useEffect(() => {
     // Only show in development or for admin users
     const isDev = import.meta.env.DEV;
-    const isAdmin = localStorage.getItem('user_role') === 'admin';
     
-    if (!isDev && !isAdmin) {
+    if (!isDev) {
       setIsVisible(false);
       return;
     }

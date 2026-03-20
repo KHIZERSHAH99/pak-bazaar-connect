@@ -30,6 +30,10 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  useEffect(() => {
+    startRoutePrefetch();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider 

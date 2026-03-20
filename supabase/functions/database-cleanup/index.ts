@@ -15,18 +15,26 @@ serve(async (req) => {
     console.log('🧹 Starting database cleanup...');
 
     // Run all cleanup functions
-    const { error } = await supabase.rpc('run_all_cleanups');
+    const { data, error } = await supabase.rpc('run_all_cleanups');
 
     if (error) {
       console.error('❌ Cleanup failed:', error);
       return createErrorResponse('Database cleanup failed', 500, error);
     }
 
-    console.log('✅ Database cleanup completed successfully');
+    // Get storage stats after cleanup
+    const { data: stats, error: statsError } = await supabase.rpc('get_storage_stats');
+
+    console.log('✅ Database cleanup completed:', JSON.stringify(data));
+    if (stats) {
+      console.log('📊 Storage stats:', JSON.stringify(stats));
+    }
 
     return createSecureResponse({ 
       success: true, 
       message: 'Database cleanup completed',
+      cleanup_results: data,
+      storage_stats: stats || null,
       timestamp: new Date().toISOString()
     });
 

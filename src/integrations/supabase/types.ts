@@ -2829,12 +2829,18 @@ export type Database = {
       }
       cleanup_auth_attempts_aggressive: { Args: never; Returns: undefined }
       cleanup_expired_data: { Args: never; Returns: undefined }
-      cleanup_old_audit_logs: { Args: never; Returns: undefined }
+      cleanup_expired_screenshots: { Args: never; Returns: number }
+      cleanup_expired_sessions: { Args: never; Returns: number }
+      cleanup_old_analytics: { Args: never; Returns: number }
+      cleanup_old_audit_logs: { Args: never; Returns: number }
       cleanup_old_audit_logs_aggressive: { Args: never; Returns: undefined }
-      cleanup_old_auth_attempts: { Args: never; Returns: undefined }
+      cleanup_old_auth_attempts: { Args: never; Returns: number }
+      cleanup_old_chat_history: { Args: never; Returns: number }
       cleanup_old_data: { Args: never; Returns: undefined }
       cleanup_old_guest_orders: { Args: never; Returns: undefined }
+      cleanup_old_notifications: { Args: never; Returns: number }
       cleanup_old_product_views: { Args: never; Returns: undefined }
+      cleanup_old_security_events: { Args: never; Returns: number }
       cleanup_old_sms_logs: { Args: never; Returns: undefined }
       cleanup_payment_screenshots_aggressive: {
         Args: never
@@ -2843,6 +2849,7 @@ export type Database = {
       cleanup_product_views_aggressive: { Args: never; Returns: undefined }
       cleanup_sensitive_data: { Args: never; Returns: undefined }
       cleanup_sms_logs_aggressive: { Args: never; Returns: undefined }
+      cleanup_stale_rate_limits: { Args: never; Returns: number }
       delete_completed_order_screenshots: { Args: never; Returns: undefined }
       delete_old_payment_screenshots: { Args: never; Returns: undefined }
       delete_old_screenshots: { Args: never; Returns: undefined }
@@ -2959,6 +2966,7 @@ export type Database = {
         }[]
       }
       get_security_stats: { Args: never; Returns: Json }
+      get_storage_stats: { Args: never; Returns: Json }
       get_user_by_phone: {
         Args: { phone_input: string }
         Returns: {
@@ -3033,7 +3041,7 @@ export type Database = {
         Args: { phone_input: string }
         Returns: string
       }
-      run_all_cleanups: { Args: never; Returns: undefined }
+      run_all_cleanups: { Args: never; Returns: Json }
       secure_check_rate_limit: {
         Args: {
           p_action: string

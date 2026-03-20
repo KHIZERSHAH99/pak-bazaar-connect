@@ -1,7 +1,8 @@
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { startRoutePrefetch } from "@/lib/route-prefetch";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
@@ -29,6 +30,10 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  useEffect(() => {
+    startRoutePrefetch();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider 

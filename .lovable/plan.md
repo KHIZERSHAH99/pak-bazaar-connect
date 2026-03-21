@@ -1,80 +1,42 @@
 
 
-## Complete Tutorial Video Production Plan
+## Mobile & Responsive UI Fixes
 
-No code changes needed — this is your full recording guide with the intro video added as #1.
+### Issues Found
 
----
+| Issue | Location | Severity |
+|-------|----------|----------|
+| Nested `<a>` tags in ProductCard | `ProductCard.tsx` lines 98 + 216 | High - DOM warning, broken click behavior |
+| Favorite button invisible on mobile | `ProductCard.tsx` line 155 | High - `opacity-0` with hover-only, never shows on touch |
+| Tablet navbar text wraps to 3 lines | `Navbar.tsx` at 768px | Medium - "Pak Bazaar Connect" stacks awkwardly |
+| Tutorials page renders blank | `Tutorials.tsx` | Medium - no footer visible, white flash before content |
+| Play overlay hidden on mobile | `Tutorials.tsx` line 132 | Medium - hover-only play button |
 
-### Phase 1: Getting Started (Record These First)
+### Plan
 
-| # | Video Title | Target Role | Category | Target Page | Duration |
-|---|-------------|-------------|----------|-------------|----------|
-| 1 | **What is Pak Bazaar Connect? (Platform Overview)** | All | Getting Started | none | 2-3 min |
-| 2 | How to Sign Up on PBC | All | Getting Started | none | 2-3 min |
-| 3 | How to Log In & Navigate Your Dashboard | All | Getting Started | /dashboard | 2-3 min |
-| 4 | How to Edit Your Profile | All | Account | /profile | 2 min |
-| 5 | How to Use the Chatbot for Help | All | General | none | 1-2 min |
+**1. Fix ProductCard nested links (ProductCard.tsx)**
+- Remove the inner `<Link>` on line 216 that wraps the "View Product" button
+- Replace with a plain `<Button>` since the entire card is already a `<Link>`
+- This eliminates the `<a> inside <a>` DOM nesting warning
 
-**Video #1 Script Outline — "What is Pak Bazaar Connect?"**
-1. Hook (10s) — "Looking for a better way to buy and sell wholesale in Pakistan?"
-2. What PBC is (30s) — B2B marketplace connecting wholesalers and sellers
-3. Who it's for (30s) — Wholesalers who want to sell, Sellers/retailers who want to buy
-4. Key features tour (60s) — Quick visual: shops, products, orders, messaging, analytics
-5. How to get started (20s) — "Sign up free, choose your role, start trading"
-6. CTA (10s) — "Create your account now at pbc.lovable.app"
+**2. Show favorite button on mobile (ProductCard.tsx)**
+- Change line 155: replace `opacity-0 group-hover:opacity-100` with `opacity-100 md:opacity-0 md:group-hover:opacity-100`
+- Mobile users can always see/tap the heart icon; desktop keeps hover behavior
 
----
+**3. Fix tablet navbar text wrapping (Navbar.tsx)**
+- Hide "Pak Bazaar Connect" text below `lg` breakpoint (1024px) instead of `sm` (640px)
+- At 768px tablet width, only show "PBC" logo to avoid the 3-line text stack
 
-### Phase 2: Wholesaler Tutorials (Supply Side)
+**4. Fix tutorials page mobile experience (Tutorials.tsx)**
+- Add a visible play icon overlay on mobile (remove hover-only behavior)
+- Ensure video dialog is full-width on mobile (`max-w-[95vw]` on small screens)
 
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 6 | How to Create Your First Shop | Wholesaler | Shops | /dashboard/shops |
-| 7 | How to Add & Manage Products | Wholesaler | Products | /dashboard/products |
-| 8 | How to Set Product Pricing & Variations | Wholesaler | Products | /dashboard/products |
-| 9 | How to Manage Incoming Orders | Wholesaler | Orders | /dashboard/wholesaler-orders |
-| 10 | How to Set Up Payment Methods | Wholesaler | Payments | /dashboard/payment |
-| 11 | How to Configure Shipping | Wholesaler | Shipping | /dashboard/shipping |
-| 12 | How to Create & Manage Coupons | Wholesaler | Orders | /dashboard/coupons |
-| 13 | How to Read Your Analytics | Wholesaler | General | /dashboard/analytics |
+**5. Minor touch-target improvements**
+- Ensure category filter buttons in Tutorials have adequate spacing on small screens
+- Make tutorial cards' play overlay always visible on mobile via `opacity-100 md:opacity-0 md:group-hover:opacity-100`
 
----
+### Files to Edit
+- `src/components/products/ProductCard.tsx`
+- `src/components/Navbar.tsx`
+- `src/pages/Tutorials.tsx`
 
-### Phase 3: Seller (Buyer) Tutorials
-
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 14 | How to Browse & Find Shops | Seller | Shops | /dashboard/browse-shops |
-| 15 | How to Place an Order | Seller | Orders | /dashboard/seller-orders |
-| 16 | How to Track Your Orders | Seller | Orders | /dashboard/seller-orders |
-| 17 | How to Message a Wholesaler | Seller | General | none |
-
----
-
-### Phase 4: Admin Tutorials (Internal Use)
-
-| # | Video Title | Target Role | Category | Target Page |
-|---|-------------|-------------|----------|-------------|
-| 18 | Admin: How to Manage Role Requests | Admin | Account | /dashboard/admin |
-| 19 | Admin: How to Add & Manage Tutorials | Admin | General | /dashboard/tutorial-manager |
-
----
-
-### Recording Tips
-
-**Structure each video:**
-1. Intro (10s) — "In this video you'll learn how to..."
-2. Show the page — Navigate to the relevant page
-3. Step-by-step walkthrough — Do the action live on screen
-4. Recap (10s) — "Now you know how to..."
-
-**Practical advice:**
-- Keep videos under 3-4 minutes
-- Screen record with OBS Studio (free)
-- Record at 1080p minimum
-- Upload to YouTube as Unlisted for privacy
-- Use the **Target Page** field in Tutorial Manager so videos appear contextually on the right page
-- Mark Video #1 as **Featured** so it always shows first
-
-**Recording order:** Phase 1 first (every user needs these), then Phase 2 (wholesalers are your supply side), then Phase 3 and 4.

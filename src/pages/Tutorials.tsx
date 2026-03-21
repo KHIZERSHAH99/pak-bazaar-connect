@@ -128,10 +128,10 @@ const PublicTutorials: React.FC = () => {
                       <Video className="h-10 w-10 text-primary/40" />
                     </div>
                   )}
-                  {/* Play overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-primary rounded-full p-3 shadow-lg">
-                      <Play className="h-6 w-6 text-primary-foreground fill-current" />
+                  {/* Play overlay - always visible on mobile, hover on desktop */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                    <div className="bg-primary rounded-full p-2.5 md:p-3 shadow-lg">
+                      <Play className="h-5 w-5 md:h-6 md:w-6 text-primary-foreground fill-current" />
                     </div>
                   </div>
                   {/* Duration badge */}
@@ -174,7 +174,7 @@ const PublicTutorials: React.FC = () => {
 
       {/* Video Dialog */}
       <Dialog open={!!selectedTutorial} onOpenChange={() => setSelectedTutorial(null)}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-[95vw] sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle className="font-poppins">
               {selectedTutorial && (getLocalizedField(selectedTutorial, 'title', language) || selectedTutorial.title)}

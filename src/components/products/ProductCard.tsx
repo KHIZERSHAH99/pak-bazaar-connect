@@ -121,6 +121,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
               Quick View
             </Button>
           </div>
+          {/* Mobile play-style tap indicator */}
+          <div className="flex md:hidden absolute inset-0 items-center justify-center pointer-events-none">
+            <div className="bg-background/80 rounded-full p-2 shadow-sm">
+              <Eye className="w-4 h-4 text-primary" />
+            </div>
+          </div>
 
           {/* Top badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
@@ -152,7 +158,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {showFavorite && (
             <button
               onClick={handleToggleFavorite}
-              className="absolute top-2 right-2 bg-background/90 rounded-full p-2 md:p-2.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+              className="absolute top-2 right-2 bg-background/90 rounded-full p-2 md:p-2.5 shadow-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:bg-background"
             >
               <Heart className={`w-4 h-4 md:w-5 md:h-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
             </button>
@@ -213,15 +219,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Order Button */}
           {showAddToCart && (
             <div className="mt-auto pt-3 flex-shrink-0">
-              <Link to={`/product/${product.id}`} className="block">
-                <Button 
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-sm md:text-base h-10 md:h-12"
-                  size="default"
-                >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  View Product
-                </Button>
-              </Link>
+              <Button 
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-sm md:text-base h-10 md:h-12"
+                size="default"
+              >
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                View Product
+              </Button>
             </div>
           )}
         </div>

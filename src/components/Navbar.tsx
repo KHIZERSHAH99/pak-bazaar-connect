@@ -75,7 +75,7 @@ const Navbar = () => {
                 <div className="bg-primary rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
                   <span className="text-primary-foreground text-lg md:text-xl font-bold">PBC</span>
                 </div>
-                <span className="text-lg md:text-xl font-bold text-foreground hidden sm:inline font-poppins">
+                <span className="text-lg md:text-xl font-bold text-foreground hidden lg:inline font-poppins">
                   Pak Bazaar Connect
                 </span>
               </Link>

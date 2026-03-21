@@ -174,7 +174,7 @@ const PublicTutorials: React.FC = () => {
 
       {/* Video Dialog */}
       <Dialog open={!!selectedTutorial} onOpenChange={() => setSelectedTutorial(null)}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-[95vw] sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle className="font-poppins">
               {selectedTutorial && (getLocalizedField(selectedTutorial, 'title', language) || selectedTutorial.title)}

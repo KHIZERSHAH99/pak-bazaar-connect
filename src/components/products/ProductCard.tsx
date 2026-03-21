@@ -219,15 +219,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Order Button */}
           {showAddToCart && (
             <div className="mt-auto pt-3 flex-shrink-0">
-              <Link to={`/product/${product.id}`} className="block">
-                <Button 
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-sm md:text-base h-10 md:h-12"
-                  size="default"
-                >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  View Product
-                </Button>
-              </Link>
+              <Button 
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-sm md:text-base h-10 md:h-12"
+                size="default"
+              >
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                View Product
+              </Button>
             </div>
           )}
         </div>

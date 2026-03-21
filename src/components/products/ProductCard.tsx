@@ -121,6 +121,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
               Quick View
             </Button>
           </div>
+          {/* Mobile play-style tap indicator */}
+          <div className="flex md:hidden absolute inset-0 items-center justify-center pointer-events-none">
+            <div className="bg-background/80 rounded-full p-2 shadow-sm">
+              <Eye className="w-4 h-4 text-primary" />
+            </div>
+          </div>
 
           {/* Top badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">

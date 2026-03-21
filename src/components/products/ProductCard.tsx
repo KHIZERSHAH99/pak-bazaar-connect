@@ -158,7 +158,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {showFavorite && (
             <button
               onClick={handleToggleFavorite}
-              className="absolute top-2 right-2 bg-background/90 rounded-full p-2 md:p-2.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+              className="absolute top-2 right-2 bg-background/90 rounded-full p-2 md:p-2.5 shadow-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:bg-background"
             >
               <Heart className={`w-4 h-4 md:w-5 md:h-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
             </button>

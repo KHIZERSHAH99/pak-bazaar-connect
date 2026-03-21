@@ -32,7 +32,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <SEOHead title={title} description={description} />
       <Navbar />
       <div className="flex flex-grow relative">
-        <div className="md:hidden fixed top-16 left-3 z-30">
+        <div className="md:hidden fixed top-[4.5rem] left-2 z-30">
           <Button 
             className="rounded-lg w-10 h-10 flex items-center justify-center bg-card border border-border shadow-lg hover:bg-accent transition-all duration-200 hover:scale-105" 
             onClick={toggleSidebar} 

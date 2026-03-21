@@ -57,11 +57,11 @@ const Navbar = () => {
   };
   return <>
       {/* Top Banner */}
-      <div className="bg-primary text-primary-foreground py-1.5 md:py-2 px-3 md:px-4 text-center relative overflow-hidden">
+      <div className="bg-primary text-primary-foreground py-1 sm:py-1.5 md:py-2 px-2 sm:px-3 md:px-4 text-center relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center opacity-5">
-          <Flag className="w-24 md:w-40 h-24 md:h-40 text-primary-foreground" />
+          <Flag className="w-20 sm:w-24 md:w-40 h-20 sm:h-24 md:h-40 text-primary-foreground" />
         </div>
-        <p className="text-xs md:text-sm font-medium relative z-10">
+        <p className="text-[10px] sm:text-xs md:text-sm font-medium relative z-10">
           Welcome to Pakistan's Premier B2B Marketplace
         </p>
       </div>

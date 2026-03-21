@@ -125,7 +125,7 @@ const FeaturedProducts = () => {
                     </div>
 
                     {/* Action Button */}
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 rounded-xl shadow-lg hover:shadow-primary/30">
+                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins mt-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 transform sm:translate-y-2 sm:group-hover:translate-y-0 rounded-xl shadow-lg hover:shadow-primary/30 min-h-[44px]">
                       {t('featuredProducts.viewDetails')}
                       <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                     </Button>

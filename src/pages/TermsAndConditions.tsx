@@ -247,8 +247,15 @@ const TermsAndConditions: React.FC = () => {
                 </ul>
               </li>
               <li>
-                In no event shall our total liability exceed PKR 10,000 (ten thousand Pakistani Rupees) 
-                or the amount paid by you to us in the last 12 months, whichever is less.
+                In no event shall our total aggregate liability exceed the total fees paid by you to us 
+                during the 12 months immediately preceding the event giving rise to such liability.
+              </li>
+              <li>
+                Nothing in these Terms shall limit or exclude our liability for: (a) death or personal injury 
+                caused by our negligence; (b) fraud or fraudulent misrepresentation; (c) gross negligence or 
+                willful misconduct; or (d) any liability that cannot be excluded or limited under applicable 
+                Pakistani law, including the Electronic Transactions Ordinance, 2002 and Section 74 of the 
+                Contract Act, 1872.
               </li>
             </ul>
           </CardContent>

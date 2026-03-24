@@ -1,42 +1,29 @@
+strict note: do it if you think it right. if you thinks its not in our case you can chose whatever you think best  
+  
+Update Liability Clause in Terms & Conditions
 
+Based on the Gemini legal advice, the current fixed PKR 10,000 liability cap could be challenged as unconscionable under Pakistan's Contract Act Section 74. This is a single-file text update.
 
-## Mobile & Responsive UI Fixes
+### Change
 
-### Issues Found
+**File: `src/pages/TermsAndConditions.tsx` (lines 249-252)**
 
-| Issue | Location | Severity |
-|-------|----------|----------|
-| Nested `<a>` tags in ProductCard | `ProductCard.tsx` lines 98 + 216 | High - DOM warning, broken click behavior |
-| Favorite button invisible on mobile | `ProductCard.tsx` line 155 | High - `opacity-0` with hover-only, never shows on touch |
-| Tablet navbar text wraps to 3 lines | `Navbar.tsx` at 768px | Medium - "Pak Bazaar Connect" stacks awkwardly |
-| Tutorials page renders blank | `Tutorials.tsx` | Medium - no footer visible, white flash before content |
-| Play overlay hidden on mobile | `Tutorials.tsx` line 132 | Medium - hover-only play button |
+Replace the current liability cap:
 
-### Plan
+> "In no event shall our total liability exceed PKR 10,000 or the amount paid by you to us in the last 12 months, whichever is less."
 
-**1. Fix ProductCard nested links (ProductCard.tsx)**
-- Remove the inner `<Link>` on line 216 that wraps the "View Product" button
-- Replace with a plain `<Button>` since the entire card is already a `<Link>`
-- This eliminates the `<a> inside <a>` DOM nesting warning
+With a fee-based limit and fraud/negligence carve-out:
 
-**2. Show favorite button on mobile (ProductCard.tsx)**
-- Change line 155: replace `opacity-0 group-hover:opacity-100` with `opacity-100 md:opacity-0 md:group-hover:opacity-100`
-- Mobile users can always see/tap the heart icon; desktop keeps hover behavior
+> "In no event shall our total aggregate liability exceed the total fees paid by you to us during the 12 months immediately preceding the event giving rise to such liability. Nothing in these Terms shall limit or exclude our liability for: (a) death or personal injury caused by our negligence; (b) fraud or fraudulent misrepresentation; (c) gross negligence or willful misconduct; or (d) any liability that cannot be excluded or limited under applicable Pakistani law, including the Electronic Transactions Ordinance, 2002 and Section 74 of the Contract Act, 1872."
 
-**3. Fix tablet navbar text wrapping (Navbar.tsx)**
-- Hide "Pak Bazaar Connect" text below `lg` breakpoint (1024px) instead of `sm` (640px)
-- At 768px tablet width, only show "PBC" logo to avoid the 3-line text stack
+### Why this matters
 
-**4. Fix tutorials page mobile experience (Tutorials.tsx)**
-- Add a visible play icon overlay on mobile (remove hover-only behavior)
-- Ensure video dialog is full-width on mobile (`max-w-[95vw]` on small screens)
+- A fixed PKR 10,000 cap is legally weak -- courts can override it under Section 74 of the Contract Act
+- Fee-based caps (12 months of fees) are the industry standard for B2B platforms
+- Explicitly excluding gross negligence and fraud from the cap is essential -- without this, the entire limitation clause could be voided
+- This protects you better while being legally defensible
 
-**5. Minor touch-target improvements**
-- Ensure category filter buttons in Tutorials have adequate spacing on small screens
-- Make tutorial cards' play overlay always visible on mobile via `opacity-100 md:opacity-0 md:group-hover:opacity-100`
+### Files to edit
 
-### Files to Edit
-- `src/components/products/ProductCard.tsx`
-- `src/components/Navbar.tsx`
-- `src/pages/Tutorials.tsx`
-
+- `src/pages/TermsAndConditions.tsx` -- update lines 249-252  
+  

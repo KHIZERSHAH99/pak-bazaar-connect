@@ -164,6 +164,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
             { name: 'Coupons', path: '/dashboard/coupons', icon: <Ticket className={iconClass} /> },
             { name: 'Payment', path: '/dashboard/payment', icon: <CreditCard className={iconClass} /> },
             { name: 'Analytics', path: '/dashboard/analytics', icon: <BarChart3 className={iconClass} /> },
+            { name: 'Inventory', path: '/dashboard/inventory', icon: <Warehouse className={iconClass} /> },
           ],
         },
       ];

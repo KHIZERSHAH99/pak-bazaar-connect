@@ -32,23 +32,39 @@ const RestockDialog: React.FC<RestockDialogProps> = ({ open, onOpenChange, produ
     }
 
     setLoading(true);
-    const newStock = mode === 'add' ? (product.stock_quantity || 0) + qty : qty;
+    const prevStock = product.stock_quantity || 0;
+    const newStock = mode === 'add' ? prevStock + qty : qty;
+    const change = newStock - prevStock;
 
     const { error } = await supabase
       .from('products')
       .update({ stock_quantity: newStock })
       .eq('id', product.id);
 
-    setLoading(false);
     if (error) {
+      setLoading(false);
       toast({ title: 'Failed to update stock', description: error.message, variant: 'destructive' });
-    } else {
-      toast({ title: 'Stock updated', description: `${product.name} now has ${newStock} units` });
-      queryClient.invalidateQueries({ queryKey: ['inventory-products'] });
-      onOpenChange(false);
-      setQuantity('');
-      setMode('add');
+      return;
     }
+
+    // Log the stock movement
+    const { data: { user } } = await supabase.auth.getUser();
+    await supabase.from('stock_movements').insert({
+      product_id: product.id,
+      quantity_change: change,
+      previous_quantity: prevStock,
+      new_quantity: newStock,
+      reason: 'manual_restock',
+      created_by: user?.id,
+    });
+
+    setLoading(false);
+    toast({ title: 'Stock updated', description: `${product.name} now has ${newStock} units` });
+    queryClient.invalidateQueries({ queryKey: ['inventory-products'] });
+    queryClient.invalidateQueries({ queryKey: ['stock-movements'] });
+    onOpenChange(false);
+    setQuantity('');
+    setMode('add');
   };
 
   if (!product) return null;

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Package, AlertTriangle, XCircle, CheckCircle, Search, RefreshCw } from 'lucide-react';
 import RestockDialog from './RestockDialog';
+import StockMovementLog from './StockMovementLog';
 
 const LOW_STOCK_THRESHOLD = 10;
 

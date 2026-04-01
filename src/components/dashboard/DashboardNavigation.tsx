@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { 
   Home, Package, ShoppingCart, MessageSquare, Settings, Store,
   BarChart3, Truck, CreditCard, Ticket, BookOpen, Video,
-  Shield, Users, Eye, ClipboardList, AlertTriangle, TrendingUp
+  Shield, Users, Eye, ClipboardList, AlertTriangle, TrendingUp, Warehouse
 } from 'lucide-react';
 
 interface NavItem {

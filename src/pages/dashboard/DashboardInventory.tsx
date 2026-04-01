@@ -1,5 +1,5 @@
 import React from 'react';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import DashboardLayout from '@/components/DashboardLayout';
 import InventoryDashboard from '@/components/dashboard/InventoryDashboard';
 
 const DashboardInventory: React.FC = () => {

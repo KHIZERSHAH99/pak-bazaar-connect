@@ -51,6 +51,7 @@ const DashboardAdminUsers = lazy(() => import('@/pages/dashboard/DashboardAdminU
 const DashboardAdminOrders = lazy(() => import('@/pages/dashboard/DashboardAdminOrders'));
 const DashboardAdminModeration = lazy(() => import('@/pages/dashboard/DashboardAdminModeration'));
 const DashboardAdminAnalytics = lazy(() => import('@/pages/dashboard/DashboardAdminAnalytics'));
+const DashboardInventory = lazy(() => import('@/pages/dashboard/DashboardInventory'));
 
 // Public pages
 const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));

@@ -175,6 +175,8 @@ const InventoryDashboard: React.FC = () => {
         </CardContent>
       </Card>
 
+      <StockMovementLog />
+
       <RestockDialog
         open={!!restockProduct}
         onOpenChange={(open) => !open && setRestockProduct(null)}

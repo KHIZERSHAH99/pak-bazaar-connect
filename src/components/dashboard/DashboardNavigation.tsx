@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { 
   Home, Package, ShoppingCart, MessageSquare, Settings, Store,
   BarChart3, Truck, CreditCard, Ticket, BookOpen, Video,
-  Shield, Users, Eye, ClipboardList, AlertTriangle, TrendingUp
+  Shield, Users, Eye, ClipboardList, AlertTriangle, TrendingUp, Warehouse
 } from 'lucide-react';
 
 interface NavItem {
@@ -135,9 +135,10 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
           { name: 'Wholesaler Orders', path: '/dashboard/wholesaler-orders', icon: <ShoppingCart className={iconClass} /> },
           { name: 'Coupons', path: '/dashboard/coupons', icon: <Ticket className={iconClass} /> },
           { name: 'Payment', path: '/dashboard/payment', icon: <CreditCard className={iconClass} /> },
-          { name: 'Analytics', path: '/dashboard/analytics', icon: <BarChart3 className={iconClass} /> },
-        ],
-      };
+           { name: 'Analytics', path: '/dashboard/analytics', icon: <BarChart3 className={iconClass} /> },
+            { name: 'Inventory', path: '/dashboard/inventory', icon: <Warehouse className={iconClass} /> },
+          ],
+        };
 
       const sellerSection: NavSection = {
         label: 'Seller View',
@@ -163,6 +164,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
             { name: 'Coupons', path: '/dashboard/coupons', icon: <Ticket className={iconClass} /> },
             { name: 'Payment', path: '/dashboard/payment', icon: <CreditCard className={iconClass} /> },
             { name: 'Analytics', path: '/dashboard/analytics', icon: <BarChart3 className={iconClass} /> },
+            { name: 'Inventory', path: '/dashboard/inventory', icon: <Warehouse className={iconClass} /> },
           ],
         },
       ];

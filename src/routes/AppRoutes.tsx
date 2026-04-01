@@ -51,6 +51,7 @@ const DashboardAdminUsers = lazy(() => import('@/pages/dashboard/DashboardAdminU
 const DashboardAdminOrders = lazy(() => import('@/pages/dashboard/DashboardAdminOrders'));
 const DashboardAdminModeration = lazy(() => import('@/pages/dashboard/DashboardAdminModeration'));
 const DashboardAdminAnalytics = lazy(() => import('@/pages/dashboard/DashboardAdminAnalytics'));
+const DashboardInventory = lazy(() => import('@/pages/dashboard/DashboardInventory'));
 
 // Public pages
 const PublicBrowseShops = lazy(() => import('@/pages/BrowseShops'));
@@ -136,6 +137,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/dashboard/tutorials" element={<ProtectedRoute><LazyRoute><DashboardTutorials /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/tutorials/:id" element={<ProtectedRoute><LazyRoute><DashboardTutorialDetail /></LazyRoute></ProtectedRoute>} />
         <Route path="/dashboard/tutorial-manager" element={<ProtectedRoute requiredRole="admin"><LazyRoute><DashboardTutorialManager /></LazyRoute></ProtectedRoute>} />
+        <Route path="/dashboard/inventory" element={<ProtectedRoute requiredRole="wholesaler"><LazyRoute><DashboardInventory /></LazyRoute></ProtectedRoute>} />
 
         {/* Seller sub-pages (kept for shop detail navigation) */}
         <Route path="/seller/shop/:shopId" element={<ProtectedRoute requiredRole="seller"><LazyRoute><SellerShopDetails /></LazyRoute></ProtectedRoute>} />

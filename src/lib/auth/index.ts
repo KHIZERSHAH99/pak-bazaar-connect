@@ -139,7 +139,7 @@ const signInWithPhone = async (phoneNumber: string, password: string) => {
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('id, email, role, phone_number, normalized_phone')
-      .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${phoneNumber},phone_number.eq.${normalizedPhone},email.like.%${normalizedPhone}@temp-phone-auth.com,email.like.%${normalizedPhone}@phone.auth.local,email.like.%${normalizedPhone}@pakbazaarconnect.store,email.like.%${normalizedPhone}@phone.auth`)
+      .or(`normalized_phone.eq.${normalizedPhone},phone_number.eq.${phoneNumber},phone_number.eq.${normalizedPhone},email.like.%${normalizedPhone}@temp-phone-auth.com,email.like.%${normalizedPhone}@phone.auth.local,email.like.%${normalizedPhone}@pakmandi.store,email.like.%${normalizedPhone}@phone.auth`)
       .limit(1)
       .maybeSingle();
 
@@ -235,7 +235,7 @@ const signUpWithPhone = async (
   }
 
   // Create unique email for Supabase auth
-  const uniqueEmail = `${normalizedPhone}@pakbazaarconnect.store`;
+  const uniqueEmail = `${normalizedPhone}@pakmandi.store`;
 
   const signUpOptions: any = {
     emailRedirectTo: `${window.location.origin}/dashboard`,

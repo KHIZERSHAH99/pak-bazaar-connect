@@ -12,7 +12,7 @@ const ChatWelcomeMessage: React.FC = () => {
         <div>
           <div className="font-medium text-foreground text-lg mb-2">AI Support</div>
           <div className="text-muted-foreground">
-            Hello! I'm your AI assistant for Pak Bazaar Connect. How can I help you today? You can ask me about:
+            Hello! I'm your AI assistant for PakMandi. How can I help you today? You can ask me about:
             <ul className="list-disc list-inside mt-3 space-y-2">
               <li className="animate-fadeIn" style={{ animationDelay: '0.1s' }}>How to create a shop</li>
               <li className="animate-fadeIn" style={{ animationDelay: '0.2s' }}>How to list products</li>

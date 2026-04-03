@@ -187,7 +187,7 @@ const Products: React.FC = () => {
 
   return (
     <Layout 
-      title="Products - Pak Bazaar Connect"
+      title="Products - PakMandi"
       description="Browse quality products from verified wholesalers across Pakistan"
     >
       <div className="container mx-auto px-4 py-8 xl:max-w-5xl">

@@ -56,7 +56,7 @@ const Features: React.FC = () => {
 
   return (
     <Layout 
-      title="Features - Pak Bazaar Connect"
+      title="Features - PakMandi"
       description="Discover powerful features designed for B2B success in Pakistan"
     >
       <div className="container mx-auto px-4 py-8">
@@ -100,7 +100,7 @@ const Features: React.FC = () => {
           <Card className="bg-primary/5 border-primary/20 mb-12">
             <CardHeader>
               <CardTitle className="text-center text-foreground font-poppins">
-                Why Choose Pak Bazaar Connect?
+                Why Choose PakMandi?
               </CardTitle>
             </CardHeader>
             <CardContent>

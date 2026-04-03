@@ -51,7 +51,7 @@ const PublicTutorials: React.FC = () => {
             Platform Tutorials
           </h1>
           <p className="text-muted-foreground font-poppins max-w-2xl mx-auto">
-            New to Pak Bazaar Connect? Watch these quick tutorials to learn how to browse products, 
+            New to PakMandi? Watch these quick tutorials to learn how to browse products, 
             place orders, manage your shop, and grow your business.
           </p>
         </div>

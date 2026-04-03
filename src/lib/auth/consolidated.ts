@@ -59,8 +59,8 @@ export const authenticateUserWithCaptcha = async (
       
       // Try multiple email formats for phone-based accounts
       const emailFormats = [
-        `phone-${normalizedPhone}@pakbazaarconnect.store`, // New format with prefix
-        `${normalizedPhone}@pakbazaarconnect.store`, // Legacy format
+        `phone-${normalizedPhone}@pakmandi.store`, // New format with prefix
+        `${normalizedPhone}@pakmandi.store`, // Legacy format
         `${normalizedPhone}@phone.auth`,
         `${normalizedPhone}@temp-phone-auth.com`,
         `${normalizedPhone}@phone-auth.com`,
@@ -167,7 +167,7 @@ export const registerUser = async (
       
       phoneNumber = phoneValidation.sanitizedValue;
       // Use consistent email format for phone-based auth - prefix with "phone-" to ensure valid email
-      authEmail = `phone-${phoneNumber}@pakbazaarconnect.store`;
+      authEmail = `phone-${phoneNumber}@pakmandi.store`;
       
       // Check phone uniqueness
       const phoneExists = await checkFieldUniqueness('phone', phoneNumber);

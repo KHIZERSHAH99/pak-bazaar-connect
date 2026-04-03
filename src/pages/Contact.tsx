@@ -9,7 +9,7 @@ import { Mail, Phone, MapPin, MessageSquare } from 'lucide-react';
 const Contact: React.FC = () => {
   return (
     <Layout 
-      title="Contact Us - Pak Bazaar Connect"
+      title="Contact Us - PakMandi"
       description="Get in touch with our team for sales inquiries, support, or partnerships."
     >
       <div className="container mx-auto px-4 py-8">
@@ -39,7 +39,7 @@ const Contact: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground font-poppins">Email</h3>
-                  <p className="text-muted-foreground font-poppins">sales@pakbazaarconnect.com</p>
+                  <p className="text-muted-foreground font-poppins">sales@pakmandi.com</p>
                 </div>
               </div>
 

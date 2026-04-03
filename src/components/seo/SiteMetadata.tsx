@@ -10,11 +10,11 @@ interface SiteMetadataProps {
 }
 
 const SiteMetadata: React.FC<SiteMetadataProps> = ({
-  title = "Pak Bazaar Connect - Pakistan's Leading B2B Marketplace",
+  title = "PakMandi - Pakistan's Leading B2B Marketplace",
   description = "Connect with verified wholesalers and retailers across Pakistan. Find quality products, compare prices, and grow your business on Pakistan's most trusted B2B platform.",
   keywords = "Pakistan B2B marketplace, wholesale trade Pakistan, Pakistani suppliers, retailers Pakistan, business-to-business Pakistan, trade platform Pakistan, wholesale products Pakistan",
   image = "/og-image.png",
-  url = "https://pakbazaarconnect.com"
+  url = "https://pakmandi.com"
 }) => {
   return (
     <Helmet>
@@ -28,7 +28,7 @@ const SiteMetadata: React.FC<SiteMetadataProps> = ({
       <meta property="og:image" content={image} />
       <meta property="og:url" content={url} />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="Pak Bazaar Connect" />
+      <meta property="og:site_name" content="PakMandi" />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -40,7 +40,7 @@ const SiteMetadata: React.FC<SiteMetadataProps> = ({
       <meta name="robots" content="index, follow" />
       <meta name="language" content="English" />
       <meta name="revisit-after" content="7 days" />
-      <meta name="author" content="Pak Bazaar Connect" />
+      <meta name="author" content="PakMandi" />
       <meta name="distribution" content="global" />
       <meta name="rating" content="general" />
       
@@ -58,10 +58,10 @@ const SiteMetadata: React.FC<SiteMetadataProps> = ({
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          "name": "Pak Bazaar Connect",
+          "name": "PakMandi",
           "description": "Pakistan's leading B2B marketplace connecting wholesalers and retailers",
-          "url": "https://pakbazaarconnect.com",
-          "logo": "https://pakbazaarconnect.com/logo.png",
+          "url": "https://pakmandi.com",
+          "logo": "https://pakmandi.com/logo.png",
           "contactPoint": {
             "@type": "ContactPoint",
             "telephone": "+92-314-9388513",
@@ -74,9 +74,9 @@ const SiteMetadata: React.FC<SiteMetadataProps> = ({
             "name": "Pakistan"
           },
           "sameAs": [
-            "https://facebook.com/pakbazaarconnect",
-            "https://twitter.com/pakbazaarconnect",
-            "https://linkedin.com/company/pakbazaarconnect"
+            "https://facebook.com/pakmandi",
+            "https://twitter.com/pakmandi",
+            "https://linkedin.com/company/pakmandi"
           ]
         })}
       </script>

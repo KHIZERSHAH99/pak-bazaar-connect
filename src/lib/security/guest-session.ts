@@ -1,6 +1,6 @@
 // Enhanced guest session management for secure guest orders
 // Improved security with hash-based session tokens and fingerprinting
-const GUEST_SESSION_KEY = 'pbc_guest_session';
+const GUEST_SESSION_KEY = 'pm_guest_session';
 const SESSION_EXPIRY_HOURS = 24;
 const MAX_ORDERS_PER_SESSION = 5;
 

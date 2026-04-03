@@ -15,7 +15,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
-  title = 'Dashboard - Pak Bazaar Connect',
+  title = 'Dashboard - PakMandi',
   description = 'Manage your business operations on Pakistan\'s leading B2B marketplace platform.'
 }) => {
   const { loading } = useAuth();

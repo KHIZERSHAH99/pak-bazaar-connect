@@ -59,7 +59,7 @@ const TutorialGrid: React.FC = () => {
             <BookOpen className="h-6 w-6" /> {language === 'ur' ? 'ٹیوٹوریلز' : 'Tutorials'}
           </h1>
           <p className="text-muted-foreground font-poppins text-sm mt-1">
-            {language === 'ur' ? 'پلیٹ فارم استعمال کرنا قدم بہ قدم سیکھیں' : 'Learn how to use PBC platform step by step'}
+            {language === 'ur' ? 'پلیٹ فارم استعمال کرنا قدم بہ قدم سیکھیں' : 'Learn how to use PakMandi platform step by step'}
           </p>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">

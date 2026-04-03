@@ -15,10 +15,10 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({ user }) => {
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center group">
           <div className="bg-primary rounded-xl p-3 shadow-lg group-hover:shadow-xl transition-all duration-300">
-            <span className="text-primary-foreground text-2xl font-bold">PBC</span>
+            <span className="text-primary-foreground text-2xl font-bold">PM</span>
           </div>
           <span className="ml-3 text-xl font-bold text-foreground hidden md:inline">
-            Pak Bazaar Connect
+            PakMandi
           </span>
         </Link>
         

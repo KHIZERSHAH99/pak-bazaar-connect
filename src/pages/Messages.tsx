@@ -8,7 +8,7 @@ const Messages: React.FC = () => {
   return (
     <ProtectedRoute>
       <Helmet>
-        <title>Messages - Pak Bazaar Connect</title>
+        <title>Messages - PakMandi</title>
       </Helmet>
       <DashboardLayout>
         <EnhancedMessaging />

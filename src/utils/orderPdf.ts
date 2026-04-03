@@ -41,7 +41,7 @@ export const generateOrderReceipt = (order: any) => {
       <div class="header">
         <div>
           <h1>Order Receipt</h1>
-          <p style="margin:4px 0;color:#666">Pak Bazaar Connect</p>
+          <p style="margin:4px 0;color:#666">PakMandi</p>
         </div>
         <div style="text-align:right">
           <p style="font-size:18px;font-weight:bold;margin:0">Order #${order.id.slice(0, 8)}</p>
@@ -88,7 +88,7 @@ export const generateOrderReceipt = (order: any) => {
       ${order.order_notes ? `<p style="font-size:13px"><strong>Notes:</strong> ${order.order_notes}</p>` : ''}
 
       <div class="footer">
-        <p>Thank you for your order! · Pak Bazaar Connect</p>
+        <p>Thank you for your order! · PakMandi</p>
       </div>
     </body>
     </html>

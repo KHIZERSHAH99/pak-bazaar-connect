@@ -112,7 +112,7 @@ const WelcomeOnboarding: React.FC<WelcomeOnboardingProps> = ({
           </div>
           
           <CardTitle className="text-xl font-bold text-foreground font-poppins">
-            Welcome to Pak Bazaar Connect!
+            Welcome to PakMandi!
           </CardTitle>
           
           <div className="flex items-center justify-center gap-2 mt-2">

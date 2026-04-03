@@ -25,7 +25,7 @@ const FinalStep: React.FC<FinalStepProps> = ({ selectedRole, form }) => {
           Ready to Create Your Account
         </h3>
         <p className="text-muted-foreground font-poppins">
-          You're all set to join Pak Bazaar Connect as a {selectedRole}
+          You're all set to join PakMandi as a {selectedRole}
         </p>
       </div>
 

@@ -3,12 +3,12 @@ import Layout from '@/components/Layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, Award, Shield } from 'lucide-react';
 const AboutUs: React.FC = () => {
-  return <Layout title="About Us - Pak Bazaar Connect" description="Learn about Pak Bazaar Connect — Pakistan's modern B2B marketplace connecting wholesalers and retailers for seamless trade.">
+  return <Layout title="About Us - PakMandi" description="Learn about PakMandi — Pakistan's modern B2B marketplace connecting wholesalers and retailers for seamless trade.">
       <div className="min-h-screen bg-background">
         <div className="max-w-6xl mx-auto px-4 py-12">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-foreground mb-6 font-poppins">About PakBazaar Connect</h1>
+            <h1 className="text-4xl font-bold text-foreground mb-6 font-poppins">About PakMandi</h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-poppins leading-relaxed">
               Connecting Pakistani wholesalers and retailers through a modern, secure, and efficient B2B marketplace. 
               Empowering businesses to grow together.
@@ -91,7 +91,7 @@ const AboutUs: React.FC = () => {
               <h2 className="text-3xl font-bold mb-6 font-poppins text-center">Our Story</h2>
               <div className="prose max-w-none">
                 <p className="text-muted-foreground mb-4 font-poppins leading-relaxed">
-                   PakBazaar Connect was founded with a simple yet powerful vision: to transform the way businesses 
+                   PakMandi was founded with a simple yet powerful vision: to transform the way businesses 
                    interact and trade in Pakistan. Recognizing the challenges faced by both wholesalers and retailers 
                    in finding reliable partners and conducting efficient transactions, we set out to create a platform 
                    that would bridge these gaps.
@@ -103,7 +103,7 @@ const AboutUs: React.FC = () => {
                    these pain points while respecting local business practices and cultural nuances.
                 </p>
                 <p className="text-muted-foreground font-poppins leading-relaxed">
-                   Today, PakBazaar Connect serves as a trusted intermediary, facilitating thousands of successful 
+                   Today, PakMandi serves as a trusted intermediary, facilitating thousands of successful 
                    business connections and transactions. We continue to evolve and improve our platform, always 
                    keeping our users' success at the heart of everything we do.
                 </p>

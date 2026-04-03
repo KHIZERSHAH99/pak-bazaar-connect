@@ -85,11 +85,11 @@ const ProductDetail: React.FC = () => {
   }
 
   // SEO Meta Tags
-  const pageTitle = `${product.name} - ${product.shops?.name || 'Shop'} | Pak Bazaar Connect`;
+  const pageTitle = `${product.name} - ${product.shops?.name || 'Shop'} | PakMandi`;
   const pageDescription = product.description 
     ? product.description.substring(0, 160) 
     : `Buy ${product.name} from ${product.shops?.name || 'verified wholesaler'}. Starting at Rs. ${product.price.toLocaleString()}. MOQ: ${product.moq || 1} units.`;
-  const productUrl = `https://pakbazaarconnect.com/product/${product.id}`;
+  const productUrl = `https://pakmandi.com/product/${product.id}`;
   const productImageUrl = product.product_images?.[0]?.image_url || product.image || '';
 
   return (
@@ -135,7 +135,7 @@ const ProductDetail: React.FC = () => {
                 : "https://schema.org/OutOfStock",
               "seller": {
                 "@type": "Organization",
-                "name": product.shops?.name || "Pak Bazaar Connect"
+                "name": product.shops?.name || "PakMandi"
               }
             },
             ...(product.avg_rating && product.total_reviews ? {

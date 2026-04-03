@@ -6,7 +6,7 @@ import CouponManagement from '@/components/coupons/CouponManagement';
 const DashboardCoupons: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={['wholesaler']}>
-      <DashboardLayout title="Coupons - Pak Bazaar Connect">
+      <DashboardLayout title="Coupons - PakMandi">
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold text-foreground font-poppins">Coupons</h1>

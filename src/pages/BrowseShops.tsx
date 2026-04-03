@@ -5,7 +5,7 @@ import Layout from '@/components/Layout';
 const PublicBrowseShops: React.FC = () => {
   return (
     <Layout 
-      title="Browse Wholesalers - Pak Bazaar Connect"
+      title="Browse Wholesalers - PakMandi"
       description="Discover verified wholesale suppliers across Pakistan"
     >
       <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/5 via-background to-primary/10 py-8">

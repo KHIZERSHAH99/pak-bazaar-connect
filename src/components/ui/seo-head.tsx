@@ -11,10 +11,10 @@ interface SEOHeadProps {
 }
 
 const SEOHead: React.FC<SEOHeadProps> = ({
-  title = 'Pak Bazaar Connect - Pakistan\'s Leading B2B Wholesale Marketplace',
+  title = 'PakMandi - Pakistan\'s Leading B2B Wholesale Marketplace',
   description = 'Pakistan ka sabse bara B2B wholesale marketplace. Karachi, Lahore, Islamabad aur pure Pakistan mein wholesalers aur retailers ko connect karein. Thok mein khareedein, munafa kamaein!',
   keywords = 'pakistan wholesale, b2b pakistan, thok bazar, wholesale market pakistan, karachi wholesale, lahore wholesale, islamabad wholesale, pakistani suppliers, wholesale products pakistan, bulk buying pakistan, wholesale clothing pakistan, wholesale electronics pakistan',
-  image = '/pbc-logo.png',
+  image = '/pm-logo.png',
   url,
   type = 'website'
 }) => {
@@ -69,14 +69,14 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     updateMetaTag('og:type', type);
     updateMetaTag('og:locale', 'ur_PK');
     updateMetaTag('og:locale:alternate', 'en_PK');
-    updateMetaTag('og:site_name', 'Pak Bazaar Connect');
+    updateMetaTag('og:site_name', 'PakMandi');
 
     // Twitter Card tags
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
     updateMetaTag('twitter:image', image);
-    updateMetaTag('twitter:site', '@pakbazaarconnect');
+    updateMetaTag('twitter:site', '@pakmandi');
 
     // Canonical URL
     let canonical = document.querySelector('link[rel="canonical"]');

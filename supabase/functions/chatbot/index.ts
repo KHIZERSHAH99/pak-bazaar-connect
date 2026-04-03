@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
     const openAI = new OpenAI({ apiKey: OPENAI_API_KEY });
 
     const systemMessage = `
-      You are an AI assistant for Pak Bazaar Connect, a B2B E-Commerce Platform connecting wholesalers and sellers in Pakistan.
+      You are an AI assistant for PakMandi, a B2B E-Commerce Platform connecting wholesalers and sellers in Pakistan.
       
       Key platform features:
       - User roles: Admin (approves roles), Wholesaler (sells products), Seller (buys products)

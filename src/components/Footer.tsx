@@ -21,10 +21,10 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-2">
             <div className="flex items-center mb-4">
               <div className="bg-primary rounded-xl p-2 shadow-md">
-                <span className="text-primary-foreground text-lg font-bold">PBC</span>
+                <span className="text-primary-foreground text-lg font-bold">PM</span>
               </div>
               <span className="ml-3 text-xl font-bold text-foreground font-poppins">
-                Pak Bazaar Connect
+                PakMandi
               </span>
             </div>
             <p className="text-muted-foreground text-sm font-poppins max-w-md mb-6">
@@ -36,8 +36,8 @@ const Footer = () => {
             <div className="space-y-3 mb-6">
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-primary" />
-                <a href="mailto:info@pakbazaarconnect.store" className="text-sm text-muted-foreground hover:text-primary transition-colors font-poppins">
-                  info@pakbazaarconnect.store
+                <a href="mailto:info@pakmandi.store" className="text-sm text-muted-foreground hover:text-primary transition-colors font-poppins">
+                  info@pakmandi.store
                 </a>
               </div>
               <div className="flex items-center gap-3">
@@ -152,7 +152,7 @@ const Footer = () => {
         {/* Footer Bottom Section */}
         <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-center text-sm text-muted-foreground font-poppins">
-            © {new Date().getFullYear()} Pak Bazaar Connect. Trusted marketplace with secure API infrastructure.
+            © {new Date().getFullYear()} PakMandi. Trusted marketplace with secure API infrastructure.
           </p>
           
           {/* Back to Top Button */}

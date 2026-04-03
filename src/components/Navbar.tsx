@@ -73,10 +73,10 @@ const Navbar = () => {
               {/* Logo */}
               <Link to="/" className="flex items-center space-x-2 md:space-x-3 hover:opacity-80 transition-opacity">
                 <div className="bg-primary rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
-                  <span className="text-primary-foreground text-lg md:text-xl font-bold">PBC</span>
+                  <span className="text-primary-foreground text-lg md:text-xl font-bold">PM</span>
                 </div>
                 <span className="text-lg md:text-xl font-bold text-foreground hidden lg:inline font-poppins">
-                  Pak Bazaar Connect
+                  PakMandi
                 </span>
               </Link>
 

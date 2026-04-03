@@ -46,7 +46,7 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
     <div className="space-y-6 animate-fadeIn bg-background rounded-md">
       <div className="text-center mb-8">
         <h3 className="text-xl font-bold text-foreground mb-2 font-poppins">Choose Your Business Role</h3>
-        <p className="text-muted-foreground font-poppins">Select how you want to use Pak Bazaar Connect</p>
+        <p className="text-muted-foreground font-poppins">Select how you want to use PakMandi</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

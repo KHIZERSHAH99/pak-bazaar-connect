@@ -40,7 +40,7 @@ const EnhancedWelcomeOnboarding: React.FC<EnhancedWelcomeOnboardingProps> = ({
       return [
         {
           icon: <Store className="h-12 w-12 text-primary" />,
-          title: 'Welcome to Pak Bazaar Connect!',
+          title: 'Welcome to PakMandi!',
           subtitle: 'Your B2B Success Starts Here',
           description: 'Join thousands of successful wholesalers who are growing their business with our platform. Get ready to expand your reach across Pakistan!',
           action: 'Get Started',

@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const ShippingPolicy = () => {
   return (
     <Layout 
-      title="Shipping Policy - Pak Bazaar Connect"
+      title="Shipping Policy - PakMandi"
       description="Shipping policy for Pakistan's leading B2B marketplace"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

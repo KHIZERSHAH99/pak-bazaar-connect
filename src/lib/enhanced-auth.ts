@@ -140,7 +140,7 @@ export const enhancedSignUp = async (
     }
 
     const phoneDigits = (formData.phoneNumber || '').replace(/[^0-9]/g, '');
-    const finalEmail = phoneDigits ? `phone-${phoneDigits}@pakbazaarconnect.store` : emailValidation.sanitizedValue;
+    const finalEmail = phoneDigits ? `phone-${phoneDigits}@pakmandi.store` : emailValidation.sanitizedValue;
 
     // Check field uniqueness
     const emailExists = await checkFieldUniqueness('email', finalEmail);

@@ -1,5 +1,5 @@
 /**
- * Helper function to get shop image source with fallback to PakBazaar Connect logo
+ * Helper function to get shop image source with fallback to PakMandi logo
  * @param logo - The shop logo URL from database
  * @returns The image source URL
  */
@@ -17,6 +17,6 @@ export const getShopImageSrc = (logo?: string | null): string => {
     return `/${logo}`;
   }
   
-  // Use PakBazaar Connect logo as default
-  return '/pbc-logo.png';
+  // Use PakMandi logo as default
+  return '/pm-logo.png';
 };

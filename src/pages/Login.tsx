@@ -8,8 +8,8 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
       <Helmet>
-        <title>Login - Pak Bazaar Connect</title>
-        <meta name="description" content="Log in to Pak Bazaar Connect — Pakistan's trusted B2B wholesale marketplace. Access your dashboard, manage orders, and grow your business." />
+        <title>Login - PakMandi</title>
+        <meta name="description" content="Log in to PakMandi — Pakistan's trusted B2B wholesale marketplace. Access your dashboard, manage orders, and grow your business." />
       </Helmet>
       {/* Background Patterns */}
       <div className="absolute inset-0 overflow-hidden">
@@ -42,7 +42,7 @@ const Login: React.FC = () => {
               <Shield className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent font-poppins mb-2">
-              Pak Bazaar Connect
+              PakMandi
             </h1>
             <p className="text-muted-foreground font-poppins text-lg">
               Pakistan's Trusted B2B Marketplace

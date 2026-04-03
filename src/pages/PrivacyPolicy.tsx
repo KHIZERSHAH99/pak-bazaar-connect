@@ -22,7 +22,7 @@ const PrivacyPolicy = () => {
                 Information We Collect
               </h2>
               <p className="mb-6 text-foreground">
-                At Pak Bazaar Connect, we are committed to protecting your privacy and ensuring the security of your personal information. As Pakistan's leading B2B marketplace, we collect various types of information to provide you with the best possible service and to facilitate secure business transactions between wholesalers and retailers.
+                At PakMandi, we are committed to protecting your privacy and ensuring the security of your personal information. As Pakistan's leading B2B marketplace, we collect various types of information to provide you with the best possible service and to facilitate secure business transactions between wholesalers and retailers.
               </p>
 
               <h3 className="text-xl font-semibold text-primary mb-3">
@@ -101,7 +101,7 @@ const PrivacyPolicy = () => {
                 Your Rights and Choices
               </h2>
               <p className="mb-4 text-foreground">
-                As a user of Pak Bazaar Connect, you have several rights regarding your personal information:
+                As a user of PakMandi, you have several rights regarding your personal information:
               </p>
               <ul className="list-disc pl-6 mb-6 text-foreground">
                 <li><strong>Access:</strong> Request a copy of the personal information we hold about you</li>

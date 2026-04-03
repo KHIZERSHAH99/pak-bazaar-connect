@@ -80,8 +80,8 @@ const BrowseShops: React.FC = () => {
     if (logo && !logo.includes('placeholder.svg') && logo.trim() !== '') {
       return logo;
     }
-    // Use PakBazaar Connect logo as default
-    return '/pbc-logo.png';
+    // Use PakMandi logo as default
+    return '/pm-logo.png';
   };
 
   return (

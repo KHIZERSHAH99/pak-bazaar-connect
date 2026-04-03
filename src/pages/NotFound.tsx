@@ -7,7 +7,7 @@ import { Home, ArrowLeft } from 'lucide-react';
 
 const NotFound: React.FC = () => {
   return (
-    <Layout title="Page Not Found - Pak Bazaar Connect">
+    <Layout title="Page Not Found - PakMandi">
       <div className="container mx-auto px-4 py-16 text-center min-h-[60vh] flex flex-col justify-center">
         <div className="max-w-md mx-auto">
           <h1 className="text-6xl font-bold text-foreground mb-6 font-poppins">404</h1>

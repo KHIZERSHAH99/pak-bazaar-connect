@@ -6,7 +6,7 @@ import PaymentMethodsSetup from '@/components/payment/PaymentMethodsSetup';
 const DashboardPayment: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={['wholesaler']}>
-      <DashboardLayout title="Payment Methods - Pak Bazaar Connect">
+      <DashboardLayout title="Payment Methods - PakMandi">
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold text-foreground font-poppins">Payment Methods</h1>

@@ -42,17 +42,17 @@ const TermsAndConditions: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground font-poppins leading-relaxed">
             <p>
-              Welcome to <strong className="text-foreground">Pak Bazaar Connect</strong> ("Platform", "we", "us", "our"). 
+              Welcome to <strong className="text-foreground">PakMandi</strong> ("Platform", "we", "us", "our"). 
               By accessing, registering, or using our Platform, you ("User", "you", "your") agree to be bound by these 
               Terms and Conditions ("Terms"). If you do not agree to these Terms, you must not use our Platform.
             </p>
             <p>
-              Pak Bazaar Connect is a B2B (Business-to-Business) wholesale marketplace operating in Pakistan that connects 
+              PakMandi is a B2B (Business-to-Business) wholesale marketplace operating in Pakistan that connects 
               wholesalers/manufacturers with retailers/sellers. We act solely as an intermediary platform and do not 
               directly sell, manufacture, or distribute any products listed on the Platform.
             </p>
             <p>
-              These Terms constitute a legally binding agreement between you and Pak Bazaar Connect. By clicking 
+              These Terms constitute a legally binding agreement between you and PakMandi. By clicking 
               "I agree to the Terms & Conditions" during registration, you confirm that you have read, understood, 
               and agree to be bound by these Terms and our Privacy Policy.
             </p>
@@ -96,7 +96,7 @@ const TermsAndConditions: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground font-poppins leading-relaxed">
-            <p><strong className="text-foreground">Pak Bazaar Connect acts ONLY as an intermediary marketplace.</strong> We:</p>
+            <p><strong className="text-foreground">PakMandi acts ONLY as an intermediary marketplace.</strong> We:</p>
             <ul className="list-disc pl-6 space-y-1">
               <li>Do <strong>NOT</strong> own, manufacture, store, or sell any products listed on the Platform</li>
               <li>Do <strong>NOT</strong> guarantee the quality, safety, legality, or accuracy of product listings</li>
@@ -196,7 +196,7 @@ const TermsAndConditions: React.FC = () => {
           <CardContent className="space-y-3 text-sm text-muted-foreground font-poppins leading-relaxed">
             <p>
               All financial transactions are conducted directly between buyers and sellers. 
-              Pak Bazaar Connect does <strong>NOT</strong> process, hold, or manage any payments.
+              PakMandi does <strong>NOT</strong> process, hold, or manage any payments.
             </p>
             <ul className="list-disc pl-6 space-y-1">
               <li>Payment methods (bank transfer, JazzCash, EasyPaisa, etc.) are arranged directly between parties</li>
@@ -231,7 +231,7 @@ const TermsAndConditions: React.FC = () => {
                 fitness for a particular purpose, or non-infringement.
               </li>
               <li>
-                Pak Bazaar Connect shall <strong>NOT</strong> be liable for any direct, indirect, incidental, 
+                PakMandi shall <strong>NOT</strong> be liable for any direct, indirect, incidental, 
                 special, consequential, or punitive damages arising from your use of or inability to use the Platform.
               </li>
               <li>
@@ -271,7 +271,7 @@ const TermsAndConditions: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground font-poppins leading-relaxed">
             <p>
-              You agree to indemnify, defend, and hold harmless Pak Bazaar Connect, its owners, directors, 
+              You agree to indemnify, defend, and hold harmless PakMandi, its owners, directors, 
               employees, agents, and affiliates from and against any and all claims, damages, obligations, 
               losses, liabilities, costs, and expenses (including attorney's fees) arising from:
             </p>
@@ -298,7 +298,7 @@ const TermsAndConditions: React.FC = () => {
           <CardContent className="space-y-3 text-sm text-muted-foreground font-poppins leading-relaxed">
             <p>
               The Platform, including its design, logo, text, graphics, software, and all other content 
-              (excluding user-generated content), is owned by Pak Bazaar Connect and is protected under 
+              (excluding user-generated content), is owned by PakMandi and is protected under 
               applicable intellectual property laws of Pakistan.
             </p>
             <p>
@@ -416,9 +416,9 @@ const TermsAndConditions: React.FC = () => {
               For any questions, concerns, or complaints regarding these Terms, please contact us:
             </p>
             <ul className="space-y-1">
-              <li><strong className="text-foreground">Platform:</strong> Pak Bazaar Connect</li>
-              <li><strong className="text-foreground">Email:</strong> support@pakbazaarconnect.com</li>
-              <li><strong className="text-foreground">Website:</strong> <Link to="/" className="text-primary hover:underline">www.pakbazaarconnect.com</Link></li>
+              <li><strong className="text-foreground">Platform:</strong> PakMandi</li>
+              <li><strong className="text-foreground">Email:</strong> support@pakmandi.com</li>
+              <li><strong className="text-foreground">Website:</strong> <Link to="/" className="text-primary hover:underline">www.pakmandi.com</Link></li>
             </ul>
           </CardContent>
         </Card>
@@ -426,7 +426,7 @@ const TermsAndConditions: React.FC = () => {
         {/* Footer note */}
         <div className="text-center py-6">
           <p className="text-xs text-muted-foreground font-poppins">
-            By using Pak Bazaar Connect, you acknowledge that you have read, understood, and agree to these Terms & Conditions.
+            By using PakMandi, you acknowledge that you have read, understood, and agree to these Terms & Conditions.
           </p>
           <Button variant="outline" className="mt-4" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4 mr-2" />

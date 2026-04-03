@@ -8,7 +8,7 @@ const DashboardBrowseShops: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={['seller']}>
       <DashboardLayout
-        title="Browse Shops - Pak Bazaar Connect"
+        title="Browse Shops - PakMandi"
         description="Discover and connect with verified wholesalers across Pakistan"
       >
         <BrowseShops />

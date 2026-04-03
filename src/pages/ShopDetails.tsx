@@ -69,7 +69,7 @@ const ShopDetails: React.FC = () => {
 
   if (shopLoading) {
     return (
-      <Layout title="Shop Details - Pak Bazaar Connect">
+      <Layout title="Shop Details - PakMandi">
         <div className="min-h-screen flex items-center justify-center">
           <LoadingSpinner />
         </div>
@@ -79,7 +79,7 @@ const ShopDetails: React.FC = () => {
 
   if (!shop) {
     return (
-      <Layout title="Shop Not Found - Pak Bazaar Connect">
+      <Layout title="Shop Not Found - PakMandi">
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Shop Not Found</h2>
@@ -94,7 +94,7 @@ const ShopDetails: React.FC = () => {
   }
 
   return (
-    <Layout title={`${shop.name} - Pak Bazaar Connect`}>
+    <Layout title={`${shop.name} - PakMandi`}>
       <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/5 via-background to-primary/10 py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Button 

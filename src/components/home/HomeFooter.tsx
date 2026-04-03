@@ -15,9 +15,9 @@ const HomeFooter: React.FC = () => {
           <div className="text-center md:text-left">
             <div className="flex justify-center md:justify-start items-center mb-4">
               <div className="bg-primary-foreground/10 rounded-xl p-2 shadow-md mr-2 md:mr-3">
-                <span className="text-primary-foreground text-lg font-bold">PBC</span>
+                <span className="text-primary-foreground text-lg font-bold">PM</span>
               </div>
-              <span className="text-lg md:text-xl font-bold font-poppins">Pak Bazaar Connect</span>
+              <span className="text-lg md:text-xl font-bold font-poppins">PakMandi</span>
             </div>
             <p className="text-primary-foreground/70 mb-2 md:mb-4 font-poppins">
               Connecting Pakistani businesses for sustainable growth

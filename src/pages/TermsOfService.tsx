@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const TermsOfService = () => {
   return (
     <Layout 
-      title="Terms of Service - Pak Bazaar Connect"
+      title="Terms of Service - PakMandi"
       description="Terms of Service for Pakistan's leading B2B marketplace"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -38,7 +38,7 @@ const TermsOfService = () => {
                 Acceptance of Terms
               </h2>
               <p className="mb-6 text-foreground">
-                By accessing and using Pak Bazaar Connect, you accept and agree to be bound by the terms and provision of this agreement.
+                By accessing and using PakMandi, you accept and agree to be bound by the terms and provision of this agreement.
               </p>
 
               <h3 className="text-xl font-semibold text-primary mb-3">
@@ -55,7 +55,7 @@ const TermsOfService = () => {
                 Platform Usage
               </h2>
               <p className="mb-6 text-foreground">
-                Pak Bazaar Connect is a B2B marketplace designed to connect wholesalers and retailers in Pakistan. Users must be legitimate businesses to participate.
+                PakMandi is a B2B marketplace designed to connect wholesalers and retailers in Pakistan. Users must be legitimate businesses to participate.
               </p>
 
               <h2 className="text-2xl font-semibold text-primary mb-4">

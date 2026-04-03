@@ -69,7 +69,7 @@ const translations = {
     'featuredProducts.noProducts': 'No featured products available',
     
     // Why Choose Us
-    'whyChoose.title': 'Why Choose Pak Bazaar Connect?',
+    'whyChoose.title': 'Why Choose PakMandi?',
     'whyChoose.description': 'Designed specifically for Pakistani businesses with local payment methods and regional expertise',
     'whyChoose.wholesalers.title': 'For Wholesalers',
     'whyChoose.wholesalers.description': 'Create shops, list products, and reach retailers across Pakistan',
@@ -408,7 +408,7 @@ const translations = {
     'featuredProducts.noProducts': 'کوئی نمایاں مصنوعات دستیاب نہیں',
     
     // Why Choose Us
-    'whyChoose.title': 'پاک بازار کنیکٹ کیوں منتخب کریں؟',
+    'whyChoose.title': 'پاک منڈی کیوں منتخب کریں؟',
     'whyChoose.description': 'خاص طور پر پاکستانی کاروباروں کے لیے مقامی ادائیگی کے طریقوں اور علاقائی مہارت کے ساتھ ڈیزائن کیا گیا',
     'whyChoose.wholesalers.title': 'تھوک فروشوں کے لیے',
     'whyChoose.wholesalers.description': 'دکانیں بنائیں، مصنوعات کی فہرست بنائیں، اور پاکستان بھر میں خوردہ فروشوں تک پہنچیں',

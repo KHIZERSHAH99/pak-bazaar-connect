@@ -101,7 +101,7 @@ serve(async (req) => {
         
       default:
         title = "Notification";
-        message = "You have a new notification from Pak Bazaar Connect.";
+        message = "You have a new notification from PakMandi.";
     }
 
     // In a real implementation, we would now send an email or push notification

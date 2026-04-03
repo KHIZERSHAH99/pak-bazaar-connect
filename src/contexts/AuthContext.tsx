@@ -286,7 +286,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       toast({
         title: "Account Created",
-        description: "Welcome to Pak Bazaar Connect!",
+        description: "Welcome to PakMandi!",
       });
       
       return {};

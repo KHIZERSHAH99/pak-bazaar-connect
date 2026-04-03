@@ -185,13 +185,13 @@ export const useEnhancedSignupForm = () => {
       
       // Create a deterministic phone-based email for Supabase auth (auto-confirmed)
       const phoneDigits = values.phoneNumber.replace(/[^0-9]/g, '');
-      const tempEmail = `phone-${phoneDigits}@pakbazaarconnect.store`;
+      const tempEmail = `phone-${phoneDigits}@pakmandi.store`;
       
       // Call enhanced signup with form data
       await enhancedSignUp(tempEmail, values.password, selectedRole, values);
       
       toast({
-        title: 'Welcome to Pak Bazaar Connect! 🎉',
+        title: 'Welcome to PakMandi! 🎉',
         description: `Your ${selectedRole} account has been created successfully. Welcome aboard!`,
         variant: 'default',
       });

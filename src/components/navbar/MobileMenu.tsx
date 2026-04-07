@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { User, ShoppingBag, Users, Zap, Home, Settings, Sun, Moon, Heart, MessageSquare, BarChart, LogOut, HelpCircle, Video } from 'lucide-react';
+import { User, ShoppingBag, Users, Home, Settings, Sun, Moon, LogOut, HelpCircle } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 interface MobileMenuProps {
@@ -38,14 +37,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   return (
     <div className="md:hidden fixed inset-x-0 top-[3.5rem] bottom-0 z-50 bg-background animate-slide-in-right overflow-hidden">
       <div className="px-3 py-3 space-y-3 h-full overflow-y-auto overflow-x-hidden max-w-full">
-        {/* Main Navigation */}
+        {/* Main Navigation — only core items */}
         <div className="space-y-1">
           <Link to="/" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              className="w-full justify-start h-10 text-sm text-foreground hover:bg-accent font-poppins"
+              className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
             >
-              <Home className="w-4 h-4 mr-2" />
+              <Home className="w-5 h-5 mr-3" />
               Home
             </Button>
           </Link>
@@ -53,9 +52,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/products" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              className="w-full justify-start h-10 text-sm text-foreground hover:bg-accent font-poppins"
+              className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
             >
-              <ShoppingBag className="w-4 h-4 mr-2" />
+              <ShoppingBag className="w-5 h-5 mr-3" />
               Products
             </Button>
           </Link>
@@ -63,30 +62,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link to="/shops" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
-              className="w-full justify-start h-10 text-sm text-foreground hover:bg-accent font-poppins"
+              className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
             >
-              <Users className="w-4 h-4 mr-2" />
+              <Users className="w-5 h-5 mr-3" />
               Wholesalers
-            </Button>
-          </Link>
-
-          <Link to="/tutorials" onClick={handleLinkClick}>
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start h-10 text-sm text-foreground hover:bg-accent font-poppins"
-            >
-              <Video className="w-4 h-4 mr-2" />
-              Tutorials
-            </Button>
-          </Link>
-          
-          <Link to="/features" onClick={handleLinkClick}>
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start h-10 text-sm text-foreground hover:bg-accent font-poppins"
-            >
-              <Zap className="w-4 h-4 mr-2" />
-              Features
             </Button>
           </Link>
         </div>
@@ -102,7 +81,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground font-poppins text-xs truncate">
-                    {profile.email}
+                    {profile.contact_name || profile.business_name || profile.email}
                   </p>
                   <Badge variant="secondary" className="text-[10px] font-poppins mt-0.5 px-1.5 py-0">
                     {profile.role}
@@ -116,9 +95,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link to="/dashboard" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins font-semibold"
+                  className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins font-semibold"
                 >
-                  <Settings className="w-4 h-4 mr-2" />
+                  <Settings className="w-5 h-5 mr-3" />
                   Dashboard
                 </Button>
               </Link>
@@ -126,9 +105,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Link to="/profile" onClick={handleLinkClick}>
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins"
+                  className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
                 >
-                  <User className="w-4 h-4 mr-2" />
+                  <User className="w-5 h-5 mr-3" />
                   Profile
                 </Button>
               </Link>
@@ -136,15 +115,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
             {/* Controls Section */}
             <div className="space-y-1 border-t border-border pt-2">
-              {/* Tutorial Button - Only for wholesalers and sellers */}
+              {/* Tutorial Button */}
               {onShowTutorial && (profile?.role === 'wholesaler' || profile?.role === 'seller') && (
                 <Button
                   onClick={onShowTutorial}
                   variant="ghost"
-                  className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins"
+                  className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
                 >
-                  <HelpCircle className="w-4 h-4 mr-2" />
-                  Tutorial
+                  <HelpCircle className="w-5 h-5 mr-3" />
+                  Help / Tutorial
                 </Button>
               )}
 
@@ -152,9 +131,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               <Button
                 onClick={handleThemeToggle}
                 variant="ghost"
-                className="w-full justify-start h-9 text-sm text-foreground hover:bg-accent font-poppins"
+                className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
               >
-                {theme === 'light' ? <Moon className="w-4 h-4 mr-2" /> : <Sun className="w-4 h-4 mr-2" />}
+                {theme === 'light' ? <Moon className="w-5 h-5 mr-3" /> : <Sun className="w-5 h-5 mr-3" />}
                 {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
               </Button>
             </div>
@@ -166,9 +145,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 onClose();
               }}
               variant="destructive"
-              className="w-full h-9 text-sm font-poppins mt-2"
+              className="w-full h-12 text-sm font-poppins mt-2"
             >
-              <LogOut className="w-4 h-4 mr-2" />
+              <LogOut className="w-5 h-5 mr-3" />
               Logout
             </Button>
           </div>
@@ -177,13 +156,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             <Link to="/login" onClick={handleLinkClick}>
               <Button 
                 variant="outline" 
-                className="w-full h-10 text-sm font-poppins"
+                className="w-full h-12 text-sm font-poppins"
               >
                 Login
               </Button>
             </Link>
             <Link to="/signup" onClick={handleLinkClick}>
-              <Button className="w-full h-10 text-sm bg-primary hover:bg-primary/90 text-primary-foreground font-poppins">
+              <Button className="w-full h-12 text-sm bg-primary hover:bg-primary/90 text-primary-foreground font-poppins">
                 Sign Up
               </Button>
             </Link>

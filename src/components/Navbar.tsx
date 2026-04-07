@@ -7,25 +7,22 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { signOut } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
-import { Flag, Menu, X, ShoppingBag, ShoppingCart, Users, Zap, Package, BookOpen, HelpCircle, Video } from 'lucide-react';
+import { Menu, X, ShoppingBag, ShoppingCart, Users, HelpCircle } from 'lucide-react';
 import UserMenu from './navbar/UserMenu';
 import MobileMenu from './navbar/MobileMenu';
 import LanguageToggle from './LanguageToggle';
 import EnhancedWelcomeOnboarding from '@/components/ui/EnhancedWelcomeOnboarding';
+
 const Navbar = () => {
-  const {
-    user,
-    profile
-  } = useAuth();
+  const { user, profile } = useAuth();
   const { t } = useLanguage();
   const { getTotalItems } = useCart();
   const cartCount = getTotalItems();
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -43,6 +40,7 @@ const Navbar = () => {
       });
     }
   };
+
   const getRoleBadge = () => {
     if (!profile?.role) return null;
     const roleColors = {
@@ -55,18 +53,9 @@ const Navbar = () => {
         {profile.role}
       </span>;
   };
-  return <>
-      {/* Top Banner */}
-      <div className="bg-primary text-primary-foreground py-1 sm:py-1.5 md:py-2 px-2 sm:px-3 md:px-4 text-center relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center opacity-5">
-          <Flag className="w-20 sm:w-24 md:w-40 h-20 sm:h-24 md:h-40 text-primary-foreground" />
-        </div>
-        <p className="text-[10px] sm:text-xs md:text-sm font-medium relative z-10">
-          Welcome to Pakistan's Premier B2B Marketplace
-        </p>
-      </div>
 
-      {/* Main Navbar */}
+  return <>
+      {/* Main Navbar — no top banner */}
       <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-14 md:h-16">
@@ -80,9 +69,8 @@ const Navbar = () => {
                 </span>
               </Link>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation — simplified to core links only */}
             <div className="hidden md:flex items-center space-x-6">
-              {/* Main Navigation Links */}
               <div className="flex items-center space-x-1">
                 <Link to="/products">
                   <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
@@ -96,15 +84,9 @@ const Navbar = () => {
                     Wholesalers
                   </Button>
                 </Link>
-                <Link to="/tutorials">
-                  <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
-                    <Video className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
-                    Tutorials
-                  </Button>
-                </Link>
               </div>
 
-              {/* Help/Tour Button - Only for wholesalers and sellers */}
+              {/* Help/Tour Button - Only for logged-in wholesalers and sellers */}
               {user && (profile?.role === 'wholesaler' || profile?.role === 'seller') && (
                 <Button
                   variant="ghost"
@@ -113,7 +95,7 @@ const Navbar = () => {
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins"
                 >
                   <HelpCircle className="w-4 h-4 mr-2" />
-                  Tutorial
+                  Help
                 </Button>
               )}
 

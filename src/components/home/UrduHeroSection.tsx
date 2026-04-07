@@ -15,7 +15,7 @@ const UrduHeroSection = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           {/* Urdu headline - big, bold, instantly understandable */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-5 leading-tight font-poppins" dir="rtl">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-5 leading-tight font-poppins" dir={language === 'ur' ? 'rtl' : 'ltr'}>
             {language === 'ur' ? (
               <>تھوک کا سامان،<br />
               <span className="text-primary">آن لائن منگوائیں</span></>

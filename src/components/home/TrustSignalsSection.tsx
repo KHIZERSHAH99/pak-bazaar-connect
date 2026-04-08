@@ -11,7 +11,7 @@ const TrustSignalsSection: React.FC = () => {
     const fetchStats = async () => {
       try {
         const [shopsRes, productsRes, ordersRes] = await Promise.all([
-          supabase.from('shops' as any).select('id', { count: 'exact', head: true }),
+          supabase.from('shops_public_safe').select('id', { count: 'exact', head: true }),
           supabase.from('products').select('id', { count: 'exact', head: true }).eq('is_active', true),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
         ]);

@@ -5,21 +5,16 @@ import { supabase } from '@/integrations/supabase/client';
 
 const TrustSignalsSection: React.FC = () => {
   const { language } = useLanguage();
-  const [stats, setStats] = useState({ shops: 0, products: 0, orders: 0 });
+  const [productCount, setProductCount] = useState(0);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [shopsRes, productsRes, ordersRes] = await Promise.all([
-          supabase.from('shops_public_safe').select('id', { count: 'exact', head: true }),
-          supabase.from('products').select('id', { count: 'exact', head: true }).eq('is_active', true),
-          supabase.from('orders').select('id', { count: 'exact', head: true }),
-        ]);
-        setStats({
-          shops: shopsRes.count || 0,
-          products: productsRes.count || 0,
-          orders: ordersRes.count || 0,
-        });
+        const { count } = await supabase
+          .from('products')
+          .select('id', { count: 'exact', head: true })
+          .eq('is_active', true);
+        setProductCount(count || 0);
       } catch (e) {
         console.error('Error fetching stats:', e);
       }

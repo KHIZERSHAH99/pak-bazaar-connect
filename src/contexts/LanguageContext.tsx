@@ -30,6 +30,7 @@ const translations = {
     'logout': 'Logout',
     'home': 'Home',
     'shops': 'Shops',
+    'wholesalers': 'Wholesalers',
     'features': 'Features',
     'blog': 'Blog',
     'about': 'About',
@@ -369,6 +370,7 @@ const translations = {
     'logout': 'لاگ آؤٹ',
     'home': 'ہوم',
     'shops': 'دکانیں',
+    'wholesalers': 'ہول سیلرز',
     'features': 'خصوصیات',
     'blog': 'بلاگ',
     'about': 'ہمارے بارے میں',
@@ -700,8 +702,8 @@ const translations = {
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState(() => {
-    // Get saved language from localStorage or default to 'en'
-    return localStorage.getItem('language') || 'en';
+    // Get saved language from localStorage or default to Urdu (primary market: Karachi wholesalers)
+    return localStorage.getItem('language') || 'ur';
   });
 
   const handleSetLanguage = (lang: string) => {

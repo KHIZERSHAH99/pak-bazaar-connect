@@ -700,8 +700,8 @@ const translations = {
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState(() => {
-    // Get saved language from localStorage or default to 'en'
-    return localStorage.getItem('language') || 'en';
+    // Get saved language from localStorage or default to Urdu (primary market: Karachi wholesalers)
+    return localStorage.getItem('language') || 'ur';
   });
 
   const handleSetLanguage = (lang: string) => {

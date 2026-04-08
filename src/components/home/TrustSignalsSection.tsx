@@ -61,9 +61,9 @@ const TrustSignalsSection: React.FC = () => {
         {/* Live Stats Bar */}
         <div className="flex flex-wrap justify-center gap-6 sm:gap-10 md:gap-16 mb-10 md:mb-14">
           {[
-            { value: formatStat(stats.shops), label: isUrdu ? 'رجسٹرڈ دکانیں' : 'Registered Shops' },
-            { value: formatStat(stats.products), label: isUrdu ? 'پروڈکٹس' : 'Products Listed' },
-            { value: formatStat(stats.orders), label: isUrdu ? 'آرڈرز مکمل' : 'Orders Completed' },
+            { value: formatStat(productCount), label: isUrdu ? 'پروڈکٹس' : 'Products Listed' },
+            { value: isUrdu ? 'مفت' : 'Free', label: isUrdu ? 'سائن اپ' : 'Signup & Listing' },
+            { value: '24/7', label: isUrdu ? 'سپورٹ' : 'Support' },
           ].map((stat, i) => (
             <div key={i} className="text-center min-w-[80px]">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary font-poppins">

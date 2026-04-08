@@ -2,6 +2,7 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import UrduHeroSection from '@/components/home/UrduHeroSection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
+import TrustSignalsSection from '@/components/home/TrustSignalsSection';
 import CallToActionSection from '@/components/home/CallToActionSection';
 
 const Index: React.FC = () => {
@@ -13,6 +14,7 @@ const Index: React.FC = () => {
       <div className="min-h-screen">
         <UrduHeroSection />
         <FeaturedProducts />
+        <TrustSignalsSection />
         <CallToActionSection />
       </div>
     </Layout>

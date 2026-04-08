@@ -370,6 +370,7 @@ const translations = {
     'logout': 'لاگ آؤٹ',
     'home': 'ہوم',
     'shops': 'دکانیں',
+    'wholesalers': 'ہول سیلرز',
     'features': 'خصوصیات',
     'blog': 'بلاگ',
     'about': 'ہمارے بارے میں',

@@ -30,6 +30,7 @@ const translations = {
     'logout': 'Logout',
     'home': 'Home',
     'shops': 'Shops',
+    'wholesalers': 'Wholesalers',
     'features': 'Features',
     'blog': 'Blog',
     'about': 'About',

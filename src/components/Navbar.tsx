@@ -15,13 +15,14 @@ import EnhancedWelcomeOnboarding from '@/components/ui/EnhancedWelcomeOnboarding
 
 const Navbar = () => {
   const { user, profile } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { getTotalItems } = useCart();
   const cartCount = getTotalItems();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const isRtl = language === 'ur';
 
   const handleLogout = async () => {
     try {
@@ -49,18 +50,18 @@ const Navbar = () => {
       seller: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
       pending: 'bg-muted text-muted-foreground'
     };
+    const roleLabel = t(profile.role as string);
     return <span className={`px-2 py-0.5 text-xs font-medium rounded-full font-poppins ${roleColors[profile.role as keyof typeof roleColors] || roleColors.pending}`}>
-        {profile.role}
+        {roleLabel}
       </span>;
   };
 
   return <>
-      {/* Main Navbar — no top banner */}
-      <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50">
+      <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50" dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-14 md:h-16">
               {/* Logo */}
-              <Link to="/" className="flex items-center space-x-2 md:space-x-3 hover:opacity-80 transition-opacity">
+              <Link to="/" className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity">
                 <div className="bg-primary rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
                   <span className="text-primary-foreground text-lg md:text-xl font-bold">PM</span>
                 </div>
@@ -69,24 +70,24 @@ const Navbar = () => {
                 </span>
               </Link>
 
-            {/* Desktop Navigation — simplified to core links only */}
-            <div className="hidden md:flex items-center space-x-6">
-              <div className="flex items-center space-x-1">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-6">
+              <div className="flex items-center gap-1">
                 <Link to="/products">
                   <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
-                    <ShoppingBag className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                    <ShoppingBag className={`w-4 h-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
                     {t('products')}
                   </Button>
                 </Link>
                 <Link to="/shops">
                   <Button variant="ghost" className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins transition-all duration-200">
-                    <Users className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
-                    Wholesalers
+                    <Users className={`w-4 h-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+                    {t('shops')}
                   </Button>
                 </Link>
               </div>
 
-              {/* Help/Tour Button - Only for logged-in wholesalers and sellers */}
+              {/* Help/Tour Button */}
               {user && (profile?.role === 'wholesaler' || profile?.role === 'seller') && (
                 <Button
                   variant="ghost"
@@ -94,8 +95,8 @@ const Navbar = () => {
                   onClick={() => setShowTutorial(true)}
                   className="text-muted-foreground hover:text-primary hover:bg-primary/10 font-poppins"
                 >
-                  <HelpCircle className="w-4 h-4 mr-2" />
-                  Help
+                  <HelpCircle className={`w-4 h-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+                  {t('help')}
                 </Button>
               )}
 
@@ -114,7 +115,7 @@ const Navbar = () => {
               {/* Language Toggle */}
               <LanguageToggle />
 
-              {user ? <UserMenu email={profile?.email || user.email} role={profile?.role} onLogout={handleLogout} getRoleBadge={getRoleBadge} /> : <div className="flex items-center space-x-3 rtl:space-x-reverse">
+              {user ? <UserMenu email={profile?.email || user.email} role={profile?.role} onLogout={handleLogout} getRoleBadge={getRoleBadge} /> : <div className="flex items-center gap-3">
                   <Link to="/login">
                     <Button variant="ghost" className="text-primary hover:text-primary/80 hover:bg-primary/10 font-poppins">
                       {t('login')}

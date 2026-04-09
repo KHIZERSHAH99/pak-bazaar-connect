@@ -11,6 +11,7 @@ import { authenticateUserWithCaptcha } from '@/lib/auth/consolidated';
 import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/auth/phone-utils';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
 import { showAuthError } from '@/lib/auth/auth-errors';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const PakistaniLoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -19,28 +20,28 @@ const PakistaniLoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [accountLocked, setAccountLocked] = useState(false);
   const [lockoutMessage, setLockoutMessage] = useState('');
+  const { t, language } = useLanguage();
+  const isRtl = language === 'ur';
   
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Check account lockout when phone number changes
   useEffect(() => {
     const checkLockout = async () => {
       if (phoneNumber && validatePakistaniPhone(normalizePakistaniPhone(phoneNumber))) {
         const lockoutStatus = await authSecurityManager.checkAccountLockout(normalizePakistaniPhone(phoneNumber));
         setAccountLocked(lockoutStatus.isLocked);
-        setLockoutMessage(`Account locked. Try again in ${Math.ceil(lockoutStatus.remainingTime / 60000)} minutes.`);
+        setLockoutMessage(t('accountLocked').replace('{minutes}', String(Math.ceil(lockoutStatus.remainingTime / 60000))));
       } else {
         setAccountLocked(false);
         setLockoutMessage('');
       }
     };
 
-    const timeoutId = setTimeout(checkLockout, 500); // Debounce
+    const timeoutId = setTimeout(checkLockout, 500);
     return () => clearTimeout(timeoutId);
-  }, [phoneNumber]);
-
+  }, [phoneNumber, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +51,7 @@ const PakistaniLoginForm: React.FC = () => {
       const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
       
       if (!validatePakistaniPhone(cleanPhone)) {
-        throw new Error('Please enter a valid Pakistani mobile number (03XX-XXXXXXX)');
+        throw new Error(t('validPhoneError'));
       }
 
       if (accountLocked) {
@@ -59,39 +60,34 @@ const PakistaniLoginForm: React.FC = () => {
 
       console.log('🔐 Attempting authentication:', cleanPhone);
       
-      // Call authentication without captcha token (hCaptcha disabled in Supabase)
       const result = await authenticateUserWithCaptcha(cleanPhone, password);
       
       if (result.user) {
         toast({
-          title: 'خوش آمدید! Welcome back!',
-          description: 'You have successfully logged in.',
+          title: t('welcomeBack'),
+          description: t('loginSuccess'),
         });
 
         const redirectTo = searchParams.get('redirect') || '/dashboard';
-        console.log('🔄 Redirecting to:', redirectTo);
         navigate(redirectTo, { replace: true });
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      
-      // Use the new error handling system
       showAuthError(error, 'login');
       
-      // Show signup prompt for certain errors
       if (error.message?.includes('No account') || error.message?.includes('not found')) {
         setTimeout(() => {
           toast({
-            title: 'Need an Account?',
-            description: 'Create a new account to get started with our B2B marketplace.',
+            title: t('needAccount'),
+            description: t('needAccountDesc'),
             action: (
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={() => navigate('/signup')}
-                className="ml-2"
+                className={isRtl ? 'mr-2' : 'ml-2'}
               >
-                Sign Up
+                {t('signup')}
               </Button>
             ),
           });
@@ -103,23 +99,23 @@ const PakistaniLoginForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-xl border-0 overflow-hidden">
+    <Card className="w-full max-w-md mx-auto shadow-xl border-0 overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader className="text-center bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-8 pt-8">
         <div className="inline-flex items-center justify-center p-3 bg-primary-foreground/10 rounded-full mb-4 backdrop-blur-sm border border-primary-foreground/20">
           <Phone className="h-8 w-8 text-primary-foreground" />
         </div>
         <CardTitle className="text-3xl font-bold text-primary-foreground font-poppins">
-          پاکستانی لاگ ان
+          {t('pakistaniLogin')}
         </CardTitle>
         <CardDescription className="font-poppins text-primary-foreground/90 text-base mt-2">
-          Enter your Pakistani mobile number and password
+          {t('enterMobileAndPassword')}
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6 bg-card">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label className="text-sm font-medium font-poppins text-foreground">
-              Pakistani Mobile Number
+              {t('pakistaniMobileLabel')}
             </Label>
             <PhoneInput
               value={phoneNumber}
@@ -135,13 +131,13 @@ const PakistaniLoginForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="password" className="text-sm font-medium font-poppins text-foreground">
-              Password
+              {t('password')}
             </Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
+                placeholder={t('enterPassword')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading || accountLocked}
@@ -151,7 +147,7 @@ const PakistaniLoginForm: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 hover:text-foreground transition-colors"
+                className={`absolute inset-y-0 ${isRtl ? 'left-0 pl-3' : 'right-0 pr-3'} flex items-center hover:text-foreground transition-colors`}
                 disabled={isLoading}
               >
                 {showPassword ? (
@@ -168,7 +164,7 @@ const PakistaniLoginForm: React.FC = () => {
               to="/forgot-password"
               className="text-primary hover:text-primary/80 font-medium font-poppins transition-colors"
             >
-              Forgot Password?
+              {t('forgotPassword')}
             </Link>
           </div>
 
@@ -179,11 +175,11 @@ const PakistaniLoginForm: React.FC = () => {
           >
             {isLoading ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Signing In...
+                <Loader2 className={`h-4 w-4 ${isRtl ? 'ml-2' : 'mr-2'} animate-spin`} />
+                {t('signingIn')}
               </>
             ) : (
-              'Sign In'
+              t('signIn')
             )}
           </Button>
         </form>
@@ -193,18 +189,18 @@ const PakistaniLoginForm: React.FC = () => {
             <div className="w-full border-t border-border"></div>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">Or</span>
+            <span className="bg-card px-2 text-muted-foreground">{t('or')}</span>
           </div>
         </div>
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground font-poppins">
-            Don't have an account?{' '}
+            {t('dontHaveAccount')}{' '}
             <Link
               to="/signup"
               className="text-primary hover:text-primary/80 font-semibold transition-colors"
             >
-              Create Pakistani account
+              {t('createPakistaniAccount')}
             </Link>
           </p>
         </div>
@@ -217,10 +213,10 @@ const PakistaniLoginForm: React.FC = () => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground font-poppins">
-                Secure Authentication
+                {t('secureAuth')}
               </p>
               <p className="text-xs text-muted-foreground font-poppins mt-0.5">
-                Pakistani phone-only authentication with end-to-end encryption
+                {t('secureAuthDesc')}
               </p>
             </div>
           </div>

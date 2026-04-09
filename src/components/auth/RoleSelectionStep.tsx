@@ -1,8 +1,7 @@
-
 import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { Store, ShoppingBag, Crown } from 'lucide-react';
+import { Store, ShoppingBag } from 'lucide-react';
 import { UserRole } from '@/lib/types';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface RoleSelectionStepProps {
   selectedRole: UserRole;
@@ -15,38 +14,31 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
   onRoleSelect,
   isLoading
 }) => {
+  const { t, language } = useLanguage();
+  const isRtl = language === 'ur';
+
   const roles = [
     {
       id: 'wholesaler' as UserRole,
-      title: 'Wholesaler',
-      description: 'Sell products to retailers across Pakistan',
+      title: t('wholesalerTitle'),
+      description: t('wholesalerDesc'),
       icon: <Store className="h-8 w-8" />,
-      features: [
-        'Create and manage shops',
-        'List unlimited products',
-        'Create promotional ads',
-        'Fulfill bulk orders'
-      ]
+      features: [t('wholesalerF1'), t('wholesalerF2'), t('wholesalerF3'), t('wholesalerF4')]
     },
     {
       id: 'seller' as UserRole,
-      title: 'Seller/Retailer',
-      description: 'Purchase from wholesalers and grow your business',
+      title: t('sellerTitle'),
+      description: t('sellerDesc'),
       icon: <ShoppingBag className="h-8 w-8" />,
-      features: [
-        'Browse wholesale catalogs',
-        'Place bulk orders',
-        'Track order status',
-        'Manage inventory purchases'
-      ]
+      features: [t('sellerF1'), t('sellerF2'), t('sellerF3'), t('sellerF4')]
     }
   ];
 
   return (
-    <div className="space-y-6 animate-fadeIn bg-background rounded-md">
+    <div className="space-y-6 animate-fadeIn bg-background rounded-md" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="text-center mb-8">
-        <h3 className="text-xl font-bold text-foreground mb-2 font-poppins">Choose Your Business Role</h3>
-        <p className="text-muted-foreground font-poppins">Select how you want to use PakMandi</p>
+        <h3 className="text-xl font-bold text-foreground mb-2 font-poppins">{t('chooseBusinessRole')}</h3>
+        <p className="text-muted-foreground font-poppins">{t('selectHowToUse')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -61,7 +53,7 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
             onClick={() => onRoleSelect(role.id)}
           >
             <div className="flex items-center mb-4">
-              <div className={`p-3 rounded-full mr-4 ${
+              <div className={`p-3 rounded-full ${isRtl ? 'ml-4' : 'mr-4'} ${
                 selectedRole === role.id ? 'bg-primary/10' : 'bg-muted'
               }`}>
                 <div className={selectedRole === role.id ? 'text-primary' : 'text-muted-foreground'}>
@@ -77,7 +69,7 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
             <ul className="space-y-2">
               {role.features.map((feature, index) => (
                 <li key={index} className="flex items-center text-sm text-foreground font-poppins">
-                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                  <div className={`w-2 h-2 bg-primary rounded-full ${isRtl ? 'ml-3' : 'mr-3'}`}></div>
                   {feature}
                 </li>
               ))}
@@ -86,7 +78,7 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
             {selectedRole === role.id && (
               <div className="mt-4 p-3 bg-primary/10 rounded-lg">
                 <p className="text-sm font-medium text-primary font-poppins">
-                  ✓ Selected - Continue to {role.id === 'wholesaler' ? 'business verification' : 'basic information'}
+                  ✓ {t('selectedContinue')} - {role.id === 'wholesaler' ? t('businessVerification') : t('basicInformation')}
                 </p>
               </div>
             )}
@@ -96,9 +88,9 @@ const RoleSelectionStep: React.FC<RoleSelectionStepProps> = ({
 
       <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 rounded-lg border border-primary/20">
         <p className="text-sm text-primary font-poppins text-center">
-          <strong>Note:</strong> {selectedRole === 'wholesaler' 
-            ? 'Wholesalers need to provide business verification documents for security and trust.'
-            : 'Sellers have a simplified registration process to get started quickly.'
+          <strong>{t('note')}:</strong> {selectedRole === 'wholesaler' 
+            ? t('wholesalerNote')
+            : t('sellerNote')
           }
         </p>
       </div>

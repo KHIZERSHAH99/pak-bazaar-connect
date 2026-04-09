@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useChatSupport } from '@/hooks/useChatSupport';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
 interface ModernChatInterfaceProps {
@@ -35,6 +35,8 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
   const [isMinimized, setIsMinimized] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { t, language } = useLanguage();
+  const isRtl = language === 'ur';
   
   const { chatHistory, loading, sending, sendMessage } = useChatSupport();
 
@@ -68,11 +70,11 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
   };
 
   const quickQuestions = [
-    "How do I create an ad?",
-    "How to register as wholesaler?",
-    "How does order processing work?",
-    "What are the payment options?",
-    "How to verify my business?"
+    t('chatQ1'),
+    t('chatQ2'),
+    t('chatQ3'),
+    t('chatQ4'),
+    t('chatQ5'),
   ];
 
   const formatTime = (timestamp: string) => {
@@ -89,10 +91,10 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
       "w-full max-w-2xl mx-auto shadow-lg border-0",
       isMinimized && "h-16",
       className
-    )}>
+    )} dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader className="border-b bg-gradient-to-r from-primary to-primary/80 text-white p-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-3">
             <div className="relative">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="/placeholder-avatar.png" />
@@ -104,14 +106,14 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
             </div>
             <div>
               <CardTitle className="text-sm font-medium font-poppins">
-                Pak Bazaar Support
+                {t('pakMandiSupport')}
               </CardTitle>
               <p className="text-xs text-green-100 font-poppins">
-                AI Assistant • Online
+                {t('aiAssistantOnline')}
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
               size="sm"
@@ -140,31 +142,31 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
             {loading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                <span className="ml-2 text-sm text-muted-foreground font-poppins">Loading chat history...</span>
+                <span className={`${isRtl ? 'mr-2' : 'ml-2'} text-sm text-muted-foreground font-poppins`}>{t('loadingChatHistory')}</span>
               </div>
             ) : chatHistory.length === 0 ? (
               <div className="space-y-4">
                 <div className="text-center py-6">
                   <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
                   <h3 className="font-medium text-foreground mb-2 font-poppins">
-                    Welcome to Pak Bazaar Support!
+                    {t('welcomeToSupport')}
                   </h3>
                   <p className="text-sm text-muted-foreground font-poppins">
-                    Ask me anything about our B2B marketplace platform.
+                    {t('askAnything')}
                   </p>
                 </div>
                 
                 <div className="space-y-2">
                   <p className="text-xs font-medium text-muted-foreground font-poppins mb-2">
-                    Quick Questions:
+                    {t('quickQuestions')}
                   </p>
                   {quickQuestions.map((question, index) => (
                     <button
                       key={index}
                       onClick={() => handleSend(question)}
-                      className="block w-full text-left p-2 text-xs bg-muted hover:bg-muted/80 rounded-md transition-colors font-poppins"
+                      className="block w-full text-start p-2 text-xs bg-muted hover:bg-muted/80 rounded-md transition-colors font-poppins"
                     >
-                      <HelpCircle className="h-3 w-3 inline mr-2 text-primary" />
+                      <HelpCircle className={`h-3 w-3 inline ${isRtl ? 'ml-2' : 'mr-2'} text-primary`} />
                       {question}
                     </button>
                   ))}
@@ -175,11 +177,11 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                 {chatHistory.map((chat) => (
                   <div key={chat.id} className="space-y-3">
                     {/* User Message */}
-                    <div className="flex justify-end">
-                      <div className="flex items-start space-x-2 max-w-[80%]">
+                    <div className={`flex ${isRtl ? 'justify-start' : 'justify-end'}`}>
+                      <div className="flex items-start gap-2 max-w-[80%]">
                         <div className="bg-primary text-white rounded-lg px-3 py-2">
                           <p className="text-sm font-poppins">{chat.message}</p>
-                          <div className="flex items-center justify-end mt-1 space-x-1">
+                          <div className="flex items-center justify-end mt-1 gap-1">
                             <Clock className="h-3 w-3 opacity-70" />
                             <span className="text-xs opacity-70">
                               {formatTime(chat.created_at || '')}
@@ -196,8 +198,8 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
 
                     {/* Bot Reply */}
                     {chat.reply && (
-                      <div className="flex justify-start">
-                        <div className="flex items-start space-x-2 max-w-[80%]">
+                      <div className={`flex ${isRtl ? 'justify-end' : 'justify-start'}`}>
+                        <div className="flex items-start gap-2 max-w-[80%]">
                           <Avatar className="h-6 w-6">
                             <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">
                               <Bot className="h-3 w-3" />
@@ -206,16 +208,16 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
                           <div className="bg-white dark:bg-gray-800 border rounded-lg px-3 py-2 shadow-sm">
                             <div className="flex items-center mb-1">
                               <span className="text-xs font-medium text-blue-600 font-poppins">
-                                Support Assistant
+                                {t('supportAssistant')}
                               </span>
-                              <Badge variant="secondary" className="ml-2 text-xs">AI</Badge>
+                              <Badge variant="secondary" className={`${isRtl ? 'mr-2' : 'ml-2'} text-xs`}>AI</Badge>
                             </div>
                             <p className="text-sm text-foreground font-poppins whitespace-pre-wrap">
                               {chat.reply}
                             </p>
                             <div className="flex items-center mt-1">
                               <Clock className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-xs text-muted-foreground ml-1">
+                              <span className={`text-xs text-muted-foreground ${isRtl ? 'mr-1' : 'ml-1'}`}>
                                 {formatTime(chat.created_at || '')}
                               </span>
                             </div>
@@ -228,21 +230,21 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
 
                 {/* Typing Indicator */}
                 {(sending || isTyping) && (
-                  <div className="flex justify-start">
-                    <div className="flex items-start space-x-2">
+                  <div className={`flex ${isRtl ? 'justify-end' : 'justify-start'}`}>
+                    <div className="flex items-start gap-2">
                       <Avatar className="h-6 w-6">
                         <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">
                           <Bot className="h-3 w-3" />
                         </AvatarFallback>
                       </Avatar>
                       <div className="bg-white dark:bg-gray-800 border rounded-lg px-3 py-2 shadow-sm">
-                        <div className="flex items-center space-x-1">
-                          <div className="flex space-x-1">
+                        <div className="flex items-center gap-1">
+                          <div className="flex gap-1">
                             <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce"></div>
                             <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                             <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                           </div>
-                          <span className="text-xs text-muted-foreground font-poppins ml-2">Typing...</span>
+                          <span className={`text-xs text-muted-foreground font-poppins ${isRtl ? 'mr-2' : 'ml-2'}`}>{t('typing')}</span>
                         </div>
                       </div>
                     </div>
@@ -255,12 +257,12 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
 
           {/* Input Area */}
           <div className="border-t p-4 bg-gray-50 dark:bg-gray-900/50">
-            <div className="flex space-x-2">
+            <div className="flex gap-2">
               <Input
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type your message..."
+                placeholder={t('typeYourMessage')}
                 disabled={sending}
                 className="flex-1 bg-white dark:bg-gray-800 font-poppins"
               />
@@ -277,7 +279,7 @@ const ModernChatInterface: React.FC<ModernChatInterfaceProps> = ({
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2 font-poppins">
-              Press Enter to send • Our AI assistant is here to help 24/7
+              {t('pressEnterToSend')}
             </p>
           </div>
         </CardContent>

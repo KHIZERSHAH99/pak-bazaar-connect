@@ -1,96 +1,75 @@
 
-# UI Simplification Plan — Safe, Surgical Changes
 
-**Goal**: Make PakMandi feel effortless for non-tech-savvy Pakistani wholesalers/retailers. No features removed — just reorganized and decluttered.
+## Priority 3: Urdu-First Experience & Translation Cleanup
 
----
+### Problem
+The app has partial Urdu support but ~60% of the interface remains English-only. For illiterate or semi-literate Pakistani wholesalers, hitting random English text mid-flow breaks trust and creates confusion. RTL alignment is inconsistent.
 
-## Batch 1: Homepage Declutter (LOW RISK)
+### Approach
+Systematic sweep through all user-facing components. No feature changes, no logic changes — pure translation and alignment fixes. Low risk, high impact.
 
-### 1a. Remove top green banner
-- The "Welcome to Pakistan's Premier B2B Marketplace" banner adds zero value — it's marketing text that takes space
-- **File**: `Navbar.tsx` — delete lines 59-67
+### Batch 1: Core Navigation & Chrome (Low Risk)
 
-### 1b. Remove "Why Choose Us" section from homepage
-- 3 cards with bullet points = wall of text. Nobody reads this on first visit
-- **File**: `Index.tsx` — remove `<WhyChooseUsSection />`
-- Component stays in codebase (can be used on About page later)
+**Files**: `Navbar.tsx`, `MobileMenu.tsx`, `DashboardNavigation.tsx`, `LanguageToggle.tsx`
 
-### 1c. Remove "Recently Viewed Products" from homepage  
-- Clutters the first impression for new visitors (they have no history anyway)
-- **File**: `Index.tsx` — remove `<RecentlyViewedProducts />`
-- Component stays in codebase
+- Replace hardcoded "Wholesalers" → `t('shops')` (already has Urdu: دکانیں)
+- Replace hardcoded "Help" → add translation key `help` → مدد
+- Add `dir` attribute to navbar container when Urdu active
+- Dashboard sidebar: translate "More Tools" → مزید, "Stock" → اسٹاک, all group labels
+- Role badge: show Urdu role names (ہول سیلر, فروخت کنندہ) when language is Urdu
 
-### 1d. Simplify Hero text
-- Current: "Pakistan's Largest B2B E-Commerce Platform" — too corporate
-- New: "Thok ka Saman, Online Mangwao" (اردو + English) — instantly understandable
-- **File**: `UrduHeroSection.tsx`
+### Batch 2: Auth & Onboarding (Medium Risk)
 
-**Result**: Homepage becomes: Hero → Products → CTA. Clean, focused, fast.
+**Files**: `RoleSelectionStep.tsx`, `EmailSignupForm.tsx`, `AccountInfoStep.tsx`, `PakistaniLoginForm.tsx`
 
----
+- Role selection cards: translate titles, descriptions, feature lists
+- Login form labels and error messages
+- Signup form field labels and validation messages
+- Lockout message translation
+- Add `dir="rtl"` to form containers when Urdu
 
-## Batch 2: Navigation Cleanup (LOW RISK)
+### Batch 3: Dashboard & Orders (Medium Risk)
 
-### 2a. Remove "Tutorials" from main navbar
-- New visitors don't need tutorials — they need to browse products
-- Keep Tutorials accessible in dashboard sidebar only
-- **Files**: `Navbar.tsx`, `MobileMenu.tsx`
+**Files**: `EnhancedSellerDashboard.tsx`, `EnhancedWholesalerDashboard.tsx`, order-related components
 
-### 2b. Remove "Features" from mobile menu
-- Marketing page, not useful for actual users trying to buy/sell
-- **File**: `MobileMenu.tsx`
+- Dashboard quick action cards: translate titles and descriptions
+- Order status labels and filter options
+- Toast/notification messages: add bilingual support
+- Stats cards (Total Orders, Revenue, etc.) — already have translations, verify they're used
 
-### 2c. Simplify mobile menu structure
-- Fewer items = less overwhelming on small screens
-- Keep: Home, Products, Wholesalers, Login/Signup (or Dashboard/Logout)
+### Batch 4: Chat & Support (Low Risk)
 
-**Result**: Navbar has only 3 links: Products | Wholesalers | Cart
+**Files**: `ChatWelcomeMessage.tsx`, `ModernChatInterface.tsx`
 
----
+- Welcome message in Urdu when language is set
+- Suggested questions in Urdu
+- "Press Enter to send" → "بھیجنے کے لیے Enter دبائیں"
+- Chat input placeholder
 
-## Batch 3: Dashboard Sidebar Reorganization (MEDIUM RISK)
+### Batch 5: RTL Layout Pass (Medium Risk)
 
-### 3a. Wholesaler sidebar — group into Primary & Secondary
-- **Primary** (always visible): Home, Shop, Products, Orders, Stock
-- **Secondary** (collapsed under "More"): Analytics, Coupons, Payment, Shipping, Tutorials, Profile
-- This reduces 10+ visible items to 5 visible + expandable
+- Add conditional `dir="rtl"` to page-level containers
+- Flip icon positions (mr-2 → ml-2) when RTL
+- Ensure `space-x-reverse` on flex containers in RTL
+- Search input: flip search icon position in RTL mode
+- Test on mobile viewport to verify no layout breaks
 
-### 3b. Seller sidebar — already clean (5 items), keep as-is
+### New Translation Keys Needed
+Add ~30-40 new keys to `LanguageContext.tsx` for currently hardcoded strings like:
+- `help` → مدد
+- `moreTools` → مزید
+- `stock` → اسٹاک  
+- `browseProducts` (verify exists)
+- `pressEnterToSend` → بھیجنے کے لیے Enter دبائیں
+- Various dashboard action descriptions
 
-### 3c. Remove "Tutorials" from General section
-- Move to bottom of sidebar as a help link instead of nav item
+### Safety
+- No database changes
+- No auth flow changes  
+- No feature additions or removals
+- Each batch can be tested independently
+- Build verification after each batch
 
-**Result**: Wholesalers see 5 core actions instead of 10+
+### Execution Order
+Batch 1 → 2 → 3 → 4 → 5, with build check after each. I'll pause between batches for you to verify on preview.
 
----
-
-## Batch 4: Signup Simplification (MEDIUM RISK)
-
-### 4a. Current signup uses `EmailSignupForm` — it's a single-page form with:
-- Business Type, Contact Name, Business Name, Email, Phone, Password, Terms
-- This is actually reasonable but the email field is confusing for phone-based users
-
-### 4b. The email field will stay (needed for Supabase auth) but we'll:
-- Auto-generate email from phone (already done in enhanced signup)
-- Make sure the active signup flow is the phone-based one, not email-based
-
-**No changes to signup in this phase** — it works and changing auth flows is high risk.
-
----
-
-## Summary of Changes
-
-| Change | Risk | Files |
-|--------|------|-------|
-| Remove top banner | Low | Navbar.tsx |
-| Remove WhyChooseUs from homepage | Low | Index.tsx |
-| Remove RecentlyViewed from homepage | Low | Index.tsx |
-| Simplify hero text | Low | UrduHeroSection.tsx |
-| Remove Tutorials from navbar | Low | Navbar.tsx, MobileMenu.tsx |
-| Remove Features from mobile menu | Low | MobileMenu.tsx |
-| Dashboard sidebar reorganization | Medium | DashboardNavigation.tsx |
-
-**Total files modified**: 5
-**Features removed**: 0
-**Components deleted**: 0

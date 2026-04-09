@@ -12,8 +12,8 @@ import { Phone, Briefcase, Lock, Mail, Eye, EyeOff, User, Building2, CheckCircle
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/phone-utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-// Enhanced signup form schema with business info
 const signupSchema = z.object({
   businessType: z.enum(['wholesaler', 'seller']),
   contactName: z.string()
@@ -45,9 +45,9 @@ const EmailSignupForm = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
-  // Phone validation state
   const [phoneCheckStatus, setPhoneCheckStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const { t, language } = useLanguage();
+  const isRtl = language === 'ur';
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -62,7 +62,6 @@ const EmailSignupForm = () => {
     }
   });
 
-  // Watch phone number for real-time validation
   const phoneNumber = form.watch('phoneNumber');
   
   useEffect(() => {
@@ -76,8 +75,6 @@ const EmailSignupForm = () => {
       
       try {
         const normalizedPhone = normalizePakistaniPhone(phoneNumber);
-        
-        // Check if phone exists using RPC function
         const { data: phoneData, error } = await supabase.rpc('check_phone_exists', {
           p_phone: normalizedPhone
         });
@@ -100,12 +97,11 @@ const EmailSignupForm = () => {
   }, [phoneNumber]);
 
   const handleSubmit = async (formData: SignupFormValues) => {
-    // Check if phone is already taken
     if (phoneCheckStatus === 'taken') {
       toast({
         variant: 'destructive',
-        title: 'Phone Already Registered',
-        description: 'This phone number is already registered. Please login instead.',
+        title: t('phoneAlreadyRegistered'),
+        description: t('phoneAlreadyDesc'),
       });
       return;
     }
@@ -115,7 +111,6 @@ const EmailSignupForm = () => {
       const normalizedPhone = normalizePakistaniPhone(formData.phoneNumber);
       const redirectUrl = `${window.location.origin}/dashboard`;
 
-      // Sign up with Supabase (no captcha since it's disabled in Supabase dashboard)
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -132,22 +127,20 @@ const EmailSignupForm = () => {
 
       if (signUpError) throw signUpError;
 
-      // Store email for confirmation page
       sessionStorage.setItem('pendingConfirmationEmail', formData.email);
 
       toast({
-        title: 'Account Created!',
-        description: 'Please check your email to confirm your account.',
+        title: t('accountCreated'),
+        description: t('checkEmailConfirm'),
       });
 
-      // Redirect to email confirmation page
       navigate('/email-confirmation-pending');
     } catch (error: any) {
       console.error('Signup error:', error);
       
       toast({
         variant: 'destructive',
-        title: 'Signup Failed',
+        title: t('signupFailed'),
         description: error.message || 'Please try again.',
       });
     } finally {
@@ -158,7 +151,6 @@ const EmailSignupForm = () => {
   const selectedBusinessType = form.watch('businessType');
   const password = form.watch('password');
   
-  // Calculate password strength
   const getPasswordStrength = (pwd: string) => {
     let strength = 0;
     if (pwd.length >= 8) strength++;
@@ -172,7 +164,7 @@ const EmailSignupForm = () => {
   const passwordStrength = getPasswordStrength(password || '');
 
   return (
-    <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-card">
+    <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-card" dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-6 pt-8">
         <div className="flex justify-center mb-3">
           <div className="bg-primary-foreground/10 p-3 rounded-full backdrop-blur-sm border border-primary-foreground/20">
@@ -180,11 +172,11 @@ const EmailSignupForm = () => {
           </div>
         </div>
         
-        <CardTitle className="text-xl font-bold font-poppins text-center" dir="rtl">
-          پاکستانی اکاؤنٹ
+        <CardTitle className="text-xl font-bold font-poppins text-center">
+          {t('pakistaniAccount')}
         </CardTitle>
         <CardDescription className="font-poppins text-white/90 text-sm text-center mt-1">
-          Create your Pakistani B2B business account
+          {t('createB2BAccount')}
         </CardDescription>
       </CardHeader>
 
@@ -198,7 +190,7 @@ const EmailSignupForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-semibold text-foreground">
-                    Business Type *
+                    {t('businessTypeLabel')} *
                   </FormLabel>
                   <FormControl>
                     <div className="grid grid-cols-2 gap-3">
@@ -213,7 +205,7 @@ const EmailSignupForm = () => {
                         onClick={() => field.onChange('seller')}
                       >
                         <Briefcase className="h-6 w-6" />
-                        <span className="font-semibold text-sm">Seller/Retailer</span>
+                        <span className="font-semibold text-sm">{t('sellerTitle')}</span>
                       </Button>
                       <Button
                         type="button"
@@ -226,8 +218,7 @@ const EmailSignupForm = () => {
                         onClick={() => field.onChange('wholesaler')}
                       >
                         <Briefcase className="h-6 w-6" />
-                        <span className="font-semibold text-sm">Wholesaler</span>
-                        <span className="text-xs opacity-80">(تھوک فروش)</span>
+                        <span className="font-semibold text-sm">{t('wholesalerTitle')}</span>
                       </Button>
                     </div>
                   </FormControl>
@@ -236,7 +227,7 @@ const EmailSignupForm = () => {
               )}
             />
 
-            {/* Contact Name Field */}
+            {/* Contact Name */}
             <FormField
               control={form.control}
               name="contactName"
@@ -244,13 +235,13 @@ const EmailSignupForm = () => {
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
                     <User className="w-4 h-4" />
-                    Contact Name *
+                    {t('contactNameLabel')} *
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="text"
-                      placeholder="Your full name"
+                      placeholder={t('yourFullName')}
                       disabled={isLoading}
                       className="font-poppins"
                     />
@@ -260,7 +251,7 @@ const EmailSignupForm = () => {
               )}
             />
 
-            {/* Business Name Field */}
+            {/* Business Name */}
             <FormField
               control={form.control}
               name="businessName"
@@ -268,13 +259,13 @@ const EmailSignupForm = () => {
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
                     <Building2 className="w-4 h-4" />
-                    Business Name *
+                    {t('businessNameLabel')} *
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="text"
-                      placeholder="Your business or shop name"
+                      placeholder={t('yourBusinessName')}
                       disabled={isLoading}
                       className="font-poppins"
                     />
@@ -284,7 +275,7 @@ const EmailSignupForm = () => {
               )}
             />
 
-            {/* Email Field */}
+            {/* Email */}
             <FormField
               control={form.control}
               name="email"
@@ -292,7 +283,7 @@ const EmailSignupForm = () => {
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
                     <Mail className="w-4 h-4" />
-                    Email Address *
+                    {t('emailAddress')} *
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -308,7 +299,7 @@ const EmailSignupForm = () => {
               )}
             />
 
-            {/* Pakistani Mobile Number */}
+            {/* Phone */}
             <FormField
               control={form.control}
               name="phoneNumber"
@@ -316,7 +307,7 @@ const EmailSignupForm = () => {
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
                     <Phone className="w-4 h-4" />
-                    Pakistani Mobile Number *
+                    {t('pakistaniMobileLabel')} *
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
@@ -325,9 +316,9 @@ const EmailSignupForm = () => {
                         type="tel"
                         placeholder="03XX-XXXXXXX"
                         disabled={isLoading}
-                        className="font-poppins pr-10"
+                        className={`font-poppins ${isRtl ? 'pl-10' : 'pr-10'}`}
                       />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <div className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2`}>
                         {phoneCheckStatus === 'checking' && (
                           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                         )}
@@ -342,11 +333,11 @@ const EmailSignupForm = () => {
                   </FormControl>
                   {phoneCheckStatus === 'taken' && (
                     <p className="text-sm text-destructive">
-                      This phone number is already registered. <Link to="/login" className="underline">Login instead?</Link>
+                      {t('phoneTaken')} <Link to="/login" className="underline">{t('loginInstead')}</Link>
                     </p>
                   )}
                   {phoneCheckStatus === 'available' && (
-                    <p className="text-sm text-green-600">Phone number is available!</p>
+                    <p className="text-sm text-green-600">{t('phoneAvailable')}</p>
                   )}
                   <FormMessage />
                 </FormItem>
@@ -361,28 +352,27 @@ const EmailSignupForm = () => {
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
                     <Lock className="w-4 h-4" />
-                    Password *
+                    {t('passwordLabel')} *
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         {...field}
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Create a strong password"
+                        placeholder={t('createStrongPassword')}
                         disabled={isLoading}
-                        className="font-poppins pr-10"
+                        className={`font-poppins ${isRtl ? 'pl-10' : 'pr-10'}`}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors`}
                         tabIndex={-1}
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                   </FormControl>
-                  {/* Password strength indicator */}
                   {password && (
                     <div className="space-y-1">
                       <div className="flex gap-1">
@@ -402,7 +392,7 @@ const EmailSignupForm = () => {
                         ))}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {passwordStrength <= 2 ? 'Weak password' : passwordStrength <= 3 ? 'Medium strength' : 'Strong password'}
+                        {passwordStrength <= 2 ? t('weakPassword') : passwordStrength <= 3 ? t('mediumPassword') : t('strongPassword')}
                       </p>
                     </div>
                   )}
@@ -411,12 +401,12 @@ const EmailSignupForm = () => {
               )}
             />
 
-            {/* Terms & Conditions Checkbox */}
+            {/* Terms */}
             <FormField
               control={form.control}
               name="acceptTerms"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-border p-4">
+                <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border border-border p-4">
                   <FormControl>
                     <input
                       type="checkbox"
@@ -428,23 +418,23 @@ const EmailSignupForm = () => {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="text-sm font-poppins cursor-pointer">
-                      I agree to the{' '}
+                      {t('agreeToTerms')}{' '}
                       <Link
                         to="/terms-and-conditions"
                         target="_blank"
                         className="text-primary hover:text-primary/80 underline font-medium"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        Terms & Conditions
+                        {t('termsAndConditions')}
                       </Link>
-                      {' '}and{' '}
+                      {' '}{t('and')}{' '}
                       <Link
                         to="/privacy-policy"
                         target="_blank"
                         className="text-primary hover:text-primary/80 underline font-medium"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        Privacy Policy
+                        {t('privacyPolicy')}
                       </Link>
                     </FormLabel>
                     <FormMessage />
@@ -460,11 +450,11 @@ const EmailSignupForm = () => {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating Account...
+                  <Loader2 className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4 animate-spin`} />
+                  {t('creatingAccount')}
                 </>
               ) : (
-                'Create Account'
+                t('createAccount')
               )}
             </Button>
           </form>
@@ -475,7 +465,7 @@ const EmailSignupForm = () => {
           <div className="flex items-start gap-2">
             <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
             <p className="text-xs text-muted-foreground">
-              <strong>Secure Registration:</strong> Your data is protected with industry-standard encryption.
+              <strong>{t('secureRegistration')}:</strong> {t('secureRegDesc')}
             </p>
           </div>
         </div>
@@ -483,9 +473,9 @@ const EmailSignupForm = () => {
 
       <CardFooter className="border-t border-border bg-muted/30 dark:bg-muted/50 flex justify-center p-4">
         <p className="text-sm text-muted-foreground font-poppins">
-          Already have an account?{' '}
+          {t('alreadyHaveAccountLink')}{' '}
           <Link to="/login" className="text-primary hover:text-primary/80 font-medium">
-            Sign in here
+            {t('signInHere')}
           </Link>
         </p>
       </CardFooter>

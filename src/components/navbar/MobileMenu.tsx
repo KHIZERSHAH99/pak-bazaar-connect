@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { User, ShoppingBag, Users, Home, Settings, Sun, Moon, LogOut, HelpCircle } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onShowTutorial 
 }) => {
   const { theme, setTheme } = useTheme();
+  const { t, language } = useLanguage();
+  const isRtl = language === 'ur';
 
   if (!isOpen) return null;
 
@@ -35,17 +38,17 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   };
 
   return (
-    <div className="md:hidden fixed inset-x-0 top-[3.5rem] bottom-0 z-50 bg-background animate-slide-in-right overflow-hidden">
+    <div className="md:hidden fixed inset-x-0 top-[3.5rem] bottom-0 z-50 bg-background animate-slide-in-right overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="px-3 py-3 space-y-3 h-full overflow-y-auto overflow-x-hidden max-w-full">
-        {/* Main Navigation — only core items */}
+        {/* Main Navigation */}
         <div className="space-y-1">
           <Link to="/" onClick={handleLinkClick}>
             <Button 
               variant="ghost" 
               className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
             >
-              <Home className="w-5 h-5 mr-3" />
-              Home
+              <Home className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+              {t('home')}
             </Button>
           </Link>
           
@@ -54,8 +57,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               variant="ghost" 
               className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
             >
-              <ShoppingBag className="w-5 h-5 mr-3" />
-              Products
+              <ShoppingBag className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+              {t('products')}
             </Button>
           </Link>
           
@@ -64,8 +67,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               variant="ghost" 
               className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
             >
-              <Users className="w-5 h-5 mr-3" />
-              Wholesalers
+              <Users className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+              {t('shops')}
             </Button>
           </Link>
         </div>
@@ -75,7 +78,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
           <div className="space-y-2 border-t border-border pt-2">
             {/* User Info */}
             {profile && (
-              <div className="flex items-center space-x-2 p-2 bg-accent rounded-lg">
+              <div className="flex items-center gap-2 p-2 bg-accent rounded-lg">
                 <div className="bg-primary/10 p-1.5 rounded-full">
                   <User className="w-4 h-4 text-primary" />
                 </div>
@@ -84,7 +87,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                     {profile.contact_name || profile.business_name || profile.email}
                   </p>
                   <Badge variant="secondary" className="text-[10px] font-poppins mt-0.5 px-1.5 py-0">
-                    {profile.role}
+                    {t(profile.role)}
                   </Badge>
                 </div>
               </div>
@@ -97,8 +100,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   variant="ghost" 
                   className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins font-semibold"
                 >
-                  <Settings className="w-5 h-5 mr-3" />
-                  Dashboard
+                  <Settings className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+                  {t('dashboard')}
                 </Button>
               </Link>
 
@@ -107,8 +110,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   variant="ghost" 
                   className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
                 >
-                  <User className="w-5 h-5 mr-3" />
-                  Profile
+                  <User className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+                  {t('profile')}
                 </Button>
               </Link>
             </div>
@@ -122,8 +125,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                   variant="ghost"
                   className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
                 >
-                  <HelpCircle className="w-5 h-5 mr-3" />
-                  Help / Tutorial
+                  <HelpCircle className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+                  {t('help')}
                 </Button>
               )}
 
@@ -133,8 +136,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 variant="ghost"
                 className="w-full justify-start h-12 text-sm text-foreground hover:bg-accent font-poppins"
               >
-                {theme === 'light' ? <Moon className="w-5 h-5 mr-3" /> : <Sun className="w-5 h-5 mr-3" />}
-                {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                {theme === 'light' ? <Moon className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} /> : <Sun className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} />}
+                {theme === 'light' ? t('darkMode') : t('lightMode')}
               </Button>
             </div>
 
@@ -147,8 +150,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               variant="destructive"
               className="w-full h-12 text-sm font-poppins mt-2"
             >
-              <LogOut className="w-5 h-5 mr-3" />
-              Logout
+              <LogOut className={`w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+              {t('logout')}
             </Button>
           </div>
         ) : (
@@ -158,12 +161,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
                 variant="outline" 
                 className="w-full h-12 text-sm font-poppins"
               >
-                Login
+                {t('login')}
               </Button>
             </Link>
             <Link to="/signup" onClick={handleLinkClick}>
               <Button className="w-full h-12 text-sm bg-primary hover:bg-primary/90 text-primary-foreground font-poppins">
-                Sign Up
+                {t('signup')}
               </Button>
             </Link>
           </div>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronDown, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,9 +34,11 @@ interface DashboardNavigationProps {
 
 const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate }) => {
   const { profile, user } = useAuth();
+  const { t, language } = useLanguage();
   const location = useLocation();
   const unreadCount = useUnreadMessages();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+  const isRtl = language === 'ur';
 
   const { data: pendingOrderCount = 0 } = useQuery({
     queryKey: ['pending-order-count', user?.id, profile?.role],
@@ -103,7 +106,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 
-  const iconClass = "w-5 h-5 mr-3 flex-shrink-0";
+  const iconClass = `w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'} flex-shrink-0`;
 
   const toggleSection = (label: string) => {
     setExpandedSections(prev => ({ ...prev, [label]: !prev[label] }));
@@ -111,7 +114,6 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
 
   const isSectionOpen = (section: NavSection) => {
     if (!section.collapsible) return true;
-    // Auto-open if any child is active
     if (section.items.some(item => isActive(item.path))) return true;
     return expandedSections[section.label] ?? section.defaultOpen ?? false;
   };
@@ -120,43 +122,43 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
     if (profile?.role === 'admin') {
       return [
         {
-          label: 'General',
+          label: t('general'),
           items: [
-            { name: 'Dashboard', path: '/dashboard', icon: <Home className={iconClass} /> },
-            { name: 'Messages', path: '/messages', icon: <MessageSquare className={iconClass} />, badge: unreadCount > 0 ? String(unreadCount) : undefined },
+            { name: t('dashboard'), path: '/dashboard', icon: <Home className={iconClass} /> },
+            { name: t('messages'), path: '/messages', icon: <MessageSquare className={iconClass} />, badge: unreadCount > 0 ? String(unreadCount) : undefined },
           ],
         },
         {
-          label: 'Admin Controls',
+          label: t('adminControls'),
           items: [
-            { name: 'Admin Panel', path: '/dashboard/admin', icon: <Shield className={iconClass} /> },
-            { name: 'User Management', path: '/dashboard/admin/users', icon: <Users className={iconClass} />, badge: pendingRoleRequests > 0 ? String(pendingRoleRequests) : undefined },
-            { name: 'Order Oversight', path: '/dashboard/admin/orders', icon: <ClipboardList className={iconClass} />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
-            { name: 'Moderation', path: '/dashboard/admin/moderation', icon: <Eye className={iconClass} />, badge: pendingAds > 0 ? String(pendingAds) : undefined },
-            { name: 'Platform Analytics', path: '/dashboard/admin/analytics', icon: <TrendingUp className={iconClass} /> },
-            { name: 'Tutorial Manager', path: '/dashboard/tutorial-manager', icon: <Video className={iconClass} /> },
+            { name: t('adminPanel'), path: '/dashboard/admin', icon: <Shield className={iconClass} /> },
+            { name: t('userManagement'), path: '/dashboard/admin/users', icon: <Users className={iconClass} />, badge: pendingRoleRequests > 0 ? String(pendingRoleRequests) : undefined },
+            { name: t('orderOversight'), path: '/dashboard/admin/orders', icon: <ClipboardList className={iconClass} />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
+            { name: t('moderation'), path: '/dashboard/admin/moderation', icon: <Eye className={iconClass} />, badge: pendingAds > 0 ? String(pendingAds) : undefined },
+            { name: t('platformAnalytics'), path: '/dashboard/admin/analytics', icon: <TrendingUp className={iconClass} /> },
+            { name: t('tutorialManager'), path: '/dashboard/tutorial-manager', icon: <Video className={iconClass} /> },
           ],
         },
         {
-          label: 'Wholesaler View',
+          label: t('wholesalerView'),
           collapsible: true,
           items: [
-            { name: 'Shops', path: '/dashboard/shops', icon: <Store className={iconClass} /> },
-            { name: 'Products', path: '/dashboard/products', icon: <Package className={iconClass} /> },
-            { name: 'Orders', path: '/dashboard/wholesaler-orders', icon: <ShoppingCart className={iconClass} /> },
-            { name: 'Inventory', path: '/dashboard/inventory', icon: <Warehouse className={iconClass} /> },
-            { name: 'Shipping', path: '/dashboard/shipping', icon: <Truck className={iconClass} /> },
-            { name: 'Coupons', path: '/dashboard/coupons', icon: <Ticket className={iconClass} /> },
-            { name: 'Payment', path: '/dashboard/payment', icon: <CreditCard className={iconClass} /> },
-            { name: 'Analytics', path: '/dashboard/analytics', icon: <BarChart3 className={iconClass} /> },
+            { name: t('shops'), path: '/dashboard/shops', icon: <Store className={iconClass} /> },
+            { name: t('products'), path: '/dashboard/products', icon: <Package className={iconClass} /> },
+            { name: t('orders'), path: '/dashboard/wholesaler-orders', icon: <ShoppingCart className={iconClass} /> },
+            { name: t('inventory'), path: '/dashboard/inventory', icon: <Warehouse className={iconClass} /> },
+            { name: t('shipping'), path: '/dashboard/shipping', icon: <Truck className={iconClass} /> },
+            { name: t('coupons'), path: '/dashboard/coupons', icon: <Ticket className={iconClass} /> },
+            { name: t('payment'), path: '/dashboard/payment', icon: <CreditCard className={iconClass} /> },
+            { name: t('analytics'), path: '/dashboard/analytics', icon: <BarChart3 className={iconClass} /> },
           ],
         },
         {
-          label: 'Seller View',
+          label: t('sellerView'),
           collapsible: true,
           items: [
-            { name: 'Browse Shops', path: '/dashboard/browse-shops', icon: <Store className={iconClass} /> },
-            { name: 'Seller Orders', path: '/dashboard/seller-orders', icon: <ShoppingCart className={iconClass} /> },
+            { name: t('browseShopsNav'), path: '/dashboard/browse-shops', icon: <Store className={iconClass} /> },
+            { name: t('sellerOrders'), path: '/dashboard/seller-orders', icon: <ShoppingCart className={iconClass} /> },
           ],
         },
       ];
@@ -165,26 +167,26 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
     if (profile?.role === 'wholesaler') {
       return [
         {
-          label: 'Main',
+          label: t('main'),
           items: [
-            { name: 'Dashboard', path: '/dashboard', icon: <Home className={iconClass} /> },
-            { name: 'My Shop', path: '/dashboard/shops', icon: <Store className={iconClass} /> },
-            { name: 'Products', path: '/dashboard/products', icon: <Package className={iconClass} /> },
-            { name: 'Orders', path: '/dashboard/wholesaler-orders', icon: <ShoppingCart className={iconClass} />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
-            { name: 'Stock', path: '/dashboard/inventory', icon: <Warehouse className={iconClass} /> },
-            { name: 'Messages', path: '/messages', icon: <MessageSquare className={iconClass} />, badge: unreadCount > 0 ? String(unreadCount) : undefined },
+            { name: t('dashboard'), path: '/dashboard', icon: <Home className={iconClass} /> },
+            { name: t('myShop'), path: '/dashboard/shops', icon: <Store className={iconClass} /> },
+            { name: t('products'), path: '/dashboard/products', icon: <Package className={iconClass} /> },
+            { name: t('orders'), path: '/dashboard/wholesaler-orders', icon: <ShoppingCart className={iconClass} />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
+            { name: t('stock'), path: '/dashboard/inventory', icon: <Warehouse className={iconClass} /> },
+            { name: t('messages'), path: '/messages', icon: <MessageSquare className={iconClass} />, badge: unreadCount > 0 ? String(unreadCount) : undefined },
           ],
         },
         {
-          label: 'More',
+          label: t('moreTools'),
           collapsible: true,
           items: [
-            { name: 'Shipping', path: '/dashboard/shipping', icon: <Truck className={iconClass} /> },
-            { name: 'Coupons', path: '/dashboard/coupons', icon: <Ticket className={iconClass} /> },
-            { name: 'Payment', path: '/dashboard/payment', icon: <CreditCard className={iconClass} /> },
-            { name: 'Analytics', path: '/dashboard/analytics', icon: <BarChart3 className={iconClass} /> },
-            { name: 'Tutorials', path: '/dashboard/tutorials', icon: <BookOpen className={iconClass} /> },
-            { name: 'Profile', path: '/profile', icon: <Settings className={iconClass} /> },
+            { name: t('shipping'), path: '/dashboard/shipping', icon: <Truck className={iconClass} /> },
+            { name: t('coupons'), path: '/dashboard/coupons', icon: <Ticket className={iconClass} /> },
+            { name: t('payment'), path: '/dashboard/payment', icon: <CreditCard className={iconClass} /> },
+            { name: t('analytics'), path: '/dashboard/analytics', icon: <BarChart3 className={iconClass} /> },
+            { name: t('tutorials'), path: '/dashboard/tutorials', icon: <BookOpen className={iconClass} /> },
+            { name: t('profile'), path: '/profile', icon: <Settings className={iconClass} /> },
           ],
         },
       ];
@@ -193,14 +195,14 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
     if (profile?.role === 'seller') {
       return [
         {
-          label: 'Main',
+          label: t('main'),
           items: [
-            { name: 'Dashboard', path: '/dashboard', icon: <Home className={iconClass} /> },
-            { name: 'Browse Shops', path: '/dashboard/browse-shops', icon: <Store className={iconClass} /> },
-            { name: 'My Orders', path: '/dashboard/seller-orders', icon: <ShoppingCart className={iconClass} />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
-            { name: 'Messages', path: '/messages', icon: <MessageSquare className={iconClass} />, badge: unreadCount > 0 ? String(unreadCount) : undefined },
-            { name: 'Tutorials', path: '/dashboard/tutorials', icon: <BookOpen className={iconClass} /> },
-            { name: 'Profile', path: '/profile', icon: <Settings className={iconClass} /> },
+            { name: t('dashboard'), path: '/dashboard', icon: <Home className={iconClass} /> },
+            { name: t('browseShopsNav'), path: '/dashboard/browse-shops', icon: <Store className={iconClass} /> },
+            { name: t('myOrders'), path: '/dashboard/seller-orders', icon: <ShoppingCart className={iconClass} />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
+            { name: t('messages'), path: '/messages', icon: <MessageSquare className={iconClass} />, badge: unreadCount > 0 ? String(unreadCount) : undefined },
+            { name: t('tutorials'), path: '/dashboard/tutorials', icon: <BookOpen className={iconClass} /> },
+            { name: t('profile'), path: '/profile', icon: <Settings className={iconClass} /> },
           ],
         },
       ];
@@ -209,20 +211,21 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
     // Fallback
     return [
       {
-        label: 'General',
+        label: t('general'),
         items: [
-          { name: 'Dashboard', path: '/dashboard', icon: <Home className={iconClass} /> },
-          { name: 'Messages', path: '/messages', icon: <MessageSquare className={iconClass} />, badge: unreadCount > 0 ? String(unreadCount) : undefined },
-          { name: 'Profile', path: '/profile', icon: <Settings className={iconClass} /> },
+          { name: t('dashboard'), path: '/dashboard', icon: <Home className={iconClass} /> },
+          { name: t('messages'), path: '/messages', icon: <MessageSquare className={iconClass} />, badge: unreadCount > 0 ? String(unreadCount) : undefined },
+          { name: t('profile'), path: '/profile', icon: <Settings className={iconClass} /> },
         ],
       },
     ];
   };
 
   const sections = getNavSections();
+  const ChevronIcon = isRtl ? ChevronLeft : ChevronRight;
 
   return (
-    <nav className="space-y-4">
+    <nav className="space-y-4" dir={isRtl ? 'rtl' : 'ltr'}>
       {sections.map((section, sectionIdx) => {
         const open = isSectionOpen(section);
         return (
@@ -235,7 +238,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
                 className="flex items-center justify-between w-full text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-1.5 font-poppins hover:text-foreground transition-colors"
               >
                 <span>{section.label}</span>
-                {open ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                {open ? <ChevronDown className="h-3 w-3" /> : <ChevronIcon className="h-3 w-3" />}
               </button>
             ) : (
               <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-1.5 font-poppins">
@@ -267,7 +270,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
                           {item.badge}
                         </Badge>
                       )}
-                      <ChevronRight className={`h-3 w-3 sm:h-4 sm:w-4 opacity-0 -translate-x-2 transition-all duration-200 
+                      <ChevronIcon className={`h-3 w-3 sm:h-4 sm:w-4 opacity-0 -translate-x-2 transition-all duration-200 
                         ${isActive(item.path) ? 'opacity-100 translate-x-0' : 'group-hover:opacity-50 group-hover:translate-x-0'}`} 
                       />
                     </div>

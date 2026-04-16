@@ -16,6 +16,8 @@ const Index: React.FC = () => {
       <div className="min-h-screen">
         <UrduHeroSection />
         <FeaturedProducts />
+        <RecentlyViewedProducts />
+        <WhyChooseUsSection />
         <TrustSignalsSection />
         <CallToActionSection />
       </div>

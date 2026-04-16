@@ -11,12 +11,12 @@ const UrduHeroSection = () => {
   const isRtl = language === 'ur';
 
   return (
-    <section className="relative py-16 md:py-28 lg:py-36 bg-gradient-to-b from-primary/5 to-background overflow-hidden">
+    <section className="relative py-14 md:py-20 lg:py-28 bg-gradient-to-b from-primary/5 to-background overflow-hidden">
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-5xl mx-auto" dir={isRtl ? 'rtl' : 'ltr'}>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground mb-4 md:mb-6 leading-tight font-poppins tracking-tight">
+        <div className="text-center max-w-4xl mx-auto" dir={isRtl ? 'rtl' : 'ltr'}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-3 md:mb-5 leading-[1.1] font-poppins tracking-tight">
             {isRtl ? (
               <>پاکستان کا سب سے بڑا<br />
               <span className="text-primary">B2B ای کامرس</span> پلیٹ فارم</>
@@ -26,27 +26,27 @@ const UrduHeroSection = () => {
             )}
           </h1>
           
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 md:mb-10 font-poppins max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-muted-foreground mb-6 md:mb-8 font-poppins max-w-xl mx-auto">
             {isRtl 
               ? 'ہول سیلرز اور ریٹیلرز کو جوڑیں، اپنے کاروبار کو آگے بڑھائیں'
               : 'Connect wholesalers and retailers, accelerate your business growth'}
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 md:mb-16 px-2 sm:px-0">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10 md:mb-14 px-2 sm:px-0">
             <Link to={user ? "/dashboard" : "/signup"}>
               <Button 
                 size="lg" 
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 sm:px-10 py-6 sm:py-7 text-lg sm:text-xl font-poppins font-semibold shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto min-h-[52px] rounded-xl"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 sm:px-8 py-5 text-base font-poppins font-semibold shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto min-h-[48px] rounded-lg"
               >
                 {user ? t('dashboard') : t('signup')}
-                <ArrowRight className={`${isRtl ? 'mr-2' : 'ml-2'} h-5 w-5`} />
+                <ArrowRight className={`${isRtl ? 'mr-2' : 'ml-2'} h-4 w-4`} />
               </Button>
             </Link>
             <Link to="/products">
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-primary text-primary hover:bg-primary/10 px-8 sm:px-10 py-6 sm:py-7 text-lg sm:text-xl font-poppins font-semibold w-full sm:w-auto min-h-[52px] rounded-xl"
+                className="border-2 border-primary text-primary hover:bg-primary/10 px-6 sm:px-8 py-5 text-base font-poppins font-semibold w-full sm:w-auto min-h-[48px] rounded-lg"
               >
                 {t('browseProducts')}
               </Button>
@@ -54,22 +54,22 @@ const UrduHeroSection = () => {
           </div>
           
           {/* Trust signals */}
-          <div className="flex flex-row items-center justify-center gap-8 sm:gap-16 max-w-2xl mx-auto">
-            <div className="flex items-center gap-2.5">
-              <Shield className="h-6 sm:h-7 w-6 sm:w-7 text-primary flex-shrink-0" />
-              <span className="text-sm sm:text-base text-muted-foreground font-poppins whitespace-nowrap">
+          <div className="flex flex-row items-center justify-center gap-6 sm:gap-12">
+            <div className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary flex-shrink-0" />
+              <span className="text-xs sm:text-sm text-muted-foreground font-poppins">
                 {isRtl ? 'محفوظ لین دین' : 'Secure Transactions'}
               </span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <Users className="h-6 sm:h-7 w-6 sm:w-7 text-primary flex-shrink-0" />
-              <span className="text-sm sm:text-base text-muted-foreground font-poppins whitespace-nowrap">
+            <div className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary flex-shrink-0" />
+              <span className="text-xs sm:text-sm text-muted-foreground font-poppins">
                 {isRtl ? 'تصدیق شدہ سیلرز' : 'Verified Sellers'}
               </span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <TrendingUp className="h-6 sm:h-7 w-6 sm:w-7 text-primary flex-shrink-0" />
-              <span className="text-sm sm:text-base text-muted-foreground font-poppins whitespace-nowrap">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary flex-shrink-0" />
+              <span className="text-xs sm:text-sm text-muted-foreground font-poppins">
                 {isRtl ? 'بہترین قیمتیں' : 'Best Prices'}
               </span>
             </div>

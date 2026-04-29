@@ -4,10 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PhoneInput } from '@/components/ui/phone-input';
-import { Phone, Eye, EyeOff, Loader2, Shield } from 'lucide-react';
+import { Phone, Eye, EyeOff, Loader as Loader2, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { authenticateUserWithCaptcha } from '@/lib/auth/consolidated';
+import { signIn } from '@/lib/auth';
 import { validatePakistaniPhone, normalizePakistaniPhone } from '@/lib/auth/phone-utils';
 import { authSecurityManager } from '@/lib/security/enhanced-auth-security';
 import { showAuthError } from '@/lib/auth/auth-errors';
@@ -59,8 +59,8 @@ const PakistaniLoginForm: React.FC = () => {
       }
 
       console.log('🔐 Attempting authentication:', cleanPhone);
-      
-      const result = await authenticateUserWithCaptcha(cleanPhone, password);
+
+      const result = await signIn(cleanPhone, password);
       
       if (result.user) {
         toast({

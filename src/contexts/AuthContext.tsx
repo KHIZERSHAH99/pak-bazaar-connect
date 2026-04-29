@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { authenticateUser, registerUser, signOutUser } from '@/lib/auth/consolidated';
+import { signIn, signUp, signOut } from '@/lib/auth';
 import { getUserProfile } from '@/lib/auth/profile';
 import { ensureProfileSync } from '@/lib/auth/profile-sync';
 import { UserRole } from '@/lib/types';
@@ -125,26 +125,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let mounted = true;
     let refreshTimer: ReturnType<typeof setTimeout> | null = null;
     let sessionCheckTimer: ReturnType<typeof setInterval> | null = null;
+    let isRefreshing = false; // Prevent concurrent refresh attempts
 
     const setupSessionRefresh = (sess: Session) => {
-      if (refreshTimer) clearTimeout(refreshTimer);
-      
+      // Always clear previous timer to prevent accumulation
+      if (refreshTimer) {
+        clearTimeout(refreshTimer);
+        refreshTimer = null;
+      }
+
       const expiresAt = sess.expires_at ? sess.expires_at * 1000 : 0;
       const timeUntilExpiry = expiresAt - Date.now();
       const refreshTime = Math.max(0, timeUntilExpiry - 5 * 60 * 1000);
-      
+
       if (refreshTime > 0) {
         refreshTimer = setTimeout(async () => {
+          // Skip if already refreshing or component unmounted
+          if (isRefreshing || !mounted) return;
+
+          isRefreshing = true;
           try {
             const { data, error } = await supabase.auth.refreshSession();
             if (error) {
               if (import.meta.env.DEV) console.error('Session refresh failed:', error);
-              await supabase.auth.signOut();
-            } else if (data.session) {
+              if (mounted) await supabase.auth.signOut();
+            } else if (data.session && mounted) {
               setupSessionRefresh(data.session);
             }
           } catch (err) {
             if (import.meta.env.DEV) console.error('Session refresh error:', err);
+          } finally {
+            isRefreshing = false;
           }
         }, refreshTime);
       }
@@ -153,61 +164,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Periodic session integrity check — validates session server-side
     const startSessionIntegrityCheck = () => {
       if (sessionCheckTimer) clearInterval(sessionCheckTimer);
-      sessionCheckTimer = setInterval(async () => {
+      sessionCheckTimer = setInterval(() => {
         if (!mounted) return;
-        try {
-          const { data: { session: currentSession }, error } = await supabase.auth.getSession();
-          if (error || !currentSession) {
-            if (mounted) {
-              setUser(null);
-              setSession(null);
-              setProfile(null);
-              clearAllClientState();
+        // Wrap async operations in IIFE to avoid deadlock
+        (async () => {
+          try {
+            const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+            if (error || !currentSession) {
+              if (mounted) {
+                setUser(null);
+                setSession(null);
+                setProfile(null);
+                clearAllClientState();
+              }
+              return;
             }
-            return;
-          }
-          // Verify the session is still valid by making a lightweight authenticated call
-          const { error: verifyError } = await supabase.auth.getUser();
-          if (verifyError) {
-            if (import.meta.env.DEV) console.warn('Session integrity check failed:', verifyError.message);
-            await supabase.auth.signOut();
-            if (mounted) {
-              setUser(null);
-              setSession(null);
-              setProfile(null);
-              clearAllClientState();
+            // Verify the session is still valid by making a lightweight authenticated call
+            const { error: verifyError } = await supabase.auth.getUser();
+            if (verifyError) {
+              if (import.meta.env.DEV) console.warn('Session integrity check failed:', verifyError.message);
+              await supabase.auth.signOut();
+              if (mounted) {
+                setUser(null);
+                setSession(null);
+                setProfile(null);
+                clearAllClientState();
+              }
             }
+          } catch {
+            // Silently fail — network issues shouldn't force logout
           }
-        } catch {
-          // Silently fail — network issues shouldn't force logout
-        }
+        })();
       }, SESSION_CHECK_INTERVAL);
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, sess) => {
+      (event, sess) => {
         if (!mounted) return;
-        
-        if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
-          if (sess) setupSessionRefresh(sess);
-        }
-        
-        setSession(sess);
-        setUser(sess?.user ?? null);
-        
-        if (sess?.user && event === 'SIGNED_IN' && !profileFetchedRef.current) {
-          startSessionIntegrityCheck();
-          ensureProfileSync(sess.user.id, sess.user.email || '', sess.user.user_metadata).then(() => {
-            fetchProfile(sess.user.id);
-          });
-        } else if (event === 'SIGNED_OUT') {
-          setProfile(null);
-          clearAllClientState();
-          if (refreshTimer) clearTimeout(refreshTimer);
-          if (sessionCheckTimer) clearInterval(sessionCheckTimer);
-        }
-        
-        if (mounted) setLoading(false);
+
+        // Wrap async operations in IIFE to avoid deadlock
+        (async () => {
+          try {
+            if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+              if (sess) setupSessionRefresh(sess);
+            }
+
+            setSession(sess);
+            setUser(sess?.user ?? null);
+
+            if (sess?.user && event === 'SIGNED_IN' && !profileFetchedRef.current) {
+              startSessionIntegrityCheck();
+              await ensureProfileSync(sess.user.id, sess.user.email || '', sess.user.user_metadata);
+              await fetchProfile(sess.user.id);
+            } else if (event === 'SIGNED_OUT') {
+              setProfile(null);
+              clearAllClientState();
+              if (refreshTimer) clearTimeout(refreshTimer);
+              if (sessionCheckTimer) clearInterval(sessionCheckTimer);
+            }
+
+            if (mounted) setLoading(false);
+          } catch (error) {
+            console.error('Auth state change error:', error);
+            if (mounted) setLoading(false);
+          }
+        })();
       }
     );
 
@@ -233,8 +254,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => {
       mounted = false;
-      if (refreshTimer) clearTimeout(refreshTimer);
-      if (sessionCheckTimer) clearInterval(sessionCheckTimer);
+      // Ensure all timers are properly cleared
+      if (refreshTimer) {
+        clearTimeout(refreshTimer);
+        refreshTimer = null;
+      }
+      if (sessionCheckTimer) {
+        clearInterval(sessionCheckTimer);
+        sessionCheckTimer = null;
+      }
       subscription.unsubscribe();
     };
   }, []);
@@ -243,31 +271,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleSignIn = async (phoneOrEmail: string, password: string): Promise<{ error?: string }> => {
     try {
       setLoading(true);
-      
+
       const securityCheck = await authSecurityManager.enforceSecureLogin(phoneOrEmail, password);
       if (!securityCheck.allowed) {
         throw new Error(securityCheck.message || 'Sign in blocked for security reasons');
       }
-      
-      await authenticateUser(phoneOrEmail, password);
+
+      await signIn(phoneOrEmail, password);
       await authSecurityManager.recordAuthAttempt(phoneOrEmail, true);
-      
+
       toast({
         title: "Welcome back!",
         description: "You have been signed in successfully.",
       });
-      
+
       return {};
     } catch (error: any) {
       const errorMessage = error.message || 'Sign in failed';
       await authSecurityManager.recordAuthAttempt(phoneOrEmail, false);
-      
+
       toast({
         title: "Sign In Failed",
         description: errorMessage,
         variant: "destructive"
       });
-      
+
       return { error: errorMessage };
     } finally {
       setLoading(false);
@@ -275,30 +303,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const handleSignUp = async (
-    phoneOrEmail: string, 
-    password: string, 
-    role: string, 
+    phoneOrEmail: string,
+    password: string,
+    role: string,
     businessData?: Record<string, any>
   ): Promise<{ error?: string }> => {
     try {
       setLoading(true);
-      await registerUser(phoneOrEmail, password, role as UserRole, businessData || {});
-      
+      await signUp(phoneOrEmail, password, role as UserRole, businessData || {});
+
       toast({
         title: "Account Created",
         description: "Welcome to PakMandi!",
       });
-      
+
       return {};
     } catch (error: any) {
       const errorMessage = error.message || 'Registration failed';
-      
+
       toast({
         title: "Registration Failed",
         description: errorMessage,
         variant: "destructive"
       });
-      
+
       return { error: errorMessage };
     } finally {
       setLoading(false);
@@ -308,23 +336,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleSignOut = async (): Promise<void> => {
     try {
       setLoading(true);
-      
+
       // Clear all client state before sign out
       clearAllClientState();
-      
-      await signOutUser();
-      
+
+      await signOut();
+
       setUser(null);
       setSession(null);
       setProfile(null);
-      
+
       toast({
         title: "Signed Out",
         description: "You have been signed out successfully.",
       });
     } catch (error: any) {
       console.error('Sign out error:', error);
-      
+
       toast({
         title: "Sign Out Error",
         description: "There was an issue signing out. Please try again.",

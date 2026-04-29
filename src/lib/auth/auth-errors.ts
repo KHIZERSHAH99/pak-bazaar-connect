@@ -1,4 +1,5 @@
 import { toast } from '@/hooks/use-toast';
+import { validatePakistaniPhone } from './phone-utils';
 
 export interface AuthError {
   code: string;
@@ -371,8 +372,8 @@ export const validateEmail = (email: string): AuthError | null => {
   return null;
 };
 
-// Validate Pakistani phone number
-export const validatePakistaniPhone = (phone: string): AuthError | null => {
+// Validate Pakistani phone number - wrapper that returns AuthError for consistency
+export const validatePakistaniPhoneForError = (phone: string): AuthError | null => {
   if (!phone || phone.length === 0) {
     return {
       code: 'phone_required',
@@ -380,19 +381,17 @@ export const validatePakistaniPhone = (phone: string): AuthError | null => {
       field: 'phone'
     };
   }
-  
-  // Remove any spaces or dashes
-  const cleanPhone = phone.replace(/[\s-]/g, '');
-  
-  // Check if it starts with 03 and has 11 digits total
-  if (!/^03\d{9}$/.test(cleanPhone)) {
+
+  // Use the phone-utils version for actual validation
+  const isValid = validatePakistaniPhone(phone);
+  if (!isValid) {
     return {
       code: 'invalid_phone_format',
       message: AUTH_ERROR_MESSAGES['invalid_phone_format'],
       field: 'phone'
     };
   }
-  
+
   return null;
 };
 

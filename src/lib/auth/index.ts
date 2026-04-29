@@ -209,6 +209,49 @@ const signInWithEmail = async (email: string, password: string) => {
   return data;
 };
 
+// Verify profile exists with exponential backoff retry
+const verifyProfileExists = async (userId: string, maxRetries = 3): Promise<boolean> => {
+  let retryCount = 0;
+  let lastError: any;
+
+  while (retryCount < maxRetries) {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) {
+        lastError = error;
+        throw error;
+      }
+
+      if (profile) {
+        console.log('✅ Profile verified for user:', userId);
+        return true;
+      }
+
+      // Profile doesn't exist yet, retry with exponential backoff
+      const waitTime = Math.pow(2, retryCount) * 500; // 500ms, 1s, 2s
+      console.log(`Profile not found yet, retrying in ${waitTime}ms (attempt ${retryCount + 1}/${maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    } catch (error) {
+      lastError = error;
+      if (retryCount < maxRetries - 1) {
+        const waitTime = Math.pow(2, retryCount) * 500;
+        console.warn(`Retry ${retryCount + 1}/${maxRetries} after error:`, error);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
+
+    retryCount++;
+  }
+
+  console.error('Profile verification failed after retries:', lastError);
+  return false;
+};
+
 // Phone-based signup with captcha support
 const signUpWithPhone = async (
   phoneNumber: string, 
@@ -295,6 +338,13 @@ const signUpWithPhone = async (
 
     if (profileError) {
       console.error('Profile creation error:', profileError);
+      throw new Error('Failed to create user profile. Please try again.');
+    }
+
+    // Verify profile exists before returning
+    const profileExists = await verifyProfileExists(data.user.id);
+    if (!profileExists) {
+      throw new Error('Profile verification failed. Please try signing in again.');
     }
   }
 
@@ -335,6 +385,36 @@ const signUpWithEmail = async (
       throw new Error('Please enter a valid email address');
     }
     throw new Error('Registration failed. Please try again.');
+  }
+
+  // Ensure profile is created for email-based signup
+  if (data.user) {
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        id: data.user.id,
+        email: email,
+        role: role || 'seller',
+        contact_name: businessData?.contactName || 'User',
+        business_name: businessData?.businessName || 'Business',
+        business_type: businessData?.businessType || 'Retailer',
+        address: businessData?.address || '',
+        city: businessData?.city || '',
+        postal_code: businessData?.postalCode || '',
+        industry: businessData?.industry || '',
+        years_in_business: businessData?.yearsInBusiness || '1-3 years'
+      });
+
+    if (profileError && profileError.code !== 'PGRST103') { // PGRST103 = duplicate key
+      console.error('Profile creation error:', profileError);
+      throw new Error('Failed to create user profile. Please try again.');
+    }
+
+    // Verify profile exists before returning
+    const profileExists = await verifyProfileExists(data.user.id);
+    if (!profileExists) {
+      throw new Error('Profile verification failed. Please try signing in again.');
+    }
   }
 
   return data;

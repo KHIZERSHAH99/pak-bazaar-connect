@@ -5,7 +5,7 @@ import { validateAndSanitizeInput, checkFieldUniqueness } from '@/lib/security/s
 import { 
   showAuthError, 
   validatePasswordStrength, 
-  validatePakistaniPhone,
+  validatePakistaniPhoneForError,
   parseAuthError 
 } from './auth-errors';
 
@@ -38,7 +38,7 @@ export const authenticateUserWithCaptcha = async (
     
     if (isPhone) {
       // Validate phone format first
-      const phoneError = validatePakistaniPhone(normalizedInput);
+      const phoneError = validatePakistaniPhoneForError(normalizedInput);
       if (phoneError) {
         throw new Error(phoneError.message);
       }

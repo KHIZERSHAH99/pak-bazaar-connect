@@ -23,7 +23,7 @@ export const signUpUser = async (email: string, password: string, role: UserRole
       email: email.toLowerCase().trim(),
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: { role }
       }
     });

@@ -194,7 +194,7 @@ export const registerUser = async (
     
     // Create account (no captcha - disabled in Supabase settings)
     const signUpOptions = {
-      emailRedirectTo: `${window.location.origin}/dashboard`,
+      emailRedirectTo: `${window.location.origin}/auth/callback`,
       data: {
         email: authEmail,
         role,

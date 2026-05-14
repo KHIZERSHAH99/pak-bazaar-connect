@@ -5,7 +5,7 @@ import { PaymentMethodInfo } from '@/lib/types';
 // Get payment methods for a wholesaler
 export const getWholesalerPaymentMethods = async (wholesalerId: string): Promise<PaymentMethodInfo[]> => {
   const { data, error } = await supabase
-    .from('payment_methods')
+    .from('payment_methods_buyer_safe')
     .select('*')
     .eq('wholesaler_id', wholesalerId)
     .eq('is_active', true);

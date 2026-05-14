@@ -142,7 +142,7 @@ export const checkPaymentMethodConsistency = async (
 
     // Get wholesaler's payment methods separately
     const { data: paymentMethods, error: pmError } = await supabase
-      .from('payment_methods')
+      .from('payment_methods_buyer_safe')
       .select('*')
       .eq('wholesaler_id', order.shops.owner_id)
       .eq('is_active', true);

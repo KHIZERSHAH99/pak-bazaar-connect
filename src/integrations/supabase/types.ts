@@ -1886,6 +1886,33 @@ export type Database = {
           },
         ]
       }
+      profile_otps: {
+        Row: {
+          otp_attempts: number | null
+          otp_code: string | null
+          otp_expires_at: string | null
+          updated_at: string
+          user_id: string
+          verification_otp: string | null
+        }
+        Insert: {
+          otp_attempts?: number | null
+          otp_code?: string | null
+          otp_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+          verification_otp?: string | null
+        }
+        Update: {
+          otp_attempts?: number | null
+          otp_code?: string | null
+          otp_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_otp?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
@@ -1913,9 +1940,6 @@ export type Database = {
           last_role_switch: string | null
           normalized_phone: string | null
           ntn_number: string | null
-          otp_attempts: number | null
-          otp_code: string | null
-          otp_expires_at: string | null
           phone_encrypted: string | null
           phone_number: string | null
           phone_verified: boolean | null
@@ -1931,7 +1955,6 @@ export type Database = {
           suspension_type: string | null
           updated_at: string | null
           verification_notes: string | null
-          verification_otp: string | null
           verification_status: string | null
           years_in_business: string | null
         }
@@ -1961,9 +1984,6 @@ export type Database = {
           last_role_switch?: string | null
           normalized_phone?: string | null
           ntn_number?: string | null
-          otp_attempts?: number | null
-          otp_code?: string | null
-          otp_expires_at?: string | null
           phone_encrypted?: string | null
           phone_number?: string | null
           phone_verified?: boolean | null
@@ -1979,7 +1999,6 @@ export type Database = {
           suspension_type?: string | null
           updated_at?: string | null
           verification_notes?: string | null
-          verification_otp?: string | null
           verification_status?: string | null
           years_in_business?: string | null
         }
@@ -2009,9 +2028,6 @@ export type Database = {
           last_role_switch?: string | null
           normalized_phone?: string | null
           ntn_number?: string | null
-          otp_attempts?: number | null
-          otp_code?: string | null
-          otp_expires_at?: string | null
           phone_encrypted?: string | null
           phone_number?: string | null
           phone_verified?: boolean | null
@@ -2027,7 +2043,6 @@ export type Database = {
           suspension_type?: string | null
           updated_at?: string | null
           verification_notes?: string | null
-          verification_otp?: string | null
           verification_status?: string | null
           years_in_business?: string | null
         }
@@ -2692,6 +2707,76 @@ export type Database = {
       }
     }
     Views: {
+      payment_methods_buyer_safe: {
+        Row: {
+          account_number: string | null
+          account_number_masked: string | null
+          account_title: string | null
+          bank_name: string | null
+          created_at: string | null
+          easypaisa_masked: string | null
+          easypaisa_number: string | null
+          id: string | null
+          is_active: boolean | null
+          jazzcash_masked: string | null
+          jazzcash_number: string | null
+          updated_at: string | null
+          wholesaler_id: string | null
+        }
+        Insert: {
+          account_number?: string | null
+          account_number_masked?: string | null
+          account_title?: string | null
+          bank_name?: string | null
+          created_at?: string | null
+          easypaisa_masked?: string | null
+          easypaisa_number?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          jazzcash_masked?: string | null
+          jazzcash_number?: string | null
+          updated_at?: string | null
+          wholesaler_id?: string | null
+        }
+        Update: {
+          account_number?: string | null
+          account_number_masked?: string | null
+          account_title?: string | null
+          bank_name?: string | null
+          created_at?: string | null
+          easypaisa_masked?: string | null
+          easypaisa_number?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          jazzcash_masked?: string | null
+          jazzcash_number?: string | null
+          updated_at?: string | null
+          wholesaler_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_methods_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_methods_wholesaler_id_fkey"
+            columns: ["wholesaler_id"]
+            isOneToOne: false
+            referencedRelation: "public_wholesaler_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles_public: {
         Row: {
           business_name: string | null

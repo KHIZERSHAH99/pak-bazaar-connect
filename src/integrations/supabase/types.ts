@@ -2906,6 +2906,7 @@ export type Database = {
       delete_old_screenshots: { Args: never; Returns: undefined }
       delete_old_verification_documents: { Args: never; Returns: undefined }
       detect_unusual_access_patterns: { Args: never; Returns: undefined }
+      email_is_taken: { Args: { p_email: string }; Returns: boolean }
       generate_csrf_token: { Args: never; Returns: string }
       generate_otp: { Args: never; Returns: string }
       get_active_products_list: {

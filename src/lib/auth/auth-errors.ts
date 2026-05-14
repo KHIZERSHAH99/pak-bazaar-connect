@@ -412,7 +412,7 @@ export const validateAuthForm = (data: {
   
   // Validate phone if provided
   if (data.phone !== undefined) {
-    const phoneError = validatePakistaniPhone(data.phone);
+    const phoneError = validatePakistaniPhoneForError(data.phone);
     if (phoneError) errors.push(phoneError);
   }
   

@@ -5,7 +5,7 @@ import { validateAndSanitizeInput, checkFieldUniqueness } from '@/lib/security/s
 import { 
   showAuthError, 
   validatePasswordStrength, 
-  validatePakistaniPhone,
+  validatePakistaniPhoneForError,
   parseAuthError 
 } from './auth-errors';
 
@@ -38,7 +38,7 @@ export const authenticateUserWithCaptcha = async (
     
     if (isPhone) {
       // Validate phone format first
-      const phoneError = validatePakistaniPhone(normalizedInput);
+      const phoneError = validatePakistaniPhoneForError(normalizedInput);
       if (phoneError) {
         throw new Error(phoneError.message);
       }
@@ -194,7 +194,7 @@ export const registerUser = async (
     
     // Create account (no captcha - disabled in Supabase settings)
     const signUpOptions = {
-      emailRedirectTo: `${window.location.origin}/dashboard`,
+      emailRedirectTo: `${window.location.origin}/auth/callback`,
       data: {
         email: authEmail,
         role,

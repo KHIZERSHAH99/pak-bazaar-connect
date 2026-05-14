@@ -109,7 +109,30 @@ const EmailSignupForm = () => {
     setIsLoading(true);
     try {
       const normalizedPhone = normalizePakistaniPhone(formData.phoneNumber);
-      const redirectUrl = `${window.location.origin}/dashboard`;
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+
+      // Friendly pre-check: tell users clearly when their email is already
+      // registered, instead of the generic "check your email" response.
+      // The RPC is rate-limited server-side to prevent enumeration.
+      try {
+        const { data: taken } = await supabase.rpc('email_is_taken', {
+          p_email: formData.email,
+        });
+        if (taken === true) {
+          toast({
+            variant: 'destructive',
+            title: t('emailAlreadyRegistered') || 'Email already registered',
+            description:
+              t('emailAlreadyDesc') ||
+              'This email is already linked to an account. Try logging in or reset your password.',
+          });
+          setIsLoading(false);
+          return;
+        }
+      } catch (preErr) {
+        // Non-fatal — fall through and let signUp handle it.
+        console.warn('email_is_taken pre-check failed, continuing:', preErr);
+      }
 
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,

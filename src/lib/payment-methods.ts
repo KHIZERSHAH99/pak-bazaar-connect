@@ -106,7 +106,7 @@ export const getPaymentMethodsForShop = async (shopId: string): Promise<PaymentM
     // Then get the payment methods for the shop owner - using anon key for public access
     console.log('📋 Step 2: Getting payment methods for owner:', shop.owner_id);
     const { data: paymentMethods, error: paymentError } = await supabase
-      .from('payment_methods')
+      .from('payment_methods_buyer_safe')
       .select('*')
       .eq('wholesaler_id', shop.owner_id)
       .eq('is_active', true)

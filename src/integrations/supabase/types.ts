@@ -2707,6 +2707,51 @@ export type Database = {
       }
     }
     Views: {
+      company_profiles_public_safe: {
+        Row: {
+          address: string | null
+          business_type: string | null
+          city_id: string | null
+          company_name: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          logo: string | null
+          updated_at: string | null
+          user_id: string | null
+          verification_status: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          business_type?: string | null
+          city_id?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          logo?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          verification_status?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          business_type?: string | null
+          city_id?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          logo?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          verification_status?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       payment_methods_buyer_safe: {
         Row: {
           account_number: string | null
@@ -2864,7 +2909,7 @@ export type Database = {
         Row: {
           address: string | null
           city_id: string | null
-          contact: string | null
+          commission_rate: number | null
           created_at: string | null
           id: string | null
           logo: string | null
@@ -2875,7 +2920,7 @@ export type Database = {
         Insert: {
           address?: string | null
           city_id?: string | null
-          contact?: string | null
+          commission_rate?: number | null
           created_at?: string | null
           id?: string | null
           logo?: string | null
@@ -2886,7 +2931,7 @@ export type Database = {
         Update: {
           address?: string | null
           city_id?: string | null
-          contact?: string | null
+          commission_rate?: number | null
           created_at?: string | null
           id?: string | null
           logo?: string | null
@@ -3035,6 +3080,13 @@ export type Database = {
           status: string
         }[]
       }
+      get_company_contact: {
+        Args: { p_user_id: string }
+        Returns: {
+          phone: string
+          whatsapp: string
+        }[]
+      }
       get_current_commission_rate: { Args: never; Returns: number }
       get_effective_user_role: { Args: never; Returns: string }
       get_order_details_secure: { Args: { p_order_id: string }; Returns: Json }
@@ -3103,6 +3155,7 @@ export type Database = {
         }[]
       }
       get_security_stats: { Args: never; Returns: Json }
+      get_shop_contact: { Args: { p_shop_id: string }; Returns: string }
       get_storage_stats: { Args: never; Returns: Json }
       get_user_by_phone: {
         Args: { phone_input: string }

@@ -220,7 +220,7 @@ const EmailSignupForm = () => {
                       <Button
                         type="button"
                         variant={selectedBusinessType === 'seller' ? 'default' : 'outline'}
-                        className={`h-20 flex flex-col items-center justify-center gap-1 ${
+                       className={`h-20 flex flex-col items-center justify-center gap-1 active:scale-[0.98] transition-transform ${
                           selectedBusinessType === 'seller'
                             ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
                             : 'hover:bg-primary/5'
@@ -233,7 +233,7 @@ const EmailSignupForm = () => {
                       <Button
                         type="button"
                         variant={selectedBusinessType === 'wholesaler' ? 'default' : 'outline'}
-                        className={`h-20 flex flex-col items-center justify-center gap-1 ${
+                        className={`h-20 flex flex-col items-center justify-center gap-1 active:scale-[0.98] transition-transform ${
                           selectedBusinessType === 'wholesaler'
                             ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
                             : 'hover:bg-primary/5'
@@ -266,7 +266,9 @@ const EmailSignupForm = () => {
                       type="text"
                       placeholder={t('yourFullName')}
                       disabled={isLoading}
-                      className="font-poppins"
+                      className="font-poppins h-12 md:h-11 text-base"
+                      autoComplete="name"
+                      autoCapitalize="words"
                     />
                   </FormControl>
                   <FormMessage />
@@ -290,7 +292,8 @@ const EmailSignupForm = () => {
                       type="text"
                       placeholder={t('yourBusinessName')}
                       disabled={isLoading}
-                      className="font-poppins"
+                      className="font-poppins h-12 md:h-11 text-base"
+                      autoComplete="organization"
                     />
                   </FormControl>
                   <FormMessage />
@@ -314,7 +317,11 @@ const EmailSignupForm = () => {
                       type="email"
                       placeholder="your@email.com"
                       disabled={isLoading}
-                      className="font-poppins"
+                      className="font-poppins h-12 md:h-11 text-base"
+                      autoComplete="email"
+                      inputMode="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
                     />
                   </FormControl>
                   <FormMessage />
@@ -339,7 +346,9 @@ const EmailSignupForm = () => {
                         type="tel"
                         placeholder="03XX-XXXXXXX"
                         disabled={isLoading}
-                        className={`font-poppins ${isRtl ? 'pl-10' : 'pr-10'}`}
+                        className={`font-poppins h-12 md:h-11 text-base ${isRtl ? 'pl-12' : 'pr-12'}`}
+                        autoComplete="tel-national"
+                        inputMode="numeric"
                       />
                       <div className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2`}>
                         {phoneCheckStatus === 'checking' && (
@@ -384,12 +393,14 @@ const EmailSignupForm = () => {
                         type={showPassword ? 'text' : 'password'}
                         placeholder={t('createStrongPassword')}
                         disabled={isLoading}
-                        className={`font-poppins ${isRtl ? 'pl-10' : 'pr-10'}`}
+                        className={`font-poppins h-12 md:h-11 text-base ${isRtl ? 'pl-12' : 'pr-12'}`}
+                        autoComplete="new-password"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors`}
+                        className={`absolute ${isRtl ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 h-11 w-11 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors`}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                         tabIndex={-1}
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -429,14 +440,14 @@ const EmailSignupForm = () => {
               control={form.control}
               name="acceptTerms"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border border-border p-4">
+                <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border border-border p-4 active:bg-muted/30 transition-colors">
                   <FormControl>
                     <input
                       type="checkbox"
                       checked={field.value}
                       onChange={field.onChange}
                       disabled={isLoading}
-                      className="mt-0.5 h-4 w-4 rounded border-input accent-primary cursor-pointer"
+                      className="mt-0.5 h-5 w-5 rounded border-input accent-primary cursor-pointer"
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
@@ -468,7 +479,7 @@ const EmailSignupForm = () => {
 
             <Button 
               type="submit" 
-              className="w-full py-6 font-semibold"
+              className="w-full h-12 md:h-11 text-base font-semibold active:scale-[0.99] transition-transform"
               disabled={isLoading || phoneCheckStatus === 'taken'}
             >
               {isLoading ? (

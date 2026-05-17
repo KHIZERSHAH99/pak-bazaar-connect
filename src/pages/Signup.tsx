@@ -18,7 +18,7 @@ const Signup: React.FC = () => {
   return (
     <Layout title="Signup - PakMandi">
       <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/5 via-background to-primary/10 relative overflow-hidden">
-        <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto py-6 sm:py-12 px-3 sm:px-6 lg:px-8">
           <EmailSignupForm />
         </div>
       </div>

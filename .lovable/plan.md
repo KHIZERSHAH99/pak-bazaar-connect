@@ -1,103 +1,72 @@
-## Plan: Re-apply liked changes, auth UX fixes, and security hardening
+## Mobile UI/UX Proportion Fix (Daraz-inspired)
 
-### Part 1 — Re-apply the two reverted sections (kept from earlier)
+Goal: tighten phone proportions so cards, type, and CTAs feel right on a 360–414px screen. Desktop/tablet untouched. No business logic changes — only Tailwind classes & layout structure.
 
-Restore the two homepage sections shown in the screenshots: 
+### Audit findings (current issues on mobile)
 
-1. **"For Wholesalers / For Retailers / Trust Between Strangers"** trust card row (3 cards with checkmarks).
-2. **Stats + 4 trust badges row** (3+ Products, Free Signup, 24/7 Support → Verified Wholesalers, Secure Transactions, 0% Platform Fee, Nationwide Delivery + "Trusted by electronics wholesalers in Karachi" pill).
+1. **Product grid is single-column on phones** (`grid-cols-1 sm:grid-cols-2`). Daraz, Alibaba, Temu all use **2-column** on phones. Cards feel huge, only 1 product per screen.
+2. **ProductCard typography oversized**: name `text-base`, price `text-xl`, button `h-10` → eats vertical space. Padding `p-4` too generous for a 2-col card.
+3. **Featured products** still single column on mobile with `h-48` images + `p-5` → enormous cards.
+4. **Hero CTAs** are `py-5` + `text-base` stacked full-width — visually heavy. Trust row uses `h-6` icons which on small screens push hero below the fold awkwardly.
+5. **Navbar** logo "PM" tile uses `p-1.5` + `text-lg` → fine, but cart icon button is only `h-9 w-9` (under our 44px rule), while the hamburger is unlabelled and same size — inconsistent hit area.
+6. **Login page** wraps the form in `max-w-2xl` and renders a 3-up features grid below — on mobile the features stack as 3 big cards adding excessive scroll. Header `text-4xl` PakMandi + `p-3` shield icon is oversized for 390px.
+7. **No bottom-sheet / sticky thumb-zone CTAs** — Daraz keeps "Add to cart" reachable; ours is mid-card.
 
-Files: `src/pages/Index.tsx`, plus restore/touch-up `src/components/home/TrustSignalsSection.tsx` and `src/components/home/StatsDisplay.tsx` (or create lightweight equivalents if missing). Use semantic tokens, no hardcoded colors.
+### Plan
 
-### Part 2 — Further high-impact UX improvements (small, low-risk)
+**1. ProductCard (`src/components/products/ProductCard.tsx`)**
+- Image height on mobile: `h-32 sm:h-48` (was `h-40`).
+- Padding: `p-2.5 sm:p-5` (was `p-4 sm:p-5`).
+- Name: `text-sm sm:text-base` line-clamp-2.
+- Price: `text-base sm:text-xl` (was `text-xl` flat).
+- Hide MOQ badge & description on mobile (already hidden md+ for desc; remove MOQ on `<sm`).
+- Move favorite button to `top-1.5 right-1.5`, size `p-1.5`.
+- Replace bottom "View Product" button on mobile with a compact `h-9` icon-led CTA (cart icon only on `<sm`, full label `sm+`).
+- Remove the always-visible mobile eye-overlay (visual noise in a 2-col grid).
+- Tighten badges: `text-[10px] px-1.5 py-0.5` on mobile.
 
-Only if you approve. Suggested next polish (one section per round, not all at once):
+**2. ProductsGrid (`src/components/products/ProductsGrid.tsx`)**
+- Grid: `grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4` (was `grid-cols-1 sm:grid-cols-2 …`).
+- Gap: `gap-2 sm:gap-4 lg:gap-6` (was `gap-6 lg:gap-8`).
+- Skeleton matches the new 2-col mobile layout, smaller heights.
+- Sort bar: shrink select to `h-8 text-xs` on mobile.
 
-- Sticky "Order on WhatsApp" floating button on product/shop pages (trust + familiarity).
-- Urdu sub-labels under English nav items (already partly done; extend to dashboard).
-- Bigger, single-color CTA on hero ("ابھی شروع کریں / Start Now") — remove duplicate CTAs.
-- Verified-wholesaler badge on shop cards (we already have data).
-- "How it works" 3-step strip (Browse → Order → Receive) — Urdu icons, no paragraphs.
+**3. FeaturedProducts (`src/components/home/FeaturedProducts.tsx`)**
+- Grid: `grid-cols-2 sm:grid-cols-2 lg:grid-cols-4` (was `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`).
+- Image: `h-32 sm:h-48`, card padding `p-3 sm:p-5`.
+- Name `text-sm sm:text-lg`, price `text-base sm:text-xl`.
+- Hide MOQ row and "View Details" button label on mobile (icon-only chip).
+- Section header: `text-xl sm:text-2xl md:text-4xl`, mb tightened.
 
-Pick which ones; do NOT mass-apply.
+**4. Hero (`src/components/home/UrduHeroSection.tsx`)**
+- H1: `text-[26px] leading-[1.15] sm:text-4xl …`.
+- Subtitle: `text-sm sm:text-base md:text-xl`.
+- CTA buttons on mobile: side-by-side (`grid-cols-2 gap-2`) instead of stacked full-width, `h-11 text-sm`.
+- Trust row: convert to a 3-icon horizontal chip strip on mobile (`flex justify-between text-[11px]`, icons `h-4 w-4`), grid sm+.
+- Section padding: `py-8 md:py-24`.
 
-### Part 3 — Authentication fixes
+**5. Navbar (`src/components/Navbar.tsx`)**
+- Mobile bar height: `h-12` (was `h-14`) for a tighter, Daraz-like top bar.
+- Logo tile: `p-1 text-base` on mobile.
+- Cart and hamburger buttons: standardize to `h-10 w-10`, icons `w-5 h-5`.
+- Add mobile-only inline search input slot placeholder (visual proportion only — wires to existing `/products?search=` GET).
 
-**A. Email verification redirect**
+**6. Login (`src/pages/Login.tsx`)**
+- Header icon `p-2 h-6 w-6`, title `text-2xl sm:text-4xl`, subtitle `text-sm sm:text-lg`.
+- Hide the 3-up trust cards on `<sm` (keep sm+) — replace with a single inline trust line ("🔒 10,000+ businesses · Secure · Verified").
+- Container padding `py-4 sm:py-8`.
 
-- Confirm `emailRedirectTo: ${window.location.origin}/` is set on `supabase.auth.signUp` in `useEnhancedSignupForm.tsx` and any other signup paths.
-- Add `/auth/callback` route that handles `?code=` exchange and redirects to `/dashboard` with a success toast. Today the link likely lands on `/` with a hash and confuses users.
-- Update Supabase Auth → URL Configuration: Site URL = `https://pakm.lovable.app`, Redirect URLs include preview + custom domain. (User action — I'll list exact URLs.) (Our own custom damain is [https://pakbazaarconnect.store](https://pakm.lovable.app)) or you can do something so when we change our domain in future the redirect change itself if possible
+**7. Global**
+- Bump tap-target rule in `src/index.css` from `min-height: 40px` to `min-height: 44px` (Apple HIG / Daraz standard) and add `min-width: 44px` for icon-only buttons via a utility class `.tap-44`.
 
-**B. "Email already registered" handling (without enumeration leak)**  
-Current behavior: Supabase returns generic "check your email" even when the email is already used → user thinks signup worked.
+### Out of scope
+- No backend/RLS/edge changes.
+- No copy changes beyond what's required to fit narrower mobile widths.
+- Desktop (`md+`) layouts unchanged unless explicitly noted.
 
-Fix safely:
+### Technical notes
+- All changes are Tailwind responsive classes; no new dependencies.
+- Semantic tokens preserved (`bg-primary`, `text-foreground`, etc.).
+- RTL (Urdu) untouched — only sizes change, not directional classes.
 
-- For **phone-based signup** (our primary flow): we already check phone uniqueness via RPC. Add the same explicit check for **email** before calling `signUp`, using a SECURITY DEFINER RPC `email_is_taken(_email)` that returns a **rate-limited boolean** (max 5 calls / IP / minute, logs attempts). This prevents mass enumeration while letting the legitimate signup form show: *"This email is already registered. Try logging in or reset your password."*
-- If rate limit hit → fall back to generic message.
-- Never reveal existence on the password-reset endpoint (keep generic).
-
-**C. Better auth error messages**  
-`src/lib/auth/auth-errors.ts` already has a parser. Improvements:
-
-- Add explicit handling for `over_email_send_rate_limit`, `email_address_invalid`, `signup_disabled`.
-- Show inline field errors (red text under input) in addition to toast — currently toast-only on some forms.
-- Distinguish "wrong password" vs "no account" only when safe (use generic for login to prevent enumeration; use specific only on signup after rate-limited existence check).
-
-### Part 4 — Security findings (verified & action plan)
-
-I reviewed each finding against current schema/policies. Verdict + fix:
-
-
-| #   | Finding                                                  | Legit?                          | Fix                                                                                                                                                                                                                                                                                                                                       |
-| --- | -------------------------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | `payment_methods` plaintext columns exposed to buyers    | **YES, critical**               | Create view `payment_methods_buyer_safe` exposing only masked fields + bank_name + account_title. Replace buyer SELECT policy to deny direct table reads; update `src/lib/orders/payments.ts` to query the view. Plaintext columns kept only for wholesaler-self access.                                                                  |
-| 2   | `profiles` role self-escalation via OR'd UPDATE policies | **YES, critical**               | Drop both UPDATE policies; create one policy `profiles_self_update_no_role` with WITH CHECK that asserts `role = (SELECT role FROM profiles WHERE id = auth.uid())`. Also our existing trigger `prevent_role_self_escalation` is a backstop — keep it.                                                                                    |
-| 3   | `company_profiles` phone/whatsapp public                 | **YES, warn**                   | Create view `company_profiles_public_safe` (omits phone, whatsapp). Public SELECT policy on table → require authenticated for full row; anon reads via view only.                                                                                                                                                                         |
-| 4   | `profiles` exposes OTP + CNIC to row owner               | **YES, error**                  | Move OTP fields (`otp_code`, `otp_expires_at`, `otp_attempts`, `verification_otp`) to new `profile_otps` table with RLS denying SELECT to all (only SECURITY DEFINER functions can read). Create view `profiles_self_safe` for client reads excluding OTP + image URLs. Update `useEnhancedSignupForm`, OTP verify RPCs to use new table. |
-| 5   | Shop `contact` exposed to all authenticated              | warn                            | Add `shops_public_safe` view without `contact`; restrict table to owner + admin. Buyers see contact only after placing an order (existing pattern from payment_methods).                                                                                                                                                                  |
-| 6   | `operation_rate_limits` policy = false                   | warn, but **app-breaking risk** | Rate-limit code must run via SECURITY DEFINER RPC. Audit `src/lib/security/rate-limiter.ts` — if it inserts directly, switch to `rpc('record_rate_limit_hit', …)`.                                                                                                                                                                        |
-| 7   | Storage policy `payment_screenshot = s.name` typo        | YES                             | Fix migration: `o.payment_screenshot = objects.name`.                                                                                                                                                                                                                                                                                     |
-| 8   | Public bucket allows listing                             | warn                            | Make `ad-images`, `shop-logos`, `product-images` buckets non-listable (drop broad SELECT, replace with `bucket_id = ... AND name = storage.objects.name` per-object reads).                                                                                                                                                               |
-| 9   | SECURITY DEFINER functions executable by anon/auth       | warn                            | Audit all our RPCs; `REVOKE EXECUTE ... FROM anon, authenticated` on internal-only ones (`record_rate_limit_hit`, OTP writers, audit loggers); keep only intentional public RPCs (`email_is_taken`, `phone_is_taken`).                                                                                                                    |
-| 10  | Leaked password protection disabled                      | warn                            | Enable in Supabase dashboard (user toggle).                                                                                                                                                                                                                                                                                               |
-| 11  | Postgres version has security patches                    | warn                            | User upgrades from Supabase dashboard.                                                                                                                                                                                                                                                                                                    |
-
-
-### Part 5 — Comprehensive hack-vector review
-
-Beyond the findings above, I'll add checks/protections for:
-
-- **XSS**: audit all `dangerouslySetInnerHTML` (currently zero — good); confirm sanitizer used in chatbot responses.
-- **CSRF**: edge functions verify Origin/Referer; add to `chatbot`, `notifications`, `database-cleanup`.
-- **SSRF**: any URL fetched server-side (image proxy?) — none found, but add allow-list helper for future.
-- **IDOR**: re-test that order/shop/product IDs in URLs are RLS-protected (they are; will add automated test seed).
-- **Open redirect**: check post-login redirect param is same-origin only.
-- **Session fixation**: confirm `supabase.auth` rotates tokens (default yes).
-- **Brute force**: extend `auth_attempts` rate limiting to 5/min/IP on login + signup.
-- **File upload**: confirm `file-validation.ts` enforces MIME + size + magic bytes for screenshots/logos.
-- **Storage bucket enumeration**: covered in #8.
-- **JWT leakage**: confirm anon key only in client (it's fine — RLS does the work). No service_role anywhere in `src/`.
-- **Logging**: ensure no PII / passwords / OTPs logged to console in production builds.
-- **Dependency vulns**: run `dependency_scan` after.
-
-### Migrations summary (one combined migration per area)
-
-1. `payment_methods_buyer_safe` view + policy swap.
-2. `profiles` role-immutable UPDATE policy rewrite.
-3. `profile_otps` table + view `profiles_self_safe` + data move.
-4. `shops_public_safe`, `company_profiles_public_safe` views + policy swaps.
-5. Storage policy typo fix + bucket listing restrictions.
-6. REVOKE EXECUTE on internal SECURITY DEFINER functions.
-7. New RPC `email_is_taken` (rate-limited).
-
-### Execution order I propose
-
-1. **Part 1** (re-apply liked sections) — 5 min, zero risk.
-2. **Part 4** security migrations — biggest user-protection win, do in 2 batched migrations with my review of each policy before apply.
-3. **Part 3** auth UX (callback route + email-exists RPC + better errors).
-4. **Part 5** remaining hardening (storage, REVOKE, edge function origin checks).
-5. **Part 2** UX polish — last, after you pick which ones.
-
-Reply with: **"go"** to start with steps 1 → 4 in order, or list which steps to skip/reorder.
+After implementation I'll capture mobile screenshots of `/`, `/products`, `/login`, and a product detail card to confirm proportions land.

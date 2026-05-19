@@ -34,17 +34,17 @@ const Login: React.FC = () => {
         </div>
       </div>
 
-      <div className="relative z-10 flex flex-col justify-center py-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 flex flex-col justify-center py-4 sm:py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="sm:mx-auto sm:w-full sm:max-w-md mb-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md mb-5 sm:mb-8">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
-              <Shield className="h-8 w-8 text-primary" />
+            <div className="inline-flex items-center justify-center p-2 sm:p-3 bg-primary/10 rounded-full mb-3 sm:mb-4">
+              <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent font-poppins mb-2">
+            <h1 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent font-poppins mb-1 sm:mb-2">
               PakMandi
             </h1>
-            <p className="text-muted-foreground font-poppins text-lg">
+            <p className="text-muted-foreground font-poppins text-sm sm:text-lg">
               Pakistan's Trusted B2B Marketplace
             </p>
           </div>
@@ -54,7 +54,7 @@ const Login: React.FC = () => {
           <PakistaniLoginForm />
 
           {/* Features Section */}
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+          <div className="mt-6 sm:mt-12 hidden sm:grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
             <div className="bg-card/80 backdrop-blur-sm p-4 rounded-lg border border-border/50 text-center">
               <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-2">
                 <Shield className="h-5 w-5 text-primary" />
@@ -86,8 +86,17 @@ const Login: React.FC = () => {
             </div>
           </div>
 
+          {/* Mobile trust strip */}
+          <div className="sm:hidden mt-5 flex items-center justify-center gap-3 text-[11px] text-muted-foreground font-poppins">
+            <span className="inline-flex items-center gap-1"><Shield className="h-3.5 w-3.5 text-primary" /> Secure</span>
+            <span>•</span>
+            <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5 text-primary" /> 10,000+</span>
+            <span>•</span>
+            <span className="inline-flex items-center gap-1"><TrendingUp className="h-3.5 w-3.5 text-primary" /> Verified</span>
+          </div>
+
           {/* Footer Links */}
-          <div className="mt-8 text-center space-y-4">
+          <div className="mt-6 sm:mt-8 text-center space-y-3 sm:space-y-4">
             <Link
               to="/"
               className="inline-flex items-center text-sm text-muted-foreground hover:text-primary font-poppins transition-colors"

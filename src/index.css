@@ -187,10 +187,14 @@ html {
   }
 }
 
-/* Mobile touch-friendly tap targets */
+/* Mobile touch-friendly tap targets (Apple HIG 44px) */
 @media (max-width: 640px) {
   button, a, [role="button"] {
-    min-height: 40px;
+    min-height: 44px;
+  }
+  /* Allow compact controls (badges, inline chips, card CTAs) to opt out */
+  .tap-compact, [data-tap="compact"] {
+    min-height: 0 !important;
   }
 }
 

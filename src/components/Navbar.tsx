@@ -59,11 +59,11 @@ const Navbar = () => {
   return <>
       <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50" dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-14 md:h-16">
+            <div className="flex justify-between items-center h-12 md:h-16">
               {/* Logo */}
               <Link to="/" className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity">
-                <div className="bg-primary rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
-                  <span className="text-primary-foreground text-lg md:text-xl font-bold">PM</span>
+                <div className="bg-primary rounded-lg md:rounded-xl p-1 md:p-2 shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-primary-foreground text-base md:text-xl font-bold">PM</span>
                 </div>
                 <span className="text-lg md:text-xl font-bold text-foreground hidden lg:inline font-poppins">
                   PakMandi
@@ -133,8 +133,8 @@ const Navbar = () => {
             <div className="md:hidden flex items-center gap-1">
               {/* Mobile Cart */}
               <Link to="/checkout" className="relative">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-9 w-9">
-                  <ShoppingCart className="w-4 h-4" />
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-10 w-10">
+                  <ShoppingCart className="w-5 h-5" />
                   {cartCount > 0 && (
                     <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 text-[9px] bg-destructive text-destructive-foreground">
                       {cartCount}
@@ -143,7 +143,7 @@ const Navbar = () => {
                 </Button>
               </Link>
               <LanguageToggle />
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10 h-10 w-10" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
                 {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>

@@ -132,14 +132,14 @@ const Checkout: React.FC = () => {
 
   return (
     <Layout>
-    <div className="min-h-screen bg-muted/50 py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-muted/50 py-4 sm:py-8">
+      <div className="container mx-auto px-3 sm:px-4">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-foreground mb-8 font-poppins">Checkout</h1>
+          <h1 className="text-xl sm:text-3xl font-bold text-foreground mb-4 sm:mb-8 font-poppins">Checkout</h1>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
             {/* Order Details */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               {/* Customer Information */}
               <Card>
                 <CardHeader>
@@ -217,16 +217,16 @@ const Checkout: React.FC = () => {
                               <img
                                 src={item.product.image || '/placeholder.svg'}
                                 alt={item.product.name}
-                                className="w-16 h-16 object-cover rounded-md"
+                                className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md flex-shrink-0"
                               />
                               <div>
-                                <h4 className="font-medium">{item.product.name}</h4>
-                                <p className="text-sm text-muted-foreground">
+                                <h4 className="font-medium text-sm sm:text-base line-clamp-1">{item.product.name}</h4>
+                                <p className="text-xs sm:text-sm text-muted-foreground">
                                   PKR {item.product.price.toLocaleString()} × {item.quantity}
                                 </p>
                               </div>
                             </div>
-                            <p className="font-bold text-primary">
+                            <p className="font-bold text-primary text-sm sm:text-base whitespace-nowrap">
                               PKR {(item.product.price * item.quantity).toLocaleString()}
                             </p>
                           </div>

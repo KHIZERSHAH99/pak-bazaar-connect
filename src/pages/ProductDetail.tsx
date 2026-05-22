@@ -48,7 +48,7 @@ const ProductDetail: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
           <div className="animate-pulse">
             <div className="h-8 bg-muted rounded w-1/3 mb-6"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -68,7 +68,7 @@ const ProductDetail: React.FC = () => {
   if (!product) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
           <div className="text-center py-16">
             <Package className="h-24 w-24 text-muted-foreground mx-auto mb-6" />
             <h1 className="text-2xl font-bold mb-4 font-poppins">Product not found</h1>

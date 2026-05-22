@@ -59,11 +59,11 @@ const Navbar = () => {
   return <>
       <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50" dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-12 md:h-16">
+            <div className="flex justify-between items-center h-14 md:h-16">
               {/* Logo */}
               <Link to="/" className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity">
-                <div className="bg-primary rounded-lg md:rounded-xl p-1 md:p-2 shadow-md hover:shadow-lg transition-shadow">
-                  <span className="text-primary-foreground text-base md:text-xl font-bold">PM</span>
+                <div className="bg-primary rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-primary-foreground text-sm md:text-xl font-bold leading-none">PM</span>
                 </div>
                 <span className="text-lg md:text-xl font-bold text-foreground hidden lg:inline font-poppins">
                   PakMandi
@@ -130,21 +130,21 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Button and Language Toggle */}
-            <div className="md:hidden flex items-center gap-1">
+            <div className="md:hidden flex items-center gap-0.5">
               {/* Mobile Cart */}
               <Link to="/checkout" className="relative">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-10 w-10">
-                  <ShoppingCart className="w-5 h-5" />
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-11 w-11 rounded-full tap-compact">
+                  <ShoppingCart className="!w-[22px] !h-[22px]" />
                   {cartCount > 0 && (
-                    <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 text-[9px] bg-destructive text-destructive-foreground">
+                    <Badge className="absolute top-1 right-1 h-4 min-w-4 px-1 flex items-center justify-center p-0 text-[9px] bg-destructive text-destructive-foreground rounded-full">
                       {cartCount}
                     </Badge>
                   )}
                 </Button>
               </Link>
               <LanguageToggle />
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10 h-10 w-10" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10 h-11 w-11 rounded-full tap-compact" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
+                {isMobileMenuOpen ? <X className="!w-[22px] !h-[22px]" /> : <Menu className="!w-[22px] !h-[22px]" />}
               </Button>
             </div>
           </div>

@@ -38,7 +38,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   };
 
   return (
-    <div className="md:hidden fixed inset-x-0 top-[3.5rem] bottom-0 z-50 bg-background animate-slide-in-right overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="md:hidden fixed inset-x-0 top-14 bottom-0 z-50 bg-background animate-slide-in-right overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="px-3 py-3 space-y-3 h-full overflow-y-auto overflow-x-hidden max-w-full">
         {/* Main Navigation */}
         <div className="space-y-1">

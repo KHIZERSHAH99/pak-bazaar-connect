@@ -15,15 +15,17 @@ const ProductsManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 font-poppins">Products</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex justify-between items-center gap-2">
+        <h1 className="text-xl sm:text-3xl font-bold text-foreground font-poppins">Products</h1>
         <Button 
-          className="bg-primary hover:bg-primary/90 font-poppins"
+          size="sm"
+          className="bg-primary hover:bg-primary/90 font-poppins h-9 sm:h-10 px-3 sm:px-4 text-sm"
           onClick={() => setIsCreateDialogOpen(true)}
         >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Product
+          <Plus className="w-4 h-4 sm:mr-2" />
+          <span className="hidden sm:inline">Add Product</span>
+          <span className="sm:hidden ml-1">Add</span>
         </Button>
       </div>
       

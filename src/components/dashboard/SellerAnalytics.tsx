@@ -4,10 +4,10 @@ import { BarChart3, TrendingUp, Package } from 'lucide-react';
 
 const SellerAnalytics: React.FC = () => {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-gray-900 font-poppins">Analytics</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <h1 className="text-xl sm:text-3xl font-bold text-foreground font-poppins">Analytics</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-poppins text-lg">

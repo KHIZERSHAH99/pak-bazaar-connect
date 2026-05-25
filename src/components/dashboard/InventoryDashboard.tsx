@@ -84,15 +84,15 @@ const InventoryDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
         {statCards.map(s => (
           <Card key={s.label}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <s.icon className={`h-8 w-8 ${s.color} shrink-0`} />
-              <div>
-                <p className="text-2xl font-bold">{s.value}</p>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
+            <CardContent className="p-3 sm:p-4 flex items-center gap-2 sm:gap-3">
+              <s.icon className={`h-6 w-6 sm:h-8 sm:w-8 ${s.color} shrink-0`} />
+              <div className="min-w-0">
+                <p className="text-lg sm:text-2xl font-bold leading-tight">{s.value}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{s.label}</p>
               </div>
             </CardContent>
           </Card>

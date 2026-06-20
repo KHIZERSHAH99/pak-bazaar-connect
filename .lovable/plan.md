@@ -1,72 +1,94 @@
-## Mobile UI/UX Proportion Fix (Daraz-inspired)
+# Plan: Harden SECURITY DEFINER RPCs
 
-Goal: tighten phone proportions so cards, type, and CTAs feel right on a 360–414px screen. Desktop/tablet untouched. No business logic changes — only Tailwind classes & layout structure.
+## Context
 
-### Audit findings (current issues on mobile)
+37 `SECURITY DEFINER` functions in the `public` schema are currently `EXECUTE`-able by `anon`. These run with owner privileges, bypassing RLS — any bug or missing check inside one is a full RLS bypass. Goal: add explicit allowlists + strict input validation to every one, then verify edge cases.
 
-1. **Product grid is single-column on phones** (`grid-cols-1 sm:grid-cols-2`). Daraz, Alibaba, Temu all use **2-column** on phones. Cards feel huge, only 1 product per screen.
-2. **ProductCard typography oversized**: name `text-base`, price `text-xl`, button `h-10` → eats vertical space. Padding `p-4` too generous for a 2-col card.
-3. **Featured products** still single column on mobile with `h-48` images + `p-5` → enormous cards.
-4. **Hero CTAs** are `py-5` + `text-base` stacked full-width — visually heavy. Trust row uses `h-6` icons which on small screens push hero below the fold awkwardly.
-5. **Navbar** logo "PM" tile uses `p-1.5` + `text-lg` → fine, but cart icon button is only `h-9 w-9` (under our 44px rule), while the hamburger is unlabelled and same size — inconsistent hit area.
-6. **Login page** wraps the form in `max-w-2xl` and renders a 3-up features grid below — on mobile the features stack as 3 big cards adding excessive scroll. Header `text-4xl` PakMandi + `p-3` shield icon is oversized for 390px.
-7. **No bottom-sheet / sticky thumb-zone CTAs** — Daraz keeps "Add to cart" reachable; ours is mid-card.
+## Approach
 
-### Plan
+Bucket each RPC by required caller, then apply a standard hardening template per bucket. One migration per bucket (5 migrations) to keep blast radius small and reviewable.
 
-**1. ProductCard (`src/components/products/ProductCard.tsx`)**
-- Image height on mobile: `h-32 sm:h-48` (was `h-40`).
-- Padding: `p-2.5 sm:p-5` (was `p-4 sm:p-5`).
-- Name: `text-sm sm:text-base` line-clamp-2.
-- Price: `text-base sm:text-xl` (was `text-xl` flat).
-- Hide MOQ badge & description on mobile (already hidden md+ for desc; remove MOQ on `<sm`).
-- Move favorite button to `top-1.5 right-1.5`, size `p-1.5`.
-- Replace bottom "View Product" button on mobile with a compact `h-9` icon-led CTA (cart icon only on `<sm`, full label `sm+`).
-- Remove the always-visible mobile eye-overlay (visual noise in a 2-col grid).
-- Tighten badges: `text-[10px] px-1.5 py-0.5` on mobile.
+### Bucket A — Must stay anon-callable (pre-auth flows)
+Used during signup/login before a session exists.
+- `authenticate_user_by_phone` (both overloads)
+- `check_phone_exists`, `check_user_exists`, `email_is_taken`, `get_user_by_phone`, `get_available_phones`
+- `generate_csrf_token`, `validate_csrf_token`
+- `secure_check_rate_limit`, `check_rate_limit`
 
-**2. ProductsGrid (`src/components/products/ProductsGrid.tsx`)**
-- Grid: `grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4` (was `grid-cols-1 sm:grid-cols-2 …`).
-- Gap: `gap-2 sm:gap-4 lg:gap-6` (was `gap-6 lg:gap-8`).
-- Skeleton matches the new 2-col mobile layout, smaller heights.
-- Sort bar: shrink select to `h-8 text-xs` on mobile.
+**Hardening:**
+- Input validation: phone regex `^\+92[0-9]{10}$`, email regex + `length <= 255`, reject NULL/empty, cap all text inputs at 256 chars.
+- Built-in rate limit by IP (uses `operation_rate_limits`) — e.g. 10 calls / 5 min per IP per function.
+- Return generic responses (no enumeration of which field matched).
+- `SET search_path = ''` on every function.
 
-**3. FeaturedProducts (`src/components/home/FeaturedProducts.tsx`)**
-- Grid: `grid-cols-2 sm:grid-cols-2 lg:grid-cols-4` (was `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`).
-- Image: `h-32 sm:h-48`, card padding `p-3 sm:p-5`.
-- Name `text-sm sm:text-lg`, price `text-base sm:text-xl`.
-- Hide MOQ row and "View Details" button label on mobile (icon-only chip).
-- Section header: `text-xl sm:text-2xl md:text-4xl`, mb tightened.
+### Bucket B — Public read RPCs (intentionally anon)
+Replace catalog/storefront queries.
+- `get_active_products_list`, `get_public_shop_info`, `get_public_profile_info`, `get_profile_summary`, `get_safe_profile_summary`, `get_safe_profile_data`, `get_shop_contact`, `get_company_contact`, `get_payment_methods_secure`, `get_secure_payment_methods`, `get_order_details_secure`
 
-**4. Hero (`src/components/home/UrduHeroSection.tsx`)**
-- H1: `text-[26px] leading-[1.15] sm:text-4xl …`.
-- Subtitle: `text-sm sm:text-base md:text-xl`.
-- CTA buttons on mobile: side-by-side (`grid-cols-2 gap-2`) instead of stacked full-width, `h-11 text-sm`.
-- Trust row: convert to a 3-icon horizontal chip strip on mobile (`flex justify-between text-[11px]`, icons `h-4 w-4`), grid sm+.
-- Section padding: `py-8 md:py-24`.
+**Hardening:**
+- Validate UUID inputs are not NULL.
+- Strip every sensitive column inside the function body (re-audit each SELECT list).
+- For `get_*_payment_methods*` and `get_order_details_secure`: require `auth.uid() IS NOT NULL` and re-verify ownership/active-order link inside the function — remove `anon` from `EXECUTE` grant.
+- For `get_company_contact` / `get_shop_contact`: rate-limit per IP to prevent scraping.
 
-**5. Navbar (`src/components/Navbar.tsx`)**
-- Mobile bar height: `h-12` (was `h-14`) for a tighter, Daraz-like top bar.
-- Logo tile: `p-1 text-base` on mobile.
-- Cart and hamburger buttons: standardize to `h-10 w-10`, icons `w-5 h-5`.
-- Add mobile-only inline search input slot placeholder (visual proportion only — wires to existing `/products?search=` GET).
+### Bucket C — Must be authenticated, not anon
+Currently grant `anon` but logically require a session.
+- `has_role`, `get_user_role`, `get_effective_user_role`
+- `switch_business_role`
+- `increment_coupon_usage`
+- `track_product_view`, `secure_insert_analytics_event`
+- `log_audit_event`, `log_security_event`, `secure_insert_audit_log`
+- `mask_sensitive_data`
+- `calculate_shipping_cost`, `get_product_analytics`
 
-**6. Login (`src/pages/Login.tsx`)**
-- Header icon `p-2 h-6 w-6`, title `text-2xl sm:text-4xl`, subtitle `text-sm sm:text-lg`.
-- Hide the 3-up trust cards on `<sm` (keep sm+) — replace with a single inline trust line ("🔒 10,000+ businesses · Secure · Verified").
-- Container padding `py-4 sm:py-8`.
+**Hardening:**
+- `REVOKE EXECUTE ... FROM anon` (analytics/tracking RPCs keep anon only if guest tracking is required — confirm per-function in migration).
+- Add `IF auth.uid() IS NULL THEN RAISE EXCEPTION 'auth required'; END IF;` at top.
+- For `switch_business_role`: allowlist target_role IN ('seller','wholesaler') only; never accept 'admin'.
+- For `has_role` / `get_user_role`: lock callers to their own `auth.uid()` (no arbitrary `_user_id`) or admin.
+- For `log_*` RPCs: ignore caller-supplied `p_user_id`, always use `auth.uid()`; cap JSON payload size (e.g. `octet_length(p_details::text) < 8192`).
+- For `increment_coupon_usage`: verify caller owns the order applying the coupon.
 
-**7. Global**
-- Bump tap-target rule in `src/index.css` from `min-height: 40px` to `min-height: 44px` (Apple HIG / Daraz standard) and add `min-width: 44px` for icon-only buttons via a utility class `.tap-44`.
+### Bucket D — Admin / service-role only
+- `run_all_cleanups`, `get_storage_stats`
 
-### Out of scope
-- No backend/RLS/edge changes.
-- No copy changes beyond what's required to fit narrower mobile widths.
-- Desktop (`md+`) layouts unchanged unless explicitly noted.
+**Hardening:**
+- `REVOKE EXECUTE ... FROM anon, authenticated`
+- Add `IF NOT public.has_role(auth.uid(), 'admin') THEN RAISE EXCEPTION 'forbidden'; END IF;` (skipped when caller is `service_role`).
 
-### Technical notes
-- All changes are Tailwind responsive classes; no new dependencies.
-- Semantic tokens preserved (`bg-primary`, `text-foreground`, etc.).
-- RTL (Urdu) untouched — only sizes change, not directional classes.
+### Bucket E — Already-restricted definer functions (47 others)
+Functions only callable by `postgres`/`service_role` (triggers, cron, edge functions). Audit but defer broad changes — confirm none accidentally grant `anon` after the migrations above.
 
-After implementation I'll capture mobile screenshots of `/`, `/products`, `/login`, and a product detail card to confirm proportions land.
+## Testing matrix
+
+After each migration, re-test from three identities using the SQL editor + a small script using the anon key:
+
+| Caller         | Expectation                                                                 |
+|----------------|------------------------------------------------------------------------------|
+| anon           | Bucket A: works with valid input, rate-limits, masks errors. B: read-only.   |
+| authenticated  | Bucket C: works for own data. Cannot pass another user's `user_id`.          |
+| different user | All RPCs reject cross-user access.                                           |
+| admin          | Bucket D works.                                                               |
+| malformed input| NULL/empty/oversized/non-UUID/SQL-quote inputs are rejected cleanly.          |
+
+Edge cases to explicitly test:
+- `switch_business_role('admin')` → must reject.
+- `has_role(other_user_id, 'admin')` from authenticated → must reject or return false only for self.
+- `log_audit_event(p_user_id => other_user_id, ...)` → must overwrite with `auth.uid()`.
+- `get_payment_methods_secure(shop_id)` as anon → must reject (no active order context).
+- `check_phone_exists('+92...')` called 100x → 11th call rate-limited.
+
+## Deliverables
+
+1. 5 migrations (one per bucket A–D, plus an audit-only migration locking down Bucket E grants).
+2. A test script (`scripts/security/test-rpc-hardening.ts`) that exercises the matrix above with the anon key + a seeded test user, runnable locally and later wired into CI (item #1 of the parent task).
+3. Updated `mem://security/hardened-rpc-functions` memory.
+
+## Out of scope
+- Migrating definer functions to `SECURITY INVOKER` (would break legitimate RLS-bypass use cases).
+- CI integration (that is task #1, next).
+- Postgres version upgrade & leaked-password protection (platform actions).
+
+## Risk & rollback
+- Each migration is additive (REVOKE + new validation). Rollback = re-grant + drop validation block.
+- Highest-risk bucket: C — revoking anon from `has_role` could break unauthenticated code paths. Mitigation: search frontend for anon calls to these RPCs first; preserve any that are legitimately public by moving them to Bucket B with stricter input validation instead.

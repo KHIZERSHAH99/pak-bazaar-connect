@@ -3059,15 +3059,6 @@ export type Database = {
           verification_status: string
         }[]
       }
-      get_available_phones: {
-        Args: never
-        Returns: {
-          email: string
-          normalized_phone: string
-          phone_number: string
-          role: string
-        }[]
-      }
       get_commission_data_secure: {
         Args: { p_wholesaler_id: string }
         Returns: {

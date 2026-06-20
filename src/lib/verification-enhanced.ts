@@ -204,18 +204,19 @@ export const getVerificationDocumentUrls = async (profileId: string) => {
     return { cnicUrl: null, selfieUrl: null, status: targetProfile.verification_status };
   }
 
-  // Get signed URLs for the documents
-  const { data: cnicUrl } = supabase.storage
-    .from('verification-documents')
-    .getPublicUrl(targetProfile.cnic_image);
+  // Get short-lived signed URLs for the documents — never expose PII via public URLs
+  const [{ data: cnicSigned, error: cnicErr }, { data: selfieSigned, error: selfieErr }] =
+    await Promise.all([
+      supabase.storage.from('verification-documents').createSignedUrl(targetProfile.cnic_image, 300),
+      supabase.storage.from('verification-documents').createSignedUrl(targetProfile.selfie_image, 300),
+    ]);
 
-  const { data: selfieUrl } = supabase.storage
-    .from('verification-documents')
-    .getPublicUrl(targetProfile.selfie_image);
+  if (cnicErr) console.error('Error signing CNIC URL:', cnicErr);
+  if (selfieErr) console.error('Error signing selfie URL:', selfieErr);
 
   return {
-    cnicUrl: cnicUrl.publicUrl,
-    selfieUrl: selfieUrl.publicUrl,
+    cnicUrl: cnicSigned?.signedUrl ?? null,
+    selfieUrl: selfieSigned?.signedUrl ?? null,
     status: targetProfile.verification_status
   };
 };

@@ -102,6 +102,7 @@ const AppRoutes: React.FC = () => {
         {/* Legal pages */}
         <Route path="/contact" element={<LazyRoute><Contact /></LazyRoute>} />
         <Route path="/about" element={<LazyRoute><AboutUs /></LazyRoute>} />
+        <Route path="/why-pakmandi" element={<LazyRoute><WhyPakMandi /></LazyRoute>} />
         <Route path="/privacy-policy" element={<LazyRoute><PrivacyPolicy /></LazyRoute>} />
         <Route path="/terms-of-service" element={<LazyRoute><TermsOfService /></LazyRoute>} />
         <Route path="/refund-policy" element={<LazyRoute><RefundPolicy /></LazyRoute>} />

@@ -22,6 +22,7 @@ const Features = lazy(() => import('@/pages/Features'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
 const Contact = lazy(() => import('@/pages/Contact'));
 const AboutUs = lazy(() => import('@/pages/AboutUs'));
+const WhyPakMandi = lazy(() => import('@/pages/WhyPakMandi'));
 const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
 const RefundPolicy = lazy(() => import('@/pages/RefundPolicy'));
 const ShippingPolicy = lazy(() => import('@/pages/ShippingPolicy'));
@@ -101,6 +102,7 @@ const AppRoutes: React.FC = () => {
         {/* Legal pages */}
         <Route path="/contact" element={<LazyRoute><Contact /></LazyRoute>} />
         <Route path="/about" element={<LazyRoute><AboutUs /></LazyRoute>} />
+        <Route path="/why-pakmandi" element={<LazyRoute><WhyPakMandi /></LazyRoute>} />
         <Route path="/privacy-policy" element={<LazyRoute><PrivacyPolicy /></LazyRoute>} />
         <Route path="/terms-of-service" element={<LazyRoute><TermsOfService /></LazyRoute>} />
         <Route path="/refund-policy" element={<LazyRoute><RefundPolicy /></LazyRoute>} />

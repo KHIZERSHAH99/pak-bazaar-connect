@@ -8,6 +8,7 @@ import WelcomeOnboarding from '@/components/ui/WelcomeOnboarding';
 import DashboardLayout from '@/components/DashboardLayout';
 import ShopsManagement from '@/components/dashboard/ShopsManagement';
 import WholesalerSummaryStats from '@/components/dashboard/WholesalerSummaryStats';
+import WholesalerFirstRun from '@/components/dashboard/WholesalerFirstRun';
 const Dashboard: React.FC = () => {
   const {
     user,
@@ -78,9 +79,10 @@ const Dashboard: React.FC = () => {
       case 'wholesaler':
         return <div className="space-y-4 sm:space-y-6">
             <div>
-              <h1 className="text-xl sm:text-3xl font-bold text-foreground font-poppins">Wholesaler Dashboard</h1>
-              <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2 font-poppins">Manage your shops from the navigation menu</p>
+              <h1 className="text-xl sm:text-3xl font-bold text-foreground font-poppins">آپ کا ڈیش بورڈ</h1>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2 font-poppins">Aap ka dashboard — sab kuch aik jaga</p>
             </div>
+            <WholesalerFirstRun />
             <WholesalerSummaryStats />
             <ShopsManagement />
           </div>;

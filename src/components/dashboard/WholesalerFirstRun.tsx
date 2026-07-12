@@ -30,8 +30,8 @@ const WholesalerFirstRun: React.FC = () => {
         hasProduct = (prods?.length ?? 0) > 0;
       }
 
-      const { data: pm } = await supabase
-        .from('payment_methods').select('id').eq('user_id', user.id).limit(1);
+      const pmQuery = supabase.from('payment_methods').select('id').limit(1) as any;
+      const { data: pm } = await pmQuery.eq('user_id', user.id);
       const hasPayment = (pm?.length ?? 0) > 0;
 
       return { hasShop, hasProduct, hasPayment };

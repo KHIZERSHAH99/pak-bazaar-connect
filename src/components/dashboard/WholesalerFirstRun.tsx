@@ -25,8 +25,8 @@ const WholesalerFirstRun: React.FC = () => {
 
       let hasProduct = false;
       if (hasShop) {
-        const { data: prods } = await supabase
-          .from('products').select('id').in('shop_id', shopIds).limit(1);
+        const query = supabase.from('products').select('id').limit(1) as any;
+        const { data: prods } = await query.in('shop_id', shopIds);
         hasProduct = (prods?.length ?? 0) > 0;
       }
 

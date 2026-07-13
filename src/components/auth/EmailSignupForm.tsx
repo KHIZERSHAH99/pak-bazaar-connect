@@ -46,6 +46,7 @@ const EmailSignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [phoneCheckStatus, setPhoneCheckStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [step, setStep] = useState<1 | 2>(1);
   const { t, language } = useLanguage();
   const isRtl = language === 'ur';
 
@@ -186,6 +187,13 @@ const EmailSignupForm = () => {
   
   const passwordStrength = getPasswordStrength(password || '');
 
+  const goToStep2 = async () => {
+    const valid = await form.trigger(['businessType', 'contactName', 'phoneNumber']);
+    if (!valid) return;
+    if (phoneCheckStatus === 'taken') return;
+    setStep(2);
+  };
+
   return (
     <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-card" dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-6 pt-8">
@@ -201,11 +209,19 @@ const EmailSignupForm = () => {
         <CardDescription className="font-poppins text-white/90 text-sm text-center mt-1">
           {t('createB2BAccount')}
         </CardDescription>
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <div className={`h-2 w-10 rounded-full ${step === 1 ? 'bg-primary-foreground' : 'bg-primary-foreground/40'}`} />
+          <div className={`h-2 w-10 rounded-full ${step === 2 ? 'bg-primary-foreground' : 'bg-primary-foreground/40'}`} />
+        </div>
+        <p className="text-center text-xs text-white/80 mt-1 font-poppins">
+          {step === 1 ? 'Step 1 of 2 · قدم ۱ / ۲' : 'Step 2 of 2 · قدم ۲ / ۲'}
+        </p>
       </CardHeader>
 
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            {step === 1 && (<>
             {/* Business Type Selection */}
             <FormField
               control={form.control}
@@ -276,6 +292,64 @@ const EmailSignupForm = () => {
               )}
             />
 
+            {/* Phone */}
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    {t('pakistaniMobileLabel')} *
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        type="tel"
+                        placeholder="03XX-XXXXXXX"
+                        disabled={isLoading}
+                        className={`font-poppins h-12 md:h-11 text-base ${isRtl ? 'pl-12' : 'pr-12'}`}
+                        autoComplete="tel-national"
+                        inputMode="numeric"
+                      />
+                      <div className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2`}>
+                        {phoneCheckStatus === 'checking' && (
+                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        )}
+                        {phoneCheckStatus === 'available' && (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        )}
+                        {phoneCheckStatus === 'taken' && (
+                          <XCircle className="h-4 w-4 text-destructive" />
+                        )}
+                      </div>
+                    </div>
+                  </FormControl>
+                  {phoneCheckStatus === 'taken' && (
+                    <p className="text-sm text-destructive">
+                      {t('phoneTaken')} <Link to="/login" className="underline">{t('loginInstead')}</Link>
+                    </p>
+                  )}
+                  {phoneCheckStatus === 'available' && (
+                    <p className="text-sm text-green-600">{t('phoneAvailable')}</p>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="button"
+              onClick={goToStep2}
+              className="w-full h-12 md:h-11 text-base font-semibold"
+              disabled={isLoading || phoneCheckStatus === 'taken' || phoneCheckStatus === 'checking'}
+            >
+              Next · اگلا
+            </Button>
+            </>)}
+
+            {step === 2 && (<>
             {/* Business Name */}
             <FormField
               control={form.control}
@@ -324,53 +398,6 @@ const EmailSignupForm = () => {
                       spellCheck={false}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Phone */}
-            <FormField
-              control={form.control}
-              name="phoneNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    {t('pakistaniMobileLabel')} *
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        type="tel"
-                        placeholder="03XX-XXXXXXX"
-                        disabled={isLoading}
-                        className={`font-poppins h-12 md:h-11 text-base ${isRtl ? 'pl-12' : 'pr-12'}`}
-                        autoComplete="tel-national"
-                        inputMode="numeric"
-                      />
-                      <div className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2`}>
-                        {phoneCheckStatus === 'checking' && (
-                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                        )}
-                        {phoneCheckStatus === 'available' && (
-                          <CheckCircle2 className="h-4 w-4 text-green-500" />
-                        )}
-                        {phoneCheckStatus === 'taken' && (
-                          <XCircle className="h-4 w-4 text-destructive" />
-                        )}
-                      </div>
-                    </div>
-                  </FormControl>
-                  {phoneCheckStatus === 'taken' && (
-                    <p className="text-sm text-destructive">
-                      {t('phoneTaken')} <Link to="/login" className="underline">{t('loginInstead')}</Link>
-                    </p>
-                  )}
-                  {phoneCheckStatus === 'available' && (
-                    <p className="text-sm text-green-600">{t('phoneAvailable')}</p>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -491,6 +518,16 @@ const EmailSignupForm = () => {
                 t('createAccount')
               )}
             </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setStep(1)}
+              className="w-full h-11 text-sm"
+              disabled={isLoading}
+            >
+              ← Back · واپس
+            </Button>
+            </>)}
           </form>
         </Form>
 

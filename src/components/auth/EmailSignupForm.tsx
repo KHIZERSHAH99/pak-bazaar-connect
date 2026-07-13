@@ -221,6 +221,7 @@ const EmailSignupForm = () => {
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            {step === 1 && (<>
             {/* Business Type Selection */}
             <FormField
               control={form.control}
@@ -291,6 +292,64 @@ const EmailSignupForm = () => {
               )}
             />
 
+            {/* Phone */}
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    {t('pakistaniMobileLabel')} *
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        type="tel"
+                        placeholder="03XX-XXXXXXX"
+                        disabled={isLoading}
+                        className={`font-poppins h-12 md:h-11 text-base ${isRtl ? 'pl-12' : 'pr-12'}`}
+                        autoComplete="tel-national"
+                        inputMode="numeric"
+                      />
+                      <div className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2`}>
+                        {phoneCheckStatus === 'checking' && (
+                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        )}
+                        {phoneCheckStatus === 'available' && (
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        )}
+                        {phoneCheckStatus === 'taken' && (
+                          <XCircle className="h-4 w-4 text-destructive" />
+                        )}
+                      </div>
+                    </div>
+                  </FormControl>
+                  {phoneCheckStatus === 'taken' && (
+                    <p className="text-sm text-destructive">
+                      {t('phoneTaken')} <Link to="/login" className="underline">{t('loginInstead')}</Link>
+                    </p>
+                  )}
+                  {phoneCheckStatus === 'available' && (
+                    <p className="text-sm text-green-600">{t('phoneAvailable')}</p>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="button"
+              onClick={goToStep2}
+              className="w-full h-12 md:h-11 text-base font-semibold"
+              disabled={isLoading || phoneCheckStatus === 'taken' || phoneCheckStatus === 'checking'}
+            >
+              Next · اگلا
+            </Button>
+            </>)}
+
+            {step === 2 && (<>
             {/* Business Name */}
             <FormField
               control={form.control}
@@ -339,53 +398,6 @@ const EmailSignupForm = () => {
                       spellCheck={false}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Phone */}
-            <FormField
-              control={form.control}
-              name="phoneNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    {t('pakistaniMobileLabel')} *
-                  </FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        type="tel"
-                        placeholder="03XX-XXXXXXX"
-                        disabled={isLoading}
-                        className={`font-poppins h-12 md:h-11 text-base ${isRtl ? 'pl-12' : 'pr-12'}`}
-                        autoComplete="tel-national"
-                        inputMode="numeric"
-                      />
-                      <div className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2`}>
-                        {phoneCheckStatus === 'checking' && (
-                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                        )}
-                        {phoneCheckStatus === 'available' && (
-                          <CheckCircle2 className="h-4 w-4 text-green-500" />
-                        )}
-                        {phoneCheckStatus === 'taken' && (
-                          <XCircle className="h-4 w-4 text-destructive" />
-                        )}
-                      </div>
-                    </div>
-                  </FormControl>
-                  {phoneCheckStatus === 'taken' && (
-                    <p className="text-sm text-destructive">
-                      {t('phoneTaken')} <Link to="/login" className="underline">{t('loginInstead')}</Link>
-                    </p>
-                  )}
-                  {phoneCheckStatus === 'available' && (
-                    <p className="text-sm text-green-600">{t('phoneAvailable')}</p>
-                  )}
                   <FormMessage />
                 </FormItem>
               )}

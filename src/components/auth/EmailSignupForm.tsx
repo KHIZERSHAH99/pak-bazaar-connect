@@ -518,6 +518,16 @@ const EmailSignupForm = () => {
                 t('createAccount')
               )}
             </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setStep(1)}
+              className="w-full h-11 text-sm"
+              disabled={isLoading}
+            >
+              ← Back · واپس
+            </Button>
+            </>)}
           </form>
         </Form>
 

@@ -46,6 +46,7 @@ const EmailSignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [phoneCheckStatus, setPhoneCheckStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [step, setStep] = useState<1 | 2>(1);
   const { t, language } = useLanguage();
   const isRtl = language === 'ur';
 
@@ -186,6 +187,13 @@ const EmailSignupForm = () => {
   
   const passwordStrength = getPasswordStrength(password || '');
 
+  const goToStep2 = async () => {
+    const valid = await form.trigger(['businessType', 'contactName', 'phoneNumber']);
+    if (!valid) return;
+    if (phoneCheckStatus === 'taken') return;
+    setStep(2);
+  };
+
   return (
     <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-card" dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-6 pt-8">
@@ -201,6 +209,13 @@ const EmailSignupForm = () => {
         <CardDescription className="font-poppins text-white/90 text-sm text-center mt-1">
           {t('createB2BAccount')}
         </CardDescription>
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <div className={`h-2 w-10 rounded-full ${step === 1 ? 'bg-primary-foreground' : 'bg-primary-foreground/40'}`} />
+          <div className={`h-2 w-10 rounded-full ${step === 2 ? 'bg-primary-foreground' : 'bg-primary-foreground/40'}`} />
+        </div>
+        <p className="text-center text-xs text-white/80 mt-1 font-poppins">
+          {step === 1 ? 'Step 1 of 2 · قدم ۱ / ۲' : 'Step 2 of 2 · قدم ۲ / ۲'}
+        </p>
       </CardHeader>
 
       <CardContent className="pt-6">

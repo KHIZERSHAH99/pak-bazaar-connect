@@ -13,9 +13,19 @@ import {
   AlertTriangle,
   MapPin,
   Calendar,
-  ArrowLeft
+  ArrowLeft,
+  Phone,
+  MessageCircle,
+  MoreHorizontal
 } from 'lucide-react';
 import { Order, OrderStatus } from '@/lib/types';
+import { buildWhatsappInvoiceUrl, buildTelUrl } from '@/lib/orders/whatsapp-invoice';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface EnhancedOrderCardProps {
   order: Order;
@@ -64,25 +74,25 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-500/15 text-yellow-700 dark:text-yellow-300 border-yellow-500/30';
       case 'confirmed':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-primary/15 text-primary border-primary/30';
       case 'processing':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-primary/10 text-primary border-primary/20';
       case 'packed':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+        return 'bg-primary/10 text-primary border-primary/20';
       case 'shipped':
-        return 'bg-cyan-100 text-cyan-800 border-cyan-200';
+        return 'bg-primary/15 text-primary border-primary/30';
       case 'delivered':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-primary/20 text-primary border-primary/40';
       case 'completed':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        return 'bg-primary/20 text-primary border-primary/40';
       case 'rejected':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-destructive/15 text-destructive border-destructive/30';
       case 'returned':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-muted text-muted-foreground border-border';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -100,15 +110,15 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      'pending': 'Pending',
-      'confirmed': 'Confirmed',
-      'processing': 'Processing',
-      'packed': 'Packed',
-      'shipped': 'Shipped',
-      'delivered': 'Delivered',
-      'completed': 'Completed',
-      'rejected': 'Rejected',
-      'returned': 'Returned'
+      'pending': 'Intezaar (Pending)',
+      'confirmed': 'Confirm ho gaya',
+      'processing': 'Tayyar ho raha',
+      'packed': 'Pack ho gaya',
+      'shipped': 'Bheja gaya',
+      'delivered': 'Pahonch gaya',
+      'completed': 'Mukammal',
+      'rejected': 'Mana kar diya',
+      'returned': 'Wapas'
     };
     return labels[status] || status;
   };
@@ -133,6 +143,17 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
 
   const nextStatus = getNextStatus(order.status);
   const canAdvanceStatus = userRole === 'wholesaler' && nextStatus && !['completed', 'rejected', 'returned'].includes(order.status);
+  const isWholesalerPending = userRole === 'wholesaler' && order.status === 'pending' && showActions && !!onStatusUpdate;
+  const telUrl = buildTelUrl(order.buyer_phone);
+  const waUrl = buildWhatsappInvoiceUrl(order);
+
+  const handleConfirmAndNotify = () => {
+    if (!onStatusUpdate) return;
+    onStatusUpdate(order.id, 'confirmed');
+    if (waUrl) {
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <Card className={`hover:shadow-md transition-shadow overflow-hidden ${order.requires_attention ? 'ring-2 ring-yellow-400' : ''}`}>
@@ -229,61 +250,102 @@ const EnhancedOrderCard: React.FC<EnhancedOrderCardProps> = ({
           </div>
 
           <div className="flex flex-wrap gap-2">
+            {isWholesalerPending && (
+              <Button
+                size="lg"
+                onClick={handleConfirmAndNotify}
+                className="flex-1 min-h-[48px] bg-primary hover:bg-primary/90 text-primary-foreground text-sm sm:text-base font-semibold gap-2"
+              >
+                <CheckCircle className="h-5 w-5" />
+                Confirm & Notify (منظور کریں)
+              </Button>
+            )}
+
+            {userRole === 'wholesaler' && telUrl && (
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="min-h-[44px] min-w-[44px] gap-1"
+                aria-label="Call buyer"
+              >
+                <a href={telUrl}>
+                  <Phone className="h-4 w-4" />
+                  <span className="hidden sm:inline">Call</span>
+                </a>
+              </Button>
+            )}
+
+            {userRole === 'wholesaler' && waUrl && !isWholesalerPending && (
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="min-h-[44px] gap-1"
+                aria-label="Send WhatsApp invoice"
+              >
+                <a href={waUrl} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="h-4 w-4" />
+                  <span className="hidden sm:inline">WhatsApp</span>
+                </a>
+              </Button>
+            )}
+
             <Button
               variant="outline"
               size="sm"
               onClick={() => onViewOrder(order)}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm min-w-[80px]"
+              className="min-h-[44px] flex items-center justify-center gap-1 text-xs sm:text-sm"
             >
-              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">View Details</span>
-              <span className="sm:hidden">View</span>
+              <Eye className="h-4 w-4" />
+              <span className="hidden sm:inline">View</span>
             </Button>
-            
+
             {showReorderButton && onReorder && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onReorder(order)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm min-w-[80px]"
+                className="min-h-[44px] flex items-center justify-center gap-1 text-xs sm:text-sm"
               >
-                <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
+                <RotateCcw className="h-4 w-4" />
                 <span className="hidden sm:inline">Reorder</span>
                 <span className="sm:hidden">Re-buy</span>
               </Button>
             )}
 
-            {canAdvanceStatus && onStatusUpdate && showActions && (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => onStatusUpdate(order.id, nextStatus)}
-                className="flex-1 sm:flex-initial bg-green-600 hover:bg-green-700 text-xs sm:text-sm min-w-[80px]"
-              >
-                {getStatusIcon(nextStatus)}
-                <span className="hidden sm:inline">{getStatusLabel(nextStatus)}</span>
-                <span className="sm:hidden">Next</span>
-              </Button>
-            )}
-
-            {userRole === 'wholesaler' && order.status === 'pending' && onStatusUpdate && showActions && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => onStatusUpdate(order.id, 'rejected')}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1 text-xs sm:text-sm min-w-[80px]"
-              >
-                <XCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Reject</span>
-                <span className="sm:hidden">No</span>
-              </Button>
+            {userRole === 'wholesaler' && showActions && onStatusUpdate && (canAdvanceStatus || order.status === 'pending') && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="min-h-[44px] min-w-[44px]" aria-label="More actions">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {canAdvanceStatus && !isWholesalerPending && (
+                    <DropdownMenuItem onClick={() => onStatusUpdate(order.id, nextStatus!)}>
+                      {getStatusIcon(nextStatus!)}
+                      <span className="ml-2">Next: {getStatusLabel(nextStatus!)}</span>
+                    </DropdownMenuItem>
+                  )}
+                  {order.status === 'pending' && (
+                    <DropdownMenuItem
+                      onClick={() => onStatusUpdate(order.id, 'rejected')}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Reject (مسترد کریں)
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>
 
         {order.last_status_update && (
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
+          <div className="mt-3 pt-3 border-t border-border">
+            <p className="text-xs text-muted-foreground">
               Last updated: {formatDate(order.last_status_update)}
             </p>
           </div>

@@ -299,11 +299,21 @@ export const deleteProduct = async (productId: string): Promise<void> => {
 
     const { error } = await supabase
       .from('products')
-      .update({ is_active: false })
+      .delete()
       .eq('id', productId);
 
     if (error) {
       console.error('Product deletion error:', error);
+      // Fallback to soft-delete if hard delete is blocked by FK constraints
+      // (e.g. product referenced by past orders)
+      if (error.code === '23503') {
+        const { error: softErr } = await supabase
+          .from('products')
+          .update({ is_active: false })
+          .eq('id', productId);
+        if (softErr) throw new Error(`Failed to delete product: ${softErr.message}`);
+        return;
+      }
       throw new Error(`Failed to delete product: ${error.message}`);
     }
   } catch (error) {

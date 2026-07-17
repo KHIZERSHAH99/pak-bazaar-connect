@@ -286,27 +286,25 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <p className="text-xs text-muted-foreground -mt-1">
+            Only the <span className="font-semibold text-foreground">Basic</span> tab is required. Other tabs are optional — you can add them later.
+          </p>
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-5 h-8 sm:h-10">
-              <TabsTrigger value="basic" className="text-xs px-1 sm:px-2 sm:text-sm">
-                <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
-                <span className="hidden sm:inline">Basic</span>
+            <TabsList className="grid w-full grid-cols-3 h-10">
+              <TabsTrigger value="basic" className="text-xs sm:text-sm gap-1">
+                <Info className="w-4 h-4" />
+                <span>Basic</span>
+                <span className="text-destructive">*</span>
               </TabsTrigger>
-              <TabsTrigger value="details" className="text-xs px-1 sm:px-2 sm:text-sm">
-                <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
-                <span className="hidden sm:inline">Details</span>
+              <TabsTrigger value="images" className="text-xs sm:text-sm gap-1">
+                <Image className="w-4 h-4" />
+                <span>Images</span>
+                <span className="text-destructive">*</span>
               </TabsTrigger>
-              <TabsTrigger value="images" className="text-xs px-1 sm:px-2 sm:text-sm">
-                <Image className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
-                <span className="hidden sm:inline">Images</span>
-              </TabsTrigger>
-              <TabsTrigger value="pricing" className="text-xs px-1 sm:px-2 sm:text-sm">
-                <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
-                <span className="hidden sm:inline">Pricing</span>
-              </TabsTrigger>
-              <TabsTrigger value="variations" className="text-xs px-1 sm:px-2 sm:text-sm">
-                <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
-                <span className="hidden sm:inline">Variations</span>
+              <TabsTrigger value="more" className="text-xs sm:text-sm gap-1">
+                <Settings className="w-4 h-4" />
+                <span>More</span>
+                <span className="text-[10px] text-muted-foreground">(optional)</span>
               </TabsTrigger>
             </TabsList>
             
@@ -379,9 +377,56 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                 />
                 <Label htmlFor="is_active">Active product (visible to buyers)</Label>
               </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t">
+                <div>
+                  <Label htmlFor="base_price">Price (PKR) *</Label>
+                  <Input
+                    id="base_price"
+                    name="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    placeholder="0.00"
+                    disabled={isSubmitting}
+                  />
+                  {errors.price && <p className="text-sm text-destructive mt-1">{errors.price}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="basic_moq">Min Order Qty</Label>
+                  <Input
+                    id="basic_moq"
+                    name="moq"
+                    type="number"
+                    min="1"
+                    value={formData.moq}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                  />
+                  {errors.moq && <p className="text-sm text-destructive mt-1">{errors.moq}</p>}
+                </div>
+              </div>
             </TabsContent>
-            
-            <TabsContent value="details" className="space-y-4">
+
+            <TabsContent value="images" className="space-y-4">
+              <MultipleImageUpload
+                images={images}
+                onChange={setImages}
+                disabled={isSubmitting}
+                maxImages={5}
+              />
+              {errors.images && <p className="text-sm text-destructive mt-1">{errors.images}</p>}
+            </TabsContent>
+
+            <TabsContent value="more" className="space-y-6">
+              <div className="text-xs text-muted-foreground bg-muted/50 border rounded-md p-2">
+                All fields below are optional. Skip whatever doesn't apply — you can edit later.
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold flex items-center gap-2"><Package className="w-4 h-4" /> Stock & packaging</h4>
               <div>
                 <Label htmlFor="stock_quantity">Stock Quantity</Label>
                 <Input
@@ -432,53 +477,10 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                 />
                 <Label htmlFor="customization_available">Customization available</Label>
               </div>
-            </TabsContent>
-            
-            <TabsContent value="images" className="space-y-4">
-              <MultipleImageUpload
-                images={images}
-                onChange={setImages}
-                disabled={isSubmitting}
-                maxImages={5}
-              />
-              {errors.images && <p className="text-sm text-destructive mt-1">{errors.images}</p>}
-            </TabsContent>
-            
-
-            <TabsContent value="pricing" className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="base_price">Price (PKR) *</Label>
-                  <Input
-                    id="base_price"
-                    name="price"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    placeholder="0.00"
-                    disabled={isSubmitting}
-                  />
-                  {errors.price && <p className="text-sm text-destructive mt-1">{errors.price}</p>}
-                </div>
-
-                <div>
-                  <Label htmlFor="pricing_moq">Minimum Order Quantity (MOQ)</Label>
-                  <Input
-                    id="pricing_moq"
-                    name="moq"
-                    type="number"
-                    min="1"
-                    value={formData.moq}
-                    onChange={handleInputChange}
-                    disabled={isSubmitting}
-                  />
-                  {errors.moq && <p className="text-sm text-destructive mt-1">{errors.moq}</p>}
-                </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 border-t pt-4">
+                <h4 className="text-sm font-semibold flex items-center gap-2"><DollarSign className="w-4 h-4" /> Samples & shipping</h4>
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="pricing_sample_available"
@@ -547,21 +549,23 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                 />
               </div>
 
-              <div className="border-t pt-4 mt-6">
+              <div className="border-t pt-4">
+                <h4 className="text-sm font-semibold mb-3">Bulk pricing tiers</h4>
                 <InlinePricingTiers
                   tiers={inlineTiers}
                   onChange={setInlineTiers}
                   basePrice={parseFloat(formData.price) || 0}
                 />
               </div>
-            </TabsContent>
 
-            <TabsContent value="variations" className="space-y-4">
-              <InlineVariationManager
-                variations={inlineVariations}
-                onChange={setInlineVariations}
-                basePrice={parseFloat(formData.price) || 0}
-              />
+              <div className="border-t pt-4">
+                <h4 className="text-sm font-semibold mb-3">Variations (size, color, etc.)</h4>
+                <InlineVariationManager
+                  variations={inlineVariations}
+                  onChange={setInlineVariations}
+                  basePrice={parseFloat(formData.price) || 0}
+                />
+              </div>
             </TabsContent>
           </Tabs>
           

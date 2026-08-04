@@ -96,8 +96,8 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
 
     if (!formData.name.trim()) {
       newErrors.name = 'Product name is required';
-    } else if (formData.name.length < 2 || formData.name.length > 200) {
-      newErrors.name = 'Product name must be between 2 and 200 characters';
+    } else if (formData.name.trim().length < 2 || formData.name.trim().length > 100) {
+      newErrors.name = 'Product name must be between 2 and 100 characters';
     }
 
     if (!formData.price) {
@@ -156,13 +156,15 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
     try {
       setIsSubmitting(true);
       
-      // Upload primary image
-      let imageUrl;
-      if (images.length > 0) {
-        const primaryImage = images.find(img => img.isPrimary) || images[0];
-        const fileName = `product_${Date.now()}_${primaryImage.file.name}`;
-        imageUrl = await uploadImage('product_images', fileName, primaryImage.file);
+      // Upload every selected image; remember which URL is primary
+      const uploaded: Array<{ url: string; isPrimary: boolean }> = [];
+      for (const img of images) {
+        if (!img.file) continue;
+        const fileName = `product_${Date.now()}_${Math.random().toString(36).slice(2)}_${img.file.name}`;
+        const url = await uploadImage('product_images', fileName, img.file);
+        if (url) uploaded.push({ url, isPrimary: img.isPrimary });
       }
+      const imageUrl = (uploaded.find(u => u.isPrimary) || uploaded[0])?.url;
 
       const productData = {
         shop_id: formData.shop_id,
@@ -188,6 +190,66 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
       };
 
       const result = await createProduct(productData);
+
+      // Persist the optional/advanced data that belongs in child tables
+      if (result?.id) {
+        const productId = result.id;
+
+        if (uploaded.length > 0) {
+          const { error: imgErr } = await supabase.from('product_images').insert(
+            uploaded.map((u, index) => ({
+              product_id: productId,
+              image_url: u.url,
+              is_primary: u.url === imageUrl,
+              sort_order: index,
+            }))
+          );
+          if (imgErr) console.error('Failed to save product images:', imgErr);
+        }
+
+        if (inlineTiers.length > 0) {
+          const { error: tierErr } = await supabase.from('product_pricing_tiers').insert(
+            inlineTiers.map(t => ({
+              product_id: productId,
+              min_quantity: t.min_quantity,
+              max_quantity: t.max_quantity ?? null,
+              unit_price: t.unit_price,
+            }))
+          );
+          if (tierErr) {
+            console.error('Failed to save pricing tiers:', tierErr);
+            toast({
+              title: 'Bulk pricing not saved',
+              description: 'The product was created, but bulk pricing tiers could not be saved. You can add them from Edit.',
+              variant: 'destructive',
+            });
+          }
+        }
+
+        if (inlineVariations.length > 0) {
+          const { error: varErr } = await supabase.from('product_variations').insert(
+            inlineVariations.map((v, index) => ({
+              product_id: productId,
+              variation_type: v.variation_type,
+              variation_value: v.variation_value,
+              variation_label: v.variation_label || null,
+              hex_color: v.hex_color || null,
+              price_adjustment: v.price_adjustment ?? 0,
+              stock_quantity: v.stock_quantity ?? 0,
+              is_available: v.is_available ?? true,
+              sort_order: v.sort_order ?? index,
+            }))
+          );
+          if (varErr) {
+            console.error('Failed to save variations:', varErr);
+            toast({
+              title: 'Variations not saved',
+              description: 'The product was created, but variations could not be saved. You can add them from Edit.',
+              variant: 'destructive',
+            });
+          }
+        }
+      }
       
       toast({
         title: 'Success',
@@ -232,6 +294,8 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
     });
     setImages([]);
     setErrors({});
+    setInlineTiers([]);
+    setInlineVariations([]);
   };
 
   const handleClose = () => {

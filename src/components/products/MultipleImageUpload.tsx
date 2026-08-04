@@ -28,8 +28,11 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
 }) => {
   const { toast } = useToast();
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    e.target.value = '';
+
+    if (files.length === 0) return;
     
     if (images.length + files.length > maxImages) {
       toast({
@@ -40,48 +43,63 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
       return;
     }
 
-    const newImages: ImagePreview[] = [];
-    
-    files.forEach(file => {
+    const accepted = files.filter(file => {
       if (file.size > MAX_PRODUCT_IMAGE_SIZE_KB * 1024) {
         toast({
           title: 'File too large',
           description: `${file.name} is too large. Maximum size is ${MAX_PRODUCT_IMAGE_SIZE_KB / 1024}MB`,
           variant: 'destructive',
         });
-        return;
+        return false;
       }
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const newImage: ImagePreview = {
-          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-          file,
-          preview: reader.result as string,
-          isPrimary: images.length === 0 && newImages.length === 0
-        };
-        newImages.push(newImage);
-        
-        if (newImages.length === files.length) {
-          onChange([...images, ...newImages]);
-        }
-      };
-      reader.readAsDataURL(file);
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: 'Unsupported file',
+          description: `${file.name} is not an image`,
+          variant: 'destructive',
+        });
+        return false;
+      }
+      return true;
     });
 
-    // Clear the input
-    e.target.value = '';
+    if (accepted.length === 0) return;
+
+    const readFile = (file: File) =>
+      new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+
+    try {
+      const previews = await Promise.all(accepted.map(readFile));
+      const newImages: ImagePreview[] = accepted.map((file, index) => ({
+        id: `${Date.now()}_${index}_${Math.random().toString(36).slice(2, 11)}`,
+        file,
+        preview: previews[index],
+        isPrimary: images.length === 0 && index === 0,
+      }));
+      onChange([...images, ...newImages]);
+    } catch {
+      toast({
+        title: 'Could not read images',
+        description: 'Please try selecting the images again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const removeImage = (id: string) => {
-    const updatedImages = images.filter(img => img.id !== id);
-    
-    // If we removed the primary image, make the first remaining image primary
-    if (updatedImages.length > 0 && !updatedImages.some(img => img.isPrimary)) {
-      updatedImages[0].isPrimary = true;
-    }
-    
-    onChange(updatedImages);
+    const remaining = images.filter(img => img.id !== id);
+    const hasPrimary = remaining.some(img => img.isPrimary);
+    onChange(
+      remaining.map((img, index) => ({
+        ...img,
+        isPrimary: hasPrimary ? img.isPrimary : index === 0,
+      }))
+    );
   };
 
   const setPrimaryImage = (id: string) => {

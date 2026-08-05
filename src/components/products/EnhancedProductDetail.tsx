@@ -73,7 +73,7 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
       return;
     }
 
-    if (profile?.role !== 'seller') {
+    if (profile?.role !== 'seller' && profile?.role !== 'admin') {
       toast({
         title: "Seller Account Required",
         description: "Only sellers can place orders. Please switch to seller role.",
@@ -85,8 +85,8 @@ const EnhancedProductDetail: React.FC<EnhancedProductDetailProps> = ({ product, 
     // Check if trying to order from own shop
     if (product.shops?.owner_id === user.id) {
       toast({
-        title: "Cannot Order",
-        description: "You cannot order from your own shop",
+        title: "This is your own shop",
+        description: "You own this shop, so you can't buy your own product. Use a different buyer account to test ordering.",
         variant: "destructive"
       });
       return;

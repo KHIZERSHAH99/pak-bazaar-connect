@@ -64,7 +64,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    if (product) {
+    if (product && isOpen) {
       setFormData({
         name: product.name,
         description: product.description || '',
@@ -100,7 +100,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       
       // Specifications feature removed
     }
-  }, [product]);
+  }, [product, isOpen]);
 
   // Removed fetchProductSpecifications - specs feature no longer needed
 
@@ -194,7 +194,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       
       onClose();
       onProductUpdated();
-      resetForm();
     } catch (error: any) {
       // Only show error if it's not an audit_logs related error
       // since audit_logs errors don't affect the actual product update
@@ -213,7 +212,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         });
         onClose();
         onProductUpdated();
-        resetForm();
       }
     } finally {
       setIsSubmitting(false);

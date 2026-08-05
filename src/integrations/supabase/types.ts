@@ -1028,6 +1028,7 @@ export type Database = {
           buyer_address: string | null
           buyer_area: string | null
           buyer_city: string | null
+          buyer_hidden_at: string | null
           buyer_id: string
           buyer_name: string | null
           buyer_phone: string | null
@@ -1076,6 +1077,7 @@ export type Database = {
           buyer_address?: string | null
           buyer_area?: string | null
           buyer_city?: string | null
+          buyer_hidden_at?: string | null
           buyer_id: string
           buyer_name?: string | null
           buyer_phone?: string | null
@@ -1124,6 +1126,7 @@ export type Database = {
           buyer_address?: string | null
           buyer_area?: string | null
           buyer_city?: string | null
+          buyer_hidden_at?: string | null
           buyer_id?: string
           buyer_name?: string | null
           buyer_phone?: string | null

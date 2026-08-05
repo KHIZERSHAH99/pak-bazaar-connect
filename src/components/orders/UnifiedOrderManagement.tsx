@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Package, CheckCircle, Clock, TrendingUp, Search, Loader2, Bell } from 'lucide-react';
-import { getUnifiedOrders, optimisticUpdateOrderStatus, subscribeToOrders } from '@/lib/orders/unified-queries';
+import { getUnifiedOrders, optimisticUpdateOrderStatus, subscribeToOrders, hideOrderForBuyer } from '@/lib/orders/unified-queries';
 import { reusePreviousOrder } from '@/lib/orders/core';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -173,6 +173,16 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
     }
   }, [navigate, toast]);
 
+  const handleHideOrder = useCallback(async (orderId: string) => {
+    try {
+      await hideOrderForBuyer(orderId);
+      toast({ title: 'Order removed', description: 'Removed from your orders list' });
+      queryClient.invalidateQueries({ queryKey: ['unified-orders', userRole] });
+    } catch (error: any) {
+      toast({ title: 'Could not remove order', description: error.message, variant: 'destructive' });
+    }
+  }, [queryClient, toast, userRole]);
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -239,6 +249,7 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
               onReorder={handleReorder}
               onDownloadReceipt={generateOrderReceipt}
               onViewTimeline={(id) => setTimelineOrderId(id)}
+              onHide={userRole === 'seller' ? handleHideOrder : undefined}
               userRole={userRole}
             />
           ))

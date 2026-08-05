@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, Package, RotateCcw, Download, History } from 'lucide-react';
+import { CheckCircle, XCircle, Package, RotateCcw, Download, History, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface OrderCardCompactProps {
@@ -11,6 +11,7 @@ interface OrderCardCompactProps {
   onReorder: (orderId: string) => void;
   onDownloadReceipt: (order: any) => void;
   onViewTimeline: (orderId: string) => void;
+  onHide?: (orderId: string) => void;
   userRole: 'seller' | 'wholesaler';
 }
 
@@ -24,9 +25,13 @@ const statusColorMap: Record<string, string> = {
 };
 
 const OrderCardCompact: React.FC<OrderCardCompactProps> = memo(({
-  order, onStatusUpdate, onReorder, onDownloadReceipt, onViewTimeline, userRole
+  order, onStatusUpdate, onReorder, onDownloadReceipt, onViewTimeline, onHide, userRole
 }) => {
   const showReorder = userRole === 'seller' && ['completed', 'delivered'].includes(order.status);
+  const canHide =
+    userRole === 'seller' &&
+    !!onHide &&
+    ['completed', 'delivered', 'rejected', 'cancelled'].includes(order.status);
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -108,6 +113,17 @@ const OrderCardCompact: React.FC<OrderCardCompactProps> = memo(({
             <Button size="sm" variant="ghost" onClick={() => onViewTimeline(order.id)} className="flex-1 text-xs">
               <History className="h-3 w-3 mr-1" /> Timeline
             </Button>
+            {canHide && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onHide!(order.id)}
+                className="text-xs text-destructive hover:text-destructive"
+                aria-label="Remove order from my list"
+              >
+                <Trash2 className="h-3 w-3 mr-1" /> Remove
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

@@ -26,6 +26,7 @@ export const getUnifiedOrders = async (
           shops!fk_orders_shop_id(id, name, contact, address, logo, owner_id)
         `, { count: 'exact' })
         .eq('buyer_id', user.id)
+        .is('buyer_hidden_at', null)
         .order('created_at', { ascending: false })
         .range(from, to - 1);
 

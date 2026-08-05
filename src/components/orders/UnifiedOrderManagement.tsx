@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Package, CheckCircle, Clock, TrendingUp, Search, Loader2, Bell } from 'lucide-react';
-import { getUnifiedOrders, optimisticUpdateOrderStatus, subscribeToOrders } from '@/lib/orders/unified-queries';
+import { getUnifiedOrders, optimisticUpdateOrderStatus, subscribeToOrders, hideOrderForBuyer } from '@/lib/orders/unified-queries';
 import { reusePreviousOrder } from '@/lib/orders/core';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';

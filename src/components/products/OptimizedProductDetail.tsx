@@ -339,10 +339,10 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
       return;
     }
 
-    if (profile?.role !== 'seller') {
+    if (profile?.role !== 'seller' && profile?.role !== 'admin') {
       toast({
         title: "Seller Account Required",
-        description: "Only sellers can place orders.",
+        description: "Only buyer (seller) accounts can place orders. Switch your role from your profile.",
         variant: "destructive"
       });
       return;
@@ -350,8 +350,8 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
 
     if (product.shops?.owner_id === user.id) {
       toast({
-        title: "Cannot Order",
-        description: "You cannot order from your own shop",
+        title: "This is your own shop",
+        description: "You own this shop, so you can't buy your own product. Use a different buyer account to test ordering.",
         variant: "destructive"
       });
       return;

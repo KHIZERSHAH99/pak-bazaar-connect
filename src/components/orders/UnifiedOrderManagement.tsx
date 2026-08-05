@@ -173,6 +173,16 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
     }
   }, [navigate, toast]);
 
+  const handleHideOrder = useCallback(async (orderId: string) => {
+    try {
+      await hideOrderForBuyer(orderId);
+      toast({ title: 'Order removed', description: 'Removed from your orders list' });
+      queryClient.invalidateQueries({ queryKey: ['unified-orders', userRole] });
+    } catch (error: any) {
+      toast({ title: 'Could not remove order', description: error.message, variant: 'destructive' });
+    }
+  }, [queryClient, toast, userRole]);
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -239,6 +249,7 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
               onReorder={handleReorder}
               onDownloadReceipt={generateOrderReceipt}
               onViewTimeline={(id) => setTimelineOrderId(id)}
+              onHide={userRole === 'seller' ? handleHideOrder : undefined}
               userRole={userRole}
             />
           ))

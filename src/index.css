@@ -1,4 +1,3 @@
-
 @import './styles/fonts.css';
 @import './styles/urdu.css';
 @import './styles/animations.css';
@@ -68,6 +67,11 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+  }
+
+  /* Lovable badge global removal rule */
+  #lovable-badge {
+    display: none !important;
   }
 }
 

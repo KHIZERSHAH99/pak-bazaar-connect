@@ -213,23 +213,12 @@ const EnhancedMessaging: React.FC = () => {
       setMessages(data || []);
 
       if (user) {
-        const { data: updatedRows, error: readError } = await supabase
+        await supabase
           .from('messages')
           .update({ read_at: new Date().toISOString() })
           .eq('conversation_id', conversationId)
           .neq('sender_id', user.id)
-          .is('read_at', null)
-          .select('id');
-
-        if (readError) {
-          console.error('Failed to mark messages as read:', readError);
-        } else if (updatedRows?.length) {
-          // Refresh conversation list so the unread badge clears immediately
-          setConversations(prev =>
-            prev.map(c => (c.id === conversationId ? { ...c, unread_count: 0 } : c))
-          );
-          fetchConversations();
-        }
+          .is('read_at', null);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);

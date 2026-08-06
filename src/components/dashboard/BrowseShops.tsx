@@ -138,20 +138,20 @@ const BrowseShops: React.FC = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="flex justify-between items-start sm:items-center gap-2">
-        <div className="min-w-0">
-          <h1 className="text-xl sm:text-3xl font-bold text-foreground font-poppins">Browse Wholesale Shops</h1>
-          <p className="text-xs sm:text-base text-muted-foreground font-poppins mt-0.5 sm:mt-1">Discover verified wholesale suppliers across Pakistan</p>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground font-poppins">Browse Wholesale Shops</h1>
+          <p className="text-muted-foreground font-poppins mt-1">Discover verified wholesale suppliers across Pakistan</p>
         </div>
-        <Badge variant="secondary" className="bg-primary/10 text-primary shrink-0 text-[10px] sm:text-xs">
+        <Badge variant="secondary" className="bg-primary/10 text-primary">
           <Store className="h-3 w-3 mr-1" />
-          {filteredShops.length}<span className="hidden sm:inline">&nbsp;shops</span>
+          {filteredShops.length} shops
         </Badge>
       </div>
 
       <Card className="bg-card shadow-sm">
-        <CardContent className="p-3 sm:p-4">
+        <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -195,14 +195,14 @@ const BrowseShops: React.FC = () => {
           )}
         </Card>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredShops.map(shop => (
             <Card
               key={shop.id}
               className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer border-border hover:border-primary/50"
               onClick={() => handleViewShop(shop.id)}
             >
-              <div className="relative h-28 sm:h-48 bg-gradient-to-br from-muted to-muted/50 overflow-hidden">
+              <div className="relative h-48 bg-gradient-to-br from-muted to-muted/50 overflow-hidden">
                 <img
                   src={getShopImageSrc(shop.logo)}
                   alt={shop.name}
@@ -211,29 +211,29 @@ const BrowseShops: React.FC = () => {
                     e.currentTarget.src = `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop&auto=format`;
                   }}
                 />
-                <div className="absolute top-1.5 left-1.5 sm:top-3 sm:left-3">
-                  <Badge className="bg-background/90 text-foreground shadow-sm text-[10px] sm:text-xs px-1.5 py-0 sm:px-2 sm:py-0.5">
+                <div className="absolute top-3 left-3">
+                  <Badge className="bg-background/90 text-foreground shadow-sm">
                     <Store className="h-3 w-3 mr-1" />
                     Verified
                   </Badge>
                 </div>
               </div>
 
-              <CardHeader className="pb-2 px-3 pt-3 sm:pb-3 sm:px-6 sm:pt-6">
-                <CardTitle className="text-sm sm:text-lg font-semibold text-foreground font-poppins group-hover:text-primary transition-colors line-clamp-1">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg font-semibold text-foreground font-poppins group-hover:text-primary transition-colors">
                   {shop.name}
                 </CardTitle>
               </CardHeader>
 
-              <CardContent className="space-y-2 sm:space-y-3 px-3 pb-3 sm:px-6 sm:pb-6">
+              <CardContent className="space-y-3">
                 {isAuthenticated && shop.contact ? (
                   <>
-                    <div className="hidden sm:flex items-center text-sm text-muted-foreground">
+                    <div className="flex items-center text-sm text-muted-foreground">
                       <Phone className="h-4 w-4 mr-2 text-primary" />
                       <span className="font-poppins">{shop.contact}</span>
                     </div>
 
-                    <div className="hidden sm:flex items-start text-sm text-muted-foreground">
+                    <div className="flex items-start text-sm text-muted-foreground">
                       <MapPin className="h-4 w-4 mr-2 mt-0.5 text-primary" />
                       <div className="font-poppins">
                         <div className="line-clamp-2">{shop.address}</div>
@@ -241,13 +241,13 @@ const BrowseShops: React.FC = () => {
                     </div>
                   </>
                 ) : (
-                  <div className="hidden sm:flex items-center text-sm text-muted-foreground bg-muted/50 rounded-md p-2">
+                  <div className="flex items-center text-sm text-muted-foreground bg-muted/50 rounded-md p-2">
                     <Lock className="h-4 w-4 mr-2 text-primary" />
                     <span className="font-poppins text-xs">Login to see contact details</span>
                   </div>
                 )}
 
-                <div className="hidden sm:flex items-center justify-between pt-3 border-t border-border">
+                <div className="flex items-center justify-between pt-3 border-t border-border">
                   <div className="flex items-center text-xs text-muted-foreground">
                     <Package className="h-3 w-3 mr-1" />
                     <span>Products</span>
@@ -263,16 +263,14 @@ const BrowseShops: React.FC = () => {
                 </div>
 
                 <Button
-                  size="sm"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins mt-2 sm:mt-4 h-9 sm:h-10 text-xs sm:text-sm tap-compact"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins mt-4"
                   onClick={e => {
                     e.stopPropagation();
                     handleViewShop(shop.id);
                   }}
                 >
-                  <Package className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-                  <span className="sm:hidden">View Shop</span>
-                  <span className="hidden sm:inline">View Shop & Products</span>
+                  <Package className="h-4 w-4 mr-2" />
+                  View Shop & Products
                 </Button>
               </CardContent>
             </Card>

@@ -64,7 +64,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    if (product && isOpen) {
+    if (product) {
       setFormData({
         name: product.name,
         description: product.description || '',
@@ -100,7 +100,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       
       // Specifications feature removed
     }
-  }, [product, isOpen]);
+  }, [product]);
 
   // Removed fetchProductSpecifications - specs feature no longer needed
 
@@ -131,15 +131,11 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       
       // Handle image upload
       let imageUrl = product.image;
-      const newImages = images.filter(img => img.id !== 'existing' && img.file);
-      const uploaded: Array<{ url: string; isPrimary: boolean }> = [];
-      for (const img of newImages) {
-        const fileName = `product_${Date.now()}_${Math.random().toString(36).slice(2)}_${img.file.name}`;
-        const url = await uploadImage('product_images', fileName, img.file);
-        if (url) uploaded.push({ url, isPrimary: img.isPrimary });
-      }
-      if (uploaded.length > 0) {
-        imageUrl = (uploaded.find(u => u.isPrimary) || uploaded[0]).url;
+      const newImages = images.filter(img => img.id !== 'existing');
+      if (newImages.length > 0) {
+        const primaryImage = newImages.find(img => img.isPrimary) || newImages[0];
+        const fileName = `product_${Date.now()}_${primaryImage.file.name}`;
+        imageUrl = await uploadImage('product_images', fileName, primaryImage.file);
       }
 
       const price = parseFloat(formData.price);
@@ -172,18 +168,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       };
 
       await updateProduct(product.id, updateData);
-
-      if (uploaded.length > 0) {
-        const { error: imgErr } = await supabase.from('product_images').insert(
-          uploaded.map((u, index) => ({
-            product_id: product.id,
-            image_url: u.url,
-            is_primary: u.url === imageUrl,
-            sort_order: index,
-          }))
-        );
-        if (imgErr) console.error('Failed to save product images:', imgErr);
-      }
       
       // Update specifications
       // Specifications feature removed - no longer saving specs
@@ -194,6 +178,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
       
       onClose();
       onProductUpdated();
+      resetForm();
     } catch (error: any) {
       // Only show error if it's not an audit_logs related error
       // since audit_logs errors don't affect the actual product update
@@ -212,6 +197,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         });
         onClose();
         onProductUpdated();
+        resetForm();
       }
     } finally {
       setIsSubmitting(false);
@@ -245,7 +231,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !isSubmitting) onClose(); }}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Product</DialogTitle>

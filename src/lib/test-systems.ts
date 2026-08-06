@@ -30,7 +30,7 @@ export const testSystems = async () => {
 
     // Test Pricing
     const { error: pricingError } = await supabase
-      .from('product_pricing_tiers')
+      .from('pricing_tiers')
       .select('id')
       .limit(1);
     results.pricing = !pricingError;

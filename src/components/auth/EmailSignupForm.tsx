@@ -46,7 +46,6 @@ const EmailSignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [phoneCheckStatus, setPhoneCheckStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
-  const [step, setStep] = useState<1 | 2>(1);
   const { t, language } = useLanguage();
   const isRtl = language === 'ur';
 
@@ -110,30 +109,7 @@ const EmailSignupForm = () => {
     setIsLoading(true);
     try {
       const normalizedPhone = normalizePakistaniPhone(formData.phoneNumber);
-      const redirectUrl = `${window.location.origin}/auth/callback`;
-
-      // Friendly pre-check: tell users clearly when their email is already
-      // registered, instead of the generic "check your email" response.
-      // The RPC is rate-limited server-side to prevent enumeration.
-      try {
-        const { data: taken } = await supabase.rpc('email_is_taken', {
-          p_email: formData.email,
-        });
-        if (taken === true) {
-          toast({
-            variant: 'destructive',
-            title: t('emailAlreadyRegistered') || 'Email already registered',
-            description:
-              t('emailAlreadyDesc') ||
-              'This email is already linked to an account. Try logging in or reset your password.',
-          });
-          setIsLoading(false);
-          return;
-        }
-      } catch (preErr) {
-        // Non-fatal — fall through and let signUp handle it.
-        console.warn('email_is_taken pre-check failed, continuing:', preErr);
-      }
+      const redirectUrl = `${window.location.origin}/dashboard`;
 
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
@@ -187,13 +163,6 @@ const EmailSignupForm = () => {
   
   const passwordStrength = getPasswordStrength(password || '');
 
-  const goToStep2 = async () => {
-    const valid = await form.trigger(['businessType', 'contactName', 'phoneNumber']);
-    if (!valid) return;
-    if (phoneCheckStatus === 'taken') return;
-    setStep(2);
-  };
-
   return (
     <Card className="w-full max-w-md mx-auto border-none shadow-lg overflow-hidden bg-card" dir={isRtl ? 'rtl' : 'ltr'}>
       <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground pb-6 pt-8">
@@ -209,19 +178,11 @@ const EmailSignupForm = () => {
         <CardDescription className="font-poppins text-white/90 text-sm text-center mt-1">
           {t('createB2BAccount')}
         </CardDescription>
-        <div className="flex items-center justify-center gap-2 mt-4">
-          <div className={`h-2 w-10 rounded-full ${step === 1 ? 'bg-primary-foreground' : 'bg-primary-foreground/40'}`} />
-          <div className={`h-2 w-10 rounded-full ${step === 2 ? 'bg-primary-foreground' : 'bg-primary-foreground/40'}`} />
-        </div>
-        <p className="text-center text-xs text-white/80 mt-1 font-poppins">
-          {step === 1 ? 'Step 1 of 2 · قدم ۱ / ۲' : 'Step 2 of 2 · قدم ۲ / ۲'}
-        </p>
       </CardHeader>
 
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {step === 1 && (<>
             {/* Business Type Selection */}
             <FormField
               control={form.control}
@@ -236,7 +197,7 @@ const EmailSignupForm = () => {
                       <Button
                         type="button"
                         variant={selectedBusinessType === 'seller' ? 'default' : 'outline'}
-                       className={`h-20 flex flex-col items-center justify-center gap-1 active:scale-[0.98] transition-transform ${
+                        className={`h-20 flex flex-col items-center justify-center gap-1 ${
                           selectedBusinessType === 'seller'
                             ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
                             : 'hover:bg-primary/5'
@@ -249,7 +210,7 @@ const EmailSignupForm = () => {
                       <Button
                         type="button"
                         variant={selectedBusinessType === 'wholesaler' ? 'default' : 'outline'}
-                        className={`h-20 flex flex-col items-center justify-center gap-1 active:scale-[0.98] transition-transform ${
+                        className={`h-20 flex flex-col items-center justify-center gap-1 ${
                           selectedBusinessType === 'wholesaler'
                             ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
                             : 'hover:bg-primary/5'
@@ -282,9 +243,55 @@ const EmailSignupForm = () => {
                       type="text"
                       placeholder={t('yourFullName')}
                       disabled={isLoading}
-                      className="font-poppins h-12 md:h-11 text-base"
-                      autoComplete="name"
-                      autoCapitalize="words"
+                      className="font-poppins"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Business Name */}
+            <FormField
+              control={form.control}
+              name="businessName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <Building2 className="w-4 h-4" />
+                    {t('businessNameLabel')} *
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder={t('yourBusinessName')}
+                      disabled={isLoading}
+                      className="font-poppins"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Email */}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    {t('emailAddress')} *
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="your@email.com"
+                      disabled={isLoading}
+                      className="font-poppins"
                     />
                   </FormControl>
                   <FormMessage />
@@ -309,9 +316,7 @@ const EmailSignupForm = () => {
                         type="tel"
                         placeholder="03XX-XXXXXXX"
                         disabled={isLoading}
-                        className={`font-poppins h-12 md:h-11 text-base ${isRtl ? 'pl-12' : 'pr-12'}`}
-                        autoComplete="tel-national"
-                        inputMode="numeric"
+                        className={`font-poppins ${isRtl ? 'pl-10' : 'pr-10'}`}
                       />
                       <div className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2`}>
                         {phoneCheckStatus === 'checking' && (
@@ -339,70 +344,6 @@ const EmailSignupForm = () => {
               )}
             />
 
-            <Button
-              type="button"
-              onClick={goToStep2}
-              className="w-full h-12 md:h-11 text-base font-semibold"
-              disabled={isLoading || phoneCheckStatus === 'taken' || phoneCheckStatus === 'checking'}
-            >
-              Next · اگلا
-            </Button>
-            </>)}
-
-            {step === 2 && (<>
-            {/* Business Name */}
-            <FormField
-              control={form.control}
-              name="businessName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
-                    <Building2 className="w-4 h-4" />
-                    {t('businessNameLabel')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="text"
-                      placeholder={t('yourBusinessName')}
-                      disabled={isLoading}
-                      className="font-poppins h-12 md:h-11 text-base"
-                      autoComplete="organization"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Email */}
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    {t('emailAddress')} *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="email"
-                      placeholder="your@email.com"
-                      disabled={isLoading}
-                      className="font-poppins h-12 md:h-11 text-base"
-                      autoComplete="email"
-                      inputMode="email"
-                      autoCapitalize="none"
-                      spellCheck={false}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             {/* Password */}
             <FormField
               control={form.control}
@@ -420,14 +361,12 @@ const EmailSignupForm = () => {
                         type={showPassword ? 'text' : 'password'}
                         placeholder={t('createStrongPassword')}
                         disabled={isLoading}
-                        className={`font-poppins h-12 md:h-11 text-base ${isRtl ? 'pl-12' : 'pr-12'}`}
-                        autoComplete="new-password"
+                        className={`font-poppins ${isRtl ? 'pl-10' : 'pr-10'}`}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className={`absolute ${isRtl ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 h-11 w-11 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors`}
-                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors`}
                         tabIndex={-1}
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -467,14 +406,14 @@ const EmailSignupForm = () => {
               control={form.control}
               name="acceptTerms"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border border-border p-4 active:bg-muted/30 transition-colors">
+                <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border border-border p-4">
                   <FormControl>
                     <input
                       type="checkbox"
                       checked={field.value}
                       onChange={field.onChange}
                       disabled={isLoading}
-                      className="mt-0.5 h-5 w-5 rounded border-input accent-primary cursor-pointer"
+                      className="mt-0.5 h-4 w-4 rounded border-input accent-primary cursor-pointer"
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
@@ -506,7 +445,7 @@ const EmailSignupForm = () => {
 
             <Button 
               type="submit" 
-              className="w-full h-12 md:h-11 text-base font-semibold active:scale-[0.99] transition-transform"
+              className="w-full py-6 font-semibold"
               disabled={isLoading || phoneCheckStatus === 'taken'}
             >
               {isLoading ? (
@@ -518,16 +457,6 @@ const EmailSignupForm = () => {
                 t('createAccount')
               )}
             </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setStep(1)}
-              className="w-full h-11 text-sm"
-              disabled={isLoading}
-            >
-              ← Back · واپس
-            </Button>
-            </>)}
           </form>
         </Form>
 

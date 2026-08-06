@@ -78,8 +78,6 @@ const EmailLoginForm: React.FC = () => {
   };
 
   const onSubmit = async (values: LoginFormValues) => {
-    let attemptIdentifier = '';
-    let success = false;
     try {
       setLoading(true);
       setEmailNotConfirmed(false);
@@ -88,18 +86,8 @@ const EmailLoginForm: React.FC = () => {
       
       // Determine if identifier is email or phone
       const isEmail = identifier.includes('@');
-      attemptIdentifier = isEmail ? identifier : normalizePakistaniPhone(identifier);
-
-      // Brute-force protection: check lockout before attempting
-      const { data: lockoutData } = await supabase.rpc('check_account_lockout', {
-        user_phone: attemptIdentifier,
-      });
-      if (lockoutData && (lockoutData as any).locked) {
-        const minutes = (lockoutData as any).retry_after_minutes ?? 15;
-        throw new Error(
-          `Too many failed attempts. Please try again in ${minutes} minute(s).`
-        );
-      }
+      
+      console.log('Attempting login with:', identifier, 'Type:', isEmail ? 'email' : 'phone');
 
       let data, error;
 
@@ -112,7 +100,9 @@ const EmailLoginForm: React.FC = () => {
         data = result.data;
         error = result.error;
       } else {
-        const normalizedPhone = attemptIdentifier;
+        // Normalize phone number using shared utility
+        const normalizedPhone = normalizePakistaniPhone(identifier);
+        console.log('Normalized phone:', normalizedPhone);
         
         // Authenticate by phone via secure RPC (bypasses RLS safely)
         const { data: authDataRaw, error: rpcError } = await supabase.rpc('authenticate_user_by_phone', {
@@ -133,6 +123,8 @@ const EmailLoginForm: React.FC = () => {
       }
 
       if (error) {
+        console.error('Login error:', error);
+        
         // Check if it's an email not confirmed error
         if (error.message.toLowerCase().includes('email not confirmed')) {
           setEmailNotConfirmed(true);
@@ -142,7 +134,8 @@ const EmailLoginForm: React.FC = () => {
         throw error;
       }
 
-      success = true;
+      console.log('Login successful:', data);
+      
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in",
@@ -150,23 +143,14 @@ const EmailLoginForm: React.FC = () => {
 
       navigate('/dashboard');
     } catch (error: any) {
+      console.error('Login failed:', error);
+      
       toast({
         title: "Login failed",
         description: error.message || "Invalid email or password",
         variant: "destructive",
       });
     } finally {
-      // Log attempt for brute-force tracking (don't block on errors)
-      if (attemptIdentifier) {
-        supabase
-          .rpc('log_auth_attempt', {
-            p_identifier: attemptIdentifier,
-            p_success: success,
-            p_ip_address: null,
-            p_user_agent: navigator?.userAgent ?? null,
-          })
-          .then(() => undefined, () => undefined);
-      }
       setLoading(false);
     }
   };

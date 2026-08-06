@@ -13,21 +13,6 @@ export const createProduct = async (productData: {
   image?: string;
   category_id?: string;
   moq?: number;
-  is_active?: boolean;
-  package_weight?: number | null;
-  package_dimensions?: string | null;
-  stock_quantity?: number | null;
-  warranty_info?: string | null;
-  certifications?: string[] | null;
-  customization_available?: boolean | null;
-  colors_available?: string[] | null;
-  packaging_type?: string | null;
-  units_per_package?: number | null;
-  sample_available?: boolean | null;
-  sample_price?: number | null;
-  brand?: string | null;
-  model_number?: string | null;
-  origin_country?: string | null;
 }): Promise<Product> => {
   try {
     const user = await getCurrentUser();
@@ -44,8 +29,8 @@ export const createProduct = async (productData: {
       throw new Error('Price must be greater than 0');
     }
 
-    if (productData.name.trim().length < 2 || productData.name.trim().length > 100) {
-      throw new Error('Product name must be between 2 and 100 characters');
+    if (productData.name.trim().length < 3 || productData.name.trim().length > 100) {
+      throw new Error('Product name must be between 3 and 100 characters');
     }
 
     if (productData.moq && productData.moq < 1) {
@@ -86,23 +71,9 @@ export const createProduct = async (productData: {
         price: productData.price,
         image: productData.image,
         category_id: productData.category_id,
-        is_active: productData.is_active ?? true,
+        is_active: true,
         verification_status: 'approved',
-        moq: productData.moq || 1,
-        package_weight: productData.package_weight ?? null,
-        package_dimensions: productData.package_dimensions ?? null,
-        stock_quantity: productData.stock_quantity ?? null,
-        warranty_info: productData.warranty_info ?? null,
-        certifications: productData.certifications ?? null,
-        customization_available: productData.customization_available ?? false,
-        colors_available: productData.colors_available ?? null,
-        packaging_type: productData.packaging_type ?? null,
-        units_per_package: productData.units_per_package ?? 1,
-        sample_available: productData.sample_available ?? false,
-        sample_price: productData.sample_price ?? null,
-        brand: productData.brand ?? null,
-        model_number: productData.model_number ?? null,
-        origin_country: productData.origin_country ?? null
+        moq: productData.moq || 1
       })
       .select()
       .single();
@@ -328,21 +299,11 @@ export const deleteProduct = async (productId: string): Promise<void> => {
 
     const { error } = await supabase
       .from('products')
-      .delete()
+      .update({ is_active: false })
       .eq('id', productId);
 
     if (error) {
       console.error('Product deletion error:', error);
-      // Fallback to soft-delete if hard delete is blocked by FK constraints
-      // (e.g. product referenced by past orders)
-      if (error.code === '23503') {
-        const { error: softErr } = await supabase
-          .from('products')
-          .update({ is_active: false })
-          .eq('id', productId);
-        if (softErr) throw new Error(`Failed to delete product: ${softErr.message}`);
-        return;
-      }
       throw new Error(`Failed to delete product: ${error.message}`);
     }
   } catch (error) {

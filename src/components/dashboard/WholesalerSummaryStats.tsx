@@ -3,17 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  ShoppingCart,
-  DollarSign,
-  Store,
-  Package,
-  MessageSquare,
-  TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
-  AlertTriangle,
-} from 'lucide-react';
+import { ShoppingCart, DollarSign, Store, Package, MessageSquare, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 const WholesalerSummaryStats: React.FC = () => {
   const { user } = useAuth();
@@ -54,7 +44,6 @@ const WholesalerSummaryStats: React.FC = () => {
 
       const orders = ordersResult.data || [];
       const products = productsResult.data || [];
-      const productsFull = products as Array<{ id: string; is_active: boolean; stock_quantity?: number | null }>;
       
       // Filter unread messages to only those in user's conversations
       const { data: convs } = await supabase
@@ -88,15 +77,10 @@ const WholesalerSummaryStats: React.FC = () => {
         totalShops: shopIds.length,
         totalProducts: products.length,
         activeProducts: products.filter(p => p.is_active).length,
-        lowStockCount: productsFull.filter(p => (p.stock_quantity ?? 0) > 0 && (p.stock_quantity ?? 0) <= 5).length,
-        outOfStockCount: productsFull.filter(p => (p.stock_quantity ?? 0) === 0).length,
         totalOrders: orders.length,
         todayOrders: todayOrders.length,
         pendingOrders: pendingOrders.length,
         totalRevenue,
-        todayRevenue: todayOrders
-          .filter(o => ['confirmed', 'shipped', 'delivered'].includes(o.status))
-          .reduce((sum, o) => sum + Number(o.total_amount), 0),
         unreadMessages: unreadMessages.length,
         revenueTrend,
       };
@@ -107,89 +91,36 @@ const WholesalerSummaryStats: React.FC = () => {
 
   if (!stats) return null;
 
-  // Phase 2 — 3 huge primary numbers, Urdu-first, no cognitive overload.
-  const primary = [
-    {
-      ur: 'نئے آرڈرز',
-      roman: 'Naye orders',
-      value: stats.pendingOrders,
-      icon: ShoppingCart,
-      accent: 'text-yellow-300',
-    },
-    {
-      ur: 'آج کی بکری',
-      roman: 'Aaj ki bikri',
-      value: `Rs ${stats.todayRevenue.toLocaleString('en-PK')}`,
-      icon: DollarSign,
-      accent: 'text-primary',
-    },
-    {
-      ur: 'اسٹاک کم ہو رہا ہے',
-      roman: 'Stock kam ho raha hai',
-      value: stats.lowStockCount + stats.outOfStockCount,
-      icon: AlertTriangle,
-      accent: 'text-destructive',
-    },
-  ];
-
-  const secondary = [
-    { label: 'Total revenue', value: `Rs ${stats.totalRevenue.toLocaleString('en-PK')}`, icon: DollarSign, trend: stats.revenueTrend },
-    { label: 'Shops', value: stats.totalShops, icon: Store },
-    { label: 'Active products', value: `${stats.activeProducts}/${stats.totalProducts}`, icon: Package },
-    { label: 'Unread messages', value: stats.unreadMessages, icon: MessageSquare },
+  const cards = [
+    { label: "Today's Orders", value: stats.todayOrders, icon: ShoppingCart, color: 'text-blue-600' },
+    { label: 'Pending Orders', value: stats.pendingOrders, icon: TrendingUp, color: 'text-orange-600' },
+    { label: 'Total Revenue', value: `PKR ${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-emerald-600', trend: stats.revenueTrend },
+    { label: 'Shops', value: stats.totalShops, icon: Store, color: 'text-purple-600' },
+    { label: 'Active Products', value: `${stats.activeProducts}/${stats.totalProducts}`, icon: Package, color: 'text-primary' },
+    { label: 'Unread Messages', value: stats.unreadMessages, icon: MessageSquare, color: 'text-rose-600' },
   ];
 
   return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {primary.map((card) => (
-          <Card key={card.roman} className="border border-border">
-            <CardContent className="p-5 sm:p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-muted-foreground font-poppins uppercase tracking-wide">
-                  {card.roman}
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      {cards.map((card) => (
+        <Card key={card.label} className="border border-border">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <card.icon className={`w-4 h-4 ${card.color}`} />
+              <span className="text-xs text-muted-foreground font-poppins">{card.label}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <p className="text-lg font-bold text-foreground font-poppins">{card.value}</p>
+              {card.trend !== undefined && card.trend !== 0 && (
+                <span className={`flex items-center text-xs font-medium ${card.trend > 0 ? 'text-emerald-600' : 'text-destructive'}`}>
+                  {card.trend > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                  {Math.abs(card.trend)}%
                 </span>
-                <card.icon className={`w-5 h-5 ${card.accent}`} />
-              </div>
-              <div className="text-3xl sm:text-4xl font-bold font-poppins mb-1">
-                {card.value}
-              </div>
-              <div className="text-base sm:text-lg text-muted-foreground font-poppins" dir="rtl">
-                {card.ur}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <details className="group">
-        <summary className="cursor-pointer text-xs text-muted-foreground font-poppins hover:text-foreground list-none flex items-center gap-2 py-2">
-          <TrendingUp className="w-3.5 h-3.5" />
-          <span className="group-open:hidden">Show more numbers</span>
-          <span className="hidden group-open:inline">Hide extra numbers</span>
-        </summary>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
-          {secondary.map((card) => (
-            <Card key={card.label} className="border border-border">
-              <CardContent className="p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <card.icon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-[11px] text-muted-foreground font-poppins">{card.label}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-base font-bold text-foreground font-poppins">{card.value}</p>
-                  {'trend' in card && card.trend !== undefined && card.trend !== 0 && (
-                    <span className={`flex items-center text-xs font-medium ${card.trend > 0 ? 'text-emerald-600' : 'text-destructive'}`}>
-                      {card.trend > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                      {Math.abs(card.trend)}%
-                    </span>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </details>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };

@@ -29,9 +29,8 @@ export const logSecurityEvent = async (event: string, details: any = {}) => {
       details
     });
 
-    // Store in localStorage as backup (development only — avoid persisting
-    // sensitive event details like emails in production browsers)
-    if (import.meta.env.DEV && typeof window !== 'undefined') {
+    // Store in localStorage as backup (for development/debugging)
+    if (typeof window !== 'undefined') {
       const securityLogs = JSON.parse(localStorage.getItem('security_logs') || '[]');
       securityLogs.push({
         user_id: user?.id || null,

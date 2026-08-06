@@ -63,7 +63,7 @@ const Navbar = () => {
               {/* Logo */}
               <Link to="/" className="flex items-center gap-2 md:gap-3 hover:opacity-80 transition-opacity">
                 <div className="bg-primary rounded-lg md:rounded-xl p-1.5 md:p-2 shadow-md hover:shadow-lg transition-shadow">
-                  <span className="text-primary-foreground text-sm md:text-xl font-bold leading-none">PM</span>
+                  <span className="text-primary-foreground text-lg md:text-xl font-bold">PM</span>
                 </div>
                 <span className="text-lg md:text-xl font-bold text-foreground hidden lg:inline font-poppins">
                   PakMandi
@@ -130,21 +130,21 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Button and Language Toggle */}
-            <div className="md:hidden flex items-center gap-0.5">
+            <div className="md:hidden flex items-center gap-1">
               {/* Mobile Cart */}
               <Link to="/checkout" className="relative">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-11 w-11 rounded-full tap-compact">
-                  <ShoppingCart className="!w-[22px] !h-[22px]" />
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary h-9 w-9">
+                  <ShoppingCart className="w-4 h-4" />
                   {cartCount > 0 && (
-                    <Badge className="absolute top-1 right-1 h-4 min-w-4 px-1 flex items-center justify-center p-0 text-[9px] bg-destructive text-destructive-foreground rounded-full">
+                    <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center p-0 text-[9px] bg-destructive text-destructive-foreground">
                       {cartCount}
                     </Badge>
                   )}
                 </Button>
               </Link>
               <LanguageToggle />
-              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10 h-11 w-11 rounded-full tap-compact" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
-                {isMobileMenuOpen ? <X className="!w-[22px] !h-[22px]" /> : <Menu className="!w-[22px] !h-[22px]" />}
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-muted-foreground hover:text-primary hover:bg-primary/10" aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}>
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
           </div>

@@ -1028,7 +1028,6 @@ export type Database = {
           buyer_address: string | null
           buyer_area: string | null
           buyer_city: string | null
-          buyer_hidden_at: string | null
           buyer_id: string
           buyer_name: string | null
           buyer_phone: string | null
@@ -1077,7 +1076,6 @@ export type Database = {
           buyer_address?: string | null
           buyer_area?: string | null
           buyer_city?: string | null
-          buyer_hidden_at?: string | null
           buyer_id: string
           buyer_name?: string | null
           buyer_phone?: string | null
@@ -1126,7 +1124,6 @@ export type Database = {
           buyer_address?: string | null
           buyer_area?: string | null
           buyer_city?: string | null
-          buyer_hidden_at?: string | null
           buyer_id?: string
           buyer_name?: string | null
           buyer_phone?: string | null
@@ -1389,6 +1386,41 @@ export type Database = {
             columns: ["wholesaler_id"]
             isOneToOne: false
             referencedRelation: "public_wholesaler_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pricing_tiers: {
+        Row: {
+          created_at: string | null
+          id: string
+          max_quantity: number | null
+          min_quantity: number
+          product_id: string
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          max_quantity?: number | null
+          min_quantity: number
+          product_id: string
+          unit_price: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          max_quantity?: number | null
+          min_quantity?: number
+          product_id?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_tiers_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -1854,33 +1886,6 @@ export type Database = {
           },
         ]
       }
-      profile_otps: {
-        Row: {
-          otp_attempts: number | null
-          otp_code: string | null
-          otp_expires_at: string | null
-          updated_at: string
-          user_id: string
-          verification_otp: string | null
-        }
-        Insert: {
-          otp_attempts?: number | null
-          otp_code?: string | null
-          otp_expires_at?: string | null
-          updated_at?: string
-          user_id: string
-          verification_otp?: string | null
-        }
-        Update: {
-          otp_attempts?: number | null
-          otp_code?: string | null
-          otp_expires_at?: string | null
-          updated_at?: string
-          user_id?: string
-          verification_otp?: string | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           address: string | null
@@ -1908,6 +1913,9 @@ export type Database = {
           last_role_switch: string | null
           normalized_phone: string | null
           ntn_number: string | null
+          otp_attempts: number | null
+          otp_code: string | null
+          otp_expires_at: string | null
           phone_encrypted: string | null
           phone_number: string | null
           phone_verified: boolean | null
@@ -1923,6 +1931,7 @@ export type Database = {
           suspension_type: string | null
           updated_at: string | null
           verification_notes: string | null
+          verification_otp: string | null
           verification_status: string | null
           years_in_business: string | null
         }
@@ -1952,6 +1961,9 @@ export type Database = {
           last_role_switch?: string | null
           normalized_phone?: string | null
           ntn_number?: string | null
+          otp_attempts?: number | null
+          otp_code?: string | null
+          otp_expires_at?: string | null
           phone_encrypted?: string | null
           phone_number?: string | null
           phone_verified?: boolean | null
@@ -1967,6 +1979,7 @@ export type Database = {
           suspension_type?: string | null
           updated_at?: string | null
           verification_notes?: string | null
+          verification_otp?: string | null
           verification_status?: string | null
           years_in_business?: string | null
         }
@@ -1996,6 +2009,9 @@ export type Database = {
           last_role_switch?: string | null
           normalized_phone?: string | null
           ntn_number?: string | null
+          otp_attempts?: number | null
+          otp_code?: string | null
+          otp_expires_at?: string | null
           phone_encrypted?: string | null
           phone_number?: string | null
           phone_verified?: boolean | null
@@ -2011,6 +2027,7 @@ export type Database = {
           suspension_type?: string | null
           updated_at?: string | null
           verification_notes?: string | null
+          verification_otp?: string | null
           verification_status?: string | null
           years_in_business?: string | null
         }
@@ -2675,121 +2692,6 @@ export type Database = {
       }
     }
     Views: {
-      company_profiles_public_safe: {
-        Row: {
-          address: string | null
-          business_type: string | null
-          city_id: string | null
-          company_name: string | null
-          created_at: string | null
-          description: string | null
-          id: string | null
-          logo: string | null
-          updated_at: string | null
-          user_id: string | null
-          verification_status: string | null
-          website: string | null
-        }
-        Insert: {
-          address?: string | null
-          business_type?: string | null
-          city_id?: string | null
-          company_name?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          logo?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          verification_status?: string | null
-          website?: string | null
-        }
-        Update: {
-          address?: string | null
-          business_type?: string | null
-          city_id?: string | null
-          company_name?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          logo?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          verification_status?: string | null
-          website?: string | null
-        }
-        Relationships: []
-      }
-      payment_methods_buyer_safe: {
-        Row: {
-          account_number: string | null
-          account_number_masked: string | null
-          account_title: string | null
-          bank_name: string | null
-          created_at: string | null
-          easypaisa_masked: string | null
-          easypaisa_number: string | null
-          id: string | null
-          is_active: boolean | null
-          jazzcash_masked: string | null
-          jazzcash_number: string | null
-          updated_at: string | null
-          wholesaler_id: string | null
-        }
-        Insert: {
-          account_number?: string | null
-          account_number_masked?: string | null
-          account_title?: string | null
-          bank_name?: string | null
-          created_at?: string | null
-          easypaisa_masked?: string | null
-          easypaisa_number?: string | null
-          id?: string | null
-          is_active?: boolean | null
-          jazzcash_masked?: string | null
-          jazzcash_number?: string | null
-          updated_at?: string | null
-          wholesaler_id?: string | null
-        }
-        Update: {
-          account_number?: string | null
-          account_number_masked?: string | null
-          account_title?: string | null
-          bank_name?: string | null
-          created_at?: string | null
-          easypaisa_masked?: string | null
-          easypaisa_number?: string | null
-          id?: string | null
-          is_active?: boolean | null
-          jazzcash_masked?: string | null
-          jazzcash_number?: string | null
-          updated_at?: string | null
-          wholesaler_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "payment_methods_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_methods_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "profiles_public"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_methods_wholesaler_id_fkey"
-            columns: ["wholesaler_id"]
-            isOneToOne: false
-            referencedRelation: "public_wholesaler_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profiles_public: {
         Row: {
           business_name: string | null
@@ -2877,7 +2779,7 @@ export type Database = {
         Row: {
           address: string | null
           city_id: string | null
-          commission_rate: number | null
+          contact: string | null
           created_at: string | null
           id: string | null
           logo: string | null
@@ -2888,7 +2790,7 @@ export type Database = {
         Insert: {
           address?: string | null
           city_id?: string | null
-          commission_rate?: number | null
+          contact?: string | null
           created_at?: string | null
           id?: string | null
           logo?: string | null
@@ -2899,7 +2801,7 @@ export type Database = {
         Update: {
           address?: string | null
           city_id?: string | null
-          commission_rate?: number | null
+          contact?: string | null
           created_at?: string | null
           id?: string | null
           logo?: string | null
@@ -3004,7 +2906,6 @@ export type Database = {
       delete_old_screenshots: { Args: never; Returns: undefined }
       delete_old_verification_documents: { Args: never; Returns: undefined }
       detect_unusual_access_patterns: { Args: never; Returns: undefined }
-      email_is_taken: { Args: { p_email: string }; Returns: boolean }
       generate_csrf_token: { Args: never; Returns: string }
       generate_otp: { Args: never; Returns: string }
       get_active_products_list: {
@@ -3027,6 +2928,15 @@ export type Database = {
           verification_status: string
         }[]
       }
+      get_available_phones: {
+        Args: never
+        Returns: {
+          email: string
+          normalized_phone: string
+          phone_number: string
+          role: string
+        }[]
+      }
       get_commission_data_secure: {
         Args: { p_wholesaler_id: string }
         Returns: {
@@ -3037,13 +2947,6 @@ export type Database = {
           order_id: string
           sale_amount: string
           status: string
-        }[]
-      }
-      get_company_contact: {
-        Args: { p_user_id: string }
-        Returns: {
-          phone: string
-          whatsapp: string
         }[]
       }
       get_current_commission_rate: { Args: never; Returns: number }
@@ -3114,7 +3017,6 @@ export type Database = {
         }[]
       }
       get_security_stats: { Args: never; Returns: Json }
-      get_shop_contact: { Args: { p_shop_id: string }; Returns: string }
       get_storage_stats: { Args: never; Returns: Json }
       get_user_by_phone: {
         Args: { phone_input: string }

@@ -174,7 +174,7 @@ export const enhancedSignUp = async (
       email: finalEmail,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/`,
         data: {
           role,
           phone_number: formData.phoneNumber,

@@ -1,3 +1,4 @@
+
 @import './styles/fonts.css';
 @import './styles/urdu.css';
 @import './styles/animations.css';
@@ -67,11 +68,6 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-  }
-
-  /* Lovable badge global removal rule */
-  #lovable-badge {
-    display: none !important;
   }
 }
 
@@ -191,14 +187,10 @@ html {
   }
 }
 
-/* Mobile touch-friendly tap targets (Apple HIG 44px) */
+/* Mobile touch-friendly tap targets */
 @media (max-width: 640px) {
   button, a, [role="button"] {
-    min-height: 44px;
-  }
-  /* Allow compact controls (badges, inline chips, card CTAs) to opt out */
-  .tap-compact, [data-tap="compact"] {
-    min-height: 0 !important;
+    min-height: 40px;
   }
 }
 

@@ -141,15 +141,13 @@ const PakistaniLoginForm: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading || accountLocked}
-                className="font-poppins pr-12 h-12 md:h-11 text-base"
-                autoComplete="current-password"
+                className="font-poppins pr-10 h-11"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className={`absolute inset-y-0 ${isRtl ? 'left-0' : 'right-0'} w-11 flex items-center justify-center hover:text-foreground transition-colors`}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className={`absolute inset-y-0 ${isRtl ? 'left-0 pl-3' : 'right-0 pr-3'} flex items-center hover:text-foreground transition-colors`}
                 disabled={isLoading}
               >
                 {showPassword ? (
@@ -172,7 +170,7 @@ const PakistaniLoginForm: React.FC = () => {
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-poppins h-12 md:h-11 text-base font-medium shadow-lg hover:shadow-xl transition-all active:scale-[0.99]"
+            className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-poppins h-11 font-medium shadow-lg hover:shadow-xl transition-all"
             disabled={isLoading || accountLocked}
           >
             {isLoading ? (

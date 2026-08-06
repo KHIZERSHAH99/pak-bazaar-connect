@@ -6,7 +6,6 @@ import DashboardSidebar from './dashboard/DashboardSidebar';
 import SEOHead from '@/components/ui/seo-head';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
-import MadadButton from '@/components/common/MadadButton';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -63,7 +62,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
         </main>
       </div>
-      <MadadButton />
     </div>
   );
 };

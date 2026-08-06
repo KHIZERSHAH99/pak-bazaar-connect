@@ -81,27 +81,27 @@ const PaymentMethodsSetup: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader className="p-4 sm:p-6">
-        <CardTitle className="flex items-center justify-between font-poppins text-base sm:text-lg gap-2">
-          <span className="flex items-center gap-2 min-w-0">
-            <Building className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-            <span className="truncate">Payment Methods Setup</span>
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between font-poppins">
+          <span className="flex items-center gap-2">
+            <Building className="h-5 w-5" />
+            Payment Methods Setup
           </span>
           {hasPaymentMethods && !isEditing && (
             <Button
               variant="outline"
               size="sm"
               onClick={() => setIsEditing(true)}
-              className="font-poppins h-8 px-2.5 text-xs sm:text-sm shrink-0 tap-compact"
+              className="font-poppins"
             >
-              <Edit className="h-3.5 w-3.5 sm:mr-2" />
-              <span className="hidden sm:inline">Edit</span>
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
             </Button>
           )}
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+      <CardContent>
         {!hasPaymentMethods || isEditing ? (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Bank Details */}

@@ -281,7 +281,7 @@ const signUpWithPhone = async (
   const uniqueEmail = `${normalizedPhone}@pakmandi.store`;
 
   const signUpOptions: any = {
-    emailRedirectTo: `${window.location.origin}/auth/callback`,
+    emailRedirectTo: `${window.location.origin}/dashboard`,
     data: {
       role,
       phone_number: normalizedPhone,
@@ -360,7 +360,7 @@ const signUpWithEmail = async (
   captchaToken?: string
 ) => {
   const signUpOptions: any = {
-    emailRedirectTo: `${window.location.origin}/auth/callback`,
+    emailRedirectTo: `${window.location.origin}/dashboard`,
     data: {
       role,
       ...businessData

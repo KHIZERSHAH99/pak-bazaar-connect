@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Package, AlertTriangle, XCircle, CheckCircle, Search, RefreshCw } from 'lucide-react';
 import RestockDialog from './RestockDialog';
 import StockMovementLog from './StockMovementLog';
-import ProductStockHistory from './ProductStockHistory';
 
 const LOW_STOCK_THRESHOLD = 10;
 
@@ -20,7 +19,6 @@ const InventoryDashboard: React.FC = () => {
   const [stockFilter, setStockFilter] = useState<string>('all');
   const [shopFilter, setShopFilter] = useState<string>('all');
   const [restockProduct, setRestockProduct] = useState<{ id: string; name: string; stock_quantity: number | null } | null>(null);
-  const [historyProduct, setHistoryProduct] = useState<{ id: string; name: string } | null>(null);
 
   const { data: shops = [] } = useQuery({
     queryKey: ['inventory-shops', user?.id],
@@ -86,15 +84,15 @@ const InventoryDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {statCards.map(s => (
           <Card key={s.label}>
-            <CardContent className="p-3 sm:p-4 flex items-center gap-2 sm:gap-3">
-              <s.icon className={`h-6 w-6 sm:h-8 sm:w-8 ${s.color} shrink-0`} />
-              <div className="min-w-0">
-                <p className="text-lg sm:text-2xl font-bold leading-tight">{s.value}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{s.label}</p>
+            <CardContent className="p-4 flex items-center gap-3">
+              <s.icon className={`h-8 w-8 ${s.color} shrink-0`} />
+              <div>
+                <p className="text-2xl font-bold">{s.value}</p>
+                <p className="text-xs text-muted-foreground">{s.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -159,23 +157,14 @@ const InventoryDashboard: React.FC = () => {
                       <td className="py-3 pr-4 text-right font-mono">{p.stock_quantity ?? 0}</td>
                       <td className="py-3 pr-4">{getStockBadge(p.stock_quantity)}</td>
                       <td className="py-3">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setRestockProduct({ id: p.id, name: p.name, stock_quantity: p.stock_quantity })}
-                          >
-                            <RefreshCw className="h-3 w-3 mr-1" />
-                            Restock
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setHistoryProduct({ id: p.id, name: p.name })}
-                          >
-                            History
-                          </Button>
-                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setRestockProduct({ id: p.id, name: p.name, stock_quantity: p.stock_quantity })}
+                        >
+                          <RefreshCw className="h-3 w-3 mr-1" />
+                          Restock
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -192,12 +181,6 @@ const InventoryDashboard: React.FC = () => {
         open={!!restockProduct}
         onOpenChange={(open) => !open && setRestockProduct(null)}
         product={restockProduct}
-      />
-
-      <ProductStockHistory
-        open={!!historyProduct}
-        onOpenChange={(open) => !open && setHistoryProduct(null)}
-        product={historyProduct}
       />
     </div>
   );

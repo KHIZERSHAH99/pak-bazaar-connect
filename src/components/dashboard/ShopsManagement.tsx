@@ -113,7 +113,7 @@ const ShopsManagement: React.FC = () => {
               {t('createYourFirstShop')}
             </Button>
           </CardContent>
-        </Card> : <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
+        </Card> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {shops.map(shop => <Card key={shop.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               {shop.logo && <div className="aspect-video relative h-24 sm:h-32">
                   <img src={shop.logo} alt={shop.name} className="w-full h-full object-cover" />

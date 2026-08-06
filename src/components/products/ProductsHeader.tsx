@@ -10,9 +10,9 @@ interface ProductsHeaderProps {
 
 const ProductsHeader: React.FC<ProductsHeaderProps> = ({ onSearch, searchTerm }) => {
   return (
-    <div className="mb-4 sm:mb-6">
-      <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2 font-poppins">Browse Products</h1>
-      <p className="text-xs sm:text-sm text-muted-foreground font-poppins mb-3 sm:mb-4">Discover wholesale products from verified suppliers across Pakistan</p>
+    <div className="mb-6">
+      <h1 className="text-2xl font-bold text-gray-900 mb-2 font-poppins">Browse Products</h1>
+      <p className="text-sm text-gray-600 font-poppins mb-4">Discover wholesale products from verified suppliers across Pakistan</p>
       
       {onSearch && (
         <div className="relative max-w-md">

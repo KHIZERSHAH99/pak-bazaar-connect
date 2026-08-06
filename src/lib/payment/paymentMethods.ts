@@ -7,7 +7,7 @@ import { mockPaymentMethods } from './mockData';
 export const getPaymentMethods = async (wholesalerId?: string): Promise<PaymentMethod[]> => {
   try {
     let query = supabase
-      .from('payment_methods_buyer_safe')
+      .from('payment_methods')
       .select('*')
       .eq('is_active', true);
     

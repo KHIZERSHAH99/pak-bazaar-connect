@@ -12,7 +12,6 @@ import NotFound from '@/pages/NotFound';
 const Login = lazy(() => import('@/pages/Login'));
 const Signup = lazy(() => import('@/pages/Signup'));
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
-const AuthCallback = lazy(() => import('@/pages/AuthCallback'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Profile = lazy(() => import('@/pages/Profile'));
 const Products = lazy(() => import('@/pages/Products'));
@@ -22,7 +21,6 @@ const Features = lazy(() => import('@/pages/Features'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
 const Contact = lazy(() => import('@/pages/Contact'));
 const AboutUs = lazy(() => import('@/pages/AboutUs'));
-const WhyPakMandi = lazy(() => import('@/pages/WhyPakMandi'));
 const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
 const RefundPolicy = lazy(() => import('@/pages/RefundPolicy'));
 const ShippingPolicy = lazy(() => import('@/pages/ShippingPolicy'));
@@ -82,7 +80,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/login" element={<LazyRoute><Login /></LazyRoute>} />
         <Route path="/signup" element={<LazyRoute><Signup /></LazyRoute>} />
         <Route path="/forgot-password" element={<LazyRoute><ForgotPassword /></LazyRoute>} />
-        <Route path="/auth/callback" element={<LazyRoute><AuthCallback /></LazyRoute>} />
         
         {/* Product routes */}
         <Route path="/products" element={<LazyRoute><Products /></LazyRoute>} />
@@ -102,7 +99,6 @@ const AppRoutes: React.FC = () => {
         {/* Legal pages */}
         <Route path="/contact" element={<LazyRoute><Contact /></LazyRoute>} />
         <Route path="/about" element={<LazyRoute><AboutUs /></LazyRoute>} />
-        <Route path="/why-pakmandi" element={<LazyRoute><WhyPakMandi /></LazyRoute>} />
         <Route path="/privacy-policy" element={<LazyRoute><PrivacyPolicy /></LazyRoute>} />
         <Route path="/terms-of-service" element={<LazyRoute><TermsOfService /></LazyRoute>} />
         <Route path="/refund-policy" element={<LazyRoute><RefundPolicy /></LazyRoute>} />

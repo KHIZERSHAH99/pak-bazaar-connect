@@ -26,7 +26,6 @@ export const getUnifiedOrders = async (
           shops!fk_orders_shop_id(id, name, contact, address, logo, owner_id)
         `, { count: 'exact' })
         .eq('buyer_id', user.id)
-        .is('buyer_hidden_at', null)
         .order('created_at', { ascending: false })
         .range(from, to - 1);
 
@@ -76,7 +75,7 @@ async function getOrderStats(userId: string, role: 'seller' | 'wholesaler', shop
     let query = supabase.from('orders').select('status, total_amount');
     
     if (role === 'seller') {
-      query = query.eq('buyer_id', userId).is('buyer_hidden_at', null);
+      query = query.eq('buyer_id', userId);
     } else if (shopIds?.length) {
       query = query.in('shop_id', shopIds);
     }
@@ -96,23 +95,6 @@ async function getOrderStats(userId: string, role: 'seller' | 'wholesaler', shop
 }
 
 // Optimistic update helper for order status changes
-// Buyer-side hiding of finished orders (record is kept for the wholesaler & admin)
-export const hideOrderForBuyer = async (orderId: string) => {
-  const user = await getCurrentUser();
-  if (!user) throw new Error('Not authenticated');
-
-  const { data, error } = await supabase
-    .from('orders')
-    .update({ buyer_hidden_at: new Date().toISOString() })
-    .eq('id', orderId)
-    .eq('buyer_id', user.id)
-    .select('id');
-
-  if (error) throw error;
-  if (!data?.length) throw new Error('Order could not be hidden');
-  return true;
-};
-
 export const optimisticUpdateOrderStatus = (
   orderId: string,
   newStatus: string,

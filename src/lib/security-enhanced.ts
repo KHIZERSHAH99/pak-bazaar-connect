@@ -21,15 +21,12 @@ export class SecurityManager {
     try {
       const user = await getCurrentUser();
       
-      // Route through hardened SECURITY DEFINER RPC — direct inserts into
-      // audit_logs are blocked by RLS (`Secure insert only via function`).
-      await supabase.rpc('log_audit_event', {
-        p_user_id: user?.id ?? null,
-        p_event_type: `security_${eventType}`,
-        p_table_name: null,
-        p_record_id: null,
-        p_old_values: null,
-        p_new_values: { ...details, severity, user_agent: navigator.userAgent } as any,
+      await supabase.from('audit_logs').insert({
+        user_id: user?.id || null,
+        event_type: `security_${eventType}`,
+        new_values: { ...details, severity },
+        ip_address: await this.getClientIP(),
+        user_agent: navigator.userAgent
       });
     } catch (error) {
       console.error('Failed to log security event:', error);

@@ -38,7 +38,7 @@ const ProductOrderButton: React.FC<ProductOrderButtonProps> = ({
       return;
     }
 
-    if (profile?.role !== 'seller' && profile?.role !== 'admin') {
+    if (profile?.role !== 'seller') {
       toast({
         title: 'Seller Account Required',
         description: 'Only sellers can place orders. Please switch to seller role.',
@@ -50,8 +50,8 @@ const ProductOrderButton: React.FC<ProductOrderButtonProps> = ({
     // Check if trying to order from own shop
     if (product.shops?.owner_id === user?.id) {
       toast({
-        title: 'This is your own shop',
-        description: "You own this shop, so you can't buy your own product. Use a different buyer account to test ordering.",
+        title: 'Cannot Order',
+        description: 'You cannot order from your own shop',
         variant: 'destructive'
       });
       return;

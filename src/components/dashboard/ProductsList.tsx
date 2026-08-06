@@ -3,15 +3,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2, Eye, EyeOff, Package, Copy, CheckSquare, Square, MoreVertical } from 'lucide-react';
+import { Edit, Trash2, Eye, EyeOff, Package, Copy, CheckSquare, Square } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Product } from '@/lib/types';
 import { getProductsByWholesaler, updateProduct, deleteProduct, createProduct } from '@/lib/products';
 import { useToast } from '@/hooks/use-toast';
@@ -105,9 +98,9 @@ const ProductsList: React.FC = () => {
     });
   };
 
-  const handleDelete = (product: Product) => {
-    if (window.confirm(`Delete "${product.name}"?\n\nThis permanently removes the product. This cannot be undone.`)) {
-      deleteProductMutation.mutate(product.id);
+  const handleDelete = (productId: string) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      deleteProductMutation.mutate(productId);
     }
   };
 
@@ -308,7 +301,7 @@ const ProductsList: React.FC = () => {
                 
                 <div className="flex gap-2">
                   <Button
-                    variant="default"
+                    variant="outline"
                     size="sm"
                     onClick={() => handleEdit(product)}
                     className="flex-1"
@@ -316,7 +309,7 @@ const ProductsList: React.FC = () => {
                     <Edit className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
                     {t('edit')}
                   </Button>
-
+                  
                   <Button
                     variant="outline"
                     size="sm"
@@ -335,26 +328,24 @@ const ProductsList: React.FC = () => {
                       </>
                     )}
                   </Button>
-
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" aria-label="More actions">
-                        <MoreVertical className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleClone(product)}>
-                        <Copy className="w-4 h-4 mr-2" /> Clone
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(product)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleClone(product)}
+                    title="Clone product"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDelete(product.id)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>

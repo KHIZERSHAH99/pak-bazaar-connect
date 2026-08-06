@@ -49,14 +49,11 @@ export class TransactionLogger {
     this.pendingLogs = [];
 
     try {
-      // Store in local storage as backup (development only — avoid persisting
-      // transaction state in production browsers where XSS could exfiltrate it)
-      if (import.meta.env.DEV) {
-        const stored = localStorage.getItem('transaction_logs') || '[]';
-        const existingLogs = JSON.parse(stored);
-        const updatedLogs = [...existingLogs, ...batch].slice(-100); // Keep last 100
-        localStorage.setItem('transaction_logs', JSON.stringify(updatedLogs));
-      }
+      // Store in local storage as backup
+      const stored = localStorage.getItem('transaction_logs') || '[]';
+      const existingLogs = JSON.parse(stored);
+      const updatedLogs = [...existingLogs, ...batch].slice(-100); // Keep last 100
+      localStorage.setItem('transaction_logs', JSON.stringify(updatedLogs));
 
       // Try to log to audit system
       for (const entry of batch) {

@@ -38,10 +38,10 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="space-y-3">
-              <Skeleton className="h-32 sm:h-48 w-full rounded-lg" />
+              <Skeleton className="h-48 w-full rounded-lg" />
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-6 w-1/3" />
               <Skeleton className="h-4 w-1/2" />
@@ -72,11 +72,11 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
     <div className="space-y-6">
       {/* Sort bar */}
       <div className="flex items-center justify-between">
-        <p className="text-xs sm:text-sm text-muted-foreground font-poppins">
+        <p className="text-sm text-muted-foreground font-poppins">
           {products.length} product{products.length !== 1 ? 's' : ''} found
         </p>
         <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-[130px] sm:w-[160px] h-8 sm:h-9 text-xs sm:text-sm">
+          <SelectTrigger className="w-[160px] h-9 text-sm">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
@@ -88,7 +88,7 @@ const ProductsGrid: React.FC<ProductsGridProps> = ({ products, loading }) => {
         </Select>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
         {currentItems.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

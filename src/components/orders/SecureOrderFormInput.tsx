@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/phone-input';
-import { CircleAlert as AlertCircle, Shield } from 'lucide-react';
+import { AlertCircle, Shield } from 'lucide-react';
 import { validateAndSanitizeInput, ValidationResult } from '@/lib/security/simple-validation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -35,14 +35,12 @@ export const SecureOrderFormInput: React.FC<SecureOrderFormInputProps> = ({
   const { toast } = useToast();
 
   const handleInputChange = async (newValue: string) => {
-    // Pass the raw value through immediately so spaces and typing work naturally
-    onChange(newValue);
     setIsValidating(true);
-
+    
     try {
       const result = await validateAndSanitizeInput(newValue, validation, maxLength);
       setValidationState(result);
-
+      
       if (result.securityThreats.length > 0) {
         toast({
           title: "Security Warning",
@@ -50,22 +48,15 @@ export const SecureOrderFormInput: React.FC<SecureOrderFormInputProps> = ({
           variant: "destructive"
         });
       }
+      
+      // Always use the sanitized value
+      onChange(result.sanitizedValue);
     } catch (error) {
       console.error('Validation error:', error);
+      // Fallback to basic sanitization
+      onChange(newValue.trim());
     } finally {
       setIsValidating(false);
-    }
-  };
-
-  const handleBlur = async () => {
-    if (!value) return;
-    try {
-      const result = await validateAndSanitizeInput(value, validation, maxLength);
-      // Only apply the sanitized (trimmed/encoded) value when leaving the field
-      onChange(result.sanitizedValue);
-      setValidationState(result);
-    } catch (error) {
-      console.error('Validation error on blur:', error);
     }
   };
 
@@ -88,7 +79,6 @@ export const SecureOrderFormInput: React.FC<SecureOrderFormInputProps> = ({
           id={id}
           value={value}
           onChange={(e) => handleInputChange(e.target.value)}
-          onBlur={handleBlur}
           placeholder={placeholder}
           required={required}
           className={hasErrors ? 'border-red-500 focus:border-red-500' : isSecure ? 'border-green-500' : ''}
@@ -111,7 +101,6 @@ export const SecureOrderFormInput: React.FC<SecureOrderFormInputProps> = ({
           type={type === 'email' ? 'email' : 'text'}
           value={value}
           onChange={(e) => handleInputChange(e.target.value)}
-          onBlur={handleBlur}
           placeholder={placeholder}
           required={required}
           className={hasErrors ? 'border-red-500 focus:border-red-500' : isSecure ? 'border-green-500' : ''}

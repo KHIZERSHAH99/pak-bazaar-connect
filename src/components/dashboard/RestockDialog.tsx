@@ -36,11 +36,10 @@ const RestockDialog: React.FC<RestockDialogProps> = ({ open, onOpenChange, produ
     const newStock = mode === 'add' ? prevStock + qty : qty;
     const change = newStock - prevStock;
 
-    const { data: updated, error } = await supabase
+    const { error } = await supabase
       .from('products')
       .update({ stock_quantity: newStock })
-      .eq('id', product.id)
-      .select('id, stock_quantity');
+      .eq('id', product.id);
 
     if (error) {
       setLoading(false);
@@ -48,19 +47,9 @@ const RestockDialog: React.FC<RestockDialogProps> = ({ open, onOpenChange, produ
       return;
     }
 
-    if (!updated || updated.length === 0) {
-      setLoading(false);
-      toast({
-        title: 'Stock not updated',
-        description: 'You do not have permission to update this product, or it no longer exists.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     // Log the stock movement
     const { data: { user } } = await supabase.auth.getUser();
-    const { error: movementError } = await supabase.from('stock_movements').insert({
+    await supabase.from('stock_movements').insert({
       product_id: product.id,
       quantity_change: change,
       previous_quantity: prevStock,
@@ -68,16 +57,11 @@ const RestockDialog: React.FC<RestockDialogProps> = ({ open, onOpenChange, produ
       reason: 'manual_restock',
       created_by: user?.id,
     });
-    if (movementError) console.error('Stock movement log failed:', movementError);
 
     setLoading(false);
-    toast({ title: 'Stock updated', description: `${product.name} now has ${updated[0].stock_quantity} units` });
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['inventory-products'] }),
-      queryClient.invalidateQueries({ queryKey: ['stock-movements'] }),
-      queryClient.invalidateQueries({ queryKey: ['products'] }),
-      queryClient.invalidateQueries({ queryKey: ['wholesaler-products'] }),
-    ]);
+    toast({ title: 'Stock updated', description: `${product.name} now has ${newStock} units` });
+    queryClient.invalidateQueries({ queryKey: ['inventory-products'] });
+    queryClient.invalidateQueries({ queryKey: ['stock-movements'] });
     onOpenChange(false);
     setQuantity('');
     setMode('add');

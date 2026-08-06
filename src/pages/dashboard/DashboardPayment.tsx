@@ -7,10 +7,10 @@ const DashboardPayment: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={['wholesaler']}>
       <DashboardLayout title="Payment Methods - PakMandi">
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-6">
           <div>
-            <h1 className="text-xl sm:text-3xl font-bold text-foreground font-poppins">Payment Methods</h1>
-            <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2 font-poppins">Manage your payment methods for receiving customer payments</p>
+            <h1 className="text-3xl font-bold text-foreground font-poppins">Payment Methods</h1>
+            <p className="text-muted-foreground mt-2 font-poppins">Manage your payment methods for receiving customer payments</p>
           </div>
           <PaymentMethodsSetup />
         </div>

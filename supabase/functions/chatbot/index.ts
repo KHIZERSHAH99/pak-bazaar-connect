@@ -1,7 +1,6 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.32.0";
 import { OpenAI } from "https://esm.sh/openai@4.12.4";
-import { validateRequestOrigin } from "../_shared/security-headers.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,15 +19,6 @@ function sanitizeInput(input: string): string {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
-  }
-
-  // CSRF: enforce same-origin for state-changing requests
-  const originErr = validateRequestOrigin(req);
-  if (originErr) {
-    return new Response(JSON.stringify({ error: 'Forbidden' }), {
-      status: 403,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
   }
 
   try {

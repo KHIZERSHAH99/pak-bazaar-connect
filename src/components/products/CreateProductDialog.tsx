@@ -96,8 +96,8 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
 
     if (!formData.name.trim()) {
       newErrors.name = 'Product name is required';
-    } else if (formData.name.trim().length < 2 || formData.name.trim().length > 100) {
-      newErrors.name = 'Product name must be between 2 and 100 characters';
+    } else if (formData.name.length < 2 || formData.name.length > 200) {
+      newErrors.name = 'Product name must be between 2 and 200 characters';
     }
 
     if (!formData.price) {
@@ -156,15 +156,13 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
     try {
       setIsSubmitting(true);
       
-      // Upload every selected image; remember which URL is primary
-      const uploaded: Array<{ url: string; isPrimary: boolean }> = [];
-      for (const img of images) {
-        if (!img.file) continue;
-        const fileName = `product_${Date.now()}_${Math.random().toString(36).slice(2)}_${img.file.name}`;
-        const url = await uploadImage('product_images', fileName, img.file);
-        if (url) uploaded.push({ url, isPrimary: img.isPrimary });
+      // Upload primary image
+      let imageUrl;
+      if (images.length > 0) {
+        const primaryImage = images.find(img => img.isPrimary) || images[0];
+        const fileName = `product_${Date.now()}_${primaryImage.file.name}`;
+        imageUrl = await uploadImage('product_images', fileName, primaryImage.file);
       }
-      const imageUrl = (uploaded.find(u => u.isPrimary) || uploaded[0])?.url;
 
       const productData = {
         shop_id: formData.shop_id,
@@ -190,66 +188,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
       };
 
       const result = await createProduct(productData);
-
-      // Persist the optional/advanced data that belongs in child tables
-      if (result?.id) {
-        const productId = result.id;
-
-        if (uploaded.length > 0) {
-          const { error: imgErr } = await supabase.from('product_images').insert(
-            uploaded.map((u, index) => ({
-              product_id: productId,
-              image_url: u.url,
-              is_primary: u.url === imageUrl,
-              sort_order: index,
-            }))
-          );
-          if (imgErr) console.error('Failed to save product images:', imgErr);
-        }
-
-        if (inlineTiers.length > 0) {
-          const { error: tierErr } = await supabase.from('product_pricing_tiers').insert(
-            inlineTiers.map(t => ({
-              product_id: productId,
-              min_quantity: t.min_quantity,
-              max_quantity: t.max_quantity ?? null,
-              unit_price: t.unit_price,
-            }))
-          );
-          if (tierErr) {
-            console.error('Failed to save pricing tiers:', tierErr);
-            toast({
-              title: 'Bulk pricing not saved',
-              description: 'The product was created, but bulk pricing tiers could not be saved. You can add them from Edit.',
-              variant: 'destructive',
-            });
-          }
-        }
-
-        if (inlineVariations.length > 0) {
-          const { error: varErr } = await supabase.from('product_variations').insert(
-            inlineVariations.map((v, index) => ({
-              product_id: productId,
-              variation_type: v.variation_type,
-              variation_value: v.variation_value,
-              variation_label: v.variation_label || null,
-              hex_color: v.hex_color || null,
-              price_adjustment: v.price_adjustment ?? 0,
-              stock_quantity: v.stock_quantity ?? 0,
-              is_available: v.is_available ?? true,
-              sort_order: v.sort_order ?? index,
-            }))
-          );
-          if (varErr) {
-            console.error('Failed to save variations:', varErr);
-            toast({
-              title: 'Variations not saved',
-              description: 'The product was created, but variations could not be saved. You can add them from Edit.',
-              variant: 'destructive',
-            });
-          }
-        }
-      }
       
       toast({
         title: 'Success',
@@ -294,8 +232,6 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
     });
     setImages([]);
     setErrors({});
-    setInlineTiers([]);
-    setInlineVariations([]);
   };
 
   const handleClose = () => {
@@ -350,25 +286,27 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          <p className="text-xs text-muted-foreground -mt-1">
-            Only the <span className="font-semibold text-foreground">Basic</span> tab is required. Other tabs are optional — you can add them later.
-          </p>
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 h-10">
-              <TabsTrigger value="basic" className="text-xs sm:text-sm gap-1">
-                <Info className="w-4 h-4" />
-                <span>Basic</span>
-                <span className="text-destructive">*</span>
+            <TabsList className="grid w-full grid-cols-5 h-8 sm:h-10">
+              <TabsTrigger value="basic" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Info className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Basic</span>
               </TabsTrigger>
-              <TabsTrigger value="images" className="text-xs sm:text-sm gap-1">
-                <Image className="w-4 h-4" />
-                <span>Images</span>
-                <span className="text-destructive">*</span>
+              <TabsTrigger value="details" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Details</span>
               </TabsTrigger>
-              <TabsTrigger value="more" className="text-xs sm:text-sm gap-1">
-                <Settings className="w-4 h-4" />
-                <span>More</span>
-                <span className="text-[10px] text-muted-foreground">(optional)</span>
+              <TabsTrigger value="images" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Image className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Images</span>
+              </TabsTrigger>
+              <TabsTrigger value="pricing" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Pricing</span>
+              </TabsTrigger>
+              <TabsTrigger value="variations" className="text-xs px-1 sm:px-2 sm:text-sm">
+                <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
+                <span className="hidden sm:inline">Variations</span>
               </TabsTrigger>
             </TabsList>
             
@@ -441,56 +379,9 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                 />
                 <Label htmlFor="is_active">Active product (visible to buyers)</Label>
               </div>
-
-              <div className="grid grid-cols-2 gap-3 pt-2 border-t">
-                <div>
-                  <Label htmlFor="base_price">Price (PKR) *</Label>
-                  <Input
-                    id="base_price"
-                    name="price"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    placeholder="0.00"
-                    disabled={isSubmitting}
-                  />
-                  {errors.price && <p className="text-sm text-destructive mt-1">{errors.price}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="basic_moq">Min Order Qty</Label>
-                  <Input
-                    id="basic_moq"
-                    name="moq"
-                    type="number"
-                    min="1"
-                    value={formData.moq}
-                    onChange={handleInputChange}
-                    disabled={isSubmitting}
-                  />
-                  {errors.moq && <p className="text-sm text-destructive mt-1">{errors.moq}</p>}
-                </div>
-              </div>
             </TabsContent>
-
-            <TabsContent value="images" className="space-y-4">
-              <MultipleImageUpload
-                images={images}
-                onChange={setImages}
-                disabled={isSubmitting}
-                maxImages={5}
-              />
-              {errors.images && <p className="text-sm text-destructive mt-1">{errors.images}</p>}
-            </TabsContent>
-
-            <TabsContent value="more" className="space-y-6">
-              <div className="text-xs text-muted-foreground bg-muted/50 border rounded-md p-2">
-                All fields below are optional. Skip whatever doesn't apply — you can edit later.
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="text-sm font-semibold flex items-center gap-2"><Package className="w-4 h-4" /> Stock & packaging</h4>
+            
+            <TabsContent value="details" className="space-y-4">
               <div>
                 <Label htmlFor="stock_quantity">Stock Quantity</Label>
                 <Input
@@ -541,10 +432,53 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                 />
                 <Label htmlFor="customization_available">Customization available</Label>
               </div>
+            </TabsContent>
+            
+            <TabsContent value="images" className="space-y-4">
+              <MultipleImageUpload
+                images={images}
+                onChange={setImages}
+                disabled={isSubmitting}
+                maxImages={5}
+              />
+              {errors.images && <p className="text-sm text-destructive mt-1">{errors.images}</p>}
+            </TabsContent>
+            
+
+            <TabsContent value="pricing" className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="base_price">Price (PKR) *</Label>
+                  <Input
+                    id="base_price"
+                    name="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    placeholder="0.00"
+                    disabled={isSubmitting}
+                  />
+                  {errors.price && <p className="text-sm text-destructive mt-1">{errors.price}</p>}
+                </div>
+
+                <div>
+                  <Label htmlFor="pricing_moq">Minimum Order Quantity (MOQ)</Label>
+                  <Input
+                    id="pricing_moq"
+                    name="moq"
+                    type="number"
+                    min="1"
+                    value={formData.moq}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                  />
+                  {errors.moq && <p className="text-sm text-destructive mt-1">{errors.moq}</p>}
+                </div>
               </div>
 
-              <div className="space-y-4 border-t pt-4">
-                <h4 className="text-sm font-semibold flex items-center gap-2"><DollarSign className="w-4 h-4" /> Samples & shipping</h4>
+              <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="pricing_sample_available"
@@ -613,23 +547,21 @@ const CreateProductDialog: React.FC<CreateProductDialogProps> = ({
                 />
               </div>
 
-              <div className="border-t pt-4">
-                <h4 className="text-sm font-semibold mb-3">Bulk pricing tiers</h4>
+              <div className="border-t pt-4 mt-6">
                 <InlinePricingTiers
                   tiers={inlineTiers}
                   onChange={setInlineTiers}
                   basePrice={parseFloat(formData.price) || 0}
                 />
               </div>
+            </TabsContent>
 
-              <div className="border-t pt-4">
-                <h4 className="text-sm font-semibold mb-3">Variations (size, color, etc.)</h4>
-                <InlineVariationManager
-                  variations={inlineVariations}
-                  onChange={setInlineVariations}
-                  basePrice={parseFloat(formData.price) || 0}
-                />
-              </div>
+            <TabsContent value="variations" className="space-y-4">
+              <InlineVariationManager
+                variations={inlineVariations}
+                onChange={setInlineVariations}
+                basePrice={parseFloat(formData.price) || 0}
+              />
             </TabsContent>
           </Tabs>
           

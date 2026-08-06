@@ -1,50 +1,49 @@
-## Next up: Phase 4 — One-Tap Orders for Wholesalers
+# Data Fixes, Ordering, Mobile Density, UX Additions
 
-Goal: make order handling so simple a shopkeeper can confirm, invoice, and notify a buyer with a single tap — no reading long forms, no hunting for buttons.
+## What I verified first
 
-### What we'll build
+- `audit_logs` **does exist** (95 rows) — the errors are not a missing table. The real cause: `audit_logs`, `product_pricing_tiers` and `pricing_tiers` have **no table privileges granted** to `anon`/`authenticated`. Without those grants the database rejects the request regardless of the access rules already written. That single gap explains both the errors during product delete + restock and the missing bulk-discount tiers on product pages.
+- There are **two** tier tables: `product_pricing_tiers` (6 rows, the one the app reads and writes) and `pricing_tiers` (0 rows, unused legacy).
+- The quantity input on the product page (`OptimizedProductDetail.tsx`) has `min={moq}` plus an onChange that snaps any lower value back to MOQ and fires a toast — that is what makes typing feel blocked mid-entry.
 
-1. **One big green "Confirm & Notify" button** on every pending order card in `EnhancedOrderCard` / `WholesalerOrders`.
-  - Single tap does three things in sequence: updates status to `confirmed`, sends WhatsApp invoice link to buyer, logs the action.
-  - Replaces the current multi-button row (Confirm / Reject / Message / View) — those move under a small "More" menu.
-2. **Tap-to-call buyer** — phone icon next to buyer name opens `tel:` link directly. No copy-paste.
-3. **WhatsApp invoice** — auto-generates a pre-filled `wa.me/<buyer_phone>?text=...` message with:
-  - Shop name (Urdu + English)
-  - Order ID (short)
-  - Items + qty + total in PKR
-  - Payment method + account details
-  - Delivery ETA
-4. **SMS/WhatsApp alert on new order** — when a new order lands, wholesaler gets:
-  - Browser push (already partially there via notifications)
-  - Optional WhatsApp deep-link ("Naya order aaya — dekhein") using the wholesaler's own phone
-  - We will **not** wire a paid SMS gateway yet — flagged as Phase 4.5 pending your provider pick (Twilio vs. local like Jazz/Zong bulk SMS).
-5. **Urdu status chips with icons + color** on the order card:
-  - Pending → yellow clock ⏳ "Intezaar"
-  - Confirmed → green check ✅ "Confirm ho gaya"
-  - Shipped → blue truck 🚚 "Bheja gaya"
-  - Delivered → green box 📦 "Pahonch gaya"
-  - Rejected → red x ❌ "Mana kar diya"
+## Phase 1 — Database access fixes (one migration)
 
-### Files to touch
+- Grant the missing privileges: tier read access for buyers and visitors, full manage access for product owners, admin read on the audit log — matching the access rules already in place.
+- Tighten the tier read rule so tiers only appear for products that are both active and approved (today it only checks active).
+- Drop the unused empty `pricing_tiers` table so there is one source of truth.
 
-- `src/components/orders/EnhancedOrderCard.tsx` — new primary button, WhatsApp helper, tel: link, Urdu chips.
-- `src/components/orders/EnhancedOrderManagement.tsx` — refresh after one-tap confirm.
-- `src/lib/orders/whatsapp-invoice.ts` (new) — pure function that builds the wa.me URL from an order.
-- `src/lib/orders/unified-queries.ts` — no schema change, just reuse `optimisticUpdateOrderStatus`.
-- Urdu strings added to `LanguageContext` where missing.
+## Phase 2 — Product ordering & quantity controls
 
-### Out of scope for this phase (queued for later)
+- Rework the quantity field so typing is never interrupted: keep the raw typed value in state, clamp to MOQ/stock only on blur or before ordering, no toast while typing.
+- Add large, reliable minus / plus stepper buttons (48px targets) that step by MOQ and respect stock; hide the browser's tiny native number arrows.
+- Show the active tier price live as quantity changes with a short "bulk discount applied" hint, and pass the tier unit price (not the base price) into the order total.
 
-- Phase 4.5: paid SMS gateway (needs your provider decision).
-- Phase 5: full literacy pass (Urdu-default for PK, Urdu numerals option, browser TTS tooltips).
-- Phase 6: earnings "Aap ko milna hai" widget, verified badge in header, weekly SMS summary.
-- Phase 7: per-screen 30-sec tutorial video buttons.
+## Phase 3 — Density & mobile pass
 
-### Technical notes
+Product cards and product detail:
+- Reduce section padding (`py-8`/`p-6` → `py-4`/`p-3`) and stack spacing (`space-y-6/8` → `space-y-3/4`).
+- Clamp descriptions to 2 lines on cards and 3 lines on detail with a "read more" toggle — this fixes the runaway card in your screenshot.
+- Cap card image height to one compact consistent ratio (~h-48 on mobile) so cards in a row match.
+- Put price, MOQ and category badges on a single horizontal row instead of stacked.
+- Equalise card heights in the grid so one long description no longer stretches a column.
 
-- No database migration needed — `orders` already has `confirmed_at`, `status`, `wholesaler_notes`.
-- `wa.me` links work without any WhatsApp Business API — opens the wholesaler's WhatsApp with a pre-filled message to the buyer's number. Zero cost.
-- `tel:` links are native browser behaviour — no library.
-- Status chip colors will use semantic tokens (`bg-primary/10 text-primary`, `bg-destructive/10 text-destructive`, etc.) — no hardcoded Tailwind colors.
+Dashboard and buttons:
+- Scale oversized mobile buttons and action tiles to app-standard sizes while keeping the 48px minimum tap height.
 
-Approve to build Phase 4, or say "do Phase 5 first" / "skip to Phase 6" and I'll re-plan.
+Performance:
+- Paginate product and order lists, lazy-load images below the fold, trim over-wide list queries.
+
+## Phase 4 — UX additions
+
+- Confirmation dialog before a buyer hides/removes a past order.
+- Admin order activity log: status-change history showing who acted and when, from the existing audit log.
+- Pagination plus status filters on `/dashboard/seller-orders`.
+- Per-product stock history timeline (manual restocks and auto-sync movements with timestamps and quantities) reusing existing stock movement data.
+
+## Technical notes
+
+- One migration total: grants, the tier rule tightening, and the legacy table drop. Phase 4 needs no schema change — `audit_logs` and `stock_movements` already hold the needed fields.
+- All new UI uses semantic tokens only; no hardcoded colors.
+- Tier-aware unit price becomes the single source for totals in both the product page and `EnhancedOrderForm`.
+
+Approve to start with Phases 1 and 2 (the actual bugs), then I'll continue into 3 and 4.

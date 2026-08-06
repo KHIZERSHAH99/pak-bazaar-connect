@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Package, AlertTriangle, XCircle, CheckCircle, Search, RefreshCw } from 'lucide-react';
 import RestockDialog from './RestockDialog';
 import StockMovementLog from './StockMovementLog';
+import ProductStockHistory from './ProductStockHistory';
 
 const LOW_STOCK_THRESHOLD = 10;
 

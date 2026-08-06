@@ -307,26 +307,7 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
   const totalPrice = unitPrice * quantity;
 
   const handleQuantityChange = (value: string) => {
-    const newQuantity = parseInt(value) || 1;
-    const minQuantity = product.moq || 1;
-    const maxQuantity = product.stock_quantity;
-    
-    if (newQuantity < minQuantity) {
-      setQuantity(minQuantity);
-      toast({
-        title: "Minimum Order Quantity",
-        description: `The minimum order quantity is ${minQuantity} units`,
-      });
-    } else if (maxQuantity && newQuantity > maxQuantity) {
-      setQuantity(maxQuantity);
-      toast({
-        title: "Stock Limit Exceeded",
-        description: `Only ${maxQuantity} units available in stock`,
-        variant: "destructive"
-      });
-    } else {
-      setQuantity(newQuantity);
-    }
+    setQuantity(parseInt(value) || product.moq || 1);
   };
 
   const handleOrderClick = () => {

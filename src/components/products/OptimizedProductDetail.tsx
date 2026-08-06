@@ -32,6 +32,7 @@ import MessageButton from '@/components/messaging/MessageButton';
 import InquiryButton from '@/components/inquiry/InquiryButton';
 import { ShareButtons } from './ShareButtons';
 import ProductImageGallery from './ProductImageGallery';
+import QuantityStepper from './QuantityStepper';
 import ProductReviews from './ProductReviews';
 import RelatedProducts from './RelatedProducts';
 

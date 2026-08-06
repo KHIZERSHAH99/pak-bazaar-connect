@@ -16,6 +16,16 @@ import { generateOrderReceipt } from '@/utils/orderPdf';
 import OrderTimeline from '@/components/orders/OrderTimeline';
 import OrderCardCompact from '@/components/orders/OrderCardCompact';
 import OrderStatusConfirmDialog from '@/components/orders/OrderStatusConfirmDialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface UnifiedOrderManagementProps {
   userRole: 'seller' | 'wholesaler';
@@ -35,13 +45,13 @@ const OrderStats = memo(({ stats }: { stats: any }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-3">
       {items.map((item) => (
         <Card key={item.label}>
-          <CardContent className="pt-6 text-center">
-            <item.icon className={`h-8 w-8 mx-auto mb-2 ${item.color}`} />
-            <p className="text-2xl font-bold">{item.value}</p>
-            <p className="text-xs text-muted-foreground">{item.label}</p>
+          <CardContent className="p-3 text-center">
+            <item.icon className={`h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 ${item.color}`} />
+            <p className="text-base sm:text-xl font-bold">{item.value}</p>
+            <p className="text-[11px] text-muted-foreground">{item.label}</p>
           </CardContent>
         </Card>
       ))}
@@ -59,6 +69,7 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
   const [searchQuery, setSearchQuery] = useState('');
   const [timelineOrderId, setTimelineOrderId] = useState<string | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{ orderId: string; status: string } | null>(null);
+  const [hideOrderId, setHideOrderId] = useState<string | null>(null);
   const [newOrderCount, setNewOrderCount] = useState(0);
 
   // Paginated query
@@ -173,13 +184,15 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
     }
   }, [navigate, toast]);
 
-  const handleHideOrder = useCallback(async (orderId: string) => {
+  const confirmHideOrder = useCallback(async (orderId: string) => {
     try {
       await hideOrderForBuyer(orderId);
       toast({ title: 'Order removed', description: 'Removed from your orders list' });
       queryClient.invalidateQueries({ queryKey: ['unified-orders', userRole] });
     } catch (error: any) {
       toast({ title: 'Could not remove order', description: error.message, variant: 'destructive' });
+    } finally {
+      setHideOrderId(null);
     }
   }, [queryClient, toast, userRole]);
 
@@ -198,7 +211,7 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <OrderStats stats={stats} />
 
       {/* New order notification banner */}
@@ -249,7 +262,7 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
               onReorder={handleReorder}
               onDownloadReceipt={generateOrderReceipt}
               onViewTimeline={(id) => setTimelineOrderId(id)}
-              onHide={userRole === 'seller' ? handleHideOrder : undefined}
+              onHide={userRole === 'seller' ? (id: string) => setHideOrderId(id) : undefined}
               userRole={userRole}
             />
           ))
@@ -285,6 +298,25 @@ const UnifiedOrderManagement: React.FC<UnifiedOrderManagementProps> = ({ userRol
           {timelineOrderId && <OrderTimeline orderId={timelineOrderId} />}
         </DialogContent>
       </Dialog>
+
+      {/* Hide order confirmation */}
+      <AlertDialog open={!!hideOrderId} onOpenChange={(open) => !open && setHideOrderId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove this order from your list?</AlertDialogTitle>
+            <AlertDialogDescription>
+              It will be hidden from your orders only. The seller and your receipt records keep the
+              full history, so nothing is deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => hideOrderId && confirmHideOrder(hideOrderId)}>
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

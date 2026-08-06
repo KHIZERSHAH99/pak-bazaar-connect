@@ -20,6 +20,7 @@ const InventoryDashboard: React.FC = () => {
   const [stockFilter, setStockFilter] = useState<string>('all');
   const [shopFilter, setShopFilter] = useState<string>('all');
   const [restockProduct, setRestockProduct] = useState<{ id: string; name: string; stock_quantity: number | null } | null>(null);
+  const [historyProduct, setHistoryProduct] = useState<{ id: string; name: string } | null>(null);
 
   const { data: shops = [] } = useQuery({
     queryKey: ['inventory-shops', user?.id],

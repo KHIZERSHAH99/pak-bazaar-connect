@@ -96,7 +96,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Link to={`/product/${product.id}`} className="block">
-      <Card className="group overflow-hidden hover:shadow-md transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10 h-full bg-card dark:bg-card">
+      <Card className="group flex flex-col overflow-hidden hover:shadow-md transition-all duration-300 border-0 shadow-sm hover:shadow-primary/10 h-full bg-card dark:bg-card">
         {/* Product Image */}
         <div className="relative overflow-hidden">
           <img 
@@ -104,7 +104,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             alt={product.name} 
             loading="lazy"
             decoding="async"
-            className="w-full h-32 sm:h-48 md:h-52 lg:h-56 xl:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-32 sm:h-40 md:h-44 lg:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               e.currentTarget.src = `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&auto=format`;
             }}
@@ -159,31 +159,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Product Details */}
-        <div className="p-2.5 sm:p-5 lg:p-6 space-y-1.5 sm:space-y-3 flex-1 flex flex-col">
+        <div className="p-2.5 sm:p-3 lg:p-4 space-y-1.5 sm:space-y-2 flex-1 flex flex-col">
           {/* Product Name */}
-          <h3 className="font-semibold text-sm sm:text-base md:text-lg lg:text-xl text-foreground group-hover:text-primary transition-colors font-poppins line-clamp-2 flex-shrink-0">
+          <h3 className="font-semibold text-sm sm:text-base md:text-lg text-foreground group-hover:text-primary transition-colors font-poppins line-clamp-2 flex-shrink-0">
             {product.name}
           </h3>
           
-          {/* Price with Tier Indicator */}
-          <div className="space-y-1 sm:space-y-2 flex-shrink-0">
-            <div className="flex items-center justify-between">
-              <span className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold text-primary font-poppins">
-                PKR {product.price.toLocaleString()}
-              </span>
-              {product.moq && product.moq > 1 && (
-                <Badge variant="outline" className="hidden sm:inline-flex text-xs md:text-sm text-muted-foreground border-border px-2 py-1">
-                  MOQ: {product.moq}
-                </Badge>
-              )}
-            </div>
-            {/* Bulk pricing indicator - only show when tiers exist */}
-            {(product as any).pricing_tiers && (product as any).pricing_tiers.length > 0 && (
-              <div className="hidden sm:flex items-center gap-1">
-                <Badge className="text-xs md:text-sm bg-primary/10 text-primary px-2 py-1">
-                  Bulk discounts available
-                </Badge>
-              </div>
+          {/* Price + metadata on one row */}
+          <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+            <span className="text-base sm:text-lg md:text-xl font-bold text-primary font-poppins">
+              PKR {product.price.toLocaleString()}
+            </span>
+            {product.moq && product.moq > 1 && (
+              <Badge variant="outline" className="text-[10px] sm:text-xs text-muted-foreground border-border px-1.5 py-0.5">
+                MOQ: {product.moq}
+              </Badge>
+            )}
+            {(product as any).product_pricing_tiers?.length > 0 && (
+              <Badge className="hidden sm:inline-flex text-[10px] sm:text-xs bg-primary/10 text-primary px-1.5 py-0.5">
+                Bulk discounts
+              </Badge>
             )}
           </div>
 
@@ -202,18 +197,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           )}
 
-          {/* Description - Show on tablets and up */}
+          {/* Description - Show on tablets and up, clamped to keep cards even */}
           {product.description && (
-            <p className="hidden md:block text-sm lg:text-base text-muted-foreground font-poppins line-clamp-3 flex-shrink-0">
+            <p className="hidden md:block text-sm text-muted-foreground font-poppins line-clamp-2 flex-shrink-0">
               {product.description}
             </p>
           )}
 
           {/* Order Button */}
           {showAddToCart && (
-            <div className="mt-auto pt-2 sm:pt-3 flex-shrink-0">
+            <div className="mt-auto pt-2 flex-shrink-0">
               <Button 
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-xs sm:text-sm md:text-base h-9 sm:h-10 md:h-12"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-poppins text-xs sm:text-sm h-10 sm:h-10"
                 size="default"
               >
                 <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-2" />

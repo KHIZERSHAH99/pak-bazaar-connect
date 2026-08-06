@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Package, AlertTriangle, XCircle, CheckCircle, Search, RefreshCw } from 'lucide-react';
 import RestockDialog from './RestockDialog';
 import StockMovementLog from './StockMovementLog';
+import ProductStockHistory from './ProductStockHistory';
 
 const LOW_STOCK_THRESHOLD = 10;
 
@@ -19,6 +20,7 @@ const InventoryDashboard: React.FC = () => {
   const [stockFilter, setStockFilter] = useState<string>('all');
   const [shopFilter, setShopFilter] = useState<string>('all');
   const [restockProduct, setRestockProduct] = useState<{ id: string; name: string; stock_quantity: number | null } | null>(null);
+  const [historyProduct, setHistoryProduct] = useState<{ id: string; name: string } | null>(null);
 
   const { data: shops = [] } = useQuery({
     queryKey: ['inventory-shops', user?.id],
@@ -157,14 +159,23 @@ const InventoryDashboard: React.FC = () => {
                       <td className="py-3 pr-4 text-right font-mono">{p.stock_quantity ?? 0}</td>
                       <td className="py-3 pr-4">{getStockBadge(p.stock_quantity)}</td>
                       <td className="py-3">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setRestockProduct({ id: p.id, name: p.name, stock_quantity: p.stock_quantity })}
-                        >
-                          <RefreshCw className="h-3 w-3 mr-1" />
-                          Restock
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setRestockProduct({ id: p.id, name: p.name, stock_quantity: p.stock_quantity })}
+                          >
+                            <RefreshCw className="h-3 w-3 mr-1" />
+                            Restock
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setHistoryProduct({ id: p.id, name: p.name })}
+                          >
+                            History
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -181,6 +192,12 @@ const InventoryDashboard: React.FC = () => {
         open={!!restockProduct}
         onOpenChange={(open) => !open && setRestockProduct(null)}
         product={restockProduct}
+      />
+
+      <ProductStockHistory
+        open={!!historyProduct}
+        onOpenChange={(open) => !open && setHistoryProduct(null)}
+        product={historyProduct}
       />
     </div>
   );

@@ -1393,41 +1393,6 @@ export type Database = {
           },
         ]
       }
-      pricing_tiers: {
-        Row: {
-          created_at: string | null
-          id: string
-          max_quantity: number | null
-          min_quantity: number
-          product_id: string
-          unit_price: number
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          max_quantity?: number | null
-          min_quantity: number
-          product_id: string
-          unit_price: number
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          max_quantity?: number | null
-          min_quantity?: number
-          product_id?: string
-          unit_price?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "pricing_tiers_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       product_images: {
         Row: {
           alt_text: string | null

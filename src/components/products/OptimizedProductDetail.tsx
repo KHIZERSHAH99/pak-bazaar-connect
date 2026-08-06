@@ -32,6 +32,7 @@ import MessageButton from '@/components/messaging/MessageButton';
 import InquiryButton from '@/components/inquiry/InquiryButton';
 import { ShareButtons } from './ShareButtons';
 import ProductImageGallery from './ProductImageGallery';
+import QuantityStepper from './QuantityStepper';
 import ProductReviews from './ProductReviews';
 import RelatedProducts from './RelatedProducts';
 
@@ -307,26 +308,7 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
   const totalPrice = unitPrice * quantity;
 
   const handleQuantityChange = (value: string) => {
-    const newQuantity = parseInt(value) || 1;
-    const minQuantity = product.moq || 1;
-    const maxQuantity = product.stock_quantity;
-    
-    if (newQuantity < minQuantity) {
-      setQuantity(minQuantity);
-      toast({
-        title: "Minimum Order Quantity",
-        description: `The minimum order quantity is ${minQuantity} units`,
-      });
-    } else if (maxQuantity && newQuantity > maxQuantity) {
-      setQuantity(maxQuantity);
-      toast({
-        title: "Stock Limit Exceeded",
-        description: `Only ${maxQuantity} units available in stock`,
-        variant: "destructive"
-      });
-    } else {
-      setQuantity(newQuantity);
-    }
+    setQuantity(parseInt(value) || product.moq || 1);
   };
 
   const handleOrderClick = () => {
@@ -416,21 +398,23 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
             )}
 
             {/* Quantity Input - Mobile optimized */}
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="quantity" className="text-sm md:text-base">
-                  Quantity (Min: {product.moq || 1}{product.stock_quantity ? `, Max: ${product.stock_quantity}` : ''})
-                </Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min={product.moq || 1}
-                  max={product.stock_quantity || undefined}
-                  value={quantity}
-                  onChange={(e) => handleQuantityChange(e.target.value)}
-                  className="h-12 md:h-10 text-base"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="quantity" className="text-sm md:text-base">
+                Quantity (Min: {product.moq || 1}{product.stock_quantity ? `, Max: ${product.stock_quantity}` : ''})
+              </Label>
+              <QuantityStepper
+                id="quantity"
+                value={quantity}
+                min={product.moq || 1}
+                max={product.stock_quantity || undefined}
+                step={product.moq || 1}
+                onChange={setQuantity}
+              />
+              {tiers.length > 0 && unitPrice < (product.price || 0) && (
+                <p className="text-xs text-primary font-medium">
+                  Bulk discount applied — Rs. {unitPrice.toLocaleString()} per unit
+                </p>
+              )}
             </div>
 
             {/* Order Summary */}

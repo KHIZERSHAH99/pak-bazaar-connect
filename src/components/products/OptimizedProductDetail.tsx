@@ -397,21 +397,23 @@ const OptimizedProductDetail: React.FC<OptimizedProductDetailProps> = ({ product
             )}
 
             {/* Quantity Input - Mobile optimized */}
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="quantity" className="text-sm md:text-base">
-                  Quantity (Min: {product.moq || 1}{product.stock_quantity ? `, Max: ${product.stock_quantity}` : ''})
-                </Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min={product.moq || 1}
-                  max={product.stock_quantity || undefined}
-                  value={quantity}
-                  onChange={(e) => handleQuantityChange(e.target.value)}
-                  className="h-12 md:h-10 text-base"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="quantity" className="text-sm md:text-base">
+                Quantity (Min: {product.moq || 1}{product.stock_quantity ? `, Max: ${product.stock_quantity}` : ''})
+              </Label>
+              <QuantityStepper
+                id="quantity"
+                value={quantity}
+                min={product.moq || 1}
+                max={product.stock_quantity || undefined}
+                step={product.moq || 1}
+                onChange={setQuantity}
+              />
+              {tiers.length > 0 && unitPrice < (product.price || 0) && (
+                <p className="text-xs text-primary font-medium">
+                  Bulk discount applied — Rs. {unitPrice.toLocaleString()} per unit
+                </p>
+              )}
             </div>
 
             {/* Order Summary */}

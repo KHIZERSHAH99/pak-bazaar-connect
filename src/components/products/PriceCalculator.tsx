@@ -72,6 +72,19 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
       }
     }
 
+    // Below the first discount tier -> base price applies (no tier discount yet)
+    if (!currentTier) {
+      const firstTier = sortedTiers[0];
+      if (firstTier && quantity < firstTier.min_quantity) {
+        currentTier = {
+          id: 'base',
+          min_quantity: 1,
+          max_quantity: null,
+          unit_price: basePrice
+        };
+      }
+    }
+
     // Fall back to first tier if still no tier found
     currentTier = currentTier || sortedTiers[0];
 
@@ -79,8 +92,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
     const unitPrice = currentTier.unit_price > 0 ? currentTier.unit_price : basePrice;
     const totalPrice = quantity * unitPrice;
 
-    // Calculate savings based on the first tier or base price
-    const baseUnitPrice = sortedTiers[0]?.unit_price > 0 ? sortedTiers[0].unit_price : basePrice;
+    // Calculate savings against the base price (not against the first tier's discounted price)
+    const baseUnitPrice = basePrice > 0 ? basePrice : 100;
     const baseTotal = quantity * baseUnitPrice;
     const savings = baseTotal - totalPrice;
     const savingsPercent = baseTotal > 0 ? savings / baseTotal * 100 : 0;

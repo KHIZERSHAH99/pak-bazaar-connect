@@ -111,6 +111,10 @@ export const usePricingTiers = (productId: string | undefined) => {
     
     if (tiers.length === 0) return validFallbackPrice;
 
+    // Below the first discount tier -> base price applies (no tier discount yet)
+    const firstTier = tiers[0];
+    if (quantity < firstTier.min_quantity) return validFallbackPrice;
+
     // Find the applicable tier based on quantity
     let applicableTier = tiers.find(tier => 
       quantity >= tier.min_quantity && 
@@ -125,8 +129,8 @@ export const usePricingTiers = (productId: string | undefined) => {
       }
     }
 
-    // Get the price, ensuring it's never 0
-    const price = applicableTier?.unit_price || tiers[0]?.unit_price || validFallbackPrice;
+    // Get the price, ensuring it's never 0 (only tier price if a tier applies)
+    const price = applicableTier?.unit_price || validFallbackPrice;
     return price > 0 ? price : validFallbackPrice;
   };
 

@@ -35,6 +35,11 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
     })).sort((a, b) => a.min_quantity - b.min_quantity);
   }, [tiers, basePrice]);
   const activeTier = useMemo(() => {
+    // Below the first discount tier -> no tier is active; base price applies
+    if (!sortedTiers.length || currentQuantity < sortedTiers[0].min_quantity) {
+      return null;
+    }
+
     // Find the applicable tier
     let tier = sortedTiers.find(tier => currentQuantity >= tier.min_quantity && (tier.max_quantity === null || currentQuantity <= tier.max_quantity));
 
@@ -45,7 +50,7 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
         tier = lastTier;
       }
     }
-    return tier || sortedTiers[0];
+    return tier || null;
   }, [sortedTiers, currentQuantity]);
   if (!sortedTiers || sortedTiers.length === 0) return null;
   return <Card className={cn("overflow-hidden", className)}>
@@ -81,16 +86,16 @@ const TieredPricingDisplay: React.FC<TieredPricingDisplayProps> = ({
         </div>
         
         {/* Show total for current quantity */}
-        {activeTier && currentQuantity >= (sortedTiers[0]?.min_quantity || 1) && <div className="px-4 py-3 bg-muted/30 border-t">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">
-                Total for {currentQuantity.toLocaleString()} units:
-              </span>
-              <span className="font-bold text-primary">
-                PKR {(currentQuantity * activeTier.unit_price).toLocaleString()}
-              </span>
-            </div>
-          </div>}
+        <div className="px-4 py-3 bg-muted/30 border-t">
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">
+              Total for {currentQuantity.toLocaleString()} units:
+            </span>
+            <span className="font-bold text-primary">
+              PKR {((activeTier?.unit_price ?? basePrice) * currentQuantity).toLocaleString()}
+            </span>
+          </div>
+        </div>
         
         {/* Bulk order message */}
         <div className="px-4 py-2 bg-muted/50 border-t">

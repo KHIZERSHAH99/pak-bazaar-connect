@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, ShoppingBag, FileText, TrendingUp, AlertTriangle, Shield, Activity, Video, Eye, ClipboardList, Store, Package } from 'lucide-react';
+import { Users, ShoppingBag, TrendingUp, AlertTriangle, Shield, Activity, Video, Eye, ClipboardList, Store, Package } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SecurityMonitor } from '@/components/security/SecurityMonitor';
@@ -14,26 +14,22 @@ export const EnhancedAdminDashboard: React.FC = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      const [users, orders, ads, roleRequests, shops, products] = await Promise.all([
+      const [users, orders, roleRequests, shops, products] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('orders').select('id', { count: 'exact', head: true }),
-        supabase.from('ads').select('id', { count: 'exact', head: true }),
         supabase.from('role_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('shops').select('id', { count: 'exact', head: true }),
         supabase.from('products').select('id', { count: 'exact', head: true }),
       ]);
 
-      const pendingAds = await supabase.from('ads').select('id', { count: 'exact', head: true }).eq('status', 'pending');
       const pendingOrders = await supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending');
 
       return {
         totalUsers: users.count || 0,
         totalOrders: orders.count || 0,
-        totalAds: ads.count || 0,
         totalShops: shops.count || 0,
         totalProducts: products.count || 0,
         pendingRoleRequests: roleRequests.count || 0,
-        pendingAds: pendingAds.count || 0,
         pendingOrders: pendingOrders.count || 0,
       };
     }
@@ -50,7 +46,7 @@ export const EnhancedAdminDashboard: React.FC = () => {
   const quickActions = [
     { label: 'User Management', path: '/dashboard/admin/users', icon: Users, badge: stats?.pendingRoleRequests, desc: 'Manage users, roles & suspensions' },
     { label: 'Order Oversight', path: '/dashboard/admin/orders', icon: ClipboardList, badge: stats?.pendingOrders, desc: 'Monitor & manage all orders' },
-    { label: 'Moderation', path: '/dashboard/admin/moderation', icon: Eye, badge: stats?.pendingAds, desc: 'Approve ads, products & shops' },
+    { label: 'Moderation', path: '/dashboard/admin/moderation', icon: Eye, badge: stats?.pendingRoleRequests, desc: 'Approve shops & products' },
     { label: 'Platform Analytics', path: '/dashboard/admin/analytics', icon: TrendingUp, badge: 0, desc: 'Revenue, growth & trends' },
     { label: 'Tutorial Manager', path: '/dashboard/tutorial-manager', icon: Video, badge: 0, desc: 'Manage video tutorials' },
   ];
@@ -74,8 +70,7 @@ export const EnhancedAdminDashboard: React.FC = () => {
           { label: 'Orders', value: stats?.totalOrders, icon: ShoppingBag },
           { label: 'Shops', value: stats?.totalShops, icon: Store },
           { label: 'Products', value: stats?.totalProducts, icon: Package },
-          { label: 'Ads', value: stats?.totalAds, icon: FileText },
-          { label: 'Pending', value: (stats?.pendingRoleRequests || 0) + (stats?.pendingAds || 0) + (stats?.pendingOrders || 0), icon: AlertTriangle },
+          { label: 'Pending', value: (stats?.pendingRoleRequests || 0) + (stats?.pendingOrders || 0), icon: AlertTriangle },
         ].map((stat) => (
           <Card key={stat.label}>
             <CardContent className="pt-4 pb-3 px-4">

@@ -92,10 +92,10 @@ export class SecurityManager {
     const rolePermissions: Record<string, string[]> = {
       admin: [
         'manage_users', 'manage_shops', 'manage_products', 'manage_orders',
-        'manage_ads', 'view_analytics', 'manage_commissions', 'manage_system'
+        'view_analytics', 'manage_commissions', 'manage_system'
       ],
       wholesaler: [
-        'manage_own_shops', 'manage_own_products', 'manage_own_ads',
+        'manage_own_shops', 'manage_own_products',
         'view_own_orders', 'update_order_status', 'view_own_analytics',
         'manage_payment_methods'
       ],
@@ -128,7 +128,7 @@ export class SecurityManager {
 
   // Validate resource ownership
   async validateResourceOwnership(
-    resourceType: 'shop' | 'product' | 'order' | 'ad',
+    resourceType: 'shop' | 'product' | 'order',
     resourceId: string,
     userId?: string
   ): Promise<boolean> {
@@ -166,14 +166,6 @@ export class SecurityManager {
             .eq('id', resourceId)
             .single();
           return order?.buyer_id === targetUserId || order?.shops?.owner_id === targetUserId;
-
-        case 'ad':
-          const { data: ad } = await supabase
-            .from('ads')
-            .select('wholesaler_id')
-            .eq('id', resourceId)
-            .single();
-          return ad?.wholesaler_id === targetUserId;
 
         default:
           return false;

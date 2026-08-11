@@ -11,8 +11,6 @@ import {
   Store, 
   Package, 
   ShoppingCart, 
-  TrendingUp, 
-  AlertCircle,
   CheckCircle,
   Clock,
   DollarSign
@@ -24,7 +22,6 @@ interface PlatformStats {
   total_wholesalers: number;
   total_sellers: number;
   total_pending_approvals: number;
-  total_ads: number;
   total_shops: number;
   total_products: number;
   total_orders: number;
@@ -35,9 +32,6 @@ interface WholesalerStats {
   products_count: number;
   active_products: number;
   pending_products: number;
-  ads_count: number;
-  active_ads: number;
-  pending_ads: number;
   total_orders: number;
   verification_status: string;
 }
@@ -79,7 +73,6 @@ const Stats: React.FC = () => {
         { data: wholesalers }, 
         { data: sellers },
         { data: pendingRoles },
-        { data: ads },
         { data: shops },
         { data: products },
         { data: orders }
@@ -88,7 +81,6 @@ const Stats: React.FC = () => {
         supabase.from('profiles').select('id').eq('role', 'wholesaler'),
         supabase.from('profiles').select('id').eq('role', 'seller'),
         supabase.from('role_requests').select('id').eq('status', 'pending'),
-        supabase.from('ads').select('id'),
         supabase.from('shops').select('id'),
         supabase.from('products').select('id'),
         supabase.from('orders').select('id')
@@ -99,7 +91,6 @@ const Stats: React.FC = () => {
         total_wholesalers: wholesalers?.length || 0,
         total_sellers: sellers?.length || 0,
         total_pending_approvals: pendingRoles?.length || 0,
-        total_ads: ads?.length || 0,
         total_shops: shops?.length || 0,
         total_products: products?.length || 0,
         total_orders: orders?.length || 0
@@ -134,14 +125,6 @@ const Stats: React.FC = () => {
 
       if (productsError) throw productsError;
 
-      // Fetch ads stats
-      const { data: ads, error: adsError } = await supabase
-        .from('ads')
-        .select('status')
-        .eq('wholesaler_id', user.id);
-
-      if (adsError) throw adsError;
-
       // Fetch orders stats
       const { data: orders, error: ordersError } = await supabase
         .from('orders')
@@ -156,9 +139,6 @@ const Stats: React.FC = () => {
         products_count: products?.length || 0,
         active_products: products?.filter(p => p.is_active && p.verification_status === 'approved').length || 0,
         pending_products: products?.filter(p => p.verification_status === 'pending').length || 0,
-        ads_count: ads?.length || 0,
-        active_ads: ads?.filter(a => a.status === 'active').length || 0,
-        pending_ads: ads?.filter(a => a.status === 'pending').length || 0,
         total_orders: orders?.length || 0,
         verification_status: 'pending' // This would come from a business verification table
       };
@@ -304,12 +284,6 @@ const Stats: React.FC = () => {
                   description={t('listed_products')}
                 />
                 <StatCard
-                  title={t('create_ads')}
-                  value={platformStats.total_ads}
-                  icon={TrendingUp}
-                  description={t('created_ads')}
-                />
-                <StatCard
                   title={t('orders')}
                   value={platformStats.total_orders}
                   icon={DollarSign}
@@ -325,7 +299,6 @@ const Stats: React.FC = () => {
             <TabsList>
               <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
               <TabsTrigger value="products">{t('products')}</TabsTrigger>
-              <TabsTrigger value="marketing">{t('marketing')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
@@ -341,12 +314,6 @@ const Stats: React.FC = () => {
                   value={wholesalerStats.products_count}
                   icon={Package}
                   description={t('listed_products')}
-                />
-                <StatCard
-                  title={t('create_ads')}
-                  value={wholesalerStats.active_ads}
-                  icon={TrendingUp}
-                  description={t('running_campaigns')}
                 />
                 <StatCard
                   title={t('orders')}
@@ -376,29 +343,6 @@ const Stats: React.FC = () => {
                   value={wholesalerStats.products_count}
                   icon={Package}
                   description={t('all_products')}
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="marketing" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard
-                  title={t('create_ads')}
-                  value={wholesalerStats.active_ads}
-                  icon={TrendingUp}
-                  description={t('currently_running')}
-                />
-                <StatCard
-                  title={t('pending')}
-                  value={wholesalerStats.pending_ads}
-                  icon={Clock}
-                  description={t('awaiting_approval')}
-                />
-                <StatCard
-                  title={t('create_ads')}
-                  value={wholesalerStats.ads_count}
-                  icon={AlertCircle}
-                  description={t('all_time_created')}
                 />
               </div>
             </TabsContent>

@@ -58,7 +58,7 @@ const SellerAnalytics: React.FC = () => {
           </p>
           <div className="mt-4 p-4 bg-blue-50 rounded-lg">
             <p className="text-blue-800 font-poppins text-sm">
-              📊 Analytics will appear here once you start making sales. Add products and create ads to get started.
+              📊 Analytics will appear here once you start making sales. Add products to get started.
             </p>
           </div>
         </CardContent>

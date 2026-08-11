@@ -5,7 +5,6 @@ import { getCurrentUser } from '@/lib/auth';
 export const SHOP_LIMITS = {
   MAX_SHOPS_PER_WHOLESALER: 1,
   MAX_PRODUCTS_PER_SHOP: 500,
-  MAX_ADS_PER_SHOP: 10,
   MIN_ORDER_AMOUNT: 1000, // PKR
   MAX_ORDER_AMOUNT: 5000000, // PKR 5M
 } as const;
@@ -49,30 +48,6 @@ export const checkProductCreationLimit = async (shopId: string): Promise<{ canCr
     return { 
       canCreate: false, 
       reason: `Maximum ${SHOP_LIMITS.MAX_PRODUCTS_PER_SHOP} products allowed per shop` 
-    };
-  }
-
-  return { canCreate: true };
-};
-
-export const checkAdCreationLimit = async (shopId: string): Promise<{ canCreate: boolean; reason?: string }> => {
-  const user = await getCurrentUser();
-  if (!user) return { canCreate: false, reason: 'User not authenticated' };
-
-  const { data: existingAds, error } = await supabase
-    .from('ads')
-    .select('id')
-    .eq('wholesaler_id', user.id);
-
-  if (error) {
-    console.error('Error checking ad limit:', error);
-    return { canCreate: false, reason: 'Failed to check existing ads' };
-  }
-
-  if (existingAds.length >= SHOP_LIMITS.MAX_ADS_PER_SHOP) {
-    return { 
-      canCreate: false, 
-      reason: `Maximum ${SHOP_LIMITS.MAX_ADS_PER_SHOP} ads allowed per shop` 
     };
   }
 

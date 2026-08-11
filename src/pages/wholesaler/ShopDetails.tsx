@@ -230,9 +230,6 @@ const ShopDetails: React.FC = () => {
                 <Button className="w-full" onClick={() => navigate('/dashboard/products')}>
                   Add New Product
                 </Button>
-                <Button variant="outline" className="w-full" onClick={() => navigate('/dashboard/ads')}>
-                  Create Advertisement
-                </Button>
                 <Button variant="outline" className="w-full">
                   View Analytics
                 </Button>

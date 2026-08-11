@@ -40,7 +40,7 @@ export async function getSecurityContext(): Promise<SecurityContext> {
       
       // Define role-based permissions
       const permissions: Record<string, string[]> = {
-        wholesaler: ['manage_shops', 'manage_products', 'view_orders', 'manage_ads'],
+        wholesaler: ['manage_shops', 'manage_products', 'view_orders'],
         seller: ['place_orders', 'view_products', 'manage_profile'],
         pending: ['view_products'],
       };

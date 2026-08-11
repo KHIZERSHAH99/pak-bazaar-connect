@@ -74,51 +74,6 @@ export type Database = {
         }
         Relationships: []
       }
-      ads: {
-        Row: {
-          budget_cap: number | null
-          campaign_end_date: string | null
-          campaign_start_date: string | null
-          created_at: string | null
-          current_spend: number | null
-          headline: string
-          id: string
-          image: string | null
-          is_auto_stopped: boolean | null
-          status: string
-          total_orders: number | null
-          wholesaler_id: string
-        }
-        Insert: {
-          budget_cap?: number | null
-          campaign_end_date?: string | null
-          campaign_start_date?: string | null
-          created_at?: string | null
-          current_spend?: number | null
-          headline: string
-          id?: string
-          image?: string | null
-          is_auto_stopped?: boolean | null
-          status?: string
-          total_orders?: number | null
-          wholesaler_id: string
-        }
-        Update: {
-          budget_cap?: number | null
-          campaign_end_date?: string | null
-          campaign_start_date?: string | null
-          created_at?: string | null
-          current_spend?: number | null
-          headline?: string
-          id?: string
-          image?: string | null
-          is_auto_stopped?: boolean | null
-          status?: string
-          total_orders?: number | null
-          wholesaler_id?: string
-        }
-        Relationships: []
-      }
       analytics_events: {
         Row: {
           created_at: string | null
@@ -3139,26 +3094,6 @@ export type Database = {
           p_window_minutes?: number
         }
         Returns: boolean
-      }
-      secure_insert_ad_click: {
-        Args: {
-          p_ad_id: string
-          p_placement?: string
-          p_session_id?: string
-          p_user_id?: string
-        }
-        Returns: string
-      }
-      secure_insert_ad_impression: {
-        Args: {
-          p_ad_id: string
-          p_placement?: string
-          p_session_id?: string
-          p_size?: string
-          p_source?: string
-          p_user_id?: string
-        }
-        Returns: string
       }
       secure_insert_analytics_event: {
         Args: {

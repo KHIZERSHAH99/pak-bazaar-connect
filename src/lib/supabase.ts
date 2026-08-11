@@ -4,7 +4,6 @@ import * as authModule from './auth';
 import * as shopsModule from './shops';
 import * as productsModule from './products';
 import * as ordersModule from './orders';
-import * as chatModule from './chat';
 import * as storageModule from './storage';
 import * as marketplaceModule from './marketplace';
 import * as paymentModule from './payment';
@@ -20,7 +19,6 @@ export type {
   Product,
   Order,
   Commission,
-  ChatMessage,
   Category,
   City,
   CompanyProfile,
@@ -59,11 +57,6 @@ export const {
   updateOrderStatus,
   getOrderById
 } = ordersModule;
-
-export const {
-  saveChat,
-  getChatHistory
-} = chatModule;
 
 export const {
   uploadImage

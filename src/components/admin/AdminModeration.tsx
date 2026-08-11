@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Search, Loader2, Store, Package, ImageIcon, CheckCircle, XCircle, Eye, AlertTriangle } from 'lucide-react';
+import { Search, Loader2, Store, Package } from 'lucide-react';
 import { format } from 'date-fns';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
@@ -16,20 +16,6 @@ const AdminModeration: React.FC = () => {
   const queryClient = useQueryClient();
   const [shopSearch, setShopSearch] = useState('');
   const [productSearch, setProductSearch] = useState('');
-
-  // Pending Ads
-  const { data: pendingAds = [], isLoading: adsLoading } = useQuery({
-    queryKey: ['admin-pending-ads'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('ads')
-        .select('*')
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
-  });
 
   // All Shops
   const { data: shops = [], isLoading: shopsLoading } = useQuery({
@@ -56,18 +42,6 @@ const AdminModeration: React.FC = () => {
         .limit(100);
       if (error) throw error;
       return data || [];
-    },
-  });
-
-  const updateAdStatus = useMutation({
-    mutationFn: async ({ adId, status }: { adId: string; status: string }) => {
-      const { error } = await supabase.from('ads').update({ status }).eq('id', adId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast({ title: 'Ad status updated' });
-      queryClient.invalidateQueries({ queryKey: ['admin-pending-ads'] });
-      queryClient.invalidateQueries({ queryKey: ['pending-ads-count'] });
     },
   });
 
@@ -99,16 +73,12 @@ const AdminModeration: React.FC = () => {
       ]} />
 
       <div>
-        <h1 className="text-2xl font-bold text-foreground font-poppins">Content Moderation</h1>
-        <p className="text-muted-foreground font-poppins">Review ads, moderate shops, and manage products</p>
+<h1 className="text-2xl font-bold text-foreground font-poppins">Content Moderation</h1>
+        <p className="text-muted-foreground font-poppins">Review shops and manage products</p>
       </div>
 
-      <Tabs defaultValue="ads" className="space-y-4">
+      <Tabs defaultValue="shops" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="ads" className="gap-2">
-            <ImageIcon className="h-4 w-4" /> Ads
-            {pendingAds.length > 0 && <Badge variant="destructive" className="text-[10px] px-1.5">{pendingAds.length}</Badge>}
-          </TabsTrigger>
           <TabsTrigger value="shops" className="gap-2">
             <Store className="h-4 w-4" /> Shops
           </TabsTrigger>
@@ -116,58 +86,6 @@ const AdminModeration: React.FC = () => {
             <Package className="h-4 w-4" /> Products
           </TabsTrigger>
         </TabsList>
-
-        {/* Ads Tab */}
-        <TabsContent value="ads" className="space-y-4">
-          {adsLoading ? (
-            <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
-          ) : pendingAds.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto mb-3" />
-                <p className="font-medium font-poppins">All caught up!</p>
-                <p className="text-sm text-muted-foreground font-poppins">No pending ads to review</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4">
-              {pendingAds.map((ad: any) => (
-                <Card key={ad.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-4">
-                      {ad.image && (
-                        <img src={ad.image} alt={ad.headline} className="w-24 h-24 object-cover rounded-lg shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium font-poppins">{ad.headline}</h4>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Submitted {format(new Date(ad.created_at), 'MMM d, yyyy')}
-                        </p>
-                        {ad.budget_cap && <p className="text-xs text-muted-foreground">Budget: Rs {ad.budget_cap}</p>}
-                      </div>
-                      <div className="flex gap-2 shrink-0">
-                        <Button
-                          size="sm"
-                          onClick={() => updateAdStatus.mutate({ adId: ad.id, status: 'active' })}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                        >
-                          <CheckCircle className="h-3 w-3 mr-1" /> Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => updateAdStatus.mutate({ adId: ad.id, status: 'rejected' })}
-                        >
-                          <XCircle className="h-3 w-3 mr-1" /> Reject
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
 
         {/* Shops Tab */}
         <TabsContent value="shops" className="space-y-4">

@@ -21,25 +21,6 @@ export const approveAllPendingProducts = async () => {
   }
 };
 
-// Admin function to approve all pending ads
-export const approveAllPendingAds = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('ads')
-      .update({ status: 'active' })
-      .eq('status', 'pending')
-      .select();
-
-    if (error) throw error;
-
-    console.log(`Approved ${data?.length || 0} ads`);
-    return data;
-  } catch (error) {
-    await handleError(error, 'approveAllPendingAds');
-    throw error;
-  }
-};
-
 // Admin function to get system statistics
 export const getSystemStats = async () => {
   try {
@@ -83,36 +64,22 @@ export const getSystemStats = async () => {
 
 // Admin function to bulk update verification status - simplified to avoid type issues
 export const bulkUpdateVerificationStatus = async (
-  table: 'products' | 'ads',
+  table: 'products',
   status: string,
   ids?: string[]
 ) => {
   try {
-    if (table === 'products') {
-      let query = supabase.from('products').update({ verification_status: status });
-      
-      if (ids && ids.length > 0) {
-        query = query.in('id', ids);
-      } else {
-        query = query.eq('verification_status', 'pending');
-      }
-      
-      const { data, error } = await query.select();
-      if (error) throw error;
-      return data;
+    let query = supabase.from('products').update({ verification_status: status });
+
+    if (ids && ids.length > 0) {
+      query = query.in('id', ids);
     } else {
-      let query = supabase.from('ads').update({ status: status });
-      
-      if (ids && ids.length > 0) {
-        query = query.in('id', ids);
-      } else {
-        query = query.eq('status', 'pending');
-      }
-      
-      const { data, error } = await query.select();
-      if (error) throw error;
-      return data;
+      query = query.eq('verification_status', 'pending');
     }
+
+    const { data, error } = await query.select();
+    if (error) throw error;
+    return data;
   } catch (error) {
     await handleError(error, 'bulkUpdateVerificationStatus');
     throw error;

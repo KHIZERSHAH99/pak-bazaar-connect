@@ -51,10 +51,6 @@ const PendingDashboard: React.FC = () => (
             </li>
             <li className="flex items-center">
               <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
-              Create promotional ads
-            </li>
-            <li className="flex items-center">
-              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
               Process and fulfill orders
             </li>
           </ul>

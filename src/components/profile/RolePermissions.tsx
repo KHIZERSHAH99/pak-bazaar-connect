@@ -27,7 +27,6 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
         return [
           ...basePermissions,
           { name: t('manage_users'), allowed: true, category: t('admin') },
-          { name: t('approve_ads'), allowed: true, category: t('admin') },
           { name: t('view_analytics'), allowed: true, category: t('admin') },
           { name: t('system_settings'), allowed: true, category: t('admin') }
         ];
@@ -36,7 +35,6 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
           ...basePermissions,
           { name: t('create_shops'), allowed: true, category: t('business') },
           { name: t('add_products'), allowed: true, category: t('business') },
-          { name: t('create_ads'), allowed: true, category: t('marketing') },
           { name: t('manage_orders'), allowed: true, category: t('business') }
         ];
       case 'seller':
@@ -51,8 +49,7 @@ const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
         return [
           ...basePermissions,
           { name: t('create_shops'), allowed: false, category: t('business') },
-          { name: t('place_orders'), allowed: false, category: t('business') },
-          { name: t('create_ads'), allowed: false, category: t('marketing') }
+          { name: t('place_orders'), allowed: false, category: t('business') }
         ];
     }
   };

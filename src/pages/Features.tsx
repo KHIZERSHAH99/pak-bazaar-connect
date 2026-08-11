@@ -45,7 +45,7 @@ const Features: React.FC = () => {
     {
       icon: <MessageSquare className="w-8 h-8 text-primary" />,
       title: "24/7 Support",
-      description: "Round-the-clock customer support with AI chatbot and human assistance."
+      description: "Round-the-clock customer support with in-app messaging and human assistance."
     },
     {
       icon: <BarChart3 className="w-8 h-8 text-primary" />,

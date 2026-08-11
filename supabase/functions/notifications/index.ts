@@ -9,7 +9,7 @@ const corsHeaders = {
 
 type RequestType = {
   userId: string;
-  type: "role_change_request" | "role_approved" | "role_rejected" | "ad_submitted" | "ad_approved" | "ad_rejected";
+  type: "role_change_request" | "role_approved" | "role_rejected";
   metadata?: Record<string, any>;
 };
 
@@ -82,21 +82,6 @@ serve(async (req) => {
       case "role_rejected":
         title = "Role Change Request Rejected";
         message = `Your request to change your role to ${metadata?.requestedRole || "a new role"} was not approved at this time.`;
-        break;
-        
-      case "ad_submitted":
-        title = "Advertisement Submitted";
-        message = `Your advertisement "${metadata?.headline || "New Ad"}" has been submitted and is pending approval.`;
-        break;
-        
-      case "ad_approved":
-        title = "Advertisement Approved";
-        message = `Your advertisement "${metadata?.headline || "New Ad"}" has been approved and is now active.`;
-        break;
-        
-      case "ad_rejected":
-        title = "Advertisement Rejected";
-        message = `Your advertisement "${metadata?.headline || "New Ad"}" was not approved at this time.`;
         break;
         
       default:

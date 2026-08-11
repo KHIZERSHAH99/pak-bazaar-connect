@@ -329,14 +329,6 @@ export interface Commission {
   created_at?: string;
 }
 
-export interface ChatMessage {
-  id: string;
-  user_id: string;
-  message: string;
-  reply: string;
-  created_at?: string;
-}
-
 export interface RoleRequest {
   id: string;
   user_id: string;

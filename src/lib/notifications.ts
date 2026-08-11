@@ -4,10 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 type NotificationType = 
   | "role_change_request" 
   | "role_approved" 
-  | "role_rejected" 
-  | "ad_submitted" 
-  | "ad_approved" 
-  | "ad_rejected";
+  | "role_rejected";
 
 /**
  * Sends a notification by calling the notifications edge function
@@ -54,25 +51,4 @@ export const notifyRoleApproved = async (userId: string, approvedRole: string) =
  */
 export const notifyRoleRejected = async (userId: string, requestedRole: string) => {
   return sendNotification(userId, "role_rejected", { requestedRole });
-};
-
-/**
- * Helper to notify a user about their ad submission
- */
-export const notifyAdSubmitted = async (userId: string, headline: string) => {
-  return sendNotification(userId, "ad_submitted", { headline });
-};
-
-/**
- * Helper to notify a user about their ad approval
- */
-export const notifyAdApproved = async (userId: string, headline: string) => {
-  return sendNotification(userId, "ad_approved", { headline });
-};
-
-/**
- * Helper to notify a user about their ad rejection
- */
-export const notifyAdRejected = async (userId: string, headline: string) => {
-  return sendNotification(userId, "ad_rejected", { headline });
 };

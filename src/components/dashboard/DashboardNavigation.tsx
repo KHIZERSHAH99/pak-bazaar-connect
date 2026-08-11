@@ -91,19 +91,6 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
     refetchInterval: 60000,
   });
 
-  const { data: pendingAds = 0 } = useQuery({
-    queryKey: ['pending-ads-count'],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from('ads')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending');
-      return count || 0;
-    },
-    enabled: profile?.role === 'admin',
-    refetchInterval: 60000,
-  });
-
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const iconClass = `w-5 h-5 ${isRtl ? 'ml-3' : 'mr-3'} flex-shrink-0`;
@@ -134,7 +121,7 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({ onNavigate })
             { name: t('adminPanel'), path: '/dashboard/admin', icon: <Shield className={iconClass} /> },
             { name: t('userManagement'), path: '/dashboard/admin/users', icon: <Users className={iconClass} />, badge: pendingRoleRequests > 0 ? String(pendingRoleRequests) : undefined },
             { name: t('orderOversight'), path: '/dashboard/admin/orders', icon: <ClipboardList className={iconClass} />, badge: pendingOrderCount > 0 ? String(pendingOrderCount) : undefined },
-            { name: t('moderation'), path: '/dashboard/admin/moderation', icon: <Eye className={iconClass} />, badge: pendingAds > 0 ? String(pendingAds) : undefined },
+            { name: t('moderation'), path: '/dashboard/admin/moderation', icon: <Eye className={iconClass} /> },
             { name: t('platformAnalytics'), path: '/dashboard/admin/analytics', icon: <TrendingUp className={iconClass} /> },
             { name: t('tutorialManager'), path: '/dashboard/tutorial-manager', icon: <Video className={iconClass} /> },
           ],

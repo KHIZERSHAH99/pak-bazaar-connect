@@ -36,7 +36,7 @@ const FinalStep: React.FC<FinalStepProps> = ({ selectedRole, form }) => {
             <>
               <li>• Your account will be created instantly</li>
               <li>• You can immediately start setting up your shop</li>
-              <li>• Begin listing products and creating ads</li>
+              <li>• Begin listing products and connect with retailers</li>
               <li>• Connect with retailers across Pakistan</li>
             </>
           ) : (

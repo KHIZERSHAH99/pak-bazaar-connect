@@ -50,7 +50,6 @@ const RoleManagement: React.FC<RoleManagementProps> = ({
             features={[
               t('create_manage_shops'),
               t('list_products'),
-              t('create_ads'),
               t('fulfill_orders')
             ]}
             targetRole="wholesaler"

@@ -20,7 +20,6 @@ const DEFAULT_LIMITS: Record<string, { maxRequests: number; windowMinutes: numbe
   'password_reset': { maxRequests: 3, windowMinutes: 60 },
   'order_create': { maxRequests: 10, windowMinutes: 60 },
   'product_create': { maxRequests: 5, windowMinutes: 60 },
-  'chatbot': { maxRequests: 20, windowMinutes: 60 },
   'api_general': { maxRequests: 100, windowMinutes: 60 }
 };
 

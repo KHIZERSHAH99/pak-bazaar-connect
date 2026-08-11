@@ -390,7 +390,7 @@ const translations = {
     'wholesalerDesc': 'Sell products to retailers across Pakistan',
     'wholesalerF1': 'Create and manage shops',
     'wholesalerF2': 'List unlimited products',
-    'wholesalerF3': 'Create promotional ads',
+    'wholesalerF3': 'Manage product inventory',
     'wholesalerF4': 'Fulfill bulk orders',
     'sellerTitle': 'Seller/Retailer',
     'sellerDesc': 'Purchase from wholesalers and grow your business',
@@ -449,32 +449,6 @@ const translations = {
     'accountCreated': 'Account Created!',
     'checkEmailConfirm': 'Please check your email to confirm your account.',
     'signupFailed': 'Signup Failed',
-    
-    // New: Chat
-    'pakMandiSupport': 'PakMandi Support',
-    'aiAssistantOnline': 'AI Assistant • Online',
-    'welcomeToSupport': 'Welcome to PakMandi Support!',
-    'askAnything': 'Ask me anything about our B2B marketplace platform.',
-    'quickQuestions': 'Quick Questions',
-    'chatQ1': 'How do I create an ad?',
-    'chatQ2': 'How to register as wholesaler?',
-    'chatQ3': 'How does order processing work?',
-    'chatQ4': 'What are the payment options?',
-    'chatQ5': 'How to verify my business?',
-    'loadingChatHistory': 'Loading chat history...',
-    'typeYourMessage': 'Type your message...',
-    'pressEnterToSend': 'Press Enter to send • Our AI assistant is here to help 24/7',
-    'supportAssistant': 'Support Assistant',
-    'typing': 'Typing...',
-    
-    // Chat Welcome
-    'aiSupport': 'AI Support',
-    'chatWelcomeIntro': "Hello! I'm your AI assistant for PakMandi. How can I help you today? You can ask me about:",
-    'chatWelcomeQ1': 'How to create a shop',
-    'chatWelcomeQ2': 'How to list products',
-    'chatWelcomeQ3': 'How to create ads',
-    'chatWelcomeQ4': 'How to switch roles',
-    'chatWelcomeQ5': 'Any other platform-related questions',
   },
   ur: {
     // Navigation
@@ -848,7 +822,7 @@ const translations = {
     'wholesalerDesc': 'پاکستان بھر میں خوردہ فروشوں کو سامان فروخت کریں',
     'wholesalerF1': 'دکانیں بنائیں اور چلائیں',
     'wholesalerF2': 'لامحدود مصنوعات شامل کریں',
-    'wholesalerF3': 'اشتہارات بنائیں',
+    'wholesalerF3': 'پروڈکٹ انوینٹری منظم کریں',
     'wholesalerF4': 'تھوک آرڈرز پورے کریں',
     'sellerTitle': 'خریدار / دکاندار',
     'sellerDesc': 'ہول سیلرز سے خریداری کریں اور کاروبار بڑھائیں',
@@ -907,32 +881,6 @@ const translations = {
     'accountCreated': 'اکاؤنٹ بن گیا!',
     'checkEmailConfirm': 'اپنا اکاؤنٹ تصدیق کرنے کے لیے ای میل چیک کریں۔',
     'signupFailed': 'سائن اپ ناکام',
-    
-    // New: Chat
-    'pakMandiSupport': 'پاک منڈی سپورٹ',
-    'aiAssistantOnline': 'AI معاون • آن لائن',
-    'welcomeToSupport': 'پاک منڈی سپورٹ میں خوش آمدید!',
-    'askAnything': 'ہماری B2B مارکیٹ کے بارے میں کچھ بھی پوچھیں۔',
-    'quickQuestions': 'فوری سوالات:',
-    'chatQ1': 'اشتہار کیسے بنائیں؟',
-    'chatQ2': 'ہول سیلر کیسے بنیں؟',
-    'chatQ3': 'آرڈر کا عمل کیسے ہوتا ہے؟',
-    'chatQ4': 'ادائیگی کے کیا طریقے ہیں؟',
-    'chatQ5': 'کاروبار کی تصدیق کیسے کریں؟',
-    'loadingChatHistory': 'چیٹ لوڈ ہو رہی ہے...',
-    'typeYourMessage': 'اپنا پیغام لکھیں...',
-    'pressEnterToSend': 'بھیجنے کے لیے Enter دبائیں • AI معاون 24/7 دستیاب ہے',
-    'supportAssistant': 'سپورٹ معاون',
-    'typing': 'لکھ رہا ہے...',
-    
-    // Chat Welcome
-    'aiSupport': 'AI سپورٹ',
-    'chatWelcomeIntro': 'السلام علیکم! میں پاک منڈی کا AI معاون ہوں۔ آج میں آپ کی کیا مدد کر سکتا ہوں؟ آپ مجھ سے یہ پوچھ سکتے ہیں:',
-    'chatWelcomeQ1': 'دکان کیسے بنائیں',
-    'chatWelcomeQ2': 'مصنوعات کی فہرست کیسے بنائیں',
-    'chatWelcomeQ3': 'اشتہار کیسے بنائیں',
-    'chatWelcomeQ4': 'کردار کیسے تبدیل کریں',
-    'chatWelcomeQ5': 'پلیٹ فارم سے متعلق کوئی بھی سوال',
   }
 };
 
